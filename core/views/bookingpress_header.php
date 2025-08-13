@@ -173,7 +173,6 @@ if(!empty($request_module) && $request_module != 'lite_wizard'){
 
                             $current_year = gmdate('Y', current_time('timestamp', true ) );
 
-
                             if( !empty( $bpa_sale_popup_details[ $current_year ] ) ){
                                 $sale_details = $bpa_sale_popup_details[ $current_year ];
                                 
@@ -181,9 +180,11 @@ if(!empty($request_module) && $request_module != 'lite_wizard'){
                                 $bpa_bf_popup_end_time = $sale_details['end_time'];
 
                                 $type = !empty( $sale_details['type'] ) ? $sale_details['type'] : 'black_friday';
-                                
+
                                 if( $bpa_current_date_for_bf_popup >= $bpa_bf_popup_start_time && $bpa_current_date_for_bf_popup <= $bpa_bf_popup_end_time ){
-                                    if( 'black_friday' == $type ){
+                                    if( 'birthday_sale' == $type ){
+                                        esc_html_e('Birthday Sale', 'bookingpress-appointment-booking');
+                                    } else if( 'black_friday' == $type ){
                                         esc_html_e('Black Friday Sale', 'bookingpress-appointment-booking');
                                     } else if ( 'spring_sale' == $type ){
                                         esc_html_e( 'Spring Sale', 'bookingpress-appointment-booking' );
@@ -209,7 +210,7 @@ if(!empty($request_module) && $request_module != 'lite_wizard'){
 <el-dialog custom-class="bpa-dialog bpa-dialog--upgrade-to-premium bpa-dialog--black-friday-sale" modal-append-to-body=false :visible.sync="premium_modal" :close-on-press-escape="close_modal_on_esc" v-cloak>
 <div class="bpa-dialog-heading" @click="premium_modal = false;"></div>
     <div class="bpa-dialog-body" @click="bookingpress_redirect_sale_premium_page">
-        <el-button class="bpa-btn bpa-btn--black-friday-sale-body">Grab Now</el-button>
+        <el-button class="bpa-btn bpa-btn--black-friday-sale-body">Grab Deal Now</el-button>
     </div>
 </el-dialog>
 

@@ -4595,8 +4595,6 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
             
             $service_temp_timings = $service_timings;
 
-            
-
             if( !empty( $total_booked_appiontments ) && !empty( $service_timings ) ){
                 foreach( $total_booked_appiontments as $booked_appointment_data ){
                     $total_guests = 0;
