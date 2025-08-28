@@ -2034,7 +2034,7 @@ if (! class_exists('BookingPress') ) {
         {
             global $bookingpress_version;
             $bookingpress_old_version = get_option('bookingpress_version', true);
-            if (version_compare($bookingpress_old_version, '1.1.40', '<') ) {
+            if (version_compare($bookingpress_old_version, '1.1.41', '<') ) {
                 $bookingpress_load_upgrade_file = BOOKINGPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $bookingpress_load_upgrade_file;
                 $this->bookingpress_send_anonymous_data_cron();
@@ -8952,7 +8952,7 @@ if (! class_exists('BookingPress') ) {
             $bookingpress_search_query_where = 'WHERE 1=1';
             $bookingpress_search_query_where .= $wpdb->prepare( ' AND cs.bookingpress_user_type = %d AND cs.bookingpress_user_status = %d ', 2,1 );
             if(!empty($search_user_str)) {
-                $bookingpress_search_query_where .= "AND (cs.bookingpress_user_login LIKE '%{$search_user_str}%' OR cs.bookingpress_user_email LIKE '%{$search_user_str}%' OR cs.bookingpress_user_firstname LIKE '%{$search_user_str}%' OR cs.bookingpress_user_lastname LIKE '%{$search_user_str}%') OR cs.bookingpress_customer_full_name LIKE '%{$search_user_str}%' ";
+                $bookingpress_search_query_where .= "AND (cs.bookingpress_user_login LIKE '%{$search_user_str}%' OR cs.bookingpress_user_email LIKE '%{$search_user_str}%' OR cs.bookingpress_user_firstname LIKE '%{$search_user_str}%' OR cs.bookingpress_user_lastname LIKE '%{$search_user_str}%' OR cs.bookingpress_customer_full_name LIKE '%{$search_user_str}%') ";
             }                
             $bookingpress_search_join_query  = '';
             $bookingpress_search_join_query  = apply_filters('bookingpress_search_customer_list_join_filter', $bookingpress_search_join_query);
@@ -10111,6 +10111,9 @@ if (! class_exists('BookingPress') ) {
             $company_phone   = esc_html($BookingPress->bookingpress_get_settings('company_phone_number', 'company_setting'));
             $company_website = $BookingPress->bookingpress_get_settings('company_website', 'company_setting');
     
+            $company_name = stripslashes_deep( html_entity_decode( $company_name, ENT_QUOTES ) );
+            $company_address = stripslashes_deep( html_entity_decode( $company_address, ENT_QUOTES ) );
+            
             $template_content = str_replace('%company_address%', $company_address, $template_content);
             $template_content = str_replace('%company_name%', $company_name, $template_content);
             $template_content = str_replace('%company_phone%', $company_phone, $template_content);
@@ -10154,6 +10157,7 @@ if (! class_exists('BookingPress') ) {
                 } elseif(!empty($bookingpress_payment_method) && $bookingpress_payment_method != 'manual') {
                     $bookingpress_payment_method = $this->bookingpress_get_customize_settings($bookingpress_payment_method.'_text','booking_form');
                 }
+                $bookingpress_payment_method = !empty($bookingpress_payment_method) ? stripslashes_deep( html_entity_decode( esc_html( $bookingpress_payment_method), ENT_QUOTES) ): '';
                 $template_content = str_replace('%payment_method%',$bookingpress_payment_method,$template_content);
 
                 /**** replacing the appointment data *****/    
@@ -10162,11 +10166,12 @@ if (! class_exists('BookingPress') ) {
 
                 $bookingpress_customer_id       = !empty( $bookingpress_appointment_data['bookingpress_customer_id'] ) ? esc_html( $bookingpress_appointment_data['bookingpress_customer_id'] ) : '';
 				$bookingpress_customer_email = !empty( $bookingpress_appointment_data['bookingpress_customer_email'] ) ? esc_html( $bookingpress_appointment_data['bookingpress_customer_email'] ) : '';
-				$bookingpress_customer_firstname   = !empty( $bookingpress_appointment_data['bookingpress_customer_firstname'] ) ? esc_html( $bookingpress_appointment_data['bookingpress_customer_firstname'] ) : '';
-                $bookingpress_customer_lastname   = !empty( $bookingpress_appointment_data['bookingpress_customer_lastname'] ) ? esc_html( $bookingpress_appointment_data['bookingpress_customer_lastname'] ) : '';
-                $bookingpress_customer_fullname   = !empty( $bookingpress_appointment_data['bookingpress_customer_name'] ) ? esc_html( $bookingpress_appointment_data['bookingpress_customer_name'] ) : '';
+				$bookingpress_customer_firstname   = !empty( $bookingpress_appointment_data['bookingpress_customer_firstname'] ) ? stripslashes_deep( html_entity_decode( esc_html( $bookingpress_appointment_data['bookingpress_customer_firstname'] ), ENT_QUOTES) ) : '';
+                $bookingpress_customer_lastname   = !empty( $bookingpress_appointment_data['bookingpress_customer_lastname'] ) ?stripslashes_deep( html_entity_decode( esc_html( $bookingpress_appointment_data['bookingpress_customer_lastname'] ), ENT_QUOTES) ) : '';
+                $bookingpress_customer_fullname   = !empty( $bookingpress_appointment_data['bookingpress_customer_name'] ) ? stripslashes_deep( html_entity_decode( esc_html( $bookingpress_appointment_data['bookingpress_customer_name'] ), ENT_QUOTES) ) : '';
                 $bookingpress_customer_phone   = !empty( $bookingpress_appointment_data['bookingpress_customer_phone'] ) ? esc_html( $bookingpress_appointment_data['bookingpress_customer_phone'] ) : '';
-                $bookingpress_customer_note   = !empty( $bookingpress_appointment_data['bookingpress_appointment_internal_note'] ) ? esc_html( $bookingpress_appointment_data['bookingpress_appointment_internal_note'] ) : '';
+                $bookingpress_customer_note   = !empty( $bookingpress_appointment_data['bookingpress_appointment_internal_note'] ) ? stripslashes_deep( html_entity_decode( esc_html( $bookingpress_appointment_data['bookingpress_appointment_internal_note'] ), ENT_QUOTES) ) : '';
+                
 
                 if( !empty($bookingpress_customer_phone) && !empty( $bookingpress_appointment_data['bookingpress_customer_phone_dial_code'] ) ){
 
@@ -10227,6 +10232,7 @@ if (! class_exists('BookingPress') ) {
                 } else {
                     $bookingpress_service_duration .= ' ' . esc_html__( 'Hours', 'bookingpress-appointment-booking' ); 
                 }
+                $bookingpress_service_name = !empty($bookingpress_service_name) ? stripslashes_deep( html_entity_decode( esc_html( $bookingpress_service_name ), ENT_QUOTES) ): '';
                 $template_content = str_replace('%service_name%', $bookingpress_service_name, $template_content);
                 $template_content = str_replace('%service_amount%', $bookingpress_service_price, $template_content);
                 $template_content = str_replace('%service_duration%', $bookingpress_service_duration, $template_content);
@@ -10242,7 +10248,7 @@ if (! class_exists('BookingPress') ) {
                         $bookingpress_category_name = esc_html__('Uncategorized', 'bookingpress-appointment-booking');
                     } else {                        
                         $categories= $wpdb->get_row($wpdb->prepare( "SELECT bookingpress_category_name FROM " . $tbl_bookingpress_categories." WHERE bookingpress_category_id = %d",$bookingpress_category_id), ARRAY_A );// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Reason: $tbl_bookingpress_categories is table name defined globally. False Positive alarm
-                        $bookingpress_category_name = !empty($categories['bookingpress_category_name']) ? esc_html($categories['bookingpress_category_name']): '';
+                        $bookingpress_category_name = !empty($categories['bookingpress_category_name']) ? stripslashes_deep( html_entity_decode( esc_html( $categories['bookingpress_category_name'] ), ENT_QUOTES) ): '';
                     }
                 }
                 $template_content = str_replace( '%category_name%', $bookingpress_category_name, $template_content );                    

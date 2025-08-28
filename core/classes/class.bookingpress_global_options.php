@@ -48,7 +48,10 @@ if (! class_exists('BookingPress_Global_Options') ) {
                 $bookingpress_site_current_language = 'gl';
             }elseif ($bookingpress_site_current_language == 'he_IL' ) {
                 $bookingpress_site_current_language = 'he';
+            }elseif ($bookingpress_site_current_language == 'fr_CA' ) {
+                $bookingpress_site_current_language = 'fr_CA';
             }
+            
 
             global $bookingpress_settings_table_exists, $bookingpress_customize_settings_table_exists;
 
@@ -1996,7 +1999,10 @@ if (! class_exists('BookingPress_Global_Options') ) {
                 $bookingpress_site_current_language = 'es'; // Spain
             } elseif ($bookingpress_site_current_language == 'fr_FR' ) {
                 $bookingpress_site_current_language = 'fr'; // France
-            } elseif ($bookingpress_site_current_language == 'hr' ) {
+            } elseif ($bookingpress_site_current_language == 'fr_CA' ) {
+                $bookingpress_site_current_language = 'fr_CA'; // Franch canada
+            } 
+            elseif ($bookingpress_site_current_language == 'hr' ) {
                 $bookingpress_site_current_language = 'hr'; // Croatia
             } elseif ($bookingpress_site_current_language == 'hu_HU' ) {
                 $bookingpress_site_current_language = 'hu'; // Hungary

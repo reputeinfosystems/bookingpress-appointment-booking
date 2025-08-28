@@ -5677,7 +5677,9 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                 $bookingpress_site_current_language = 'gl'; //Galician
             }elseif ($bookingpress_site_current_language == 'he_IL' ) {
                 $bookingpress_site_current_language = 'he';//Hebrew
-            }else {
+            }elseif ($bookingpress_site_current_language == 'fr_CA' ) {
+                $bookingpress_site_current_language = 'fr-ca';//french canada
+            } else {
                 $bookingpress_site_current_language = 'en';
             }
 

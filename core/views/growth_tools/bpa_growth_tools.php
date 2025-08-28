@@ -89,6 +89,50 @@
 					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="bpa-mlc-left-heading">
                         <div class="bpa-plugin-details-cls">
                             <div class="bpa-gt-plugin-icon">
+                                <span class="bpa-plugin-icon bpa-afp-icon"></span>
+                            </div>
+                            <div class="bpa-gt-plugin-dec">
+                                <div class="bpa-plugin-heading afp-heading"> AffiliatePress <span class="bpa-plugin-heading-cls">- WordPress Affiliate Plugin</span> </div>
+                                <div class="bpa-plugin-heading-desc"> Seamlessly compatible with WooCommerce, ARMember, BookingPress, and 20+ other platforms, AffiliatePress makes running affiliate programs effortless. With multiple commission types, powerful tracking, and a modern interface, it’s the smarter choice over costly and complex affiliate tools. </div>
+                                <div class="bpa-plugin-key-feature"> Key Features: </div>
+                                <ul class="bpa-feature-list-cls-plugin-dec">
+                                    <li class="bpa-feature-list-li-plugin"> Easy Affiliates Management </li>
+                                    <li class="bpa-feature-list-li-plugin"> Multiple Commission Types </li>
+                                    <li class="bpa-feature-list-li-plugin"> Customized Affiliate Signup </li>
+                                    <li class="bpa-feature-list-li-plugin"> Advanced Reports </li>
+                                    <li class="bpa-feature-list-li-plugin"> Realtime Commission Tracking </li>
+                                    <li class="bpa-feature-list-li-plugin"> AI-Powered Fraud Detection </li>
+                                </ul>
+                                <div style="margin-top:40px;">
+                                    <a href="https://www.affiliatepressplugin.com" target="_blank" class="bpa-learnmore-btn afp-plugin"> Learn More </a>
+                                    <?php if ( (is_plugin_active('affiliatepress-affiliate-marketing/affiliatepress-affiliate-marketing.php')) || file_exists( WP_PLUGIN_DIR . '/affiliatepress-affiliate-marketing/affiliatepress-affiliate-marketing.php')  ) { ?>
+                                        <el-button class="el-button bpa-btn bpa-install-btn afp-plugin" disabled="is_disabled">
+                                            <span class="bpa-btn__label"> Installed </span> 
+                                        <?php } else {
+                                            $plugin_name = 'affiliatepress-affiliate-marketing';
+                                            $plugin_install_url = wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=' . $plugin_name ), 'install-plugin_' . $plugin_name ).'&bpa_utm=bpa_growth_tool';
+
+                                            //window.location.href = '<?php echo $plugin_install_url; // phpcs:ignore
+                                            ?>
+                                            <el-button class="el-button bpa-btn bpa-install-btn afp-plugin" @click="bpa_download_plugins('affiliatepress')" :class="(is_display_affiliatepress_save_loader == '1') ? 'bpa-btn--is-loader' : ''" :disabled="is_disabled">
+                                            <span class="bpa-btn__label"> Install </span> 
+                                        <?php }  ?>
+                                        <div class="bpa-btn--loader__circles">
+                                            <div></div>
+                                            <div></div>
+                                            <div></div>
+                                        </div>
+                                    </el-button>
+                                </div>
+                            </div>
+                        </div>
+					</el-col>
+				</el-row>
+                <hr class="bpa-section-line"> 
+                <el-row type="flex" class="bpa-mlc-head-wrap">
+					<el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="bpa-mlc-left-heading">
+                        <div class="bpa-plugin-details-cls">
+                            <div class="bpa-gt-plugin-icon">
                                 <span class="bpa-plugin-icon bpa-arm-icon"></span>
                             </div>
                             <div class="bpa-gt-plugin-dec">

@@ -133,13 +133,13 @@ if (! class_exists('bookingpress_calendar') ) {
                 if(!empty($total_booked_appiontments_data)) {
                     
                     foreach($total_booked_appiontments_data as $index=> $appointment_data) {
-
+                        $appointment_start_date = $appointment_data['bookingpress_appointment_date'];
                         $appointment_end_date = $appointment_data['bookingpress_appointment_end_date'];
                         if( empty( $appointment_end_date ) || '0000-00-00' == $appointment_end_date || ('00:00:00' === $appointment_data['bookingpress_appointment_end_time'] && '00:00:00' != $posted_data['bookingpress_appointment_end_time'] && 'day' != $posted_data['activeView'] && 'mobile' != $posted_data['screen_size'] ) ){
                             $appointment_end_date = $appointment_data['bookingpress_appointment_date'];
                         }
-
-                        if( $appointment_end_date != $appointment_sel_end_date ){
+                        
+                        if( strtotime($appointment_start_date) >  strtotime($appointment_sel_end_date) && strtotime($appointment_sel_end_date) > strtotime($appointment_end_date)   ){
                             continue;
                         }
 
