@@ -279,14 +279,14 @@ if( !class_exists('BookingPress_Core') ){
             }
 
             $is_user_connected = $this->bookingpress_check_user_connection_with_appointment( $appointment_id, $user_id );
-
+            
             if( false == $is_user_connected ){
                 return false;
             }
 
             global $wpdb, $tbl_bookingpress_appointment_bookings;
 
-            $bookingpress_appointment_log_data = $wpdb->get_row($wpdb->prepare("SELECT bookingpress_service_id,bookingpress_appointment_date,bookingpress_appointment_time FROM {$tbl_bookingpress_appointment_bookings} WHERE bookingpress_appointment_booking_id = %d", $appointment_id), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_appointment_bookings is table name defined globally.
+            $bookingpress_appointment_log_data = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$tbl_bookingpress_appointment_bookings} WHERE bookingpress_appointment_booking_id = %d", $appointment_id), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_appointment_bookings is table name defined globally.
             
             $allow_cancel_appointment = true;
             $bookingpress_appointment_date = $bookingpress_appointment_log_data['bookingpress_appointment_date'];
@@ -295,10 +295,12 @@ if( !class_exists('BookingPress_Core') ){
             $bookingpress_appointment_datetime = $bookingpress_appointment_date." ".$bookingpress_appointment_time;                        
             $current_datetime = date( 'Y-m-d H:i:s', current_time('timestamp') );
             $allow_cancel_appointment = true;
+
             
             if( $bookingpress_appointment_datetime <= $current_datetime ){
                 return false;
             }
+            
 
             $allow_cancel_appointment = apply_filters( 'bookingpress_modify_cancel_appointment_flag', $allow_cancel_appointment, $bookingpress_appointment_log_data );
 

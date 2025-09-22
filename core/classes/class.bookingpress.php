@@ -2034,7 +2034,7 @@ if (! class_exists('BookingPress') ) {
         {
             global $bookingpress_version;
             $bookingpress_old_version = get_option('bookingpress_version', true);
-            if (version_compare($bookingpress_old_version, '1.1.41', '<') ) {
+            if (version_compare($bookingpress_old_version, '1.1.43', '<') ) {
                 $bookingpress_load_upgrade_file = BOOKINGPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $bookingpress_load_upgrade_file;
                 $this->bookingpress_send_anonymous_data_cron();
@@ -9940,6 +9940,16 @@ if (! class_exists('BookingPress') ) {
                             .bpa-front-tabs--vertical-left .bpa-front-tab-menu .bpa-front-tab-menu--item.__bpa-is-active span,
                             .bpa-front-tabs--vertical-left .bpa-front-tab-menu .bpa-front-tab-menu--item.__bpa-is-active .bpa-front-tm--item-icon,
                             .bpa-front-tabs .bpa-front-tabs--foot .bpa-front-btn--primary:focus {                 
+                                box-shadow: ' . $box_shadow_color . ' !important;
+                            }';
+
+                            $bookingpress_customize_css_content .= '
+                            .bpa-front-form-control--radio.el-radio:focus:not(.is-focus):not(:active):not(.is-disabled) .el-radio__inner {                 
+                                box-shadow: ' . $box_shadow_color . ' !important;
+                            }';
+
+                            $bookingpress_customize_css_content .= '
+                            .bpa-frontend-main-container .bpa-front-form-control--checkbox.el-checkbox .is-focus .el-checkbox__inner, .bpp-front-form-control--checkbox.el-checkbox:focus .is-focus .el-checkbox__inner, .bpp-frontend-main-container-package .bpp-front-form-control--checkbox.el-checkbox .is-focus .el-checkbox__inner {                 
                                 box-shadow: ' . $box_shadow_color . ' !important;
                             }';
 

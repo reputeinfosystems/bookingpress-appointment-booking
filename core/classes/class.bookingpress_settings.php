@@ -2477,8 +2477,7 @@ if (! class_exists('bookingpress_settings') ) {
                             vm.is_disabled = false
                             vm.is_display_send_test_wpmail_mail_loader = '0'    
                             vm.is_disable_send_test_wpmail_email_btn = false
-                            console.log( response.data.is_mail_sent );
-                            console.log( response.data.is_mail_sent == 1 )
+                            
                             if(response.data.is_mail_sent == 1){
                                 vm.succesfully_send_test_wpmail_email = 1
                                 vm.error_send_test_wpmail_email = 0;

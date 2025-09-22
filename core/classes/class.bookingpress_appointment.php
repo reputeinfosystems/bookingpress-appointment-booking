@@ -1694,26 +1694,27 @@ if (! class_exists('bookingpress_appointment') ) {
                             $bookingpress_customer_ids[] = $item['bookingpress_customer_id'];
                         }
                         $bookingpress_search_user_id      = implode(',', $bookingpress_customer_ids);
-                        $search_query_where = ' AND (bookingpress_customer_id IN (';
+                        $search_query_where = ' AND (bpa.bookingpress_customer_id IN (';
                         $search_query_where .= rtrim( str_repeat( '%d,', count( $bookingpress_customer_ids ) ), ',' ). ') )';
                         array_unshift( $bookingpress_customer_ids, $search_query_where );
                         $search_query_where_str = call_user_func_array( array( $wpdb, 'prepare' ), $bookingpress_customer_ids  );
 
                         $bookingpress_search_query_where .= $search_query_where_str;
                     } else {
-                        $bookingpress_search_query_where .= $wpdb->prepare( "AND ( bookingpress_service_name LIKE %s )", "%{$bookingpress_search_string}%" );
+                        $bookingpress_search_query_where_clause = apply_filters( 'bookingpress_modify_search_query_where_after_service_name', '', $bookingpress_search_string );
+                        $bookingpress_search_query_where .= $wpdb->prepare( "AND ( bpa.bookingpress_service_name LIKE %s {$bookingpress_search_query_where_clause} )", "%{$bookingpress_search_string}%" );
                     }
                 }
                 if (! empty($bookingpress_search_data['selected_date_range']) ) {
                     $bookingpress_search_date         = $bookingpress_search_data['selected_date_range'];
                     $start_date                       = date('Y-m-d', strtotime($bookingpress_search_date[0]));
                     $end_date                         = date('Y-m-d', strtotime($bookingpress_search_date[1]));
-                    $bookingpress_search_query_where .= $wpdb->prepare( " AND (bookingpress_appointment_date BETWEEN %s AND %s)", $start_date, $end_date );
+                    $bookingpress_search_query_where .= $wpdb->prepare( " AND (bpa.bookingpress_appointment_date BETWEEN %s AND %s)", $start_date, $end_date );
                 }
                 if (! empty($bookingpress_search_data['customer_name']) ) {
                     $bookingpress_search_name         = $bookingpress_search_data['customer_name'];
 
-                    $search_name_query = ' AND ( bookingpress_customer_id IN(';
+                    $search_name_query = ' AND ( bpa.bookingpress_customer_id IN(';
                     $search_name_query .= rtrim( str_repeat( '%d,', count( $bookingpress_search_name) ), ',' ).' ) )';
                     array_unshift( $bookingpress_search_name, $search_name_query );
                     $search_name_query_str = call_user_func_array( array( $wpdb, 'prepare' ), $bookingpress_search_name );
@@ -1723,29 +1724,34 @@ if (! class_exists('bookingpress_appointment') ) {
                 if (! empty($bookingpress_search_data['service_name']) ) {
                     $bookingpress_search_name         = $bookingpress_search_data['service_name'];
 
-                    $search_name_query = ' AND ( bookingpress_service_id IN(';
+                    $search_name_query = ' AND ( bpa.bookingpress_service_id IN(';
                     $search_name_query .= rtrim( str_repeat( '%d,', count( $bookingpress_search_name) ), ',' ).' ) )';
                     array_unshift( $bookingpress_search_name, $search_name_query );
                     $search_name_query_str = call_user_func_array( array( $wpdb, 'prepare' ), $bookingpress_search_name );
-                    
+                    $search_name_query_str = apply_filters( 'bookingpress_modify_search_query_where_after_service_id', $search_name_query_str, $bookingpress_search_data['service_name'] );
                     $bookingpress_search_query_where .= $search_name_query_str;
 
                 }
                 if (! empty($bookingpress_search_data['appointment_status'] && $bookingpress_search_data['appointment_status'] != 'all') ) {
                     $bookingpress_search_name         = $bookingpress_search_data['appointment_status'];
-                    $bookingpress_search_query_where .= $wpdb->prepare( " AND (bookingpress_appointment_status = %s)", $bookingpress_search_name );
+                    $bookingpress_search_query_where .= $wpdb->prepare( " AND (bpa.bookingpress_appointment_status = %s)", $bookingpress_search_name );
                 }
                 if(!empty( $bookingpress_search_data['search_appointment_id'])) {
                     $bookingpress_search_id = $bookingpress_search_data['search_appointment_id'];
-                    $bookingpress_search_query_where .= $wpdb->prepare( " AND (bookingpress_booking_id = %d)", $bookingpress_search_id );
+                    $bookingpress_search_query_where .= $wpdb->prepare( " AND (bpa.bookingpress_booking_id = %d)", $bookingpress_search_id );
                     
                 }
                 $bookingpress_search_query_where = apply_filters('bookingpress_appointment_view_add_filter', $bookingpress_search_query_where, $bookingpress_search_data);
             }
+            $bpa_left_join_data = apply_filters( 'bookingpress_modify_left_join_table_with_appointment_page', '' );
 
-            $get_total_appointments = $wpdb->get_results("SELECT * FROM {$tbl_bookingpress_appointment_bookings} {$bookingpress_search_query}{$bookingpress_search_query_where} ", ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $tbl_bookingpress_appointment_bookings is a table name. false alarm
+            $get_total_appointments = $wpdb->get_results("SELECT bpa.* FROM {$tbl_bookingpress_appointment_bookings} bpa {$bpa_left_join_data} {$bookingpress_search_query}{$bookingpress_search_query_where} group by bpa.bookingpress_appointment_booking_id", ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $tbl_bookingpress_appointment_bookings is a table name. false alarm
+            
+            ///echo $wpdb->last_query; die;
 
-            $total_appointments = $wpdb->get_results("SELECT * FROM {$tbl_bookingpress_appointment_bookings} {$bookingpress_search_query}{$bookingpress_search_query_where} order by bookingpress_appointment_booking_id DESC LIMIT {$offset} , {$perpage}", ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $tbl_bookingpress_appointment_bookings is a table name. false alarm
+            $total_appointments = $wpdb->get_results("SELECT bpa.* FROM {$tbl_bookingpress_appointment_bookings} bpa {$bpa_left_join_data} {$bookingpress_search_query}{$bookingpress_search_query_where} group by bpa.bookingpress_appointment_booking_id order by bpa.bookingpress_appointment_booking_id DESC LIMIT {$offset} , {$perpage}", ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $tbl_bookingpress_appointment_bookings is a table name. false alarm
+
+
 
             $appointments  = $bookingpress_formdata = array();
 
@@ -1903,6 +1909,7 @@ if (! class_exists('bookingpress_appointment') ) {
             }
             
             $appointments = apply_filters('bookingpress_modify_appointment_data', $appointments);
+
 
             $data['items']       = $appointments;
             $data['form_field_data'] = $bookingpress_formdata;

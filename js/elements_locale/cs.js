@@ -44,7 +44,7 @@
 					month2: 'Únor',
 					month3: 'březen',
 					month4: 'duben',
-					month5: 'Smět',
+					month5: 'května',
 					month6: 'červen',
 					month7: 'červenec',
 					month8: 'srpen',
@@ -63,16 +63,16 @@
 						sat: 'so'
 					},
 					months: {
-						jan: 'Jan',
+						jan: 'led',
 						feb: 'února',
-						mar: 'Mar',
+						mar: 'bře',
 						apr: 'dubna',
-						may: 'Smět',
+						may: 'kvě',
 						jun: 'června',
 						jul: 'července',
-						aug: 'Aug',
+						aug: 'srp',
 						sep: 'září',
-						oct: 'Oct',
+						oct: 'říj',
 						nov: 'listopad',
 						dec: 'prosinec'
 					}

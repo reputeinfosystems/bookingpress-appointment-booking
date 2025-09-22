@@ -987,24 +987,48 @@ if (! class_exists('bookingpress_customize') ) {
                     const vm = this
                     vm.is_display_save_loader = '1'
                     vm.is_disabled = 1
+                    let bpa_validation_flag = false
+
                     if(action == 'form_fields') {
                         vm.bpa_save_field_settings_data()
-                    } else {                        
-                        vm.bpa_save_booking_form_settings_data()                    
-                        vm.bpa_save_field_my_booking_data()    
-                        <?php do_action('bookingpress_save_customize_other_settings_data'); ?>
+                    } else {           
+                        
+                        <?php do_action('bookingpress_before_save_customize_other_settings_data'); ?>
+
+                        if( !( bpa_validation_flag ) ){
+
+                            vm.bpa_save_booking_form_settings_data()                    
+                            vm.bpa_save_field_my_booking_data()    
+                            <?php do_action('bookingpress_save_customize_other_settings_data'); ?>
+                        }
                     }
-                    setTimeout(function(){
+
+                    if( !( bpa_validation_flag ) ){
+
+                        setTimeout(function(){
+                            vm.is_display_save_loader = '0'
+                            vm.is_disabled = 0
+                            vm.$notify({
+                                title: '<?php esc_html_e('Success', 'bookingpress-appointment-booking'); ?>',
+                                message: '<?php esc_html_e('Customization settings saved successfully.', 'bookingpress-appointment-booking'); ?>',
+                                type: 'success',
+                                customClass: 'success_notification',
+                                duration:<?php echo intval($bookingpress_notification_duration); ?>,
+                            });
+                        }, 3000);
+
+                    } else {
+
                         vm.is_display_save_loader = '0'
                         vm.is_disabled = 0
                         vm.$notify({
-                            title: '<?php esc_html_e('Success', 'bookingpress-appointment-booking'); ?>',
-                            message: '<?php esc_html_e('Customization settings saved successfully.', 'bookingpress-appointment-booking'); ?>',
-                            type: 'success',
-                            customClass: 'success_notification',
+                            title: '<?php esc_html_e('Error', 'bookingpress-appointment-booking'); ?>',
+                            message: '<?php esc_html_e('You can not set the "Date & Time" step as the first step in the process.', 'bookingpress-appointment-booking'); ?>',
+                            type: 'error',
+                            customClass: 'error_notification',
                             duration:<?php echo intval($bookingpress_notification_duration); ?>,
                         });
-                    }, 3000);
+                    }
                 },
                 bookingpress_load_booking_form_data(){
                     const vm2 = this
