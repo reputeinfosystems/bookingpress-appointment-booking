@@ -258,7 +258,7 @@ if(!empty($request_module) && $request_module != 'lite_wizard'){
                                 </defs>
                             </svg>
                         </div>
-                        <div class="bpa-kf__item-title"><?php esc_html_e('45+ Premium add-ons totally free', 'bookingpress-appointment-booking'); ?></div>
+                        <div class="bpa-kf__item-title"><?php esc_html_e('60+ Premium add-ons totally free', 'bookingpress-appointment-booking'); ?></div>
                     </div>
                 </div>
                 <div class="bpa-kf__item-row">
@@ -344,7 +344,7 @@ if(!empty($request_module) && $request_module != 'lite_wizard'){
                                 </defs>
                             </svg>
                         </div>
-                        <div class="bpa-kf__item-title"><?php esc_html_e('Email, Whatsapp & SMS Notification', 'bookingpress-appointment-booking'); ?></div>
+                        <div class="bpa-kf__item-title"><?php esc_html_e('Email, Whatsapp, SMS & Telegram Notification', 'bookingpress-appointment-booking'); ?></div>
                     </div>
                     <div class="bpa-kf__item">
                         <div class="bpa-kf__item-icon">
@@ -367,12 +367,7 @@ if(!empty($request_module) && $request_module != 'lite_wizard'){
             <div class="bpa-utp-comparison-btns">
                 <h4><?php esc_html_e('Check out our complete comparison', 'bookingpress-appointment-booking'); ?></h4>
                 <div class="boa-cb__wrap">
-                    <el-button class="bpa-btn bpa-btn--primary" @click="bookingpress_redirect_lite_vs_preminum_page" >
-                        <?php esc_html_e('Compare Lite vs Premium', 'bookingpress-appointment-booking'); ?>
-                    </el-button>
-                    <el-button class="bpa-btn bpa-btn--secondary" @click="bookingpress_redirect_lite_vs_other_page">
-                        <?php esc_html_e('BookingPress vs Others', 'bookingpress-appointment-booking'); ?>
-                    </el-button>
+                    <el-link href="https://www.bookingpressplugin.com/bookingpress-lite-vs-premium" :underline="false" target="_blank" class="bpa-btn bpa-btn__medium bpa_lite_pro_link"><?php esc_html_e('Lite vs Premium', 'bookingpress-appointment-booking'); ?></el-link>
                 </div>
             </div>
         </div>

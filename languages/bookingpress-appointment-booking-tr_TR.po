@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: BookingPress Appointment Booking v1.1.43\n"
+"Project-Id-Version: BookingPress Appointment Booking v1.1.44\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-09-18 12:37:20+0000\n"
+"PO-Revision-Date: 2025-10-03 04:28:20+0000\n"
 "Last-Translator: admin <testrepute@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -3983,11 +3983,6 @@ msgstr "Rezervasyonların takvimler arasında iki yönlü sorunsuz senkronizasyo
 msgid "Understand your business better with reports"
 msgstr "Raporlarla işletmenizi daha iyi anlayın"
 
-#: core/views/bookingpress_header.php:347
-#@ bookingpress-appointment-booking
-msgid "Email, Whatsapp & SMS Notification"
-msgstr "E-posta, Whatsapp ve SMS Bildirimi"
-
 #: core/views/bookingpress_header.php:363
 #@ bookingpress-appointment-booking
 msgid "24/7 Real-time Support"
@@ -3998,17 +3993,7 @@ msgstr "7/24 Gerçek Zamanlı Destek"
 msgid "Check out our complete comparison"
 msgstr "Tam karşılaştırmamıza göz atın"
 
-#: core/views/bookingpress_header.php:371
-#@ bookingpress-appointment-booking
-msgid "Compare Lite vs Premium"
-msgstr "Lite ve Premium'u karşılaştırın"
-
-#: core/views/bookingpress_header.php:374
-#@ bookingpress-appointment-booking
-msgid "BookingPress vs Others"
-msgstr "BookingPress ve Diğerleri"
-
-#: core/views/bookingpress_header.php:382
+#: core/views/bookingpress_header.php:377
 #@ bookingpress-appointment-booking
 msgid "Upgrade to BookingPress Pro Now"
 msgstr "Hemen BookingPress Pro'ya Yükseltin"
@@ -6625,11 +6610,6 @@ msgstr "Müşteri Sırrını Girin"
 msgid "It is advised to use the Pop-up method rather than the legacy method although both work fine but as PayPal believes it is better to use the Pop-up method."
 msgstr "Her ikisi de iyi çalışsa da, eski yöntem yerine Pop-up yöntemini kullanmanız önerilir, ancak PayPal, Pop-up yöntemini kullanmanın daha iyi olduğuna inanmaktadır."
 
-#: core/views/bookingpress_header.php:261
-#@ bookingpress-appointment-booking
-msgid "45+ Premium add-ons totally free"
-msgstr "45+ Premium eklenti tamamen ücretsiz"
-
 #: core/views/settings/general_setting_tab.php:262
 #@ bookingpress-appointment-booking
 msgid "Auto login user after successful booking"
@@ -7090,14 +7070,29 @@ msgstr "Doğum Günü İndirimi"
 msgid "AffiliatePress Successfully installed."
 msgstr "AffiliatePress Başarıyla kuruldu."
 
-#. translators: plugin header field 'Version'
-#: bookingpress-appointment-booking.php:0
-#@ bookingpress-appointment-booking
-msgid "1.1.43"
-msgstr "1.1.43"
-
 #: core/classes/class.bookingpress_customize.php:1026
 #@ bookingpress-appointment-booking
 msgid "You can not set the \"Date & Time\" step as the first step in the process."
 msgstr "İşlemin ilk adımı olarak \\\"Tarih & Saat\\\" adımını ayarlayamazsınız."
+
+#: core/views/bookingpress_header.php:261
+#@ bookingpress-appointment-booking
+msgid "60+ Premium add-ons totally free"
+msgstr "60'tan fazla Premium eklenti tamamen ücretsiz"
+
+#: core/views/bookingpress_header.php:347
+#@ bookingpress-appointment-booking
+msgid "Email, Whatsapp, SMS & Telegram Notification"
+msgstr "E-posta, Whatsapp, SMS ve Telegram Bildirimi"
+
+#: core/views/bookingpress_header.php:370
+#@ bookingpress-appointment-booking
+msgid "Lite vs Premium"
+msgstr "Lite ve Premium"
+
+#. translators: plugin header field 'Version'
+#: bookingpress-appointment-booking.php:0
+#@ bookingpress-appointment-booking
+msgid "1.1.44"
+msgstr "1.1.44"
 

@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: BookingPress Appointment Booking v1.1.43\n"
+"Project-Id-Version: BookingPress Appointment Booking v1.1.44\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-09-18 12:27:03+0000\n"
+"PO-Revision-Date: 2025-10-03 04:19:24+0000\n"
 "Last-Translator: admin <testrepute123@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -5461,17 +5461,12 @@ msgstr "Reibungslose bidirektionale Synchronisierung von Buchungen über Kalende
 msgid "Understand your business better with reports"
 msgstr "Verstehen Sie Ihr Geschäft mit Berichten besser"
 
-#: core/views/bookingpress_header.php:347
-#@ bookingpress-appointment-booking
-msgid "Email, Whatsapp & SMS Notification"
-msgstr "E-Mail-, WhatsApp- und SMS-Benachrichtigung"
-
 #: core/views/bookingpress_header.php:363
 #@ bookingpress-appointment-booking
 msgid "24/7 Real-time Support"
 msgstr "24/7 Echtzeit-Support"
 
-#: core/views/bookingpress_header.php:382
+#: core/views/bookingpress_header.php:377
 #@ bookingpress-appointment-booking
 msgid "Upgrade to BookingPress Pro Now"
 msgstr "Upgraden Sie jetzt auf BookingPress Pro"
@@ -5487,16 +5482,6 @@ msgstr "Werde Premium"
 #@ bookingpress-appointment-booking
 msgid "Check out our complete comparison"
 msgstr "Sehen Sie sich unseren vollständigen Vergleich an"
-
-#: core/views/bookingpress_header.php:371
-#@ bookingpress-appointment-booking
-msgid "Compare Lite vs Premium"
-msgstr "Vergleichen Sie Lite mit Premium"
-
-#: core/views/bookingpress_header.php:374
-#@ bookingpress-appointment-booking
-msgid "BookingPress vs Others"
-msgstr "BookingPress im Vergleich zu anderen"
 
 #: core/classes/class.bookingpress.php:1881
 #@ bookingpress-appointment-booking
@@ -6625,11 +6610,6 @@ msgstr "Geben Sie das Client-Geheimnis ein"
 msgid "It is advised to use the Pop-up method rather than the legacy method although both work fine but as PayPal believes it is better to use the Pop-up method."
 msgstr "Es wird empfohlen, die Pop-up-Methode anstelle der herkömmlichen Methode zu verwenden, obwohl beide gut funktionieren. Da PayPal jedoch der Meinung ist, dass es besser ist, die Pop-up-Methode zu verwenden."
 
-#: core/views/bookingpress_header.php:261
-#@ bookingpress-appointment-booking
-msgid "45+ Premium add-ons totally free"
-msgstr "45+ Premium-Add-ons völlig kostenlos"
-
 #: core/views/settings/general_setting_tab.php:262
 #@ bookingpress-appointment-booking
 msgid "Auto login user after successful booking"
@@ -7090,14 +7070,29 @@ msgstr "Geburtstagsangebot"
 msgid "AffiliatePress Successfully installed."
 msgstr "AffiliatePress erfolgreich installiert."
 
-#. translators: plugin header field 'Version'
-#: bookingpress-appointment-booking.php:0
-#@ bookingpress-appointment-booking
-msgid "1.1.43"
-msgstr "1.1.43"
-
 #: core/classes/class.bookingpress_customize.php:1026
 #@ bookingpress-appointment-booking
 msgid "You can not set the \"Date & Time\" step as the first step in the process."
 msgstr "Sie können den Schritt „Datum und Uhrzeit“ nicht als ersten Schritt im Prozess festlegen."
+
+#: core/views/bookingpress_header.php:261
+#@ bookingpress-appointment-booking
+msgid "60+ Premium add-ons totally free"
+msgstr "Über 60 Premium-Add-ons völlig kostenlos"
+
+#: core/views/bookingpress_header.php:347
+#@ bookingpress-appointment-booking
+msgid "Email, Whatsapp, SMS & Telegram Notification"
+msgstr "Benachrichtigungen per E-Mail, WhatsApp, SMS und Telegram"
+
+#: core/views/bookingpress_header.php:370
+#@ bookingpress-appointment-booking
+msgid "Lite vs Premium"
+msgstr "Lite vs. Premium"
+
+#. translators: plugin header field 'Version'
+#: bookingpress-appointment-booking.php:0
+#@ bookingpress-appointment-booking
+msgid "1.1.44"
+msgstr "1.1.44"
 

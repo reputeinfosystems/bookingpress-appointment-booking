@@ -3,9 +3,9 @@ Contributors: reputeinfosystems
 Tags: booking, appointment, booking calendar, scheduling, booking system
 Donate link: https://bookingpressplugin.com/
 Requires at least: 5.3.0
-Tested up to: 6.8.2
+Tested up to: 6.8.3
 Requires PHP: 5.6
-Stable tag: 1.1.43
+Stable tag: 1.1.44
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -219,6 +219,9 @@ Please follow the steps for installation:
 13. BookingPress - General Settings
 
 == Changelog ==
+
+= 1.1.44 =
+* Minor bug fixes
 
 = 1.1.43 =
 * Fixed: Czech language translation issue with month names

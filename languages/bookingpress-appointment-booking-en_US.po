@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: BookingPress Appointment Booking v1.1.43\n"
+"Project-Id-Version: BookingPress Appointment Booking v1.1.44\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-07-10 13:24+0000\n"
-"PO-Revision-Date: 2025-09-18 12:29:16+0000\n"
+"PO-Revision-Date: 2025-10-03 04:19:54+0000\n"
 "Last-Translator: \n"
 "Language-Team: English (United States)\n"
 "MIME-Version: 1.0\n"
@@ -168,11 +168,6 @@ msgstr "40 min"
 #@ bookingpress-appointment-booking
 msgid "45 min"
 msgstr "45 min"
-
-#: core/views/bookingpress_header.php:261
-#@ bookingpress-appointment-booking
-msgid "45+ Premium add-ons totally free"
-msgstr "45+ Premium add-ons totally free"
 
 #: core/classes/class.bookingpress_settings.php:323
 #@ bookingpress-appointment-booking
@@ -896,11 +891,6 @@ msgstr "BookingPress Shortcodes"
 msgid "BookingPress SMTP Test Email Notification"
 msgstr "BookingPress SMTP Test Email Notification"
 
-#: core/views/bookingpress_header.php:374
-#@ bookingpress-appointment-booking
-msgid "BookingPress vs Others"
-msgstr "BookingPress vs Others"
-
 #: core/views/customize/manage_form_customize.php:70
 #@ bookingpress-appointment-booking
 msgid "Border color"
@@ -1242,11 +1232,6 @@ msgstr "Company phone number not found"
 #@ bookingpress-appointment-booking
 msgid "Company website name not found"
 msgstr "Company website name not found"
-
-#: core/views/bookingpress_header.php:371
-#@ bookingpress-appointment-booking
-msgid "Compare Lite vs Premium"
-msgstr "Compare Lite vs Premium"
 
 #: core/classes/class.bookingpress.php:7868
 #: core/views/upgrade_latest_data.php:1132
@@ -1992,11 +1977,6 @@ msgstr "Email notifications details updated successfully."
 #@ bookingpress-appointment-booking
 msgid "Email Subject"
 msgstr "Email Subject"
-
-#: core/views/bookingpress_header.php:347
-#@ bookingpress-appointment-booking
-msgid "Email, Whatsapp & SMS Notification"
-msgstr "Email, Whatsapp & SMS Notification"
 
 #: core/views/settings/general_setting_tab.php:236
 #@ bookingpress-appointment-booking
@@ -6406,7 +6386,7 @@ msgstr "Unsupported currency selected for the payment"
 msgid "Upcoming Appointments"
 msgstr "Upcoming Appointments"
 
-#: core/views/bookingpress_header.php:382
+#: core/views/bookingpress_header.php:377
 #@ bookingpress-appointment-booking
 msgid "Upgrade to BookingPress Pro Now"
 msgstr "Upgrade to BookingPress Pro Now"
@@ -7090,14 +7070,29 @@ msgstr "Birthday Sale"
 msgid "AffiliatePress Successfully installed."
 msgstr "AffiliatePress Successfully installed."
 
-#. translators: plugin header field 'Version'
-#: bookingpress-appointment-booking.php:0
-#@ bookingpress-appointment-booking
-msgid "1.1.43"
-msgstr "1.1.43"
-
 #: core/classes/class.bookingpress_customize.php:1026
 #@ bookingpress-appointment-booking
 msgid "You can not set the \"Date & Time\" step as the first step in the process."
 msgstr "You can not set the \\\"Date & Time\\\" step as the first step in the process."
+
+#: core/views/bookingpress_header.php:261
+#@ bookingpress-appointment-booking
+msgid "60+ Premium add-ons totally free"
+msgstr "60+ Premium add-ons totally free"
+
+#: core/views/bookingpress_header.php:347
+#@ bookingpress-appointment-booking
+msgid "Email, Whatsapp, SMS & Telegram Notification"
+msgstr "Email, Whatsapp, SMS & Telegram Notification"
+
+#: core/views/bookingpress_header.php:370
+#@ bookingpress-appointment-booking
+msgid "Lite vs Premium"
+msgstr "Lite vs Premium"
+
+#. translators: plugin header field 'Version'
+#: bookingpress-appointment-booking.php:0
+#@ bookingpress-appointment-booking
+msgid "1.1.44"
+msgstr "1.1.44"
 

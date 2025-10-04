@@ -95,7 +95,7 @@ if( !file_exists( $import_folder_path .'/index.php') ){
 }
 
 global $bookingpress_version;
-$bookingpress_version = '1.1.43';
+$bookingpress_version = '1.1.44';
 define('BOOKINGPRESS_VERSION', $bookingpress_version);
 
 global $bookingpress_ajaxurl;
