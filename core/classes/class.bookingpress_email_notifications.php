@@ -768,7 +768,7 @@ if (! class_exists('bookingpress_email_notifications') ) {
          * @param  mixed $reply_to_name
          * @return void
          */
-        function bookingpress_send_custom_email_notifications( $email_to = '', $email_subject = '', $email_content = '', $from_name = '', $from_email = '', $reply_to = '', $reply_to_name = '', $cc_emails = array() ){
+        function bookingpress_send_custom_email_notifications( $email_to = '', $email_subject = '', $email_content = '', $from_name = '', $from_email = '', $reply_to = '', $reply_to_name = '', $cc_emails = array(), $attachments = array()){
             global $wpdb, $BookingPress, $tbl_bookingpress_appointment_bookings, $tbl_bookingpress_notifications, $wp_version, $bookingpress_other_debug_log_id;
 
             $this->bookingpress_init_emai_config();
@@ -783,8 +783,53 @@ if (! class_exists('bookingpress_email_notifications') ) {
                         $bookingpress_email_header_data .= "Cc: ".implode(',', $cc_emails)."\r\n";
                     }
 
-                    if (@mail($email_to, $email_subject, $email_content, $bookingpress_email_header_data) ) {
-                         $is_mail_sent                                = 1;
+                    if( !empty( $attachments ) ){
+                        $attachment_id = wp_rand(100,999);
+                        
+                        $boundary = md5( $attachment_id.'_'.current_time('timestamp') );
+
+                        $bookingpress_email_header_data = 'Date: '.date('D, j M Y H:i:s O', current_time('timestamp') )."\r\n";
+                        $bookingpress_email_header_data .= 'From: ' . $this->from_name . '<' . $this->from_email . "> \r\n";
+                        $bookingpress_email_header_data .= 'Reply-To: ' . $reply_to_name . '<' . $reply_to . "> \r\n";
+                        $bookingpress_email_header_data .= 'X-Mailer: PHPMailer ' . $phpmailer_version . " (https://github.com/PHPMailer/PHPMailer)\r\n";
+                        if(!empty($cc_emails) && is_array($cc_emails)){
+                            $bookingpress_email_header_data .= "Cc: ".implode(',', $cc_emails)."\r\n";
+                        }
+                        
+                        $bookingpress_email_header_data .= "MIME-Version: 1.0\r\n";
+                        $bookingpress_email_header_data .= "Content-Transfer-Encoding: 7bit\r\n";
+                        $bookingpress_email_header_data .= "Content-Type: multipart/mixed; boundary = \"{$boundary}\"\r\n";
+
+                        $bookingpress_temp_email_content = "--$boundary\r\n";
+                        $bookingpress_temp_email_content .= "Content-Type: text/html; charset=\"UTF-8\"\r\n";
+                        $bookingpress_temp_email_content .= "Content-Transfer-Encoding: 8bit\r\n\r\n";
+                        $bookingpress_email_content = $bookingpress_temp_email_content . $email_content . "\r\n";
+                        foreach( $attachments as $attachment_file ){
+                            $attachment_name = basename( $attachment_file );
+                            $attachment_type = mime_content_type( $attachment_file );
+
+                            if (! function_exists('WP_Filesystem') ) {
+                                include_once ABSPATH . 'wp-admin/includes/file.php';
+                            }
+
+                            WP_Filesystem();
+                            global $wp_filesystem;
+
+                            $file_content  = $wp_filesystem->get_contents($attachment_file);
+                            $file_content = chunk_split( base64_encode( $file_content ) );
+
+                            $bookingpress_email_content .= "--$boundary\r\n";
+                            $bookingpress_email_content .= "Content-Type: {$attachment_type}; name={$attachment_name}\r\n";
+                            $bookingpress_email_content .= "Content-Disposition: attachment; filename={$attachment_name}\r\n";
+                            $bookingpress_email_content .= "Content-Transfer-Encoding: base64\r\n";
+                            $bookingpress_email_content .= "X-Attachment-Id: {$attachment_id}\r\n\r\n";
+                            $bookingpress_email_content .= $file_content;
+                        }
+                        $bookingpress_email_content .= "\r\n--{$boundary}--\r\n";
+                    }
+
+                    if (@mail($email_to, $email_subject, $bookingpress_email_content, $bookingpress_email_header_data) ) {
+                         $is_mail_sent = 1;
                     }
                     break;
                 case 'wp_mail':
@@ -796,7 +841,7 @@ if (! class_exists('bookingpress_email_notifications') ) {
                         $bookingpress_email_header_data .= "Cc: ".implode(',', $cc_emails)."\r\n";
                     }
                     
-                    if (wp_mail($email_to, $email_subject, $email_content, $bookingpress_email_header_data) ) {
+                    if (wp_mail($email_to, $email_subject, $email_content, $bookingpress_email_header_data, $attachments) ) {
                         $is_mail_sent                                = 1;
                     }
                     break;
@@ -838,6 +883,12 @@ if (! class_exists('bookingpress_email_notifications') ) {
                         if(!empty($cc_emails) && is_array($cc_emails)){
                             foreach($cc_emails as $ccemail ){
                                 $BookingPressMailer->addCC($ccemail);
+                            }
+                        }
+
+                        if (! empty($attachments) ) {
+                            foreach ( $attachments as $attachment ) {
+                                $BookingPressMailer->addAttachment($attachment);
                             }
                         }
 
@@ -936,6 +987,34 @@ if (! class_exists('bookingpress_email_notifications') ) {
                             $bookingpress_email_content_data .= "Cc:" .  implode(",",$cc_emails)  . "\r\n";
                         }
 
+                        if( !empty( $attachments )){
+
+                            foreach( $attachments as $attachment_file ){
+    
+                                $attachment_id = wp_rand(100,999);
+    
+                                $attachment_name = basename( $attachment_file );
+                                $attachment_type = mime_content_type( $attachment_file );
+                        
+                                if (! function_exists('WP_Filesystem') ) {
+                                    include_once ABSPATH . 'wp-admin/includes/file.php';
+                                }
+                        
+                                WP_Filesystem();
+                                global $wp_filesystem;
+                        
+                                $file_content  = $wp_filesystem->get_contents($attachment_file);
+                                $file_content = chunk_split( base64_encode( $file_content ) );
+                                $bookingpress_email_content_data .= "--$boundary\r\n";
+                                $bookingpress_email_content_data .= "Content-Type: {$attachment_type}; name={$attachment_name}\r\n";
+                                $bookingpress_email_content_data .= "Content-Disposition: attachment; filename={$attachment_name}\r\n";
+                                $bookingpress_email_content_data .= "Content-Transfer-Encoding: base64\r\n";
+                                $bookingpress_email_content_data .= "X-Attachment-Id: {$attachment_id}\r\n\r\n";
+                                $bookingpress_email_content_data .= $file_content;
+                            }
+                            $bookingpress_email_content_data .= "\r\n--{$boundary}--\r\n";
+                        }
+
                         // The message needs to be encoded in Base64URL
                         $mime = rtrim(strtr(base64_encode($bookingpress_email_content_data), '+/', '-_'), '=');
                         $msg = new Google_Service_Gmail_Message();
@@ -1031,6 +1110,7 @@ if (! class_exists('bookingpress_email_notifications') ) {
          */
         function bookingpress_send_after_payment_log_entry_email_notification( $email_notification_type, $inserted_booking_id, $bookingpress_customer_email, $is_send_to_customer = true )
         {
+
             global $wpdb, $BookingPress, $bookingpress_email_notifications, $bookingpress_other_debug_log_id;
 
             $bookingpress_args_data = func_get_args();

@@ -947,7 +947,10 @@ if (! class_exists('bookingpress_import_export') ) {
                                                 if(in_array($key,$get_all_table_columns)){
                                                     $import_data_v = $import_record_data[$i][$key];                                                  
                                                     if($import_data_v == 'null' || is_null($import_data_v)){
-                                                        $single_import_record[$key] = NULL;    
+                                                        $single_import_record[$key] = NULL;  
+                                                        if($key == "bookingpress_customer_full_name"){
+                                                            $single_import_record[$key] = "";
+                                                        }
                                                     }else{
                                                         $import_data_v = $this->bookingpress_import_value_modified($import_data_v,$detail_import_detail_type,$key);
                                                         $single_import_record[$key] = sanitize_text_field($import_data_v);

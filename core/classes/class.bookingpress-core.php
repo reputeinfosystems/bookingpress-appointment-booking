@@ -95,7 +95,6 @@ if( !class_exists('BookingPress_Core') ){
                     'remove_customer_avatar',
                     'customer_export',
                     'customer_import',
-
                 ),
                 'bookingpress_customize' => array(
                     'save_form_fields',

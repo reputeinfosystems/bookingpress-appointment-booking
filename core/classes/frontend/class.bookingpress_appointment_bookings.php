@@ -3103,7 +3103,7 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
          */
         function bookingpress_cancel_appointment($return_data = false,$user_id = "")
         {
-            global $wpdb, $BookingPress, $tbl_bookingpress_appointment_bookings, $tbl_bookingpress_payment_logs, $bookingpress_email_notifications;
+            global $wpdb, $BookingPress, $tbl_bookingpress_appointment_bookings, $tbl_bookingpress_payment_logs, $bookingpress_email_notifications, $tbl_bookingpress_appointment_meta;
             $response              = array();
             $wpnonce               = isset($_REQUEST['_wpnonce']) ? sanitize_text_field($_REQUEST['_wpnonce']) : '';
             $bpa_verify_nonce_flag = wp_verify_nonce($wpnonce, 'bpa_wp_nonce');
@@ -3126,9 +3126,12 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
             $appointment_cancelled_successfully = $BookingPress->bookingpress_get_settings('appointment_cancelled_successfully', 'message_setting');
             $cancel_id                          = ! empty($_REQUEST['cancel_id']) ? intval($_REQUEST['cancel_id']) : 0;
 
+            $bpa_cancel_reason = !empty( $_REQUEST['cancel_reason']) ? sanitize_text_field( $_REQUEST['cancel_reason']) : '';
+
             $allow_cancel_appointment = $this->bookingpress_check_cancel_appointment_permission_func( $cancel_id,$user_id );
             
-            if (! empty($cancel_id) && true == $allow_cancel_appointment ) {                
+            if (! empty($cancel_id) && true == $allow_cancel_appointment ) {
+            
 
                 $bookingpress_after_canceled_payment_page_id = $BookingPress->bookingpress_get_customize_settings('after_cancelled_appointment_redirection', 'booking_my_booking');
                 $bookingpress_after_canceled_payment_url = get_permalink($bookingpress_after_canceled_payment_page_id);
@@ -3145,6 +3148,18 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
 
                 if($response['variant'] == 'success' ) {
                     $wpdb->update($tbl_bookingpress_appointment_bookings, array( 'bookingpress_appointment_status' => '3' ), array( 'bookingpress_appointment_booking_id' => $cancel_id ));
+
+                    if( !empty( $bpa_cancel_reason )){
+
+                        $wpdb->insert(
+                            $tbl_bookingpress_appointment_meta,
+                            array(
+                                'bookingpress_appointment_meta_key' => 'bookingpress_cancellation_reason',
+                                'bookingpress_appointment_meta_value' => $bpa_cancel_reason,
+                                'bookingpress_appointment_id' => $cancel_id
+                            )
+                        );
+                    }
 
                     do_action('bookingpress_after_cancel_appointment_without_check_payment', $cancel_id);
                     // Get payment log id and insert canceled appointment entry
@@ -11026,7 +11041,9 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                     bkp_wpnonce_pre_fetch = bkp_wpnonce_pre_fetch.value;
                 }
 
-                var appointment_cancel_data = { action: 'bookingpress_cancel_appointment', cancel_id: cancel_id, _wpnonce: bkp_wpnonce_pre_fetch };
+                let cancellation_reason = vm2.cancellation_reason ? vm2.cancellation_reason.trim() : '';
+                
+                var appointment_cancel_data = { action: 'bookingpress_cancel_appointment', cancel_id: cancel_id, cancel_reason: cancellation_reason,_wpnonce: bkp_wpnonce_pre_fetch };
                 axios.post( appoint_ajax_obj.ajax_url, Qs.stringify( appointment_cancel_data ) )
                 .then(function(response){
                     vm2.is_display_loader = '0';
@@ -11043,6 +11060,7 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                         vm2.loadFrontAppointments();
                     }
                     vm2.is_cancel_appointment_popover = false;
+                    vm2.cancellation_reason = '';
                 }).catch(function(error){
                     console.log(error);
                     vm2.is_cancel_appointment_popover = false;
