@@ -5,7 +5,7 @@ Donate link: https://bookingpressplugin.com/
 Requires at least: 5.3.0
 Tested up to: 6.8.3
 Requires PHP: 5.6
-Stable tag: 1.1.46
+Stable tag: 1.1.47
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -220,6 +220,9 @@ Please follow the steps for installation:
 
 == Changelog ==
 
+= 1.1.47 =
+* Minor bug fixes
+
 = 1.1.46 =
 * Minor bug fixes
 
@@ -229,13 +232,6 @@ Please follow the steps for installation:
 
 = 1.1.44 =
 * Minor bug fixes
-
-= 1.1.43 =
-* Fixed: Czech language translation issue with month names
-* Other Minor bug fixes
-
-= 1.1.42 =
-* Other minor bug fixes
 
 For a complete list of changelogs of earlier versions, please check the website [here](https://www.bookingpressplugin.com/documents/changelog/#free-version)
 

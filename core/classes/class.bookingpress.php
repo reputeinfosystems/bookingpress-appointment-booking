@@ -2034,7 +2034,7 @@ if (! class_exists('BookingPress') ) {
         {
             global $bookingpress_version;
             $bookingpress_old_version = get_option('bookingpress_version', true);
-            if (version_compare($bookingpress_old_version, '1.1.46', '<') ) {
+            if (version_compare($bookingpress_old_version, '1.1.47', '<') ) {
                 $bookingpress_load_upgrade_file = BOOKINGPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $bookingpress_load_upgrade_file;
                 $this->bookingpress_send_anonymous_data_cron();
@@ -2501,7 +2501,7 @@ if (! class_exists('BookingPress') ) {
                                 window.open('https://www.bookingpressplugin.com/pricing/?utm_source=liteversion&utm_medium=plugin&utm_campaign=Upgrade+to+Premium&utm_id=bookingpress_2', '_blank');
                             },
                             bookingpress_redirect_sale_premium_page(){
-                                window.open('https://www.bookingpressplugin.com/pricing/?utm_source=lite-version&utm_medium=popup&utm_campaign=Birthdaysale', '_blank');
+                                window.open('https://www.bookingpressplugin.com/pricing/?utm_source=blackfriday_liteversionpopup&utm_medium=liteversion&utm_campaign=blackfriday', '_blank');
                             },
                             bookingpress_redirect_lite_vs_preminum_page(){
                                 window.open('https://www.bookingpressplugin.com/bookingpress-lite-vs-premium', '_blank');
@@ -3853,12 +3853,12 @@ if (! class_exists('BookingPress') ) {
 			if( preg_match( '/bookingpress/', $handle ) || preg_match( '/bookingpress/', $script ) || preg_match('/id=&#039;bookingpress/', $script) || in_array( $handle, $handle_arr ) ){
                 if( preg_match( '/\=(\'|")/', $tag, $matches_ ) ){
                     if( !empty( $matches_[1] ) ){
-                        $tag = str_replace( " src", " data-cfasync=". $matches_[1]."false".$matches_[1]." src", $tag );
+                        $tag = str_replace( " src=", " data-cfasync=". $matches_[1]."false".$matches_[1]." src=", $tag );
                     } else {
-                        $tag = str_replace(' src', ' data-cfasync="false" src', $tag);
+                        $tag = str_replace(' src=', ' data-cfasync="false" src=', $tag);
                     }
                 } else {
-                    $tag = str_replace(' src', ' data-cfasync="false" src', $tag);
+                    $tag = str_replace(' src=', ' data-cfasync="false" src=', $tag);
                 }
 			}
 

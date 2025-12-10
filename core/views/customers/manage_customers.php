@@ -32,7 +32,7 @@
                         <el-button class="bpa-btn bpa-btn__medium bpa-btn--full-width" @click="resetFilter">
                             <?php esc_html_e('Reset', 'bookingpress-appointment-booking'); ?>
                         </el-button>
-                        <el-button class="bpa-btn bpa-btn__medium bpa-btn--primary bpa-btn--full-width" @click="loadCustomers">
+                        <el-button class="bpa-btn bpa-btn__medium bpa-btn--primary bpa-btn--full-width" @click="loadCustomers(true)">
                             <?php esc_html_e('Apply', 'bookingpress-appointment-booking'); ?>
                         </el-button>
 						<el-button class="bpa-btn bpa-btn--secondary bpa-btn__medium bpa-btn--full-width" @click="bookingpress_export_customer_data_lite">

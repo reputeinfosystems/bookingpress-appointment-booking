@@ -3811,7 +3811,7 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                     foreach($appointment_data as $appointment_data_key => $appointment_data_val){
                         $content .= "<div class='bookingpress_appointment_datetime_div'>";
                         $check_timezone = false;
-                        if( !empty( $appointment_data_val['bookingpress_selected_appointment_date'] ) && !empty( $appointment_data_val['bookingpress_selected_appointment_time'] ) && '0000-00-00' != $appointment_data_val['bookingpress_selected_appointment_date'] && '00:00:00' != $appointment_data_val['bookingpress_selected_appointment_time'] ){
+                        if( !empty( $appointment_data_val['bookingpress_selected_appointment_date'] ) && !empty( $appointment_data_val['bookingpress_selected_appointment_time'] ) && '0000-00-00' != $appointment_data_val['bookingpress_selected_appointment_date'] && '00:00:00' != $appointment_data_val['bookingpress_selected_appointment_time'] || 'd' == $appointment_data_val['bookingpress_service_duration_unit']  ){
                             $booked_appointment_datetime = esc_html($appointment_data_val['bookingpress_selected_appointment_date']) . ' ' . esc_html($appointment_data_val['bookingpress_selected_appointment_time']);
                         } else {
                             $check_timezone = true;

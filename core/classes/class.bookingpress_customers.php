@@ -1653,7 +1653,7 @@ if (! class_exists('bookingpress_customers') ) {
                 this.currentPage = current_page;    
                 this.loadCustomers()
             },
-            async loadCustomers() {
+            async loadCustomers( rest_pagination = false ) {
                 this.toggleBusy(); 
                 const vm = this;              
                 var bookingpress_module_type = bookingpress_dashboard_filter_start_date = bookingpress_dashboard_filter_end_date = selected_date_range = ''; 
@@ -1662,7 +1662,10 @@ if (! class_exists('bookingpress_customers') ) {
                 bookingpress_dashboard_filter_end_date = sessionStorage.getItem("bookingpress_dashboard_filter_end_date");
                 sessionStorage.removeItem("bookingpress_module_type");
                 sessionStorage.removeItem("bookingpress_dashboard_filter_start_date");
-                sessionStorage.removeItem("bookingpress_dashboard_filter_end_date");                    
+                sessionStorage.removeItem("bookingpress_dashboard_filter_end_date");
+                if( true == rest_pagination ){
+                    this.currentPage = 1;
+                }
                 if(bookingpress_module_type != '' && bookingpress_module_type == 'customer' && bookingpress_dashboard_filter_start_date != '' && bookingpress_dashboard_filter_end_date != '' ) {                        
                     selected_date_range = [bookingpress_dashboard_filter_start_date,bookingpress_dashboard_filter_end_date];
                     vm.customer_search_range = selected_date_range;

@@ -48,7 +48,7 @@
                         <el-button class="bpa-btn bpa-btn__medium bpa-btn--full-width" @click="resetFilter">
                             <?php esc_html_e('Reset', 'bookingpress-appointment-booking'); ?>
                         </el-button>
-                        <el-button class="bpa-btn bpa-btn__medium bpa-btn--primary bpa-btn--full-width" @click="loadPayments">
+                        <el-button class="bpa-btn bpa-btn__medium bpa-btn--primary bpa-btn--full-width" @click="loadPayments(true)">
                             <?php esc_html_e('Apply', 'bookingpress-appointment-booking'); ?>
                         </el-button>
                     </div>
@@ -78,7 +78,7 @@
                         <div class="bpa-back-loader"></div>
                     </div>
 					<div class="bpa-tc__wrapper" v-if="current_screen_size == 'desktop'">
-						<el-table ref="multipleTable" :data="items" class="bpa-manage-payment-items" @selection-change="handleSelectionChange" @row-click="bookingpress_full_row_clickable" @expand-change="bookingpress_row_expand">
+						<el-table ref="multipleTable" :data="items" class="bpa-manage-payment-items" @sort-change="handel_payment_appointment_data" @selection-change="handleSelectionChange" @row-click="bookingpress_full_row_clickable" @expand-change="bookingpress_row_expand">
 							<el-table-column type="expand">
 								<template slot-scope="scope">
 									<div class="bpa-view-payment-card">
@@ -201,9 +201,9 @@
 								</template>
 							</el-table-column>
 							<el-table-column type="selection"></el-table-column>
-							<el-table-column prop="payment_date" min-width="70" label="<?php esc_html_e( 'Date', 'bookingpress-appointment-booking' ); ?>" sortable sort-by="sort_payment_date"></el-table-column>
-							<el-table-column prop="payment_customer" min-width="120" label="<?php esc_html_e( 'Customer', 'bookingpress-appointment-booking' ); ?>" sortable></el-table-column>
-							<el-table-column prop="payment_service" min-width="120" label="<?php esc_html_e( 'Service', 'bookingpress-appointment-booking' ); ?>" sortable></el-table-column>
+							<el-table-column prop="payment_date" min-width="70" label="<?php esc_html_e( 'Date', 'bookingpress-appointment-booking' ); ?>" sortable="false" sort-by="sort_payment_date"></el-table-column>
+							<el-table-column prop="payment_customer" min-width="120" label="<?php esc_html_e( 'Customer', 'bookingpress-appointment-booking' ); ?>" sortable="false"></el-table-column>
+							<el-table-column prop="payment_service" min-width="120" label="<?php esc_html_e( 'Service', 'bookingpress-appointment-booking' ); ?>" sortable="false"></el-table-column>
 							<el-table-column prop="payment_gateway" min-width="60" label="<?php esc_html_e( 'Method', 'bookingpress-appointment-booking' ); ?>">
 								<template slot-scope="scope">
 									<div class="bpa-mpg__body">
@@ -230,7 +230,7 @@
 									</div>
 								</template>
 							</el-table-column>
-							<el-table-column prop="payment_amount" min-width="60" label="<?php esc_html_e( 'Amount', 'bookingpress-appointment-booking' ); ?>" sortable sort-by="payment_numberic_amount">
+							<el-table-column prop="payment_amount" min-width="60" label="<?php esc_html_e( 'Amount', 'bookingpress-appointment-booking' ); ?>" sort-by="payment_numberic_amount">
 								<template slot-scope="scope">
 									<div class="bpa-mpi__amount-row">
 										<div class="bpa-mpi__ar-body">
@@ -239,7 +239,7 @@
 									</div>
 								</template>
 							</el-table-column>
-							<el-table-column prop="appointment_date" label="<?php esc_html_e( 'Appointment On', 'bookingpress-appointment-booking' ); ?>" sortable sort-by="sort_payment_appointment_date">
+							<el-table-column prop="appointment_date" label="<?php esc_html_e( 'Appointment On', 'bookingpress-appointment-booking' ); ?>" sortable="false" sort-by="sort_payment_appointment_date">
 								<template slot-scope="scope">
 									<label>{{ scope.row.appointment_date }}</label>
 									<div class="bpa-table-actions-wrap">

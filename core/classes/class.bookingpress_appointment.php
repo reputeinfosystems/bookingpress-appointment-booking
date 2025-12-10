@@ -993,6 +993,19 @@ if (! class_exists('bookingpress_appointment') ) {
                     vm.bookingpress_generate_share_url();
                 }
             },
+            handel_appointment_changes( {column, prop, order} ){
+
+
+                if (!order) {
+                    this.bpa_appointment_sort_by = '';
+                    this.bpa_appointment_sort_order = '';
+                } else {
+                    this.bpa_appointment_sort_by = prop;
+                    this.bpa_appointment_sort_order = order === 'descending' ? 'DESC' : 'ASC';
+                }
+
+                this.loadAppointments();
+            },
             bpa_share_appointment_url(share_url_form){
 				const vm = this
                 vm.$refs[share_url_form].validate((valid) => {
@@ -1180,10 +1193,14 @@ if (! class_exists('bookingpress_appointment') ) {
                     }
                 });
             },
-            async loadAppointments() {
+            async loadAppointments( resetPagination = false ) {
                 this.toggleBusy();
                 const vm2 = this
                 var bookingpress_module_type = bookingpress_dashboard_filter_start_date = bookingpress_dashboard_filter_end_date = bookingpress_dashboard_filter_appointment_status = '';
+
+                if( true == resetPagination ){
+                    vm2.currentPage = 1;
+                }
                 bookingpress_module_type = sessionStorage.getItem("bookingpress_module_type");                
                 bookingpress_dashboard_filter_start_date = sessionStorage.getItem("bookingpress_dashboard_filter_start_date");
                 bookingpress_dashboard_filter_end_date = sessionStorage.getItem("bookingpress_dashboard_filter_end_date");
@@ -1205,7 +1222,7 @@ if (! class_exists('bookingpress_appointment') ) {
                 
             <?php do_action('bookingpress_appointment_add_post_data'); ?>
 
-                var postData = { action:'bookingpress_get_appointments', perpage:this.perPage, currentpage:this.currentPage, search_data: bookingpress_search_data,_wpnonce:'<?php echo esc_html(wp_create_nonce('bpa_wp_nonce')); ?>'};
+                var postData = { action:'bookingpress_get_appointments', perpage:this.perPage, currentpage:this.currentPage, search_data: bookingpress_search_data,_wpnonce:'<?php echo esc_html(wp_create_nonce('bpa_wp_nonce')); ?>',sort_by: this.bpa_appointment_sort_by, sort_order: this.bpa_appointment_sort_order};
 
                 <?php do_action('bookingpress_modify_appointment_send_data'); ?>
 
@@ -1677,11 +1694,39 @@ if (! class_exists('bookingpress_appointment') ) {
                 die;
             }
 
+            $sort_by     = isset($_POST['sort_by']) ? esc_html($_POST['sort_by']) : '';
+            $sort_order  = isset($_POST['sort_order'])? esc_html($_POST['sort_order']) : 'DESC';
+
             $perpage     = isset($_POST['perpage']) ? intval($_POST['perpage']) : 10; // phpcs:ignore WordPress.Security.NonceVerification
             $currentpage = isset($_POST['currentpage']) ? intval($_POST['currentpage']) : 1; // phpcs:ignore WordPress.Security.NonceVerification
             $offset      = ( ! empty($currentpage) && $currentpage > 1 ) ? ( ( $currentpage - 1 ) * $perpage ) : 0;
             $bookingpress_search_data        = ! empty($_REQUEST['search_data']) ? array_map(array( $BookingPress, 'appointment_sanatize_field' ), $_REQUEST['search_data']) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason $_REQUEST['search_data'] contains array and sanitized properly using appointment_sanatize_field function
             $bookingpress_search_query       = '';
+
+            if ( ! in_array( $sort_order, array( 'ASC', 'DESC' ), true ) ) {
+                $sort_order = 'DESC';
+            }
+
+            $bookingpress_appointment_sortable_columns = array(
+                'created_date' => 'bpa.bookingpress_created_at',
+                'staff_member_name' => 'bpa.bookingpress_staff_first_name',
+                'service_name' => 'bpa.bookingpress_service_name',
+                'customer_name'  => 'bpa.bookingpress_customer_firstname',
+                'appointment_date' => 'bpa.bookingpress_appointment_date',
+                'appointment_duration'  => 'CASE 
+                                            WHEN bpa.bookingpress_service_duration_unit = "d" THEN bpa.bookingpress_service_duration_val * 1440
+                                            WHEN bpa.bookingpress_service_duration_unit = "h" THEN bpa.bookingpress_service_duration_val * 60
+                                            WHEN bpa.bookingpress_service_duration_unit = "m" THEN bpa.bookingpress_service_duration_val
+                                            ELSE bpa.bookingpress_service_duration_val
+                                        END'
+            );
+
+            $order_by_column = 'bpa.bookingpress_appointment_booking_id';
+
+            if ( isset( $bookingpress_appointment_sortable_columns[ $sort_by ] ) ) {
+                $order_by_column = $bookingpress_appointment_sortable_columns[ $sort_by ];
+            }
+
             $bookingpress_search_query_where = 'WHERE 1=1 ';
 
             if (! empty($bookingpress_search_data) ) {
@@ -1749,9 +1794,7 @@ if (! class_exists('bookingpress_appointment') ) {
             
             ///echo $wpdb->last_query; die;
 
-            $total_appointments = $wpdb->get_results("SELECT bpa.* FROM {$tbl_bookingpress_appointment_bookings} bpa {$bpa_left_join_data} {$bookingpress_search_query}{$bookingpress_search_query_where} group by bpa.bookingpress_appointment_booking_id order by bpa.bookingpress_appointment_booking_id DESC LIMIT {$offset} , {$perpage}", ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $tbl_bookingpress_appointment_bookings is a table name. false alarm
-
-
+            $total_appointments = $wpdb->get_results("SELECT bpa.* FROM {$tbl_bookingpress_appointment_bookings} bpa {$bpa_left_join_data} {$bookingpress_search_query}{$bookingpress_search_query_where} group by bpa.bookingpress_appointment_booking_id order by {$order_by_column} {$sort_order} LIMIT {$offset} , {$perpage}", ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $tbl_bookingpress_appointment_bookings is a table name. false alarm
 
             $appointments  = $bookingpress_formdata = array();
 

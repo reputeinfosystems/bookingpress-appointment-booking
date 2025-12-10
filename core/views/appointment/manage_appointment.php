@@ -75,7 +75,7 @@
                         <el-button class="bpa-btn bpa-btn__medium bpa-btn--full-width" @click="resetFilter">
                             <?php esc_html_e('Reset', 'bookingpress-appointment-booking'); ?>
                         </el-button>
-                        <el-button class="bpa-btn bpa-btn__medium bpa-btn--primary bpa-btn--full-width" @click="loadAppointments()">
+                        <el-button class="bpa-btn bpa-btn__medium bpa-btn--primary bpa-btn--full-width" @click="loadAppointments(true)">
                             <?php esc_html_e('Apply', 'bookingpress-appointment-booking'); ?>
                         </el-button>
                     </div>
@@ -111,7 +111,7 @@
                         <div class="bpa-back-loader"></div>
                     </div>
                     <div class="bpa-tc__wrapper" v-if="current_screen_size == 'desktop'">
-                        <el-table ref="multipleTable" class="bpa-manage-appointment-items" :data="items" @selection-change="handleSelectionChange" fit="false" @row-click="bookingpress_full_row_clickable" @expand-change="bookingpress_row_expand">
+                        <el-table ref="multipleTable" class="bpa-manage-appointment-items" :data="items" @sort-change="handel_appointment_changes" @selection-change="handleSelectionChange" fit="false" @row-click="bookingpress_full_row_clickable" @expand-change="bookingpress_row_expand">
                             <el-table-column type="expand">
                                 <template slot-scope="scope">
                                     <div class="bpa-view-appointment-card">
@@ -252,14 +252,14 @@
                                     <span>#{{ scope.row.booking_id }}</span>
                                 </template>
                             </el-table-column>
-                            <el-table-column prop="appointment_date" min-width="70" label="<?php esc_html_e( 'Date', 'bookingpress-appointment-booking' ); ?>" sortable sort-by="sort_appointment_date_time">
+                            <el-table-column prop="appointment_date" min-width="70" label="<?php esc_html_e( 'Date', 'bookingpress-appointment-booking' ); ?>" sortable="false" sort-by="sort_appointment_date_time">
                                 <template slot-scope="scope">
                                     <label class="bpa-item__date-col">{{ scope.row.appointment_date }}</label>
                                 </template>
                             </el-table-column>
-                            <el-table-column prop="customer_name" min-width="120" label="<?php esc_html_e( 'Customer', 'bookingpress-appointment-booking' ); ?>" sortable sort-by='customer_name'></el-table-column>
-                            <el-table-column prop="service_name" min-width="120" label="<?php esc_html_e( 'Service', 'bookingpress-appointment-booking' ); ?>" sortable sort-by='service_name'></el-table-column>
-                            <el-table-column prop="appointment_duration" min-width="60" label="<?php esc_html_e( 'Duration', 'bookingpress-appointment-booking' ); ?>" sortable sort-by='bookingpress_service_duration_sortable'></el-table-column>
+                            <el-table-column prop="customer_name" min-width="120" label="<?php esc_html_e( 'Customer', 'bookingpress-appointment-booking' ); ?>" sortable="false" sort-by='customer_name'></el-table-column>
+                            <el-table-column prop="service_name" min-width="120" label="<?php esc_html_e( 'Service', 'bookingpress-appointment-booking' ); ?>" sortable="false" sort-by='service_name'></el-table-column>
+                            <el-table-column prop="appointment_duration" min-width="60" label="<?php esc_html_e( 'Duration', 'bookingpress-appointment-booking' ); ?>" sortable="false" sort-by='bookingpress_service_duration_sortable'></el-table-column>
                             <el-table-column prop="appointment_status" min-width="80" label="<?php esc_html_e( 'Status', 'bookingpress-appointment-booking' ); ?>">
                                 <template slot-scope="scope">
                                     <div class="bpa-table-status-dropdown-wrapper" :class="(scope.row.change_status_loader == 1) ? '__bpa-is-loader-active' : ''">
@@ -278,7 +278,7 @@
                                     </div>
                                 </template>
                             </el-table-column>
-                            <el-table-column prop="appointment_payment" min-width="60" label="<?php esc_html_e( 'Payment', 'bookingpress-appointment-booking' ); ?>" sortable sort-by="payment_numberic_amount">
+                            <el-table-column prop="appointment_payment" min-width="60" label="<?php esc_html_e( 'Payment', 'bookingpress-appointment-booking' ); ?>" sort-by="payment_numberic_amount">
                                 <template slot-scope="scope">
                                     <div class="bpa-apc__amount-row">
                                         <div class="bpa-apc__ar-body">
@@ -287,7 +287,7 @@
                                     </div>
                                 </template>
                             </el-table-column>
-                            <el-table-column prop="created_date" label="<?php esc_html_e( 'Created Date', 'bookingpress-appointment-booking' ); ?>" sortable sort-by="bookingpress_appointment_created_date">
+                            <el-table-column prop="created_date" label="<?php esc_html_e( 'Created Date', 'bookingpress-appointment-booking' ); ?>" sortable="false" sort-by="bookingpress_appointment_created_date">
                                 <template slot-scope="scope">
                                     <label>{{ scope.row.created_date }}</label>
                                         <div class="bpa-table-actions-wrap">

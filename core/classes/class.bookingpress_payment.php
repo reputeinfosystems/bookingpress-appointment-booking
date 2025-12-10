@@ -314,6 +314,21 @@ if (! class_exists('bookingpress_payment') ) {
                     }
                     return current_page;
                 },
+                handel_payment_appointment_data( {column, prop, order} ){
+
+
+                    if (!order) {
+                        this.bpa_payment_sort_by = '';
+                        this.bpa_payment_sort_order = '';
+                    } else {
+                        this.bpa_payment_sort_by = prop;
+                        this.bpa_payment_sort_order = order === 'descending' ? 'DESC' : 'ASC';
+                    }
+
+                    this.loadPayments();
+                    
+
+                },
                 changePaginationSize(selectedPage) {     
                     var total_recored_perpage = selectedPage;
                     var current_page = this.changeCurrentPage(total_recored_perpage);                                        
@@ -321,7 +336,7 @@ if (! class_exists('bookingpress_payment') ) {
                     this.currentPage = current_page;    
                     this.loadPayments()
                 },
-                async loadPayments() {
+                async loadPayments( reset_pagination = false ) {
                     const vm = this
                     vm.toggleBusy()
                     var bookingpress_module_type = bookingpress_dashboard_filter_start_date = bookingpress_dashboard_filter_end_date = '';
@@ -333,7 +348,10 @@ if (! class_exists('bookingpress_payment') ) {
                     sessionStorage.removeItem("bookingpress_module_type");
                     sessionStorage.removeItem("bookingpress_dashboard_filter_start_date");
                     sessionStorage.removeItem("bookingpress_dashboard_filter_end_date");          
-                    sessionStorage.removeItem("bookingpress_dashboard_filter_payment_status");          
+                    sessionStorage.removeItem("bookingpress_dashboard_filter_payment_status");
+                    if( true == reset_pagination ){
+                        this.currentPage = 1;
+                    }
                     if(bookingpress_module_type != '' && bookingpress_module_type == 'payment' && bookingpress_dashboard_filter_start_date != '' && bookingpress_dashboard_filter_end_date != '' ) {                        
                         var payment_date_range = [bookingpress_dashboard_filter_start_date,bookingpress_dashboard_filter_end_date];
                         vm.search_data.search_range = payment_date_range;
@@ -341,7 +359,7 @@ if (! class_exists('bookingpress_payment') ) {
                            vm.search_data.search_status = bookingpress_dashboard_filter_payment_status;    
                         }
                     }                
-                    var postData = { action:'bookingpress_get_payments_data', perpage:this.perPage, currentpage:this.currentPage, search_data:vm.search_data,_wpnonce:'<?php echo esc_html(wp_create_nonce('bpa_wp_nonce')); ?>' };
+                    var postData = { action:'bookingpress_get_payments_data', perpage:this.perPage, currentpage:this.currentPage, search_data:vm.search_data,_wpnonce:'<?php echo esc_html(wp_create_nonce('bpa_wp_nonce')); ?>',sort_by: this.bpa_payment_sort_by, sort_order: this.bpa_payment_sort_order };
 
                     axios.post( appoint_ajax_obj.ajax_url, Qs.stringify( postData ) )
                     .then( function (response) {
@@ -489,7 +507,7 @@ if (! class_exists('bookingpress_payment') ) {
                                     duration:<?php echo intval($bookingpress_notification_duration); ?>,
                                 });
                             }else{
-            <?php do_action('bookingpress_payment_dynamic_bulk_action'); ?>
+                                <?php do_action('bookingpress_payment_dynamic_bulk_action'); ?>
                             }
                         }
                     }
@@ -690,9 +708,29 @@ if (! class_exists('bookingpress_payment') ) {
                 die;
             }
 
+            $sort_by     = isset($_POST['sort_by']) ? esc_html($_POST['sort_by']) : '';
+            $sort_order  = isset($_POST['sort_order'])? esc_html($_POST['sort_order']) : 'DESC';
             $perpage     = isset($_POST['perpage']) ? intval($_POST['perpage']) : 20; // phpcs:ignore WordPress.Security.NonceVerification
             $currentpage = isset($_POST['currentpage']) ? intval($_POST['currentpage']) : 1; // phpcs:ignore WordPress.Security.NonceVerification
             $offset      = ( ! empty($currentpage) && $currentpage > 1 ) ? ( ( $currentpage - 1 ) * $perpage ) : 0;
+
+            if ( ! in_array( $sort_order, array( 'ASC', 'DESC' ), true ) ) {
+                $sort_order = 'DESC';
+            }
+
+            $bookingpress_payment_sortable_columns = array(
+                'appointment_date' => 'bookingpress_appointment_date',
+                'payment_date'     => 'bookingpress_payment_date_time',
+                'staff_member_name' => 'bookingpress_staff_first_name',
+                'payment_customer' => 'bookingpress_customer_firstname',
+                'payment_service'  => 'bookingpress_service_name',
+            );
+
+            $order_by_column = 'bookingpress_payment_log_id';
+
+            if ( isset( $bookingpress_payment_sortable_columns[ $sort_by ] ) ) {
+                $order_by_column = $bookingpress_payment_sortable_columns[ $sort_by ];
+            }
 
             $bookingpress_search_query = ' WHERE 1=1';
             if (! empty($_POST['search_data']) ) { // phpcs:ignore WordPress.Security.NonceVerification
@@ -728,9 +766,16 @@ if (! class_exists('bookingpress_payment') ) {
                 $bookingpress_search_query = apply_filters('bookingpress_payment_add_filter', $bookingpress_search_query, $search_data);
             }
 
-            $total_payment_logs = $wpdb->get_results("SELECT * FROM {$tbl_bookingpress_payment_logs} {$bookingpress_search_query} ORDER BY bookingpress_payment_log_id DESC", ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $tbl_bookingpress_payment_logs is a table name. false alarm
-            $get_payment_logs   = $wpdb->get_results("SELECT * FROM {$tbl_bookingpress_payment_logs} {$bookingpress_search_query} ORDER BY bookingpress_payment_log_id DESC LIMIT {$offset} , {$perpage}", ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $tbl_bookingpress_payment_logs is a table name. false alarm
+            //$total_payment_logs = $wpdb->get_results("SELECT * FROM {$tbl_bookingpress_payment_logs} {$bookingpress_search_query} ORDER BY bookingpress_payment_log_id DESC", ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $tbl_bookingpress_payment_logs is a table name. false alarm
+            //$get_payment_logs   = $wpdb->get_results("SELECT * FROM {$tbl_bookingpress_payment_logs} {$bookingpress_search_query} ORDER BY bookingpress_payment_log_id DESC LIMIT {$offset} , {$perpage}", ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $tbl_bookingpress_payment_logs is a table name. false alarm
 
+            /** new column sorting data */
+
+            $total_payment_logs = $wpdb->get_results("SELECT * FROM {$tbl_bookingpress_payment_logs} {$bookingpress_search_query} ORDER BY {$order_by_column} {$sort_order}", ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $tbl_bookingpress_payment_logs is a table name. false alarm
+           
+            $get_payment_logs   = $wpdb->get_results("SELECT * FROM {$tbl_bookingpress_payment_logs} {$bookingpress_search_query} ORDER BY {$order_by_column} {$sort_order} LIMIT {$offset} , {$perpage}", ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $tbl_bookingpress_payment_logs is a table name. false alarm
+
+            
             $payment_logs_data = array();
             if (! empty($get_payment_logs) ) {
                 $bookingpress_date_format = get_option('date_format');
