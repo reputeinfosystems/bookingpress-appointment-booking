@@ -5386,16 +5386,20 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
 
             $bookingpress_hide_category_service       = $bookingpress_customize_settings['hide_category_service_selection'];//$BookingPress->bookingpress_get_customize_settings('hide_category_service_selection', 'booking_form');
 
-            
-            
-            
             $bookingpress_front_vue_data_fields['bookingpress_book_appointment_btn_text'] = $bookingpress_book_appointment_btn_text;
             $bookingpress_front_vue_data_fields['bookingpress_total_amount_text'] = $bookingpress_total_amount_text;
 
             $bpa_default_date_format = $BookingPress->bookingpress_get_settings( 'default_date_format', 'general_setting' );
             $bookingpress_front_vue_data_fields['bpa_front_date_format'] = !empty( $bpa_default_date_format ) ? $BookingPress->bookingpress_check_common_date_format( $bpa_default_date_format ) : $bookingpress_default_date_format;
 
-            $bookingpress_front_vue_data_fields['bpa_front_date_time_format'] = !empty( $bpa_default_date_format ) ? $BookingPress->bookingpress_check_common_date_format( $bpa_default_date_format ).' HH:mm' : $bookingpress_default_date_format.' HH:mm';
+            $bookingpres_default_time_format = $BookingPress->bookingpress_get_settings('default_time_format','general_setting');
+
+            
+            if($bookingpres_default_time_format == 'H:i') {
+                $bookingpress_front_vue_data_fields['bpa_front_date_time_format'] = !empty( $bpa_default_date_format ) ? $BookingPress->bookingpress_check_common_date_format( $bpa_default_date_format ).' HH:mm' : $bookingpress_default_date_format.' HH:mm';
+            } else {
+                $bookingpress_front_vue_data_fields['bpa_front_date_time_format'] = !empty( $bpa_default_date_format ) ? $BookingPress->bookingpress_check_common_date_format( $bpa_default_date_format ).' hh:mm a' : $bookingpress_default_date_format.' hh:mm a';
+            }
 
             
             $bookingpress_hide_category_service       = ( $bookingpress_hide_category_service == 'true' ) ? 1 : 0;

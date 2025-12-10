@@ -2034,7 +2034,7 @@ if (! class_exists('BookingPress') ) {
         {
             global $bookingpress_version;
             $bookingpress_old_version = get_option('bookingpress_version', true);
-            if (version_compare($bookingpress_old_version, '1.1.45', '<') ) {
+            if (version_compare($bookingpress_old_version, '1.1.46', '<') ) {
                 $bookingpress_load_upgrade_file = BOOKINGPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $bookingpress_load_upgrade_file;
                 $this->bookingpress_send_anonymous_data_cron();
@@ -2108,6 +2108,7 @@ if (! class_exists('BookingPress') ) {
                 $bpa_time_format_for_timeslot = $bookingpress_global_details['bpa_time_format_for_timeslot'];
     
                 $bookingpress_default_date_format = $BookingPress->bookingpress_check_common_date_format($bookingpress_global_details['wp_default_date_format']);
+                $bookingpres_default_time_format = $BookingPress->bookingpress_get_settings('default_time_format','general_setting');
                 $bookingpress_site_current_language = $bookingpress_global_options->bookingpress_get_site_current_language();
     
                 $is_compitible_with_pro = 0;
@@ -2167,8 +2168,13 @@ if (! class_exists('BookingPress') ) {
                             bookingpress_return_data['current_screen_size'] = 'desktop';
                             bookingpress_return_data['bpa_fab_floating_btn'] = '0';
                             bookingpress_return_data['bpa_date_common_date_format'] = '<?php echo esc_html($bookingpress_default_date_format); ?>';
-                            bookingpress_return_data['bpa_date_time_common_date_format'] = '<?php echo esc_html($bookingpress_default_date_format); ?>'+' HH:mm';
-                            
+
+                            <?php if($bookingpres_default_time_format == "H:i"){ ?>
+                                bookingpress_return_data['bpa_date_time_common_date_format'] = '<?php echo esc_html($bookingpress_default_date_format); ?>'+' HH:mm';
+                            <?php } else { ?>
+                                bookingpress_return_data['bpa_date_time_common_date_format'] = '<?php echo esc_html($bookingpress_default_date_format); ?>'+' hh:mm a';
+                            <?php }  ?>                    
+
                             <?php do_action('bookingpress_admin_vue_data_variables_script'); ?>
 
                             <?php
