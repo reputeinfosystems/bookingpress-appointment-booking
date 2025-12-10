@@ -108,10 +108,16 @@ if (! class_exists('bookingpress_calendar') ) {
                 $slot_end_time = isset($posted_data['bookingpress_appointment_end_time']) ? $posted_data['bookingpress_appointment_end_time'] : '';
                 $cal_activeView  = isset($posted_data['activeView']) ? $posted_data['activeView'] : 'month';
                 if($cal_activeView=='week' || $cal_activeView=='day') {
-                    if($slot_end_time=='00:00:00'){
-                        $slot_end_time = '24:00:00';
+                    if( $BookingPress->bpa_is_pro_active() ){
+                        $where_query = $wpdb->prepare(
+                            "AND( CAST(CONCAT(bookingpress_appointment_date, ' ', bookingpress_appointment_time) AS DATETIME) >= %s AND CAST(CONCAT(bookingpress_appointment_end_date, ' ',  bookingpress_appointment_end_time) AS DATETIME) <= %s )", $appointment_sel_data.' '.$slot_start_time, $appointment_sel_end_date .' '. $slot_end_time
+                        );
+                    } else {
+                        if($slot_end_time=='00:00:00'){
+                            $slot_end_time = '24:00:00';
+                        }
+                        $where_query = $wpdb->prepare( ' AND (bookingpress_appointment_time >= %s AND bookingpress_appointment_end_time <= %s)', $slot_start_time, $slot_end_time );
                     }
-                    $where_query = $wpdb->prepare( ' AND (bookingpress_appointment_time >= %s AND bookingpress_appointment_end_time <= %s)', $slot_start_time, $slot_end_time );
                 }
                 
                 $appointment_query_dynamic_arr= array();

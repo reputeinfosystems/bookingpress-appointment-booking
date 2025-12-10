@@ -174,6 +174,10 @@ if (! class_exists('BookingPress_Global_Options') ) {
                             'name'  => '%service_duration%',
                         ),
                         array(
+                            'value' => '%service_description%',
+                            'name'  => '%service_description%',
+                        ),
+                        array(
                             'value' => '%category_name%',
                             'name'  => '%category_name%',
                         ),

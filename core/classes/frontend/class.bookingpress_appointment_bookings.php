@@ -4597,8 +4597,8 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                 $prevStartDate = null;
                 $next_avail_date = null;
                 foreach( $service_timings as $st_key => $st_value ){
-                    $start     = new DateTime($st_value['server_start_date_time']);
-                    $end       = new DateTime($st_value['server_end_date_time']);
+                    $start     = !empty( $st_value['server_start_date_time'] ) ? new DateTime($st_value['server_start_date_time']) : ( new DateTime( $st_value['store_service_date'] .' '. $st_value['store_start_time'] ) );
+                    $end       = !empty( $st_value['server_end_date_time'] ) ? new DateTime($st_value['server_end_date_time']) : ( new DateTime( $st_value['store_service_date'] . ' ' . $st_value['store_end_time'] ) );
 
                     $startDate = $start->format('Y-m-d');
                     $endDate   = $end->format('Y-m-d');

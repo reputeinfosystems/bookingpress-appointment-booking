@@ -2034,7 +2034,7 @@ if (! class_exists('BookingPress') ) {
         {
             global $bookingpress_version;
             $bookingpress_old_version = get_option('bookingpress_version', true);
-            if (version_compare($bookingpress_old_version, '1.1.47', '<') ) {
+            if (version_compare($bookingpress_old_version, '1.1.48', '<') ) {
                 $bookingpress_load_upgrade_file = BOOKINGPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $bookingpress_load_upgrade_file;
                 $this->bookingpress_send_anonymous_data_cron();
@@ -3037,6 +3037,7 @@ if (! class_exists('BookingPress') ) {
                                 .then( function(response) {
 
                                     vm.appointment_formdata.appointment_booked_time = "";
+                                    vm.appointment_formdata.appointment_booked_end_time = "";
                                     
                                     let timeslot_response_data = response.data;
                                     let morning_times = timeslot_response_data.morning_time;
@@ -10249,9 +10250,19 @@ if (! class_exists('BookingPress') ) {
                     $bookingpress_service_duration .= ' ' . esc_html__( 'Hours', 'bookingpress-appointment-booking' ); 
                 }
                 $bookingpress_service_name = !empty($bookingpress_service_name) ? stripslashes_deep( html_entity_decode( esc_html( $bookingpress_service_name ), ENT_QUOTES) ): '';
+
                 $template_content = str_replace('%service_name%', $bookingpress_service_name, $template_content);
                 $template_content = str_replace('%service_amount%', $bookingpress_service_price, $template_content);
                 $template_content = str_replace('%service_duration%', $bookingpress_service_duration, $template_content);
+
+                if( !empty( $bookingpress_service_id )){
+
+                    $bookingpress_service_details     = $BookingPress->get_service_by_id( $bookingpress_service_id );
+                    $bookingpress_service_description = !empty( $bookingpress_service_details['bookingpress_service_description'] ) ? $bookingpress_service_details['bookingpress_service_description'] : '';
+                    
+                    $template_content = str_replace('%service_description%', $bookingpress_service_description, $template_content);
+                }
+
         
                 /***** replacing the service data *****/        
         

@@ -1273,12 +1273,12 @@ if (! class_exists('bookingpress_appointment') ) {
                     }
                     var appointment_date_range = [bookingpress_dashboard_filter_start_date,bookingpress_dashboard_filter_end_date];
                     this.appointment_date_range = appointment_date_range;
-                }                
+                }
                 var bookingpress_search_data = { 'search_appointment':this.search_appointment,'selected_date_range': this.appointment_date_range, 'customer_name': this.search_customer_name,'service_name': this.search_service_name,'appointment_status': this.search_appointment_status}  
                 
-            <?php do_action('bookingpress_appointment_add_post_data'); ?>
+                <?php do_action('bookingpress_appointment_add_post_data'); ?>
 
-                var postData = { action:'bookingpress_get_appointments', perpage:this.perPage, currentpage:this.currentPage, search_data: bookingpress_search_data,_wpnonce:'<?php echo esc_html(wp_create_nonce('bpa_wp_nonce')); ?>'};
+                var postData = { action:'bookingpress_get_appointments', perpage:this.perPage, currentpage:this.currentPage, search_data: bookingpress_search_data,_wpnonce:'<?php echo esc_html(wp_create_nonce('bpa_wp_nonce')); ?>', sort_by: this.bpa_appointment_sort_by, sort_order: this.bpa_appointment_sort_order};
                 axios.post( appoint_ajax_obj.ajax_url, Qs.stringify( postData ) )
                 .then( function (response) {
                     if( "error" == response.data.variant ){
@@ -1720,6 +1720,47 @@ if (! class_exists('bookingpress_appointment') ) {
                                             ELSE bpa.bookingpress_service_duration_val
                                         END'
             );
+            
+            $sort_extra_columns = '';
+            $sort_extra_stmt = '';
+
+            if( $BookingPress->bpa_is_pro_active() ){
+                global $bookingpress_service_extra;
+                if( !empty( $bookingpress_service_extra ) && method_exists( $bookingpress_service_extra, 'bookingpress_check_service_extra_module_activation' ) && $bookingpress_service_extra->bookingpress_check_service_extra_module_activation() ){
+                    $bookingpress_appointment_sortable_columns['appointment_duration'] = 'total_duration';
+                    $sort_extra_stmt = 'WITH RECURSIVE seq AS (
+                        SELECT 0 AS n
+                        UNION ALL SELECT n + 1 FROM seq WHERE n < 20
+                    )';
+                    $sort_extra_columns = ",(
+                        CASE
+                            WHEN bpa.bookingpress_service_duration_unit = 'd'
+                                THEN bpa.bookingpress_service_duration_val * 1440
+                            WHEN bpa.bookingpress_service_duration_unit = 'h'
+                                THEN bpa.bookingpress_service_duration_val * 60
+                            ELSE bpa.bookingpress_service_duration_val
+                        END
+                        +
+                        IFNULL((
+                            SELECT SUM(
+                                CASE
+                                    WHEN JSON_UNQUOTE(JSON_EXTRACT(bpa.bookingpress_extra_service_details, CONCAT('$[', seq.n, '].bookingpress_extra_service_details.bookingpress_extra_service_duration_unit'))) = 'h'
+                                        THEN CAST(JSON_UNQUOTE(JSON_EXTRACT(bpa.bookingpress_extra_service_details, CONCAT('$[', seq.n, '].bookingpress_extra_service_details.bookingpress_extra_service_duration'))) AS UNSIGNED) * 
+                                            CAST(JSON_UNQUOTE(JSON_EXTRACT(bpa.bookingpress_extra_service_details, CONCAT('$[', seq.n, '].bookingpress_selected_qty'))) AS UNSIGNED) * 60
+
+                                    WHEN JSON_UNQUOTE(JSON_EXTRACT(bpa.bookingpress_extra_service_details, CONCAT('$[', seq.n, '].bookingpress_extra_service_details.bookingpress_extra_service_duration_unit'))) = 'm'
+                                        THEN CAST(JSON_UNQUOTE(JSON_EXTRACT(bpa.bookingpress_extra_service_details, CONCAT('$[', seq.n, '].bookingpress_extra_service_details.bookingpress_extra_service_duration'))) AS UNSIGNED) * 
+                                            CAST(JSON_UNQUOTE(JSON_EXTRACT(bpa.bookingpress_extra_service_details, CONCAT('$[', seq.n, '].bookingpress_selected_qty'))) AS UNSIGNED)
+
+                                    ELSE 0
+                                END
+                            )
+                            FROM seq
+                            WHERE JSON_EXTRACT(bpa.bookingpress_extra_service_details, CONCAT('$[', seq.n, ']')) IS NOT NULL
+                        ), 0)
+                    ) AS total_duration";
+                }
+            }
 
             $order_by_column = 'bpa.bookingpress_appointment_booking_id';
 
@@ -1792,10 +1833,11 @@ if (! class_exists('bookingpress_appointment') ) {
 
             $get_total_appointments = $wpdb->get_results("SELECT bpa.* FROM {$tbl_bookingpress_appointment_bookings} bpa {$bpa_left_join_data} {$bookingpress_search_query}{$bookingpress_search_query_where} group by bpa.bookingpress_appointment_booking_id", ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $tbl_bookingpress_appointment_bookings is a table name. false alarm
             
-            ///echo $wpdb->last_query; die;
 
-            $total_appointments = $wpdb->get_results("SELECT bpa.* FROM {$tbl_bookingpress_appointment_bookings} bpa {$bpa_left_join_data} {$bookingpress_search_query}{$bookingpress_search_query_where} group by bpa.bookingpress_appointment_booking_id order by {$order_by_column} {$sort_order} LIMIT {$offset} , {$perpage}", ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $tbl_bookingpress_appointment_bookings is a table name. false alarm
-
+            
+            $total_appointments = $wpdb->get_results("$sort_extra_stmt SELECT bpa.* $sort_extra_columns FROM {$tbl_bookingpress_appointment_bookings} bpa {$bpa_left_join_data} {$bookingpress_search_query}{$bookingpress_search_query_where} group by bpa.bookingpress_appointment_booking_id order by {$order_by_column} {$sort_order} LIMIT {$offset} , {$perpage}", ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $tbl_bookingpress_appointment_bookings is a table name. false alarm
+            
+            
             $appointments  = $bookingpress_formdata = array();
 
             if (! empty($total_appointments) ) {

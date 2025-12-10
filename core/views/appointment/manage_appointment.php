@@ -326,7 +326,7 @@
                         </el-table>
                     </div>
                     <div class="bpa-tc__wrapper" v-if="current_screen_size == 'tablet'">
-                        <el-table ref="multipleTable" class="bpa-manage-appointment-items" :data="items" @selection-change="handleSelectionChange" fit="false" @row-click="bookingpress_full_row_clickable" @expand-change="bookingpress_row_expand">
+                        <el-table ref="multipleTable" class="bpa-manage-appointment-items" :data="items" @sort-change="handel_appointment_changes" @selection-change="handleSelectionChange" fit="false" @row-click="bookingpress_full_row_clickable" @expand-change="bookingpress_row_expand">
                             <el-table-column type="expand">
                                 <template slot-scope="scope">
                                     <div class="bpa-view-appointment-card">

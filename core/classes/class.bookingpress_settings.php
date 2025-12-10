@@ -91,20 +91,22 @@ if (! class_exists('bookingpress_settings') ) {
                     $bvav_data = base64_decode( $bvav_resp['body'] );
                     if( !empty( $bvav_data ) ){
                         $bvav_response = json_decode( $bvav_data, true );
-                        $bvav_filtered = array_values( $bvav_response );
-                        $bvallav = array_merge( ...$bvav_filtered );
-                        
-                        if( !empty( $bvallav ) ){
-                            foreach( $bvallav as $bvav_details ){
-                                $bvav_installer = $bvav_details['addon_installer'];
-
-                                if( file_exists( WP_PLUGIN_DIR . '/' . $bvav_installer ) ){
-                                    $bvavpdata = get_plugin_data( WP_PLUGIN_DIR . '/' . $bvav_installer );
-                                    $bvavactv = is_plugin_active( $bvav_installer );
-                                    if( $bvavactv ){
-                                        $bvava_data[ $bvav_details['addon_name'] ] = $bvavpdata['Version'];
-                                    } else {
-                                        $bvavd_data[ $bvav_details['addon_name'] ] = $bvavpdata['Version'];
+                        if( is_array( $bvav_response ) ){
+                            $bvav_filtered = array_values( $bvav_response );
+                            $bvallav = array_merge( ...$bvav_filtered );
+                            
+                            if( !empty( $bvallav ) ){
+                                foreach( $bvallav as $bvav_details ){
+                                    $bvav_installer = $bvav_details['addon_installer'];
+    
+                                    if( file_exists( WP_PLUGIN_DIR . '/' . $bvav_installer ) ){
+                                        $bvavpdata = get_plugin_data( WP_PLUGIN_DIR . '/' . $bvav_installer );
+                                        $bvavactv = is_plugin_active( $bvav_installer );
+                                        if( $bvavactv ){
+                                            $bvava_data[ $bvav_details['addon_name'] ] = $bvavpdata['Version'];
+                                        } else {
+                                            $bvavd_data[ $bvav_details['addon_name'] ] = $bvavpdata['Version'];
+                                        }
                                     }
                                 }
                             }
