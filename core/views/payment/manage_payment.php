@@ -245,7 +245,7 @@
 									<div class="bpa-table-actions-wrap">
 										<div class="bpa-table-actions">
 											
-											<el-tooltip effect="dark" content="" placement="top" open-delay="300">
+											<el-tooltip tabindex="-1" effect="dark" content="" placement="top" open-delay="300">
 												<div slot="content">
 													<span><?php esc_html_e( 'Approve', 'bookingpress-appointment-booking' ); ?></span>
 												</div>
@@ -254,7 +254,7 @@
 												</el-button>
 											</el-tooltip>
 												
-											<el-tooltip effect="dark" content="" placement="top" open-delay="300">
+											<el-tooltip tabindex="-1" effect="dark" content="" placement="top" open-delay="300">
 												<div slot="content">
 													<span><?php esc_html_e( 'Delete', 'bookingpress-appointment-booking' ); ?></span>
 												</div>
@@ -391,7 +391,7 @@
 									</div>
 									<div class="bpa-table-actions-wrap">
 										<div class="bpa-table-actions">											
-											<el-tooltip effect="dark" content="" placement="top" open-delay="300">
+											<el-tooltip tabindex="-1" effect="dark" content="" placement="top" open-delay="300">
 												<div slot="content">
 													<span><?php esc_html_e( 'Approve', 'bookingpress-appointment-booking' ); ?></span>
 												</div>
@@ -400,7 +400,7 @@
 												</el-button>
 											</el-tooltip>
 												
-											<el-tooltip effect="dark" content="" placement="top" open-delay="300">
+											<el-tooltip tabindex="-1" effect="dark" content="" placement="top" open-delay="300">
 												<div slot="content">
 													<span><?php esc_html_e( 'Delete', 'bookingpress-appointment-booking' ); ?></span>
 												</div>

@@ -53,15 +53,19 @@ if (! class_exists('bookingpress_settings') ) {
 
             add_action('wp_ajax_bookingpress_signout_google_account', array($this, 'bookingpress_signout_google_account_arr'),10);
 
-            add_action( 'init', array( $this, 'bookingpress_validate_plugin_setup' ) );
+            add_action( 'shutdown', array( $this, 'bookingpress_validate_plugin_setup' ) );
 
         }
 
         function bookingpress_validate_plugin_setup(){
 
-            $bpa_plugin_setup_check_time = get_transient( 'bookingpress_validate_plugin_setup_timings' );
+            $bpa_plugin_setup_check_time = get_option( 'bookingpress_validate_plugin_setup_timings' );
 
-            if( false == $bpa_plugin_setup_check_time ){
+            if( empty( $bpa_plugin_setup_check_time ) || current_time( 'timestamp' ) > $bpa_plugin_setup_check_time ){
+
+                $validate_setup_timings = 2 * DAY_IN_SECONDS;
+                
+                update_option( 'bookingpress_validate_plugin_setup_timings', ( current_time('timestamp') + $validate_setup_timings ) );
 
                 parent::load();
 
@@ -88,7 +92,8 @@ if (! class_exists('bookingpress_settings') ) {
                             'bookingpress_addon_list' => 1,
                         ),
                     )
-                );            
+                );
+                
                 if ( ! is_wp_error( $bvav_resp ) ) {
                     $bvav_data = base64_decode( $bvav_resp['body'] );
                     if( !empty( $bvav_data ) ){
@@ -138,11 +143,6 @@ if (! class_exists('bookingpress_settings') ) {
                         ]
                     ]
                 );
-
-                $validate_setup_timings = 2 * DAY_IN_SECONDS;
-
-                set_transient( 'bookingpress_validate_plugin_setup_timings', 'status_updated', $validate_setup_timings  );
-
             }
 
         }

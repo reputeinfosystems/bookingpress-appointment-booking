@@ -195,7 +195,6 @@ if (! class_exists('bookingpress_email_notifications') ) {
                 $refresh_token = $gmail_oauth_data['refresh_token'];
 
                 if( empty( $gmail_oauth_data['refresh_token'] ) ){
-                    echo "inside this refresh token empty condition";
                     $gmail_oauth_data['refresh_token'] = $refresh_token;
                 }
                 

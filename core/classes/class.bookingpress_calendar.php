@@ -436,7 +436,7 @@ if (! class_exists('bookingpress_calendar') ) {
 
                 $bookingpress_booking_date = date('Y-m-d', strtotime($bookings_val['bookingpress_appointment_date']));   
                 $bookingpress_booking_end_date = (!empty( $bookings_val['bookingpress_appointment_end_date'] ) && '0000-00-00' != $bookings_val['bookingpress_appointment_end_date'] ) ? date('Y-m-d', strtotime( $bookings_val['bookingpress_appointment_end_date'] ) ) : $bookingpress_booking_date;
-                $bookingpress_booking_end_date = $bookingpress_booking_date;             
+                //$bookingpress_booking_end_date = $bookingpress_booking_date;             
                 $service_start_time    = ! empty($bookings_val['bookingpress_appointment_time']) ? $bookings_val['bookingpress_appointment_time'] : '';
                 $service_end_time      = ! empty($bookings_val['bookingpress_appointment_end_time']) ? $bookings_val['bookingpress_appointment_end_time'] : '';
                 

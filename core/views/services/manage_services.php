@@ -146,7 +146,7 @@
                             </el-row>
                             <div class="bpa-table-actions-wrap">
                                 <div class="bpa-table-actions">
-                                    <el-tooltip effect="dark" content="" placement="top" open-delay="300">
+                                    <el-tooltip tabindex="-1" effect="dark" content="" placement="top" open-delay="300">
                                         <div slot="content">
                                             <span><?php esc_html_e('Edit', 'bookingpress-appointment-booking'); ?></span>
                                         </div>
@@ -154,7 +154,7 @@
                                             <span class="material-icons-round">mode_edit</span>
                                         </el-button>
                                     </el-tooltip>
-                                    <el-tooltip effect="dark" content="" placement="top" open-delay="300">
+                                    <el-tooltip tabindex="-1" effect="dark" content="" placement="top" open-delay="300">
                                         <div slot="content">
                                             <span><?php esc_html_e('Duplicate', 'bookingpress-appointment-booking'); ?></span>
                                         </div>
@@ -162,7 +162,7 @@
                                             <span class="material-icons-round">queue</span>
                                         </el-button>
                                     </el-tooltip>
-                                    <el-tooltip effect="dark" content="" placement="top" open-delay="300">
+                                    <el-tooltip tabindex="-1" effect="dark" content="" placement="top" open-delay="300">
                                         <div slot="content">
                                             <span><?php esc_html_e('Delete', 'bookingpress-appointment-booking'); ?></span>
                                         </div>
@@ -446,7 +446,7 @@
                                             :before-upload="checkUploadedFile" drag>
                                             <span
                                                 class="material-icons-round bpa-upload-component__icon">cloud_upload</span>
-                                            <div class="bpa-upload-component__text" v-if="service.service_image == ''"><?php esc_html_e('Please upload jpg/png/webp file', 'bookingpress-appointment-booking'); ?></div>
+                                            <div class="bpa-upload-component__text" v-if="service.service_image == ''"><?php esc_html_e('Please upload jpg/png/webp file with a maximum size of 1 MB', 'bookingpress-appointment-booking'); ?></div>
                                         </el-upload>
                                         <div class="bpa-uploaded-avatar__preview" v-if="service.service_image != ''">
                                             <button class="bpa-avatar-close-icon" @click="bookingpress_remove_service_img">

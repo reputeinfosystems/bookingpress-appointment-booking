@@ -3590,6 +3590,63 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
             wp_send_json($data);
             exit;
         }
+
+        public static function bookingpress_get_entry_details( $args = [] ){
+            
+            static $cache = [];
+
+            $key = md5( maybe_serialize( $args ) );
+
+            if ( isset( $cache[$key] ) ) {
+                return $cache[$key];
+            }
+
+            $defaults = [
+                'entry_id'  => 0,
+                'date'      => ''
+            ];
+
+            $args = wp_parse_args( $args, $defaults );
+
+            global $wpdb, $tbl_bookingpress_entries;
+
+            $entry_id = $args['entry_id'];
+
+            $result = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$tbl_bookingpress_entries} WHERE bookingpress_entry_id = %d", $entry_id ), ARRAY_A);
+
+            $cache[ $key ] = $result;
+
+            return $result;
+
+        }
+
+        public static function bookingpress_get_appointment_from_entry( $args = [] ){
+
+            static $cache_ = [];
+
+            $key = md5( maybe_serialize( $args ) );
+
+            if( isset( $cache_[ $key ] ) ){
+                return $cache_[ $key ];
+            }
+
+            $defaults = [
+                'entry_id'  => 0,
+                'date'      => ''
+            ];
+
+            $arsg = wp_parse_args( $args, $defaults );
+
+            global $wpdb, $tbl_bookingpress_appointment_bookings;
+
+            $bookingpress_entry_id = $args['entry_id'];
+
+            $result = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$tbl_bookingpress_appointment_bookings} WHERE bookingpress_entry_id = %d", $bookingpress_entry_id ), ARRAY_A );
+
+            $cache_[ $key ] = $result;
+
+            return $result;
+        }
                 
         /**
          * Callback function of [bookingpress_appointment_service] shortcode
@@ -3643,12 +3700,10 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
             if (empty($appointment_id) && !empty($_GET['appointment_id']) && $bookingpress_nonce_verification) {
                 $appointment_id = intval(base64_decode($_GET['appointment_id'])); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $_GET['appointment_id'] sanitized properly
 
-                
                 //$bookingpress_entry_details = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$tbl_bookingpress_entries} WHERE bookingpress_entry_id = %d",$appointment_id ), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_entries is table name defined globally. False Positive alarm
 
-
-                    $bookingpress_entry_details = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$tbl_bookingpress_entries} WHERE bookingpress_entry_id = %d",$appointment_id ), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_entries is table name defined globally. False Positive alarm
-
+                //$bookingpress_entry_details = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$tbl_bookingpress_entries} WHERE bookingpress_entry_id = %d",$appointment_id ), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_entries is table name defined globally. False Positive alarm
+                $bookingpress_entry_details = self::bookingpress_get_entry_details( ['entry_id' => $appointment_id ] );
                     
                 if (! empty($bookingpress_entry_details) ) {
                     $bookingpress_service_id         = $bookingpress_entry_details['bookingpress_service_id'];
@@ -3661,7 +3716,9 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
 
                     $bookingpress_entry_id = $appointment_id;
                     //$appointment_data = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$tbl_bookingpress_appointment_bookings} WHERE bookingpress_entry_id = %d", $bookingpress_entry_id), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_appointment_bookings is table name defined globally. False Positive alarm
-                        $appointment_data = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$tbl_bookingpress_appointment_bookings} WHERE bookingpress_entry_id = %d", $bookingpress_entry_id), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_appointment_bookings is table name defined globally. False Positive alarm
+                    //$appointment_data = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$tbl_bookingpress_appointment_bookings} WHERE bookingpress_entry_id = %d", $bookingpress_entry_id), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_appointment_bookings is table name defined globally. False Positive alarm
+
+                    $appointment_data = self::bookingpress_get_appointment_from_entry( [ 'entry_id' => $bookingpress_entry_id ] );
                     
                     if (empty($appointment_data) ) {
                         // If no appointment data found then display data from entries table.
@@ -3756,24 +3813,27 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
             if (empty($appointment_id) && ! empty($_GET['appointment_id']) && $bookingpress_nonce_verification ) {
                 $appointment_id = intval(base64_decode($_GET['appointment_id']));// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $_GET['appointment_id'] sanitized properly
 
-                $bookingpress_entry_details = wp_cache_get( 'bpa_bookingpress_entry_details_id_'.$appointment_id );
+                /* $bookingpress_entry_details = wp_cache_get( 'bpa_bookingpress_entry_details_id_'.$appointment_id );
                 if( false == $bookingpress_entry_details ){
                     $bookingpress_entry_details = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$tbl_bookingpress_entries} WHERE bookingpress_entry_id = %d",$appointment_id ), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_entries is table name defined globally. False Positive alarm
                     wp_cache_set( 'bpa_bookingpress_entry_details_id_'.$appointment_id , $bookingpress_entry_details);
-                }
+                } */
 
-
+                $bookingpress_entry_details = self::bookingpress_get_entry_details( ['entry_id' => $appointment_id ] );
                 
                 if (! empty($bookingpress_entry_details) ) {
                     $bookingpress_service_id         = $bookingpress_entry_details['bookingpress_service_id'];
 
                     $bookingpress_entry_id = $appointment_id;
 
-                    $bookingpress_entry_details = wp_cache_get( 'bpa_bookingpress_entry_details_id_'.$appointment_id );
+                    /* $bookingpress_entry_details = wp_cache_get( 'bpa_bookingpress_entry_details_id_'.$appointment_id );
                     if( false == $bookingpress_entry_details ){
                         $appointment_data = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$tbl_bookingpress_appointment_bookings} WHERE bookingpress_entry_id = %d", $bookingpress_entry_id), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_appointment_bookings is table name defined globally. False Positive alarm
                         wp_cache_set( 'bpa_bookingpress_entry_details_id_'.$appointment_id , $appointment_data);
-                    }
+                    } */
+
+                    //$appointment_data = self::bookingpress_get_entry_details( ['entry_id' => $appointment_id ] );
+                    $appointment_data = self::bookingpress_get_appointment_from_entry( [ 'entry_id' => $bookingpress_entry_id ] );
 
                     
                     if (empty($appointment_data) ) {
@@ -3854,7 +3914,8 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                         if(!empty($bookingpress_entry_id)){
 
                             //Get entries details
-                            $bookingpress_entry_details = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$tbl_bookingpress_entries} WHERE bookingpress_entry_id = %d",$bookingpress_entry_id), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_entries is table name defined globally. False Positive alarm
+                            //$bookingpress_entry_details = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$tbl_bookingpress_entries} WHERE bookingpress_entry_id = %d",$bookingpress_entry_id), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_entries is table name defined globally. False Positive alarm
+                            $bookingpress_entry_details = self::bookingpress_get_entry_details( [ 'entry_id' => $bookingpress_entry_id ] );
                         }
                     }
 
@@ -4004,12 +4065,13 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                 $appointment_id = intval(base64_decode($_GET['appointment_id']));// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $_GET['appointment_id'] sanitized properly
                 
                 //$bookingpress_entry_details = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$tbl_bookingpress_entries} WHERE bookingpress_entry_id = %d",$appointment_id ), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_entries is table name defined globally. False Positive alarm
-                $bookingpress_entry_details = wp_cache_get( 'bpa_bookingpress_entry_details_id_'.$appointment_id );
+                /* $bookingpress_entry_details = wp_cache_get( 'bpa_bookingpress_entry_details_id_'.$appointment_id );
                 if( false == $bookingpress_entry_details ){
                     $bookingpress_entry_details = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$tbl_bookingpress_entries} WHERE bookingpress_entry_id = %d",$appointment_id ), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_entries is table name defined globally. False Positive alarm
                     wp_cache_set( 'bpa_bookingpress_entry_details_id_'.$appointment_id , $bookingpress_entry_details);
-                }
+                } */
 
+                $bookingpress_entry_details = self::bookingpress_get_entry_details( ['entry_id' => $appointment_id ] );
 
                 if (! empty($bookingpress_entry_details) ) {
                     $bookingpress_service_id         = $bookingpress_entry_details['bookingpress_service_id'];
@@ -4021,11 +4083,13 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
 
                     $bookingpress_entry_id = $appointment_id;
                     //$appointment_data = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$tbl_bookingpress_appointment_bookings} WHERE bookingpress_entry_id = %d", $bookingpress_entry_id), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_appointment_bookings is table name defined globally. False Positive alarm
-                    $bookingpress_entry_details = wp_cache_get( 'bpa_bookingpress_entry_details_id_'.$appointment_id );
+                    /* $bookingpress_entry_details = wp_cache_get( 'bpa_bookingpress_entry_details_id_'.$appointment_id );
                     if( false == $bookingpress_entry_details ){
                         $appointment_data = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$tbl_bookingpress_appointment_bookings} WHERE bookingpress_entry_id = %d", $bookingpress_entry_id), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_appointment_bookings is table name defined globally. False Positive alarm
                         wp_cache_set( 'bpa_bookingpress_entry_details_id_'.$appointment_id , $appointment_data);
-                    }
+                    } */
+
+                    $appointment_data = self::bookingpress_get_appointment_from_entry( [ 'entry_id' => $bookingpress_entry_id ] );
 
                     if (empty($appointment_data) ) {
                         // If no data found from appointments then display data from entries table.
@@ -5093,6 +5157,8 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
         {
             global $wpdb, $BookingPress, $bookingpress_common_date_format, $tbl_bookingpress_form_fields, $tbl_bookingpress_services, $tbl_bookingpress_customers, $bookingpress_global_options,$bookingpress_front_vue_data_fields;
 
+            static $bpa_script_added = false;
+
             $general_new_uniq_id = true;
             if( !empty( $_GET['is_success'] ) && 1 == $_GET['is_success'] ){
                 $general_new_uniq_id = false;
@@ -5820,7 +5886,7 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
             $first_day_of_week = (int)  $bookingpress_global_options_arr['start_of_week'];
             $first_day_of_week_inc = $first_day_of_week + 1;
 	    
-	    $bookingpress_site_current_lang_moment_locale = get_locale();
+	        $bookingpress_site_current_lang_moment_locale = get_locale();
 
             if($bookingpress_site_current_lang_moment_locale == "am" || $bookingpress_site_current_lang_moment_locale == "ary" || $bookingpress_site_current_lang_moment_locale == "skr") {
                 $bookingpress_site_current_lang_moment_locale = "ar";
@@ -6191,7 +6257,10 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                 $bpa_script_data .= 'if( false == is_script_loaded_'.$bookingpress_vue_root_element_id_el.' ) {  is_script_loaded_'.$bookingpress_vue_root_element_id_el.' = true; bpa_load_vue_shortcode_'.$bookingpress_vue_root_element_id_el.'(); }';
             }
                 
-                wp_add_inline_script('bookingpress_elements_locale', $bpa_script_data, 'after');
+                if( !$bpa_script_added ){
+                    wp_add_inline_script('bookingpress_elements_locale', $bpa_script_data, 'after');
+                    $bpa_script_added = true;
+                }
 
                 if($bookingress_load_js_css_all_pages != 'true' ) {
 
@@ -10058,6 +10127,16 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                         var customer_form = "appointment_step_form_data";
                         vm.$refs[customer_form].validate((valid) => {
                             if (!valid) {
+
+                                vm.$nextTick(() => {
+                                    const firstError = document.querySelector(".el-form-item.is-error");
+                                    if (firstError) {
+                                        firstError.scrollIntoView({ 
+                                            behavior: "smooth", 
+                                            block: "center"
+                                        });
+                                    }
+                                });
                                 bookingpress_is_validate = 1;
                             }else{
                                 bookingpress_is_validate = 0;
