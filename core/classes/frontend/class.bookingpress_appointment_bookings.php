@@ -8260,6 +8260,7 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                     if( ("undefined" != typeof vm.appointment_step_form_data.bpa_anystaff_step_first_before_datetime && vm.appointment_step_form_data.bpa_anystaff_step_first_before_datetime != 1 ) && ( "undefined" != typeof vm.appointment_step_form_data.bpa_datetime_after_service_selection && vm.appointment_step_form_data.bpa_datetime_after_service_selection != 1 ) ){
                         
                         vm.appointment_step_form_data.selected_date = newDate;
+                        vm.appointment_step_form_data.selected_end_date = newDate;
                         vm.appointment_step_form_data.selected_start_time = "";
                         vm.appointment_step_form_data.selected_end_time = "";
                     }

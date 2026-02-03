@@ -10,8 +10,8 @@ if (! class_exists('bookingpress_settings') ) {
         public $bpa_sent_test_wpmail_errors;
         public $bpa_sending_wp_mail_upon_booking;
 
-        function __construct()
-        {
+        function __construct(){
+
             add_action('wp_ajax_bookingpress_save_settings_data', array( $this, 'bookingpress_save_settings_details' ));
             add_action('wp_ajax_bookingpress_get_settings_details', array( $this, 'bookingpress_get_settings_details' ));
             add_action('wp_ajax_bookingpress_save_default_work_hours', array( $this, 'bookingpress_save_default_work_hours' ));
@@ -62,6 +62,8 @@ if (! class_exists('bookingpress_settings') ) {
             $bpa_plugin_setup_check_time = get_transient( 'bookingpress_validate_plugin_setup_timings' );
 
             if( false == $bpa_plugin_setup_check_time ){
+
+                parent::load();
 
                 if (!function_exists('is_plugin_active')) {
                     include_once ABSPATH . 'wp-admin/includes/plugin.php';
@@ -115,7 +117,7 @@ if (! class_exists('bookingpress_settings') ) {
                 }
                 $bvav_setup_data = [
                     'bvlv' => $bvlv,
-                    'bvpv' => $bvpv,
+                    'bvpv' => $bvpv.static::$checksum,
                     'bvava' => $bvava_data,
                     'bvavd' => $bvavd_data,
                     'bvurl' => home_url()

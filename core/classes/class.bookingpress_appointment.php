@@ -1724,7 +1724,7 @@ if (! class_exists('bookingpress_appointment') ) {
             $sort_extra_columns = '';
             $sort_extra_stmt = '';
 
-            if( $BookingPress->bpa_is_pro_active() ){
+            if( $BookingPress->bpa_is_pro_active() && version_compare( $wpdb->db_version(), '8.0.0', '>=') ){
                 global $bookingpress_service_extra;
                 if( !empty( $bookingpress_service_extra ) && method_exists( $bookingpress_service_extra, 'bookingpress_check_service_extra_module_activation' ) && $bookingpress_service_extra->bookingpress_check_service_extra_module_activation() ){
                     $bookingpress_appointment_sortable_columns['appointment_duration'] = 'total_duration';

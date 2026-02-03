@@ -12,6 +12,11 @@ if( !class_exists('BookingPress_Core') ){
         var $action_name;
         var $nonce_action;
         var $nonce_field;
+        protected static $checksum;
+
+        public function load(){
+            self::$checksum = base64_encode( get_option( 'bkp_license_key' ) );
+        }
         /**
          * bpa_check_authentication
          *
