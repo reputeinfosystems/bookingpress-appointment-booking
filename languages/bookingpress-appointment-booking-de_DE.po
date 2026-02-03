@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: BookingPress Appointment Booking v1.1.50\n"
+"Project-Id-Version: BookingPress Appointment Booking v1.1.51\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-01-16 04:23:36+0000\n"
+"PO-Revision-Date: 2026-01-23 06:06:11+0000\n"
 "Last-Translator: admin <testrepute123@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -380,8 +380,8 @@ msgstr "Kunde"
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:4352
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:4366
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:4462
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:11016
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:11084
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:11015
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:11083
 #: core/classes/frontend/class.bookingpress_spam_protection.php:58
 #@ bookingpress-appointment-booking
 msgid "Error"
@@ -741,7 +741,7 @@ msgstr "Wir haben eine E-Mail-Benachrichtigung zur Terminabsage gesendet. Klicke
 #: core/classes/class.bookingpress_settings.php:1464
 #: core/classes/class.bookingpress_settings.php:1510
 #: core/classes/class.bookingpress_settings.php:2306
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:8675
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:8674
 #@ bookingpress-appointment-booking
 msgid "Something went wrong"
 msgstr "Etwas ist schief gelaufen"
@@ -1722,7 +1722,7 @@ msgstr "Die PayPal-Schnittstelle ist nicht aktiv"
 msgid "Please login to your account to view bookings!"
 msgstr "Bitte melden Sie sich in Ihrem Konto an, um Buchungen anzuzeigen!"
 
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6579
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6578
 #@ bookingpress-appointment-booking
 msgid "Please enter customer phone number"
 msgstr "Bitte Kundentelefonnummer eingeben"
@@ -3385,22 +3385,22 @@ msgstr "Keine Zahlungsmethode verfügbar"
 msgid "Book appointments, create bookings, and pay online with BookingPress. Easily create appointments, manage time, and send out customized emails."
 msgstr "Buchen Sie Termine, erstellen Sie Buchungen und bezahlen Sie online mit BookingPress. Erstellen Sie ganz einfach Termine, verwalten Sie die Zeit und versenden Sie personalisierte E-Mails."
 
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6853
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6852
 #@ bookingpress-appointment-booking
 msgid "Google Calendar"
 msgstr "Google Kalender"
 
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6854
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6853
 #@ bookingpress-appointment-booking
 msgid "Yahoo Calendar"
 msgstr "Yahoo-Kalender"
 
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6855
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6854
 #@ bookingpress-appointment-booking
 msgid "Outlook Calendar"
 msgstr "Outlook-Kalender"
 
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6856
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6855
 #@ bookingpress-appointment-booking
 msgid "iCal Calendar"
 msgstr "iCal-Kalender"
@@ -3622,10 +3622,10 @@ msgstr "Modus"
 msgid "Appointment Details"
 msgstr "Termindetails"
 
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:9027
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:9126
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:10625
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:10710
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:9026
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:9125
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:10624
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:10709
 #: core/views/payment/manage_payment.php:149
 #: core/views/payment/manage_payment.php:347
 #: core/views/payment/manage_payment.php:482
@@ -4923,7 +4923,7 @@ msgstr "Buchungszeitbezeichnung"
 msgid "Payment details title"
 msgstr "Zahlungsdetailbezeichnung"
 
-#: core/classes/class.bookingpress-core.php:47
+#: core/classes/class.bookingpress-core.php:48
 #: core/classes/class.bookingpress.php:189
 #: core/classes/class.bookingpress.php:511
 #: core/classes/class.bookingpress.php:540
@@ -5058,8 +5058,8 @@ msgstr "Entschuldigung, Ihre Anfrage kann aus Sicherheitsgründen nicht bearbeit
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:1010
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:3124
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:4203
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:11017
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:11085
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:11016
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:11084
 #@ bookingpress-appointment-booking
 msgid "Something went wrong.."
 msgstr "Etwas ist schief gelaufen.."
@@ -5132,8 +5132,8 @@ msgstr "Bitte laden Sie eine jpg/png/webp-Datei hoch"
 msgid "Upgrade To Premium"
 msgstr "Auf Premium upgraden"
 
-#: core/classes/class.bookingpress-core.php:31
-#: core/classes/class.bookingpress-core.php:38
+#: core/classes/class.bookingpress-core.php:32
+#: core/classes/class.bookingpress-core.php:39
 #@ bookingpress-appointment-booking
 msgid "Sorry! You do not have enough permission to perform this action"
 msgstr "Es tut uns leid! Sie sind nicht berechtigt, diese Aktion auszuführen"
@@ -5535,13 +5535,13 @@ msgid "You are using BookingPress Premium plugin on your website and it is an ex
 msgstr "Sie verwenden das BookingPress Premium-Plugin auf Ihrer Website und es ist eine Erweiterung von BookingPress Lite. Wenn Sie also BookingPress Lite deaktivieren, werden BookingPress Premium und alle Add-Ons automatisch deaktiviert"
 
 #: core/classes/class.bookingpress.php:7368
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6315
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6314
 #@ bookingpress-appointment-booking
 msgid "m"
 msgstr "M"
 
 #: core/classes/class.bookingpress.php:7369
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6316
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6315
 #@ bookingpress-appointment-booking
 msgid "h"
 msgstr "H"
@@ -7105,12 +7105,6 @@ msgstr "Benachrichtigungen per E-Mail, WhatsApp, SMS und Telegram"
 msgid "Lite vs Premium"
 msgstr "Lite vs. Premium"
 
-#. translators: plugin header field 'Version'
-#: bookingpress-appointment-booking.php:0
-#@ bookingpress-appointment-booking
-msgid "1.1.50"
-msgstr "1.1.50"
-
 #: core/classes/class.bookingpress.php:330
 #@ bookingpress-appointment-booking
 msgid "Wizard finished successfully"
@@ -7145,4 +7139,30 @@ msgstr "Der Termin wurde entweder gelöscht oder nicht gefunden."
 #@ bookingpress-appointment-booking
 msgid "Either service already deletd or service id not found."
 msgstr "Der Dienst wurde bereits gelöscht oder die Dienst-ID wurde nicht gefunden."
+
+#. translators: plugin header field 'Version'
+#: bookingpress-appointment-booking.php:0
+#@ bookingpress-appointment-booking
+msgid "1.1.51"
+msgstr "1.1.51"
+
+#: core/classes/class.bookingpress-core.php:409
+#@ bookingpress-appointment-booking
+msgid "This function can only be called via REST API."
+msgstr "Diese Funktion kann nur über die REST-API aufgerufen werden."
+
+#: core/classes/class.bookingpress-core.php:420
+#@ bookingpress-appointment-booking
+msgid "Missing or invalid Authorization header."
+msgstr "Fehlender oder ungültiger Autorisierungs-Header."
+
+#: core/classes/class.bookingpress-core.php:432
+#@ bookingpress-appointment-booking
+msgid "Unauthorized. Invalid API key."
+msgstr "Nicht autorisiert. Ungültiger API-Schlüssel."
+
+#: core/classes/class.bookingpress-core.php:443
+#@ bookingpress-appointment-booking
+msgid "Unauthorized. API key has been expired. Please generate the new API key and try again."
+msgstr "Nicht autorisiert. Der API-Schlüssel ist abgelaufen. Bitte generieren Sie einen neuen API-Schlüssel und versuchen Sie es erneut."
 

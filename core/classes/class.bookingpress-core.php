@@ -406,7 +406,7 @@ if( !class_exists('BookingPress_Core') ){
             if ( ! defined( 'REST_REQUEST' ) ) {
                 return new WP_Error(
                     'rest_only',
-                    __( 'This function can only be called via REST API.', 'bookingpress-rest-api' ),
+                    __( 'This function can only be called via REST API.', 'bookingpress-appointment-booking' ),
                     ['status' => 403]
                 );
             }
@@ -440,7 +440,7 @@ if( !class_exists('BookingPress_Core') ){
             if( 4 != $expiration_key_type && date('Y-m-d', current_time('timestamp') ) > date('Y-m-d', strtotime( $expiration_date ) ) ){
                 return new WP_Error(
                     'expired_api_key',
-                    __( 'Unauthorized. API key has been expired. Please generate the new API key and try again.', 'bookingpress-rest-api' ),
+                    __( 'Unauthorized. API key has been expired. Please generate the new API key and try again.', 'bookingpress-appointment-booking' ),
                     [ 'status' => 403 ]
                 );
             }

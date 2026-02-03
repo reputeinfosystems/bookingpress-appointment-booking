@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: BookingPress Appointment Booking v1.1.50\n"
+"Project-Id-Version: BookingPress Appointment Booking v1.1.51\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-01-16 04:25:37+0000\n"
+"PO-Revision-Date: 2026-01-23 06:09:57+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -135,8 +135,8 @@ msgstr "Nous sommes désolés! vous ne pouvez pas annuler ce rendez-vous car le 
 msgid "Sorry. Something went wrong while processing the request"
 msgstr "Pardon. Une erreur s'est produite lors du traitement de la demande"
 
-#: core/classes/class.bookingpress-core.php:31
-#: core/classes/class.bookingpress-core.php:38
+#: core/classes/class.bookingpress-core.php:32
+#: core/classes/class.bookingpress-core.php:39
 #@ bookingpress-appointment-booking
 msgid "Sorry! You do not have enough permission to perform this action"
 msgstr "Pardon! Vous ne disposez pas des autorisations suffisantes pour effectuer cette action"
@@ -229,7 +229,7 @@ msgstr "Titre de l'ID"
 msgid "Days"
 msgstr "Jours"
 
-#: core/classes/class.bookingpress-core.php:47
+#: core/classes/class.bookingpress-core.php:48
 #: core/classes/class.bookingpress.php:189
 #: core/classes/class.bookingpress.php:511
 #: core/classes/class.bookingpress.php:540
@@ -1213,10 +1213,10 @@ msgstr "Rendez-vous le "
 msgid "Method"
 msgstr "Méthode"
 
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:9027
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:9126
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:10625
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:10710
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:9026
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:9125
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:10624
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:10709
 #: core/views/payment/manage_payment.php:149
 #: core/views/payment/manage_payment.php:347
 #: core/views/payment/manage_payment.php:482
@@ -1476,22 +1476,22 @@ msgstr "Créer un nouveau"
 msgid "No payment method available"
 msgstr "Aucun moyen de paiement disponible"
 
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6856
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6855
 #@ bookingpress-appointment-booking
 msgid "iCal Calendar"
 msgstr "Calendrier iCal"
 
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6855
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6854
 #@ bookingpress-appointment-booking
 msgid "Outlook Calendar"
 msgstr "Calendrier Outlook"
 
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6854
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6853
 #@ bookingpress-appointment-booking
 msgid "Yahoo Calendar"
 msgstr "Calendrier Yahoo"
 
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6853
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6852
 #@ bookingpress-appointment-booking
 msgid "Google Calendar"
 msgstr "Google Agenda"
@@ -3435,7 +3435,7 @@ msgstr "Veuillez saisir l'e-mail du client"
 msgid "Please enter customer name"
 msgstr "Veuillez saisir le nom du client"
 
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6579
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6578
 #@ bookingpress-appointment-booking
 msgid "Please enter customer phone number"
 msgstr "Veuillez saisir le numéro de téléphone du client"
@@ -4170,8 +4170,8 @@ msgstr "Paramètres personnalisés mis à jour avec succès."
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:1010
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:3124
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:4203
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:11017
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:11085
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:11016
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:11084
 #@ bookingpress-appointment-booking
 msgid "Something went wrong.."
 msgstr "Quelque chose a mal tourné.."
@@ -4267,7 +4267,7 @@ msgstr "Veuillez télécharger uniquement le fichier jpg/png"
 #: core/classes/class.bookingpress_settings.php:1464
 #: core/classes/class.bookingpress_settings.php:1510
 #: core/classes/class.bookingpress_settings.php:2306
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:8675
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:8674
 #@ bookingpress-appointment-booking
 msgid "Something went wrong"
 msgstr "Quelque chose s’est mal passé."
@@ -5234,8 +5234,8 @@ msgstr "Désolé, votre demande ne peut pas être traitée pour des raisons de s
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:4352
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:4366
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:4462
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:11016
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:11084
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:11015
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:11083
 #: core/classes/frontend/class.bookingpress_spam_protection.php:58
 #@ bookingpress-appointment-booking
 msgid "Error"
@@ -5535,13 +5535,13 @@ msgid "You are using BookingPress Premium plugin on your website and it is an ex
 msgstr "Vous utilisez le plug-in BookingPress Premium sur votre site Web et il s'agit d'une extension de BookingPress Lite. Par conséquent, si vous désactivez BookingPress Lite, il désactivera automatiquement BookingPress Premium et tous les modules complémentaires."
 
 #: core/classes/class.bookingpress.php:7368
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6315
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6314
 #@ bookingpress-appointment-booking
 msgid "m"
 msgstr "m"
 
 #: core/classes/class.bookingpress.php:7369
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6316
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6315
 #@ bookingpress-appointment-booking
 msgid "h"
 msgstr "h"
@@ -7105,12 +7105,6 @@ msgstr "Notifications par e-mail, WhatsApp, SMS et Telegram"
 msgid "Lite vs Premium"
 msgstr "Version Lite vs Premium"
 
-#. translators: plugin header field 'Version'
-#: bookingpress-appointment-booking.php:0
-#@ bookingpress-appointment-booking
-msgid "1.1.50"
-msgstr "1.1.50"
-
 #: core/classes/class.bookingpress.php:330
 #@ bookingpress-appointment-booking
 msgid "Wizard finished successfully"
@@ -7145,4 +7139,30 @@ msgstr "Le rendez-vous a été supprimé ou n'a pas été trouvé."
 #@ bookingpress-appointment-booking
 msgid "Either service already deletd or service id not found."
 msgstr "Le service a déjà été supprimé ou l'identifiant du service est introuvable."
+
+#. translators: plugin header field 'Version'
+#: bookingpress-appointment-booking.php:0
+#@ bookingpress-appointment-booking
+msgid "1.1.51"
+msgstr "1.1.51"
+
+#: core/classes/class.bookingpress-core.php:409
+#@ bookingpress-appointment-booking
+msgid "This function can only be called via REST API."
+msgstr "Cette fonction ne peut être appelée que via l'API REST."
+
+#: core/classes/class.bookingpress-core.php:420
+#@ bookingpress-appointment-booking
+msgid "Missing or invalid Authorization header."
+msgstr "En-tête d'autorisation manquant ou invalide."
+
+#: core/classes/class.bookingpress-core.php:432
+#@ bookingpress-appointment-booking
+msgid "Unauthorized. Invalid API key."
+msgstr "Accès non autorisé. Clé API invalide."
+
+#: core/classes/class.bookingpress-core.php:443
+#@ bookingpress-appointment-booking
+msgid "Unauthorized. API key has been expired. Please generate the new API key and try again."
+msgstr "Accès non autorisé. La clé API a expiré. Veuillez générer une nouvelle clé API et réessayer."
 

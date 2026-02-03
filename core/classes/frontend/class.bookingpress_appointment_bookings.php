@@ -5861,8 +5861,8 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
 				components: {},
 				directives: { ' . $bookingpress_dynamic_directive_data . ' },
 				data(){
-                    
-                    return bpaInitialState();
+                    const vm = this;
+                    return bpaInitialState( vm );
 				},
 				filters: {
 					bookingpress_format_date: function(value){
@@ -6081,9 +6081,8 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                 }
             });";
 
-            $bpa_script_data .= 'function bpaInitialState(){
+            $bpa_script_data .= 'function bpaInitialState( vm ){
                 var bpa_check_username = ( rule, value, callback ) =>{
-                    const vm = this;
                 
                     if( "undefined" == vm.appointment_step_form_data.check_username_validation || false == vm.appointment_step_form_data.check_username_validation ){
                         if( "undefined" != vm.appointment_step_form_data.invalid_customer_username && true == vm.appointment_step_form_data.invalid_customer_username ){
@@ -6117,8 +6116,8 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                             vm.appointment_step_form_data.invalid_customer_message = response.data.msg;
                             return callback(new Error( response.data.msg ));
                         } else {
-                            if(this.$refs.appointment_step_form_data && "undefined" != typeof vm.appointment_step_form_data.form_fields.customer_password){
-                                this.$refs.appointment_step_form_data.clearValidate("customer_password");
+                            if(vm.$refs.appointment_step_form_data && "undefined" != typeof vm.appointment_step_form_data.form_fields && "undefined" != typeof vm.appointment_step_form_data.form_fields.customer_password){
+                                vm.$refs.appointment_step_form_data.clearValidate("customer_password");
                             }
                             vm.appointment_step_form_data.invalid_customer_username = false;
                             callback();
@@ -7320,16 +7319,16 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
             if( this.hide_category_service == "1" || this.is_service_loaded_from_url == "1" ){
                 
                 let next_tab = this.bookingpress_sidebar_step_data["service"].next_tab_name;
-                let bookingpress_selected_service_id = vm.appointment_step_form_data.selected_service;
-                let bookingpress_selected_service_name = vm.appointment_step_form_data.selected_service_name;
-                let bookingpress_selected_service_price = vm.appointment_step_form_data.selected_service_price;
-                let bookingpress_selected_service_price_without_currency = vm.appointment_step_form_data.service_price_without_currency;
+                let bookingpress_selected_service_id = this.appointment_step_form_data.selected_service;
+                let bookingpress_selected_service_name = this.appointment_step_form_data.selected_service_name;
+                let bookingpress_selected_service_price = this.appointment_step_form_data.selected_service_price;
+                let bookingpress_selected_service_price_without_currency = this.appointment_step_form_data.service_price_without_currency;
                 
                 let useFlag = "false";
-                if( "undefined" != typeof vm.is_bring_anyone_with_you_activated && 1 == vm.is_bring_anyone_with_you_activated && bookingpress_guests_load_from_share_url == "1" && bookingpress_selected_guest_from_url != "" ){
+                if( "undefined" != typeof this.is_bring_anyone_with_you_activated && 1 == this.is_bring_anyone_with_you_activated && bookingpress_guests_load_from_share_url == "1" && bookingpress_selected_guest_from_url != "" ){
                     /** Do Nothing as selectDate function has already been called before */
                 } else {   
-                    vm.selectDate( bookingpress_selected_service_id, bookingpress_selected_service_name, bookingpress_selected_service_price, bookingpress_selected_service_price_without_currency, useFlag );
+                    this.selectDate( bookingpress_selected_service_id, bookingpress_selected_service_name, bookingpress_selected_service_price, bookingpress_selected_service_price_without_currency, useFlag );
                 }
             } else {
                 if( "undefined" != typeof step_data.is_navigate_to_next && true == step_data.is_navigate_to_next ){

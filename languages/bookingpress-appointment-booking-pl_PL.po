@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: BookingPress Appointment Booking v1.1.50\n"
+"Project-Id-Version: BookingPress Appointment Booking v1.1.51\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-01-16 04:27:45+0000\n"
+"PO-Revision-Date: 2026-01-23 06:14:13+0000\n"
 "Last-Translator: admin <testrepute@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -76,13 +76,13 @@ msgstr "Rezerwuj spotkania, twórz rezerwacje i płać online za pomocą Booking
 msgid "Upgrade To Premium"
 msgstr "Uaktualnij do Premium"
 
-#: core/classes/class.bookingpress-core.php:31
-#: core/classes/class.bookingpress-core.php:38
+#: core/classes/class.bookingpress-core.php:32
+#: core/classes/class.bookingpress-core.php:39
 #@ bookingpress-appointment-booking
 msgid "Sorry! You do not have enough permission to perform this action"
 msgstr "Przepraszam! Nie masz wystarczających uprawnień, aby wykonać tę akcję"
 
-#: core/classes/class.bookingpress-core.php:47
+#: core/classes/class.bookingpress-core.php:48
 #: core/classes/class.bookingpress.php:189
 #: core/classes/class.bookingpress.php:511
 #: core/classes/class.bookingpress.php:540
@@ -449,8 +449,8 @@ msgstr "Przepraszamy, Twoja prośba nie może zostać przetworzona ze względów
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:4352
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:4366
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:4462
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:11016
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:11084
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:11015
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:11083
 #: core/classes/frontend/class.bookingpress_spam_protection.php:58
 #@ bookingpress-appointment-booking
 msgid "Error"
@@ -603,7 +603,7 @@ msgstr "Prześlij tylko plik o rozmiarze maksymalnie 1 MB"
 #: core/classes/class.bookingpress_settings.php:1464
 #: core/classes/class.bookingpress_settings.php:1510
 #: core/classes/class.bookingpress_settings.php:2306
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:8675
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:8674
 #@ bookingpress-appointment-booking
 msgid "Something went wrong"
 msgstr "Coś poszło nie tak"
@@ -716,8 +716,8 @@ msgstr "Coś poszło nie tak"
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:1010
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:3124
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:4203
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:11017
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:11085
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:11016
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:11084
 #@ bookingpress-appointment-booking
 msgid "Something went wrong.."
 msgstr "Coś poszło nie tak.."
@@ -1177,13 +1177,13 @@ msgid "Night"
 msgstr "Noc"
 
 #: core/classes/class.bookingpress.php:7368
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6315
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6314
 #@ bookingpress-appointment-booking
 msgid "m"
 msgstr "M"
 
 #: core/classes/class.bookingpress.php:7369
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6316
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6315
 #@ bookingpress-appointment-booking
 msgid "h"
 msgstr "H"
@@ -3494,27 +3494,27 @@ msgstr "Rezerwacja terminu"
 msgid "is required"
 msgstr "jest wymagane"
 
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6579
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6578
 #@ bookingpress-appointment-booking
 msgid "Please enter customer phone number"
 msgstr "Proszę podać numer telefonu klienta"
 
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6853
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6852
 #@ bookingpress-appointment-booking
 msgid "Google Calendar"
 msgstr "kalendarz Google"
 
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6854
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6853
 #@ bookingpress-appointment-booking
 msgid "Yahoo Calendar"
 msgstr "Kalendarz Yahoo"
 
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6855
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6854
 #@ bookingpress-appointment-booking
 msgid "Outlook Calendar"
 msgstr "Kalendarz Outlooka"
 
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6856
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6855
 #@ bookingpress-appointment-booking
 msgid "iCal Calendar"
 msgstr "Kalendarz iCal"
@@ -5000,10 +5000,10 @@ msgstr "Tryb"
 msgid "Transaction ID"
 msgstr "Identyfikator transakcji"
 
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:9027
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:9126
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:10625
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:10710
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:9026
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:9125
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:10624
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:10709
 #: core/views/payment/manage_payment.php:149
 #: core/views/payment/manage_payment.php:347
 #: core/views/payment/manage_payment.php:482
@@ -7105,12 +7105,6 @@ msgstr "Powiadomienia e-mail, WhatsApp, SMS i Telegram"
 msgid "Lite vs Premium"
 msgstr "Lite vs Premium"
 
-#. translators: plugin header field 'Version'
-#: bookingpress-appointment-booking.php:0
-#@ bookingpress-appointment-booking
-msgid "1.1.50"
-msgstr "1.1.50"
-
 #: core/classes/class.bookingpress.php:330
 #@ bookingpress-appointment-booking
 msgid "Wizard finished successfully"
@@ -7145,4 +7139,30 @@ msgstr "Spotkanie zostało usunięte lub nie zostało znalezione."
 #@ bookingpress-appointment-booking
 msgid "Either service already deletd or service id not found."
 msgstr "Usługa została już usunięta lub identyfikator usługi nie został znaleziony."
+
+#. translators: plugin header field 'Version'
+#: bookingpress-appointment-booking.php:0
+#@ bookingpress-appointment-booking
+msgid "1.1.51"
+msgstr "1.1.51"
+
+#: core/classes/class.bookingpress-core.php:409
+#@ bookingpress-appointment-booking
+msgid "This function can only be called via REST API."
+msgstr "Ta funkcja może być wywoływana tylko za pośrednictwem interfejsu REST API."
+
+#: core/classes/class.bookingpress-core.php:420
+#@ bookingpress-appointment-booking
+msgid "Missing or invalid Authorization header."
+msgstr "Brak nagłówka autoryzacji lub nagłówek jest nieprawidłowy."
+
+#: core/classes/class.bookingpress-core.php:432
+#@ bookingpress-appointment-booking
+msgid "Unauthorized. Invalid API key."
+msgstr "Brak autoryzacji. Nieprawidłowy klucz API."
+
+#: core/classes/class.bookingpress-core.php:443
+#@ bookingpress-appointment-booking
+msgid "Unauthorized. API key has been expired. Please generate the new API key and try again."
+msgstr "Brak autoryzacji. Klucz API wygasł. Proszę wygenerować nowy klucz API i spróbować ponownie."
 
