@@ -2251,7 +2251,7 @@ if (! class_exists('bookingpress_customers') ) {
          *
          * @return void
          */
-        function bookingpress_add_customer()
+        function bookingpress_add_customer($is_api = false)
         {
             global $wpdb, $BookingPress, $tbl_bookingpress_customers;
             $response                = array();
@@ -2261,19 +2261,26 @@ if (! class_exists('bookingpress_customers') ) {
             $response['variant']     = 'error';
             $response['title']       = esc_html__('Error', 'bookingpress-appointment-booking');
             $response['msg']         = esc_html__('Something went wrong..', 'bookingpress-appointment-booking');
-            
-            $bpa_check_authorization = $this->bpa_check_authentication( 'add_customer', true, 'bpa_wp_nonce' );
-            
-            if( preg_match( '/error/', $bpa_check_authorization ) ){
-                $bpa_auth_error = explode( '^|^', $bpa_check_authorization );
-                $bpa_error_msg = !empty( $bpa_auth_error[1] ) ? $bpa_auth_error[1] : esc_html__( 'Sorry. Something went wrong while processing the request', 'bookingpress-appointment-booking');
 
-                $response['variant'] = 'error';
-                $response['title'] = esc_html__( 'Error', 'bookingpress-appointment-booking');
-                $response['msg'] = $bpa_error_msg;
+            if($is_api == true){
+                $is_error = $this->bookingpress_validate_token();
+                if( is_wp_error( $is_error ) ){
+                    return $is_error;
+                }
+            } else {
+                $bpa_check_authorization = $this->bpa_check_authentication( 'add_customer', true, 'bpa_wp_nonce' );
+            
+                if( preg_match( '/error/', $bpa_check_authorization ) ){
+                    $bpa_auth_error = explode( '^|^', $bpa_check_authorization );
+                    $bpa_error_msg = !empty( $bpa_auth_error[1] ) ? $bpa_auth_error[1] : esc_html__( 'Sorry. Something went wrong while processing the request', 'bookingpress-appointment-booking');
 
-                wp_send_json( $response );
-                die;
+                    $response['variant'] = 'error';
+                    $response['title'] = esc_html__( 'Error', 'bookingpress-appointment-booking');
+                    $response['msg'] = $bpa_error_msg;
+
+                    wp_send_json( $response );
+                    die;
+                }
             }
 
             if (! empty($_REQUEST) ) {
@@ -2287,19 +2294,36 @@ if (! class_exists('bookingpress_customers') ) {
                 $bookingpress_password = ! empty($_REQUEST['password']) ? $_REQUEST['password'] : $bookingpress_user_pass;
 
                 if (strlen($bookingpress_firstname) > 255 ) {
+                    $response['variant'] = 'error';
+                    $response['title'] = esc_html__( 'Error', 'bookingpress-appointment-booking');
                     $response['msg'] = esc_html__('Firstname is too long...', 'bookingpress-appointment-booking');
+
+                    if($is_api == true){
+                        return $response;;
+                    }
+
                     wp_send_json($response);
                     die();
                 }
 
                 if (strlen($bookingpress_lastname) > 255 ) {
+                    $response['variant'] = 'error';
+                    $response['title'] = esc_html__( 'Error', 'bookingpress-appointment-booking');
                     $response['msg'] = esc_html__('Lastname is too long...', 'bookingpress-appointment-booking');
+                    if($is_api == true){
+                        return $response;;
+                    }
                     wp_send_json($response);
                     die();
                 }
 
                 if (strlen($bookingpress_email) > 255 ) {
+                    $response['variant'] = 'error';
+                    $response['title'] = esc_html__( 'Error', 'bookingpress-appointment-booking');
                     $response['msg'] = esc_html__('Email address is too long...', 'bookingpress-appointment-booking');
+                    if($is_api == true){
+                        return $response;;
+                    }
                     wp_send_json($response);
                     die();
                 }
@@ -2308,7 +2332,12 @@ if (! class_exists('bookingpress_customers') ) {
                 $bookingpress_allow_customer_create = ! empty($bookingpress_allow_customer_create) ? $bookingpress_allow_customer_create : 'false';
 
                 if (! empty($bookingpress_existing_user_id) && $bookingpress_existing_user_id == 'add_new' && email_exists($bookingpress_email) ) {
+                    $response['variant'] = 'error';
+                    $response['title'] = esc_html__( 'Error', 'bookingpress-appointment-booking');
                     $response['msg'] = esc_html__('Email address is already exists', 'bookingpress-appointment-booking');
+                    if($is_api == true){
+                        return $response;;
+                    }
                     wp_send_json($response);
                     die();
                 }
@@ -2321,6 +2350,14 @@ if (! class_exists('bookingpress_customers') ) {
 
                 if (! empty($bookingpress_existing_user_id) && $bookingpress_existing_user_id == 'add_new' && ! empty($bookingpress_password) && !empty($bookingpress_user_name)) {
                     $wp_create_wp_user_id          = wp_create_user($bookingpress_user_name, $bookingpress_password, $bookingpress_email);
+                    if($is_api == true){
+                        if(is_wp_error($wp_create_wp_user_id)){
+                            $response['variant'] = 'error';
+                            $response['title'] = esc_html__( 'Error', 'bookingpress-appointment-booking');
+                            $response['msg'] = $wp_create_wp_user_id->get_error_message();
+                            return $response;
+                        }
+                    }
                     $bookingpress_existing_user_id = $wp_create_wp_user_id;
                 }
                 $bookingpress_phone         = ! empty($_REQUEST['phone']) ? trim(sanitize_text_field($_REQUEST['phone'])) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
@@ -2387,17 +2424,26 @@ if (! class_exists('bookingpress_customers') ) {
                                $booking_user_update_meta_details['roles'] = $bookingpress_user_roles;
                         }
                         do_action('bookingpress_user_update_meta', $bookingpress_existing_user_id, $booking_user_update_meta_details);
+                        
 
                         $bookingpress_update_fields = array(
-                            'bookingpress_user_name'      => $bookingpress_user_name,
-                            'bookingpress_user_firstname' => $bookingpress_firstname,
-                            'bookingpress_user_lastname'  => $bookingpress_lastname,
-                            'bookingpress_user_email'     => $bookingpress_email,
                             'bookingpress_user_phone'     => $bookingpress_phone,
                             'bookingpress_user_country_phone' => $bookingpress_country_phone,
                             'bookingpress_wpuser_id'      => $bookingpress_existing_user_id,
                             'bookingpress_user_country_dial_code' => $bookingpress_country_dial_code,
                         );
+                        if(!empty($bookingpress_user_name)){
+                            $bookingpress_update_fields['bookingpress_user_name'] = $bookingpress_user_name;
+                        }
+                        if(!empty($bookingpress_firstname)){
+                            $bookingpress_update_fields['bookingpress_user_firstname'] = $bookingpress_firstname;
+                        }
+                        if(!empty($bookingpress_lastname)){
+                            $bookingpress_update_fields['bookingpress_user_lastname'] = $bookingpress_lastname;
+                        }
+                        if(!empty($bookingpress_email)){
+                            $bookingpress_update_fields['bookingpress_user_email'] = $bookingpress_email;
+                        }
 
                         $bookingpress_update_where_condition = array(
                         'bookingpress_customer_id' => $bookingpress_update_id,
@@ -2475,9 +2521,13 @@ if (! class_exists('bookingpress_customers') ) {
                     $BookingPress->update_bookingpress_customersmeta($bookingpress_update_id, 'customer_avatar_details', maybe_serialize($user_image_details));
                 }
             }
-
-            wp_send_json($response);
-            die();
+            if($is_api){
+                return $response;
+            }else{
+                wp_send_json($response);
+                die();
+            }
+            
         }
         
         /**
@@ -2575,23 +2625,31 @@ if (! class_exists('bookingpress_customers') ) {
          * @param  mixed $delete_id   Customer ID which you want to delete
          * @return void
          */
-        function bookingpress_delete_customer( $delete_id )
+        function bookingpress_delete_customer( $delete_id, $is_api = false )
         {
             global $wpdb, $tbl_bookingpress_customers,$tbl_bookingpress_appointment_bookings,$tbl_bookingpress_payment_logs;
             $response              = array();
 
-            $bpa_check_authorization = $this->bpa_check_authentication( 'delete_customer', true, 'bpa_wp_nonce' );
+
+            if($is_api == true){
+                $is_error = $this->bookingpress_validate_token();
+                if( is_wp_error( $is_error ) ){
+                    return $is_error;
+                }
+            } else {
+                $bpa_check_authorization = $this->bpa_check_authentication( 'delete_customer', true, 'bpa_wp_nonce' );
             
-            if( preg_match( '/error/', $bpa_check_authorization ) ){
-                $bpa_auth_error = explode( '^|^', $bpa_check_authorization );
-                $bpa_error_msg = !empty( $bpa_auth_error[1] ) ? $bpa_auth_error[1] : esc_html__( 'Sorry. Something went wrong while processing the request', 'bookingpress-appointment-booking');
+                if( preg_match( '/error/', $bpa_check_authorization ) ){
+                    $bpa_auth_error = explode( '^|^', $bpa_check_authorization );
+                    $bpa_error_msg = !empty( $bpa_auth_error[1] ) ? $bpa_auth_error[1] : esc_html__( 'Sorry. Something went wrong while processing the request', 'bookingpress-appointment-booking');
 
-                $response['variant'] = 'error';
-                $response['title'] = esc_html__( 'Error', 'bookingpress-appointment-booking');
-                $response['msg'] = $bpa_error_msg;
+                    $response['variant'] = 'error';
+                    $response['title'] = esc_html__( 'Error', 'bookingpress-appointment-booking');
+                    $response['msg'] = $bpa_error_msg;
 
-                wp_send_json( $response );
-                die;
+                    wp_send_json( $response );
+                    die;
+                }
             }
             
             $response['variant'] = 'error';
@@ -2603,15 +2661,25 @@ if (! class_exists('bookingpress_customers') ) {
                 $delete_customer_id = ! empty($_POST['delete_id']) ? intval($_POST['delete_id']) : intval($delete_id); // phpcs:ignore WordPress.Security.NonceVerification
                 do_action('bookingpress_before_delete_customer', $delete_customer_id);
                 if (! empty($delete_customer_id) ) {
-                    $wpdb->delete( $tbl_bookingpress_customers, array( 'bookingpress_customer_id' => $delete_customer_id ) );
-                    $wpdb->delete($tbl_bookingpress_appointment_bookings, array( 'bookingpress_customer_id' => $delete_customer_id ));
-                    $wpdb->delete($tbl_bookingpress_payment_logs, array( 'bookingpress_customer_id' => $delete_customer_id ));
+                    $is_deleted = $wpdb->delete( $tbl_bookingpress_customers, array( 'bookingpress_customer_id' => $delete_customer_id ) );
 
-                    $response['variant'] = 'success';
-                    $response['title']   = esc_html__('Success', 'bookingpress-appointment-booking');
-                    $response['msg']     = esc_html__('Customer has been deleted successfully.', 'bookingpress-appointment-booking');
-
-                    $return = true;
+                    if ($is_deleted) {
+                        $wpdb->delete($tbl_bookingpress_appointment_bookings, array( 'bookingpress_customer_id' => $delete_customer_id ));
+                        $wpdb->delete($tbl_bookingpress_payment_logs, array( 'bookingpress_customer_id' => $delete_customer_id ));
+    
+                        $response['variant'] = 'success';
+                        $response['title']   = esc_html__('Success', 'bookingpress-appointment-booking');
+                        $response['msg']     = esc_html__('Customer has been deleted successfully.', 'bookingpress-appointment-booking');
+    
+                        $return = true;
+                    }else{
+                        $response['variant'] = 'error';
+                        $response['title']   = esc_html__('Error', 'bookingpress-appointment-booking');
+                        $response['msg']     = esc_html__('Customer has been deleted successfully.', 'bookingpress-appointment-booking');
+    
+                        $return = false;
+                    }
+                    
                 }
             }
             

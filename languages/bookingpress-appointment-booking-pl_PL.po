@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: BookingPress Appointment Booking v1.1.49\n"
+"Project-Id-Version: BookingPress Appointment Booking v1.1.50\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-12-31 13:11:07+0000\n"
+"PO-Revision-Date: 2026-01-16 04:27:45+0000\n"
 "Last-Translator: admin <testrepute@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -27,10 +27,10 @@ msgstr ""
 msgid "Pending"
 msgstr "Aż do"
 
-#: core/classes/class.bookingpress.php:7821
+#: core/classes/class.bookingpress.php:8020
 #: core/classes/class.bookingpress_customize.php:204
 #: core/classes/class.bookingpress_customize.php:1373
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5343
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5345
 #: core/views/appointment/manage_appointment.php:260
 #: core/views/dashboard/manage_dashboard.php:237
 #: core/views/notifications/manage_notifications.php:157
@@ -83,10 +83,11 @@ msgid "Sorry! You do not have enough permission to perform this action"
 msgstr "Przepraszam! Nie masz wystarczających uprawnień, aby wykonać tę akcję"
 
 #: core/classes/class.bookingpress-core.php:47
-#: core/classes/class.bookingpress.php:350
-#: core/classes/class.bookingpress.php:379
-#: core/classes/class.bookingpress.php:3733
-#: core/classes/class.bookingpress.php:5313
+#: core/classes/class.bookingpress.php:189
+#: core/classes/class.bookingpress.php:511
+#: core/classes/class.bookingpress.php:540
+#: core/classes/class.bookingpress.php:3932
+#: core/classes/class.bookingpress.php:5512
 #: core/classes/class.bookingpress_customize.php:39
 #: core/classes/class.bookingpress_customize.php:279
 #: core/classes/class.bookingpress_dashboard.php:1624
@@ -103,27 +104,29 @@ msgstr "Przepraszam! Nie masz wystarczających uprawnień, aby wykonać tę akcj
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:3113
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:3394
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:4197
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:4462
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:4463
 #@ bookingpress-appointment-booking
 msgid "Sorry, Your request can not be processed due to security reason."
 msgstr "Przepraszamy, Twoja prośba nie może zostać przetworzona ze względów bezpieczeństwa."
 
-#: core/classes/class.bookingpress.php:349
-#: core/classes/class.bookingpress.php:378
-#: core/classes/class.bookingpress.php:676
-#: core/classes/class.bookingpress.php:688
-#: core/classes/class.bookingpress.php:698
-#: core/classes/class.bookingpress.php:715
-#: core/classes/class.bookingpress.php:786
-#: core/classes/class.bookingpress.php:827
-#: core/classes/class.bookingpress.php:3732
-#: core/classes/class.bookingpress.php:5312
-#: core/classes/class.bookingpress.php:8663
-#: core/classes/class.bookingpress.php:8677
-#: core/classes/class.bookingpress.php:8732
-#: core/classes/class.bookingpress.php:8742
-#: core/classes/class.bookingpress.php:8775
-#: core/classes/class.bookingpress.php:8785
+#: core/classes/class.bookingpress.php:188
+#: core/classes/class.bookingpress.php:510
+#: core/classes/class.bookingpress.php:539
+#: core/classes/class.bookingpress.php:836
+#: core/classes/class.bookingpress.php:848
+#: core/classes/class.bookingpress.php:858
+#: core/classes/class.bookingpress.php:875
+#: core/classes/class.bookingpress.php:946
+#: core/classes/class.bookingpress.php:998
+#: core/classes/class.bookingpress.php:1020
+#: core/classes/class.bookingpress.php:3931
+#: core/classes/class.bookingpress.php:5511
+#: core/classes/class.bookingpress.php:8862
+#: core/classes/class.bookingpress.php:8876
+#: core/classes/class.bookingpress.php:8931
+#: core/classes/class.bookingpress.php:8941
+#: core/classes/class.bookingpress.php:8974
+#: core/classes/class.bookingpress.php:8984
 #: core/classes/class.bookingpress_addons.php:109
 #: core/classes/class.bookingpress_addons.php:117
 #: core/classes/class.bookingpress_appointment.php:54
@@ -149,10 +152,11 @@ msgstr "Przepraszamy, Twoja prośba nie może zostać przetworzona ze względów
 #: core/classes/class.bookingpress_appointment.php:1545
 #: core/classes/class.bookingpress_appointment.php:1566
 #: core/classes/class.bookingpress_appointment.php:1690
-#: core/classes/class.bookingpress_appointment.php:2027
-#: core/classes/class.bookingpress_appointment.php:2036
-#: core/classes/class.bookingpress_appointment.php:2071
-#: core/classes/class.bookingpress_appointment.php:2079
+#: core/classes/class.bookingpress_appointment.php:2033
+#: core/classes/class.bookingpress_appointment.php:2044
+#: core/classes/class.bookingpress_appointment.php:2058
+#: core/classes/class.bookingpress_appointment.php:2090
+#: core/classes/class.bookingpress_appointment.php:2098
 #: core/classes/class.bookingpress_calendar.php:93
 #: core/classes/class.bookingpress_calendar.php:335
 #: core/classes/class.bookingpress_calendar.php:397
@@ -197,13 +201,19 @@ msgstr "Przepraszamy, Twoja prośba nie może zostać przetworzona ze względów
 #: core/classes/class.bookingpress_customers.php:2198
 #: core/classes/class.bookingpress_customers.php:2206
 #: core/classes/class.bookingpress_customers.php:2262
-#: core/classes/class.bookingpress_customers.php:2272
-#: core/classes/class.bookingpress_customers.php:2499
-#: core/classes/class.bookingpress_customers.php:2507
-#: core/classes/class.bookingpress_customers.php:2590
-#: core/classes/class.bookingpress_customers.php:2598
-#: core/classes/class.bookingpress_customers.php:2645
-#: core/classes/class.bookingpress_customers.php:2653
+#: core/classes/class.bookingpress_customers.php:2278
+#: core/classes/class.bookingpress_customers.php:2298
+#: core/classes/class.bookingpress_customers.php:2311
+#: core/classes/class.bookingpress_customers.php:2322
+#: core/classes/class.bookingpress_customers.php:2336
+#: core/classes/class.bookingpress_customers.php:2356
+#: core/classes/class.bookingpress_customers.php:2549
+#: core/classes/class.bookingpress_customers.php:2557
+#: core/classes/class.bookingpress_customers.php:2647
+#: core/classes/class.bookingpress_customers.php:2656
+#: core/classes/class.bookingpress_customers.php:2677
+#: core/classes/class.bookingpress_customers.php:2713
+#: core/classes/class.bookingpress_customers.php:2721
 #: core/classes/class.bookingpress_customize.php:38
 #: core/classes/class.bookingpress_customize.php:128
 #: core/classes/class.bookingpress_customize.php:278
@@ -322,71 +332,73 @@ msgstr "Przepraszamy, Twoja prośba nie może zostać przetworzona ze względów
 #: core/classes/class.bookingpress_services.php:1035
 #: core/classes/class.bookingpress_services.php:1080
 #: core/classes/class.bookingpress_services.php:1119
-#: core/classes/class.bookingpress_services.php:1224
-#: core/classes/class.bookingpress_services.php:1239
-#: core/classes/class.bookingpress_services.php:1253
+#: core/classes/class.bookingpress_services.php:1230
+#: core/classes/class.bookingpress_services.php:1247
 #: core/classes/class.bookingpress_services.php:1261
-#: core/classes/class.bookingpress_services.php:1276
-#: core/classes/class.bookingpress_services.php:1283
-#: core/classes/class.bookingpress_services.php:1458
-#: core/classes/class.bookingpress_services.php:1466
-#: core/classes/class.bookingpress_services.php:1518
-#: core/classes/class.bookingpress_services.php:1527
-#: core/classes/class.bookingpress_services.php:1586
-#: core/classes/class.bookingpress_services.php:1594
-#: core/classes/class.bookingpress_services.php:1643
-#: core/classes/class.bookingpress_services.php:1653
-#: core/classes/class.bookingpress_services.php:1728
-#: core/classes/class.bookingpress_services.php:1736
-#: core/classes/class.bookingpress_services.php:1812
-#: core/classes/class.bookingpress_settings.php:161
-#: core/classes/class.bookingpress_settings.php:1108
-#: core/classes/class.bookingpress_settings.php:1118
-#: core/classes/class.bookingpress_settings.php:1149
-#: core/classes/class.bookingpress_settings.php:1160
-#: core/classes/class.bookingpress_settings.php:1229
-#: core/classes/class.bookingpress_settings.php:1239
-#: core/classes/class.bookingpress_settings.php:1393
-#: core/classes/class.bookingpress_settings.php:1403
-#: core/classes/class.bookingpress_settings.php:1462
-#: core/classes/class.bookingpress_settings.php:1472
-#: core/classes/class.bookingpress_settings.php:1508
-#: core/classes/class.bookingpress_settings.php:1518
-#: core/classes/class.bookingpress_settings.php:1569
-#: core/classes/class.bookingpress_settings.php:1723
-#: core/classes/class.bookingpress_settings.php:2118
-#: core/classes/class.bookingpress_settings.php:2271
-#: core/classes/class.bookingpress_settings.php:2283
-#: core/classes/class.bookingpress_settings.php:2293
-#: core/classes/class.bookingpress_settings.php:2310
-#: core/classes/class.bookingpress_settings.php:2381
-#: core/classes/class.bookingpress_settings.php:2422
-#: core/classes/class.bookingpress_settings.php:2430
-#: core/classes/class.bookingpress_settings.php:2442
-#: core/classes/class.bookingpress_settings.php:2452
-#: core/classes/class.bookingpress_settings.php:2461
-#: core/classes/class.bookingpress_settings.php:2499
-#: core/classes/class.bookingpress_settings.php:2586
-#: core/classes/class.bookingpress_settings.php:2627
-#: core/classes/class.bookingpress_settings.php:2668
-#: core/classes/class.bookingpress_settings.php:2709
-#: core/classes/class.bookingpress_settings.php:2736
-#: core/classes/class.bookingpress_settings.php:2764
-#: core/classes/class.bookingpress_settings.php:2877
-#: core/classes/class.bookingpress_settings.php:3167
-#: core/classes/class.bookingpress_settings.php:3175
-#: core/classes/class.bookingpress_settings.php:3239
-#: core/classes/class.bookingpress_settings.php:3247
-#: core/classes/class.bookingpress_settings.php:3346
-#: core/classes/class.bookingpress_settings.php:3354
-#: core/classes/class.bookingpress_settings.php:3450
-#: core/classes/class.bookingpress_settings.php:3462
-#: core/classes/class.bookingpress_settings.php:3620
-#: core/classes/class.bookingpress_settings.php:3628
-#: core/classes/class.bookingpress_settings.php:3685
-#: core/classes/class.bookingpress_settings.php:3723
-#: core/classes/class.bookingpress_settings.php:3758
-#: core/classes/class.bookingpress_settings.php:3766
+#: core/classes/class.bookingpress_services.php:1274
+#: core/classes/class.bookingpress_services.php:1293
+#: core/classes/class.bookingpress_services.php:1300
+#: core/classes/class.bookingpress_services.php:1409
+#: core/classes/class.bookingpress_services.php:1505
+#: core/classes/class.bookingpress_services.php:1513
+#: core/classes/class.bookingpress_services.php:1571
+#: core/classes/class.bookingpress_services.php:1581
+#: core/classes/class.bookingpress_services.php:1605
+#: core/classes/class.bookingpress_services.php:1654
+#: core/classes/class.bookingpress_services.php:1662
+#: core/classes/class.bookingpress_services.php:1711
+#: core/classes/class.bookingpress_services.php:1721
+#: core/classes/class.bookingpress_services.php:1796
+#: core/classes/class.bookingpress_services.php:1804
+#: core/classes/class.bookingpress_services.php:1880
+#: core/classes/class.bookingpress_settings.php:162
+#: core/classes/class.bookingpress_settings.php:1109
+#: core/classes/class.bookingpress_settings.php:1119
+#: core/classes/class.bookingpress_settings.php:1150
+#: core/classes/class.bookingpress_settings.php:1161
+#: core/classes/class.bookingpress_settings.php:1230
+#: core/classes/class.bookingpress_settings.php:1240
+#: core/classes/class.bookingpress_settings.php:1394
+#: core/classes/class.bookingpress_settings.php:1404
+#: core/classes/class.bookingpress_settings.php:1463
+#: core/classes/class.bookingpress_settings.php:1473
+#: core/classes/class.bookingpress_settings.php:1509
+#: core/classes/class.bookingpress_settings.php:1519
+#: core/classes/class.bookingpress_settings.php:1570
+#: core/classes/class.bookingpress_settings.php:1724
+#: core/classes/class.bookingpress_settings.php:2119
+#: core/classes/class.bookingpress_settings.php:2272
+#: core/classes/class.bookingpress_settings.php:2284
+#: core/classes/class.bookingpress_settings.php:2294
+#: core/classes/class.bookingpress_settings.php:2311
+#: core/classes/class.bookingpress_settings.php:2382
+#: core/classes/class.bookingpress_settings.php:2423
+#: core/classes/class.bookingpress_settings.php:2431
+#: core/classes/class.bookingpress_settings.php:2443
+#: core/classes/class.bookingpress_settings.php:2453
+#: core/classes/class.bookingpress_settings.php:2462
+#: core/classes/class.bookingpress_settings.php:2500
+#: core/classes/class.bookingpress_settings.php:2587
+#: core/classes/class.bookingpress_settings.php:2628
+#: core/classes/class.bookingpress_settings.php:2669
+#: core/classes/class.bookingpress_settings.php:2710
+#: core/classes/class.bookingpress_settings.php:2737
+#: core/classes/class.bookingpress_settings.php:2765
+#: core/classes/class.bookingpress_settings.php:2878
+#: core/classes/class.bookingpress_settings.php:3168
+#: core/classes/class.bookingpress_settings.php:3176
+#: core/classes/class.bookingpress_settings.php:3240
+#: core/classes/class.bookingpress_settings.php:3248
+#: core/classes/class.bookingpress_settings.php:3347
+#: core/classes/class.bookingpress_settings.php:3355
+#: core/classes/class.bookingpress_settings.php:3451
+#: core/classes/class.bookingpress_settings.php:3463
+#: core/classes/class.bookingpress_settings.php:3621
+#: core/classes/class.bookingpress_settings.php:3629
+#: core/classes/class.bookingpress_settings.php:3686
+#: core/classes/class.bookingpress_settings.php:3724
+#: core/classes/class.bookingpress_settings.php:3759
+#: core/classes/class.bookingpress_settings.php:3767
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:309
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:316
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:328
@@ -436,19 +448,20 @@ msgstr "Przepraszamy, Twoja prośba nie może zostać przetworzona ze względów
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:4338
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:4352
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:4366
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:4461
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:11006
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:11073
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:4462
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:11016
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:11084
 #: core/classes/frontend/class.bookingpress_spam_protection.php:58
 #@ bookingpress-appointment-booking
 msgid "Error"
 msgstr "Błąd"
 
-#: core/classes/class.bookingpress.php:358
-#: core/classes/class.bookingpress.php:639
-#: core/classes/class.bookingpress.php:806
-#: core/classes/class.bookingpress.php:8754
-#: core/classes/class.bookingpress.php:8841
+#: core/classes/class.bookingpress.php:329
+#: core/classes/class.bookingpress.php:519
+#: core/classes/class.bookingpress.php:799
+#: core/classes/class.bookingpress.php:966
+#: core/classes/class.bookingpress.php:8953
+#: core/classes/class.bookingpress.php:9040
 #: core/classes/class.bookingpress_addons.php:173
 #: core/classes/class.bookingpress_appointment.php:62
 #: core/classes/class.bookingpress_appointment.php:69
@@ -457,8 +470,8 @@ msgstr "Błąd"
 #: core/classes/class.bookingpress_appointment.php:261
 #: core/classes/class.bookingpress_appointment.php:1099
 #: core/classes/class.bookingpress_appointment.php:1555
-#: core/classes/class.bookingpress_appointment.php:2044
-#: core/classes/class.bookingpress_appointment.php:2092
+#: core/classes/class.bookingpress_appointment.php:2053
+#: core/classes/class.bookingpress_appointment.php:2111
 #: core/classes/class.bookingpress_calendar.php:598
 #: core/classes/class.bookingpress_calendar.php:790
 #: core/classes/class.bookingpress_calendar.php:873
@@ -468,11 +481,11 @@ msgstr "Błąd"
 #: core/classes/class.bookingpress_customers.php:366
 #: core/classes/class.bookingpress_customers.php:1117
 #: core/classes/class.bookingpress_customers.php:2243
-#: core/classes/class.bookingpress_customers.php:2371
-#: core/classes/class.bookingpress_customers.php:2418
-#: core/classes/class.bookingpress_customers.php:2562
-#: core/classes/class.bookingpress_customers.php:2611
-#: core/classes/class.bookingpress_customers.php:2664
+#: core/classes/class.bookingpress_customers.php:2408
+#: core/classes/class.bookingpress_customers.php:2464
+#: core/classes/class.bookingpress_customers.php:2612
+#: core/classes/class.bookingpress_customers.php:2671
+#: core/classes/class.bookingpress_customers.php:2732
 #: core/classes/class.bookingpress_customize.php:45
 #: core/classes/class.bookingpress_customize.php:249
 #: core/classes/class.bookingpress_customize.php:335
@@ -510,24 +523,24 @@ msgstr "Błąd"
 #: core/classes/class.bookingpress_service_categories.php:548
 #: core/classes/class.bookingpress_service_categories.php:596
 #: core/classes/class.bookingpress_service_categories.php:660
-#: core/classes/class.bookingpress_services.php:1308
-#: core/classes/class.bookingpress_services.php:1323
-#: core/classes/class.bookingpress_services.php:1491
-#: core/classes/class.bookingpress_services.php:1545
-#: core/classes/class.bookingpress_services.php:1608
-#: core/classes/class.bookingpress_services.php:1681
-#: core/classes/class.bookingpress_services.php:1807
-#: core/classes/class.bookingpress_settings.php:173
-#: core/classes/class.bookingpress_settings.php:1132
-#: core/classes/class.bookingpress_settings.php:1211
-#: core/classes/class.bookingpress_settings.php:1340
-#: core/classes/class.bookingpress_settings.php:2908
-#: core/classes/class.bookingpress_settings.php:3210
-#: core/classes/class.bookingpress_settings.php:3317
-#: core/classes/class.bookingpress_settings.php:3419
-#: core/classes/class.bookingpress_settings.php:3594
-#: core/classes/class.bookingpress_settings.php:3658
-#: core/classes/class.bookingpress_settings.php:3786
+#: core/classes/class.bookingpress_services.php:1348
+#: core/classes/class.bookingpress_services.php:1363
+#: core/classes/class.bookingpress_services.php:1538
+#: core/classes/class.bookingpress_services.php:1600
+#: core/classes/class.bookingpress_services.php:1676
+#: core/classes/class.bookingpress_services.php:1749
+#: core/classes/class.bookingpress_services.php:1875
+#: core/classes/class.bookingpress_settings.php:174
+#: core/classes/class.bookingpress_settings.php:1133
+#: core/classes/class.bookingpress_settings.php:1212
+#: core/classes/class.bookingpress_settings.php:1341
+#: core/classes/class.bookingpress_settings.php:2909
+#: core/classes/class.bookingpress_settings.php:3211
+#: core/classes/class.bookingpress_settings.php:3318
+#: core/classes/class.bookingpress_settings.php:3420
+#: core/classes/class.bookingpress_settings.php:3595
+#: core/classes/class.bookingpress_settings.php:3659
+#: core/classes/class.bookingpress_settings.php:3787
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:389
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:650
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:921
@@ -540,63 +553,64 @@ msgstr "Błąd"
 msgid "Success"
 msgstr "Powodzenie"
 
-#: core/classes/class.bookingpress.php:359
+#: core/classes/class.bookingpress.php:520
 #@ bookingpress-appointment-booking
 msgid "Wizard skipped successfully"
 msgstr "Kreator pominął pomyślnie"
 
-#: core/classes/class.bookingpress.php:640
+#: core/classes/class.bookingpress.php:800
 #@ bookingpress-appointment-booking
 msgid "Data saved successfully"
 msgstr "Dane zostały zapisane pomyślnie"
 
-#: core/classes/class.bookingpress.php:677
+#: core/classes/class.bookingpress.php:837
 #: core/classes/class.bookingpress_appointment.php:547
 #: core/classes/class.bookingpress_customers.php:1948
 #: core/classes/class.bookingpress_services.php:960
-#: core/classes/class.bookingpress_settings.php:2272
+#: core/classes/class.bookingpress_settings.php:2273
 #@ bookingpress-appointment-booking
 msgid "Multiple files not allowed"
 msgstr "Wiele plików nie jest dozwolonych"
 
-#: core/classes/class.bookingpress.php:689
+#: core/classes/class.bookingpress.php:849
 #: core/classes/class.bookingpress_appointment.php:573
 #: core/classes/class.bookingpress_customers.php:1974
-#: core/classes/class.bookingpress_settings.php:2284
+#: core/classes/class.bookingpress_settings.php:2285
 #@ bookingpress-appointment-booking
 msgid "Please upload jpg/png file only"
 msgstr "Proszę przesłać wyłącznie plik jpg/png"
 
-#: core/classes/class.bookingpress.php:699
+#: core/classes/class.bookingpress.php:859
 #: core/classes/class.bookingpress_appointment.php:584
 #: core/classes/class.bookingpress_customers.php:1985
 #: core/classes/class.bookingpress_services.php:1013
-#: core/classes/class.bookingpress_settings.php:2294
+#: core/classes/class.bookingpress_settings.php:2295
 #@ bookingpress-appointment-booking
 msgid "Please upload maximum 1 MB file only"
 msgstr "Prześlij tylko plik o rozmiarze maksymalnie 1 MB"
 
-#: core/classes/class.bookingpress.php:710
-#: core/classes/class.bookingpress.php:8664
-#: core/classes/class.bookingpress.php:8733
-#: core/classes/class.bookingpress.php:8776
+#: core/classes/class.bookingpress.php:870
+#: core/classes/class.bookingpress.php:8863
+#: core/classes/class.bookingpress.php:8932
+#: core/classes/class.bookingpress.php:8975
 #: core/classes/class.bookingpress_appointment.php:556
 #: core/classes/class.bookingpress_customers.php:1957
 #: core/classes/class.bookingpress_services.php:969
-#: core/classes/class.bookingpress_settings.php:1109
-#: core/classes/class.bookingpress_settings.php:1150
-#: core/classes/class.bookingpress_settings.php:1230
-#: core/classes/class.bookingpress_settings.php:1394
-#: core/classes/class.bookingpress_settings.php:1463
-#: core/classes/class.bookingpress_settings.php:1509
-#: core/classes/class.bookingpress_settings.php:2305
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:8665
+#: core/classes/class.bookingpress_settings.php:1110
+#: core/classes/class.bookingpress_settings.php:1151
+#: core/classes/class.bookingpress_settings.php:1231
+#: core/classes/class.bookingpress_settings.php:1395
+#: core/classes/class.bookingpress_settings.php:1464
+#: core/classes/class.bookingpress_settings.php:1510
+#: core/classes/class.bookingpress_settings.php:2306
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:8675
 #@ bookingpress-appointment-booking
 msgid "Something went wrong"
 msgstr "Coś poszło nie tak"
 
-#: core/classes/class.bookingpress.php:787
-#: core/classes/class.bookingpress.php:828
+#: core/classes/class.bookingpress.php:947
+#: core/classes/class.bookingpress.php:999
+#: core/classes/class.bookingpress.php:1021
 #: core/classes/class.bookingpress_appointment.php:119
 #: core/classes/class.bookingpress_appointment.php:657
 #: core/classes/class.bookingpress_appointment.php:1050
@@ -607,8 +621,8 @@ msgstr "Coś poszło nie tak"
 #: core/classes/class.bookingpress_appointment.php:1344
 #: core/classes/class.bookingpress_appointment.php:1390
 #: core/classes/class.bookingpress_appointment.php:1567
-#: core/classes/class.bookingpress_appointment.php:2037
-#: core/classes/class.bookingpress_appointment.php:2080
+#: core/classes/class.bookingpress_appointment.php:2045
+#: core/classes/class.bookingpress_appointment.php:2099
 #: core/classes/class.bookingpress_calendar.php:571
 #: core/classes/class.bookingpress_calendar.php:1027
 #: core/classes/class.bookingpress_calendar.php:1069
@@ -621,9 +635,9 @@ msgstr "Coś poszło nie tak"
 #: core/classes/class.bookingpress_customers.php:1875
 #: core/classes/class.bookingpress_customers.php:2207
 #: core/classes/class.bookingpress_customers.php:2263
-#: core/classes/class.bookingpress_customers.php:2508
-#: core/classes/class.bookingpress_customers.php:2599
-#: core/classes/class.bookingpress_customers.php:2654
+#: core/classes/class.bookingpress_customers.php:2558
+#: core/classes/class.bookingpress_customers.php:2657
+#: core/classes/class.bookingpress_customers.php:2722
 #: core/classes/class.bookingpress_customize.php:369
 #: core/classes/class.bookingpress_customize.php:504
 #: core/classes/class.bookingpress_customize.php:664
@@ -680,82 +694,82 @@ msgstr "Coś poszło nie tak"
 #: core/classes/class.bookingpress_services.php:858
 #: core/classes/class.bookingpress_services.php:908
 #: core/classes/class.bookingpress_services.php:1036
-#: core/classes/class.bookingpress_services.php:1277
-#: core/classes/class.bookingpress_services.php:1467
-#: core/classes/class.bookingpress_services.php:1528
-#: core/classes/class.bookingpress_services.php:1595
-#: core/classes/class.bookingpress_services.php:1654
-#: core/classes/class.bookingpress_services.php:1738
-#: core/classes/class.bookingpress_settings.php:1724
-#: core/classes/class.bookingpress_settings.php:2119
-#: core/classes/class.bookingpress_settings.php:2382
-#: core/classes/class.bookingpress_settings.php:2587
-#: core/classes/class.bookingpress_settings.php:2628
-#: core/classes/class.bookingpress_settings.php:2669
-#: core/classes/class.bookingpress_settings.php:2710
-#: core/classes/class.bookingpress_settings.php:2737
-#: core/classes/class.bookingpress_settings.php:2765
-#: core/classes/class.bookingpress_settings.php:2878
-#: core/classes/class.bookingpress_settings.php:3629
-#: core/classes/class.bookingpress_settings.php:3767
+#: core/classes/class.bookingpress_services.php:1294
+#: core/classes/class.bookingpress_services.php:1514
+#: core/classes/class.bookingpress_services.php:1582
+#: core/classes/class.bookingpress_services.php:1663
+#: core/classes/class.bookingpress_services.php:1722
+#: core/classes/class.bookingpress_services.php:1806
+#: core/classes/class.bookingpress_settings.php:1725
+#: core/classes/class.bookingpress_settings.php:2120
+#: core/classes/class.bookingpress_settings.php:2383
+#: core/classes/class.bookingpress_settings.php:2588
+#: core/classes/class.bookingpress_settings.php:2629
+#: core/classes/class.bookingpress_settings.php:2670
+#: core/classes/class.bookingpress_settings.php:2711
+#: core/classes/class.bookingpress_settings.php:2738
+#: core/classes/class.bookingpress_settings.php:2766
+#: core/classes/class.bookingpress_settings.php:2879
+#: core/classes/class.bookingpress_settings.php:3630
+#: core/classes/class.bookingpress_settings.php:3768
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:456
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:1010
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:3124
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:4203
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:11007
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:11074
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:11017
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:11085
 #@ bookingpress-appointment-booking
 msgid "Something went wrong.."
 msgstr "Coś poszło nie tak.."
 
-#: core/classes/class.bookingpress.php:807
+#: core/classes/class.bookingpress.php:967
 #@ bookingpress-appointment-booking
 msgid "Text copied successfully."
 msgstr "Tekst skopiowany pomyślnie."
 
-#: core/classes/class.bookingpress.php:913
-#: core/classes/class.bookingpress.php:914
-#: core/classes/class.bookingpress_settings.php:3481
+#: core/classes/class.bookingpress.php:1106
+#: core/classes/class.bookingpress.php:1107
+#: core/classes/class.bookingpress_settings.php:3482
 #@ bookingpress-appointment-booking
 msgid "Off"
 msgstr "Wyłączony"
 
-#: core/classes/class.bookingpress.php:934
-#: core/classes/class.bookingpress_settings.php:3054
-#: core/classes/class.bookingpress_settings.php:3513
-#: core/classes/class.bookingpress_settings.php:3577
+#: core/classes/class.bookingpress.php:1127
+#: core/classes/class.bookingpress_settings.php:3055
+#: core/classes/class.bookingpress_settings.php:3514
+#: core/classes/class.bookingpress_settings.php:3578
 #@ bookingpress-appointment-booking
 msgid "Next Day"
 msgstr "Następny dzień"
 
-#: core/classes/class.bookingpress.php:954
+#: core/classes/class.bookingpress.php:1147
 #: core/classes/class.bookingpress_customize.php:1559
 #@ bookingpress-appointment-booking
 msgid "Inherit Fonts"
 msgstr "Dziedzicz czcionki"
 
-#: core/classes/class.bookingpress.php:958
+#: core/classes/class.bookingpress.php:1151
 #: core/classes/class.bookingpress_customize.php:1563
 #@ bookingpress-appointment-booking
 msgid "Default Fonts"
 msgstr "Domyślne czcionki"
 
-#: core/classes/class.bookingpress.php:962
+#: core/classes/class.bookingpress.php:1155
 #: core/classes/class.bookingpress_customize.php:1567
 #@ bookingpress-appointment-booking
 msgid "Google Fonts"
 msgstr "Czcionki Google"
 
-#: core/classes/class.bookingpress.php:1020
+#: core/classes/class.bookingpress.php:1213
 #: core/views/services/manage_services.php:30
 #@ bookingpress-appointment-booking
 msgid "Service Name"
 msgstr "Nazwa serwisu"
 
-#: core/classes/class.bookingpress.php:1021
-#: core/classes/class.bookingpress.php:7826
+#: core/classes/class.bookingpress.php:1214
+#: core/classes/class.bookingpress.php:8025
 #: core/classes/class.bookingpress_customize.php:185
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5318
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5320
 #: core/views/payment/manage_payment.php:135
 #: core/views/payment/manage_payment.php:335
 #: core/views/services/manage_services.php:104
@@ -764,10 +778,10 @@ msgstr "Nazwa serwisu"
 msgid "Price"
 msgstr "Cena"
 
-#: core/classes/class.bookingpress.php:1022
-#: core/classes/class.bookingpress.php:7825
+#: core/classes/class.bookingpress.php:1215
+#: core/classes/class.bookingpress.php:8024
 #: core/classes/class.bookingpress_customize.php:184
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5314
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5316
 #: core/views/appointment/manage_appointment.php:262
 #: core/views/dashboard/manage_dashboard.php:244
 #: core/views/frontend/appointment_my_appointments.php:542
@@ -778,63 +792,63 @@ msgstr "Cena"
 msgid "Duration"
 msgstr "Czas trwania"
 
-#: core/classes/class.bookingpress.php:1023
+#: core/classes/class.bookingpress.php:1216
 #: core/views/services/manage_services.php:529
 #@ bookingpress-appointment-booking
 msgid "Description"
 msgstr "Opis"
 
-#: core/classes/class.bookingpress.php:1866
+#: core/classes/class.bookingpress.php:2065
 #@ bookingpress-appointment-booking
 msgid "Set up is too difficult"
 msgstr "Konfiguracja jest zbyt trudna"
 
-#: core/classes/class.bookingpress.php:1867
+#: core/classes/class.bookingpress.php:2066
 #@ bookingpress-appointment-booking
 msgid "Lack of documentation"
 msgstr "Brak dokumentacji"
 
-#: core/classes/class.bookingpress.php:1868
+#: core/classes/class.bookingpress.php:2067
 #@ bookingpress-appointment-booking
 msgid "Not the features I wanted"
 msgstr "Nie te funkcje, których chciałem"
 
-#: core/classes/class.bookingpress.php:1869
+#: core/classes/class.bookingpress.php:2068
 #@ bookingpress-appointment-booking
 msgid "Found a better plugin"
 msgstr "Znalazłem lepszą wtyczkę"
 
-#: core/classes/class.bookingpress.php:1870
+#: core/classes/class.bookingpress.php:2069
 #@ bookingpress-appointment-booking
 msgid "Incompatible with theme or plugin"
 msgstr "Niekompatybilny z motywem lub wtyczką"
 
-#: core/classes/class.bookingpress.php:1871
+#: core/classes/class.bookingpress.php:2070
 #@ bookingpress-appointment-booking
 msgid "I bought premium version of BookingPress"
 msgstr "Kupiłem wersję premium BookingPress"
 
-#: core/classes/class.bookingpress.php:1872
+#: core/classes/class.bookingpress.php:2071
 #@ bookingpress-appointment-booking
 msgid "Other"
 msgstr "Inny"
 
-#: core/classes/class.bookingpress.php:1875
+#: core/classes/class.bookingpress.php:2074
 #@ bookingpress-appointment-booking
 msgid "BookingPress Lite plugin Deactivation"
 msgstr "Dezaktywacja wtyczki BookingPress Lite"
 
-#: core/classes/class.bookingpress.php:1879
+#: core/classes/class.bookingpress.php:2078
 #@ bookingpress-appointment-booking
 msgid "You are using BookingPress Premium plugin on your website and it is an extension to BookingPress Lite, so, If you deactivate BookingPress Lite then it will automatically deactivate BookingPress Premium and all the add-ons"
 msgstr "Używasz wtyczki BookingPress Premium na swojej stronie internetowej i jest ona rozszerzeniem BookingPress Lite, więc jeśli dezaktywujesz BookingPress Lite, automatycznie dezaktywuje ona BookingPress Premium i wszystkie dodatki"
 
-#: core/classes/class.bookingpress.php:1881
+#: core/classes/class.bookingpress.php:2080
 #@ bookingpress-appointment-booking
 msgid "I understand the risk"
 msgstr "Rozumiem ryzyko"
 
-#: core/classes/class.bookingpress.php:1886
+#: core/classes/class.bookingpress.php:2085
 #: core/classes/class.bookingpress_import_export.php:3119
 #: core/classes/class.bookingpress_import_export.php:3190
 #: core/classes/class.bookingpress_import_export.php:3454
@@ -881,117 +895,117 @@ msgstr "Rozumiem ryzyko"
 msgid "Cancel"
 msgstr "Anulować"
 
-#: core/classes/class.bookingpress.php:1888
+#: core/classes/class.bookingpress.php:2087
 #: core/views/customers/manage_customers.php:543
 #@ bookingpress-appointment-booking
 msgid "Proceed"
 msgstr "Przystępować"
 
-#: core/classes/class.bookingpress.php:1892
+#: core/classes/class.bookingpress.php:2091
 #@ bookingpress-appointment-booking
 msgid "BookingPress - Sorry to see you go"
 msgstr "BookingPress — Przykro nam, że odchodzisz"
 
-#: core/classes/class.bookingpress.php:1896
+#: core/classes/class.bookingpress.php:2095
 #@ bookingpress-appointment-booking
 msgid "Before you deactivate the BookingPress Lite plugin, would you quickly give us your reason for doing so?"
 msgstr "Zanim dezaktywujesz wtyczkę BookingPress Lite, czy możesz szybko podać nam powód, dla którego to robisz?"
 
-#: core/classes/class.bookingpress.php:1901
+#: core/classes/class.bookingpress.php:2100
 #@ bookingpress-appointment-booking
 msgid "How could we improve ?"
 msgstr "Jak moglibyśmy się ulepszyć?"
 
-#: core/classes/class.bookingpress.php:1907
+#: core/classes/class.bookingpress.php:2106
 #@ bookingpress-appointment-booking
 msgid "Submitting form"
 msgstr "Przesyłanie formularza"
 
-#: core/classes/class.bookingpress.php:1910
+#: core/classes/class.bookingpress.php:2109
 #@ bookingpress-appointment-booking
 msgid "If you uncheck this option, then your email address will be sent along with your feedback. This can be used by BookingPress to get back to you for more information or a solution."
 msgstr "Jeśli odznaczysz tę opcję, Twój adres e-mail zostanie wysłany wraz z Twoją opinią. Może to zostać wykorzystane przez BookingPress, aby skontaktować się z Tobą w celu uzyskania dalszych informacji lub rozwiązania."
 
-#: core/classes/class.bookingpress.php:1911
+#: core/classes/class.bookingpress.php:2110
 #@ bookingpress-appointment-booking
 msgid "Send anonymous"
 msgstr "Wyślij anonimowo"
 
-#: core/classes/class.bookingpress.php:1913
+#: core/classes/class.bookingpress.php:2112
 #@ bookingpress-appointment-booking
 msgid "Submit and"
 msgstr "Prześlij i"
 
-#: core/classes/class.bookingpress.php:1913
+#: core/classes/class.bookingpress.php:2112
 #@ bookingpress-appointment-booking
 msgid "Deactivate"
 msgstr "Dezaktywować"
 
-#: core/classes/class.bookingpress.php:1925
+#: core/classes/class.bookingpress.php:2124
 #@ bookingpress-appointment-booking
 msgid "What was the dificult part?"
 msgstr "Jaka była najtrudniejsza część?"
 
-#: core/classes/class.bookingpress.php:1926
+#: core/classes/class.bookingpress.php:2125
 #@ bookingpress-appointment-booking
 msgid "What can we describe more?"
 msgstr "Co możemy opisać więcej?"
 
-#: core/classes/class.bookingpress.php:1927
+#: core/classes/class.bookingpress.php:2126
 #@ bookingpress-appointment-booking
 msgid "How could we improve?"
 msgstr "Jak moglibyśmy się ulepszyć?"
 
-#: core/classes/class.bookingpress.php:1928
+#: core/classes/class.bookingpress.php:2127
 #@ bookingpress-appointment-booking
 msgid "Can you mention it?"
 msgstr "Czy możesz o tym wspomnieć?"
 
-#: core/classes/class.bookingpress.php:1929
+#: core/classes/class.bookingpress.php:2128
 #@ bookingpress-appointment-booking
 msgid "With what plugin or theme is incompatible?"
 msgstr "Z jaką wtyczką lub motywem jest niekompatybilny?"
 
-#: core/classes/class.bookingpress.php:1930
+#: core/classes/class.bookingpress.php:2129
 #@ bookingpress-appointment-booking
 msgid "Please specify experience"
 msgstr "Proszę podać doświadczenie"
 
-#: core/classes/class.bookingpress.php:1931
+#: core/classes/class.bookingpress.php:2130
 #@ bookingpress-appointment-booking
 msgid "Please specify"
 msgstr "Proszę sprecyzuj"
 
-#: core/classes/class.bookingpress.php:2071
+#: core/classes/class.bookingpress.php:2270
 #@ bookingpress-appointment-booking
 msgid "BookingPress - WordPress Appointment Booking Plugin requires a minimum WordPress version of 5.0."
 msgstr "BookingPress — wtyczka WordPress do rezerwacji spotkań wymaga WordPress w wersji co najmniej 5.0."
 
-#: core/classes/class.bookingpress.php:2078
+#: core/classes/class.bookingpress.php:2277
 #@ bookingpress-appointment-booking
 msgid "Please save your customization changes once from BookingPress -> Customize -> Forms"
 msgstr "Prosimy o jednokrotne zapisanie zmian w personalizacji w BookingPress -> Dostosuj -> Formularze"
 
-#: core/classes/class.bookingpress.php:2079
+#: core/classes/class.bookingpress.php:2278
 #@ bookingpress-appointment-booking
 msgid "Are you sure you have confirm the changes?"
 msgstr "Czy na pewno potwierdziłeś zmiany?"
 
-#: core/classes/class.bookingpress.php:2083
+#: core/classes/class.bookingpress.php:2282
 #@ bookingpress-appointment-booking
 msgid "It's highly recommended that BookingPress premium plugin should be updated to it's latest version to get latest changes of 'Calendar' page at the backend"
 msgstr "Zdecydowanie zaleca się aktualizację wtyczki premium BookingPress do najnowszej wersji, aby uzyskać najnowsze zmiany na stronie „Kalendarz” na zapleczu"
 
-#: core/classes/class.bookingpress.php:3805
-#: core/classes/class.bookingpress.php:4598
+#: core/classes/class.bookingpress.php:4004
+#: core/classes/class.bookingpress.php:4797
 #: core/views/bookingpress_header.php:47
 #: core/views/calendar/manage_calendar.php:10
 #@ bookingpress-appointment-booking
 msgid "Calendar"
 msgstr "Kalendarz"
 
-#: core/classes/class.bookingpress.php:3806
-#: core/classes/class.bookingpress.php:4600
+#: core/classes/class.bookingpress.php:4005
+#: core/classes/class.bookingpress.php:4799
 #: core/classes/class.bookingpress_dashboard.php:1067
 #: core/classes/class.bookingpress_import_export.php:2757
 #: core/classes/class.bookingpress_import_export.php:3261
@@ -1000,16 +1014,16 @@ msgstr "Kalendarz"
 msgid "Appointments"
 msgstr "Spotkania"
 
-#: core/classes/class.bookingpress.php:3807
-#: core/classes/class.bookingpress.php:4602
+#: core/classes/class.bookingpress.php:4006
+#: core/classes/class.bookingpress.php:4801
 #: core/views/bookingpress_header.php:73
 #: core/views/settings/payment_setting_tab.php:5
 #@ bookingpress-appointment-booking
 msgid "Payments"
 msgstr "Płatności"
 
-#: core/classes/class.bookingpress.php:3808
-#: core/classes/class.bookingpress.php:4604
+#: core/classes/class.bookingpress.php:4007
+#: core/classes/class.bookingpress.php:4803
 #: core/classes/class.bookingpress_dashboard.php:1176
 #: core/classes/class.bookingpress_dashboard.php:1198
 #: core/classes/class.bookingpress_import_export.php:2753
@@ -1020,8 +1034,8 @@ msgstr "Płatności"
 msgid "Customers"
 msgstr "Klienci"
 
-#: core/classes/class.bookingpress.php:3809
-#: core/classes/class.bookingpress.php:4606
+#: core/classes/class.bookingpress.php:4008
+#: core/classes/class.bookingpress.php:4805
 #: core/classes/class.bookingpress_customize.php:136
 #: core/classes/class.bookingpress_customize.php:1348
 #: core/classes/class.bookingpress_import_export.php:2761
@@ -1031,8 +1045,8 @@ msgstr "Klienci"
 msgid "Services"
 msgstr "Usługi"
 
-#: core/classes/class.bookingpress.php:3810
-#: core/classes/class.bookingpress.php:4608
+#: core/classes/class.bookingpress.php:4009
+#: core/classes/class.bookingpress.php:4807
 #: core/classes/class.bookingpress_import_export.php:2764
 #: core/classes/class.bookingpress_import_export.php:3257
 #: core/views/bookingpress_header.php:112
@@ -1041,8 +1055,8 @@ msgstr "Usługi"
 msgid "Notifications"
 msgstr "Powiadomienia"
 
-#: core/classes/class.bookingpress.php:3811
-#: core/classes/class.bookingpress.php:4610
+#: core/classes/class.bookingpress.php:4010
+#: core/classes/class.bookingpress.php:4809
 #: core/classes/class.bookingpress_import_export.php:3220
 #: core/views/bookingpress_header.php:126
 #: core/views/customize/manage_form_customize.php:18
@@ -1050,8 +1064,8 @@ msgstr "Powiadomienia"
 msgid "Customize"
 msgstr "Dostosuj"
 
-#: core/classes/class.bookingpress.php:3812
-#: core/classes/class.bookingpress.php:4612
+#: core/classes/class.bookingpress.php:4011
+#: core/classes/class.bookingpress.php:4811
 #: core/classes/class.bookingpress_import_export.php:2750
 #: core/classes/class.bookingpress_import_export.php:3219
 #: core/views/bookingpress_header.php:161
@@ -1059,19 +1073,19 @@ msgstr "Dostosuj"
 msgid "Settings"
 msgstr "Ustawienia"
 
-#: core/classes/class.bookingpress.php:3814
+#: core/classes/class.bookingpress.php:4013
 #@ bookingpress-appointment-booking
 msgid "Add ons"
 msgstr "Dodatki"
 
-#: core/classes/class.bookingpress.php:3815
-#: core/classes/class.bookingpress.php:4617
+#: core/classes/class.bookingpress.php:4014
+#: core/classes/class.bookingpress.php:4816
 #@ bookingpress-appointment-booking
 msgid "Growth Plugins"
 msgstr "Wtyczki wzrostu"
 
-#: core/classes/class.bookingpress.php:4591
-#: core/classes/class.bookingpress.php:4593
+#: core/classes/class.bookingpress.php:4790
+#: core/classes/class.bookingpress.php:4792
 #: core/vc/bookingpress_class_vc_extend.php:34
 #: core/vc/bookingpress_class_vc_extend.php:73
 #: core/widgets/bookingpress-elementor-widget/bookingpress-elementor-form-widget.php:52
@@ -1080,199 +1094,199 @@ msgstr "Wtyczki wzrostu"
 msgid "BookingPress"
 msgstr "RezerwacjaPrasa"
 
-#: core/classes/class.bookingpress.php:4596
+#: core/classes/class.bookingpress.php:4795
 #: core/views/dashboard/manage_dashboard.php:14
 #@ bookingpress-appointment-booking
 msgid "Dashboard"
 msgstr "Panel"
 
-#: core/classes/class.bookingpress.php:4615
+#: core/classes/class.bookingpress.php:4814
 #: core/views/addons/addons_list.php:12
 #@ bookingpress-appointment-booking
 msgid "Add-ons"
 msgstr "Dodatki"
 
-#: core/classes/class.bookingpress.php:4620
+#: core/classes/class.bookingpress.php:4819
 #: core/views/addons/addons_list.php:32
 #@ bookingpress-appointment-booking
 msgid "Upgrade to Pro"
 msgstr "Przejść na wersje Pro"
 
-#: core/classes/class.bookingpress.php:5188
+#: core/classes/class.bookingpress.php:5387
 #@ bookingpress-appointment-booking
 msgid "Please enter a username."
 msgstr "Proszę, wpisz nazwę użytkownika."
 
-#: core/classes/class.bookingpress.php:5191
-#: core/classes/class.bookingpress.php:5195
+#: core/classes/class.bookingpress.php:5390
+#: core/classes/class.bookingpress.php:5394
 #@ bookingpress-appointment-booking
 msgid "This username is invalid because it uses illegal characters. Please enter a valid username."
 msgstr "Ta nazwa użytkownika jest nieprawidłowa, ponieważ zawiera niedozwolone znaki. Proszę podać poprawną nazwę użytkownika."
 
-#: core/classes/class.bookingpress.php:5197
+#: core/classes/class.bookingpress.php:5396
 #@ bookingpress-appointment-booking
 msgid "This username is already registered, please choose another one."
 msgstr "Ta nazwa użytkownika jest już zarejestrowana. Wybierz inną."
 
-#: core/classes/class.bookingpress.php:5215
+#: core/classes/class.bookingpress.php:5414
 #@ bookingpress-appointment-booking
 msgid "Please type your e-mail address."
 msgstr "Proszę wpisać swój adres e-mail."
 
-#: core/classes/class.bookingpress.php:5218
-#: core/classes/class.bookingpress.php:5222
+#: core/classes/class.bookingpress.php:5417
+#: core/classes/class.bookingpress.php:5421
 #@ bookingpress-appointment-booking
 msgid "Please enter valid email address."
 msgstr "Proszę wprowadzić poprawny adres email."
 
-#: core/classes/class.bookingpress.php:5224
+#: core/classes/class.bookingpress.php:5423
 #@ bookingpress-appointment-booking
 msgid "This email is already registered, please choose another one."
 msgstr "Ten adres e-mail jest już zarejestrowany. Wybierz inny."
 
-#: core/classes/class.bookingpress.php:7066
-#: core/classes/class.bookingpress.php:7789
+#: core/classes/class.bookingpress.php:7265
+#: core/classes/class.bookingpress.php:7988
 #: core/classes/class.bookingpress_customize.php:154
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5363
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5365
 #@ bookingpress-appointment-booking
 msgid "Morning"
 msgstr "Poranek"
 
-#: core/classes/class.bookingpress.php:7070
-#: core/classes/class.bookingpress.php:7790
+#: core/classes/class.bookingpress.php:7269
+#: core/classes/class.bookingpress.php:7989
 #: core/classes/class.bookingpress_customize.php:155
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5367
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5369
 #@ bookingpress-appointment-booking
 msgid "Afternoon"
 msgstr "Popołudnie"
 
-#: core/classes/class.bookingpress.php:7074
-#: core/classes/class.bookingpress.php:7791
+#: core/classes/class.bookingpress.php:7273
+#: core/classes/class.bookingpress.php:7990
 #: core/classes/class.bookingpress_customize.php:156
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5371
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5373
 #@ bookingpress-appointment-booking
 msgid "Evening"
 msgstr "Wieczór"
 
-#: core/classes/class.bookingpress.php:7078
-#: core/classes/class.bookingpress.php:7792
+#: core/classes/class.bookingpress.php:7277
+#: core/classes/class.bookingpress.php:7991
 #: core/classes/class.bookingpress_customize.php:157
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5375
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5377
 #@ bookingpress-appointment-booking
 msgid "Night"
 msgstr "Noc"
 
-#: core/classes/class.bookingpress.php:7169
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6305
+#: core/classes/class.bookingpress.php:7368
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6315
 #@ bookingpress-appointment-booking
 msgid "m"
 msgstr "M"
 
-#: core/classes/class.bookingpress.php:7170
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6306
+#: core/classes/class.bookingpress.php:7369
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6316
 #@ bookingpress-appointment-booking
 msgid "h"
 msgstr "H"
 
-#: core/classes/class.bookingpress.php:7415
-#: core/classes/class.bookingpress.php:10275
+#: core/classes/class.bookingpress.php:7614
+#: core/classes/class.bookingpress.php:10474
 #: core/classes/class.bookingpress_services.php:1158
 #@ bookingpress-appointment-booking
 msgid "Uncategorized"
 msgstr "Bez kategorii"
 
-#: core/classes/class.bookingpress.php:7574
-#: core/classes/class.bookingpress.php:7603
+#: core/classes/class.bookingpress.php:7773
+#: core/classes/class.bookingpress.php:7802
 #: core/views/upgrade_latest_data.php:1004
 #: core/views/upgrade_latest_data.php:1017
 #@ bookingpress-appointment-booking
 msgid "Book your appointment now"
 msgstr "Zarezerwuj wizytę już teraz"
 
-#: core/classes/class.bookingpress.php:7709
+#: core/classes/class.bookingpress.php:7908
 #: core/classes/class.bookingpress_calendar.php:874
-#: core/classes/class.bookingpress_settings.php:582
+#: core/classes/class.bookingpress_settings.php:583
 #@ bookingpress-appointment-booking
 msgid "Appointment has been booked successfully."
 msgstr "Wizyta została pomyślnie zarezerwowana."
 
-#: core/classes/class.bookingpress.php:7710
-#: core/classes/class.bookingpress_settings.php:583
+#: core/classes/class.bookingpress.php:7909
+#: core/classes/class.bookingpress_settings.php:584
 #@ bookingpress-appointment-booking
 msgid "Appointment has been cancelled successfully."
 msgstr "Wizyta została pomyślnie anulowana."
 
-#: core/classes/class.bookingpress.php:7711
-#: core/classes/class.bookingpress_settings.php:584
+#: core/classes/class.bookingpress.php:7910
+#: core/classes/class.bookingpress_settings.php:585
 #@ bookingpress-appointment-booking
 msgid "I am sorry! Another appointment is already booked with this time slot. Please select another time slot which suits you the best."
 msgstr "Przepraszam! Kolejna wizyta w tym przedziale czasowym jest już zarezerwowana. Wybierz inny przedział czasowy, który najbardziej Ci odpowiada."
 
-#: core/classes/class.bookingpress.php:7712
+#: core/classes/class.bookingpress.php:7911
 #@ bookingpress-appointment-booking
 msgid "I am sorry! The selected currency is not supported by selected payment gateway. Please proceed with another available payment method."
 msgstr "Przepraszam! Wybrana waluta nie jest obsługiwana przez wybraną bramkę płatniczą. Proszę skorzystać z innej dostępnej metody płatności."
 
-#: core/classes/class.bookingpress.php:7713
+#: core/classes/class.bookingpress.php:7912
 #@ bookingpress-appointment-booking
 msgid "It seems that you are already registered with us! Please login to continue to book an appointment."
 msgstr "Wygląda na to, że jesteś już u nas zarejestrowany! Aby kontynuować rezerwację wizyty, zaloguj się."
 
-#: core/classes/class.bookingpress.php:7714
-#: core/classes/class.bookingpress_settings.php:587
+#: core/classes/class.bookingpress.php:7913
+#: core/classes/class.bookingpress_settings.php:588
 #@ bookingpress-appointment-booking
 msgid "Please select a payment method to proceed with the booking."
 msgstr "Aby kontynuować rezerwację, wybierz metodę płatności."
 
-#: core/classes/class.bookingpress.php:7715
-#: core/classes/class.bookingpress_settings.php:588
+#: core/classes/class.bookingpress.php:7914
+#: core/classes/class.bookingpress_settings.php:589
 #@ bookingpress-appointment-booking
 msgid "Please select a time slot to proceed with the booking."
 msgstr "Aby kontynuować rezerwację, wybierz przedział czasowy."
 
-#: core/classes/class.bookingpress.php:7716
-#: core/classes/class.bookingpress_settings.php:589
+#: core/classes/class.bookingpress.php:7915
+#: core/classes/class.bookingpress_settings.php:590
 #@ bookingpress-appointment-booking
 msgid "Please select appointment date to proceed with the booking."
 msgstr "Aby kontynuować rezerwację, proszę wybrać termin spotkania."
 
-#: core/classes/class.bookingpress.php:7717
+#: core/classes/class.bookingpress.php:7916
 #@ bookingpress-appointment-booking
 msgid "Please select any service to book an appointment."
 msgstr "Aby zarezerwować wizytę, wybierz dowolną usługę."
 
-#: core/classes/class.bookingpress.php:7718
+#: core/classes/class.bookingpress.php:7917
 #@ bookingpress-appointment-booking
 msgid "There is no payment method available."
 msgstr "Nie ma dostępnej metody płatności."
 
-#: core/classes/class.bookingpress.php:7719
-#: core/classes/class.bookingpress_settings.php:592
+#: core/classes/class.bookingpress.php:7918
+#: core/classes/class.bookingpress_settings.php:593
 #: core/views/upgrade_latest_data.php:1110
 #@ bookingpress-appointment-booking
 msgid "There is no time slots available"
 msgstr "Nie ma dostępnych przedziałów czasowych"
 
-#: core/classes/class.bookingpress.php:7720
+#: core/classes/class.bookingpress.php:7919
 #: core/views/upgrade_latest_data.php:1111
 #@ bookingpress-appointment-booking
 msgid "Cancel appointment confirmation"
 msgstr "Anuluj potwierdzenie spotkania"
 
-#: core/classes/class.bookingpress.php:7721
+#: core/classes/class.bookingpress.php:7920
 #: core/views/upgrade_latest_data.php:1112
 #@ bookingpress-appointment-booking
 msgid "There is no appointment to cancel"
 msgstr "Nie ma terminu, który można odwołać"
 
-#: core/classes/class.bookingpress.php:7781
-#: core/classes/class.bookingpress.php:7820
-#: core/classes/class.bookingpress.php:7863
-#: core/classes/class.bookingpress.php:7873
-#: core/classes/class.bookingpress.php:8196
+#: core/classes/class.bookingpress.php:7980
+#: core/classes/class.bookingpress.php:8019
+#: core/classes/class.bookingpress.php:8062
+#: core/classes/class.bookingpress.php:8072
+#: core/classes/class.bookingpress.php:8395
 #: core/classes/class.bookingpress_customize.php:203
 #: core/classes/class.bookingpress_customize.php:1372
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5338
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5340
 #: core/views/appointment/manage_appointment.php:45
 #: core/views/appointment/manage_appointment.php:261
 #: core/views/appointment/manage_appointment.php:479
@@ -1293,10 +1307,10 @@ msgstr "Nie ma terminu, który można odwołać"
 msgid "Service"
 msgstr "Praca"
 
-#: core/classes/class.bookingpress.php:7782
-#: core/classes/class.bookingpress.php:7822
-#: core/classes/class.bookingpress.php:7874
-#: core/classes/class.bookingpress.php:8200
+#: core/classes/class.bookingpress.php:7981
+#: core/classes/class.bookingpress.php:8021
+#: core/classes/class.bookingpress.php:8073
+#: core/classes/class.bookingpress.php:8399
 #: core/classes/class.bookingpress_customize.php:137
 #: core/classes/class.bookingpress_customize.php:205
 #: core/classes/class.bookingpress_customize.php:1349
@@ -1306,7 +1320,7 @@ msgstr "Praca"
 msgid "Date & Time"
 msgstr "Data i godzina"
 
-#: core/classes/class.bookingpress.php:7783
+#: core/classes/class.bookingpress.php:7982
 #: core/classes/class.bookingpress_customize.php:138
 #: core/classes/class.bookingpress_customize.php:1350
 #: core/views/appointment/manage_appointment.php:150
@@ -1325,14 +1339,14 @@ msgstr "Data i godzina"
 msgid "Basic Details"
 msgstr "Podstawowe szczegóły"
 
-#: core/classes/class.bookingpress.php:7784
+#: core/classes/class.bookingpress.php:7983
 #: core/classes/class.bookingpress_customize.php:139
 #: core/classes/class.bookingpress_customize.php:1351
 #@ bookingpress-appointment-booking
 msgid "Summary"
 msgstr "Streszczenie"
 
-#: core/classes/class.bookingpress.php:7785
+#: core/classes/class.bookingpress.php:7984
 #: core/classes/class.bookingpress_customize.php:143
 #: core/classes/class.bookingpress_customize.php:1354
 #: core/classes/class.bookingpress_services.php:353
@@ -1341,7 +1355,7 @@ msgstr "Streszczenie"
 msgid "Select Category"
 msgstr "Wybierz kategorię"
 
-#: core/classes/class.bookingpress.php:7786
+#: core/classes/class.bookingpress.php:7985
 #: core/classes/class.bookingpress_customize.php:148
 #: core/classes/class.bookingpress_customize.php:1358
 #: core/views/appointment/manage_appointment.php:816
@@ -1356,77 +1370,77 @@ msgstr "Wybierz kategorię"
 msgid "Select Service"
 msgstr "Wybierz opcję Usługa"
 
-#: core/classes/class.bookingpress.php:7788
+#: core/classes/class.bookingpress.php:7987
 #: core/classes/class.bookingpress_customize.php:153
 #: core/classes/class.bookingpress_customize.php:1362
 #@ bookingpress-appointment-booking
 msgid "Time Slot"
 msgstr "Przedział czasu"
 
-#: core/classes/class.bookingpress.php:7795
+#: core/classes/class.bookingpress.php:7994
 #: core/classes/class.bookingpress_customize.php:195
 #: core/classes/class.bookingpress_customize.php:1365
 #@ bookingpress-appointment-booking
 msgid "Your appointment booking summary"
 msgstr "Podsumowanie Twojej rezerwacji spotkania"
 
-#: core/classes/class.bookingpress.php:7796
+#: core/classes/class.bookingpress.php:7995
 #: core/classes/class.bookingpress_customize.php:196
 #: core/classes/class.bookingpress_customize.php:1366
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5358
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5360
 #@ bookingpress-appointment-booking
 msgid "Select Payment Method"
 msgstr "Wybierz Metodę Płatności"
 
-#: core/classes/class.bookingpress.php:7812
+#: core/classes/class.bookingpress.php:8011
 #: core/classes/class.bookingpress_customize.php:186
 #: core/classes/class.bookingpress_customize.php:1411
 #@ bookingpress-appointment-booking
 msgid "Go Back"
 msgstr "Wróć"
 
-#: core/classes/class.bookingpress.php:7813
+#: core/classes/class.bookingpress.php:8012
 #@ bookingpress-appointment-booking
 msgid "Next:"
 msgstr "Następny:"
 
-#: core/classes/class.bookingpress.php:7814
+#: core/classes/class.bookingpress.php:8013
 #: core/classes/class.bookingpress_customize.php:188
 #: core/classes/class.bookingpress_customize.php:1413
 #@ bookingpress-appointment-booking
 msgid "Book Appointment"
 msgstr "Zarezerwuj spotkanie"
 
-#: core/classes/class.bookingpress.php:7817
+#: core/classes/class.bookingpress.php:8016
 #: core/classes/class.bookingpress_customize.php:200
 #: core/classes/class.bookingpress_customize.php:1369
-#: core/classes/class.bookingpress_settings.php:496
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5323
+#: core/classes/class.bookingpress_settings.php:497
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5325
 #: core/views/settings/payment_setting_tab.php:137
 #@ bookingpress-appointment-booking
 msgid "PayPal"
 msgstr "PayPal"
 
-#: core/classes/class.bookingpress.php:7818
+#: core/classes/class.bookingpress.php:8017
 #: core/classes/class.bookingpress_customize.php:201
 #: core/classes/class.bookingpress_customize.php:1370
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5328
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5330
 #@ bookingpress-appointment-booking
 msgid "Pay Locally"
 msgstr "Płać lokalnie"
 
-#: core/classes/class.bookingpress.php:7819
+#: core/classes/class.bookingpress.php:8018
 #: core/classes/class.bookingpress_customize.php:202
 #: core/classes/class.bookingpress_customize.php:1371
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5333
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5335
 #@ bookingpress-appointment-booking
 msgid "Total Amount Payable"
 msgstr "Całkowita kwota do zapłaty"
 
-#: core/classes/class.bookingpress.php:7823
+#: core/classes/class.bookingpress.php:8022
 #: core/classes/class.bookingpress_customize.php:206
 #: core/classes/class.bookingpress_customize.php:1375
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5353
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5355
 #: core/views/payment/manage_payment.php:122
 #: core/views/payment/manage_payment.php:322
 #: core/views/payment/manage_payment.php:463
@@ -1435,22 +1449,22 @@ msgstr "Całkowita kwota do zapłaty"
 msgid "Appointment Details"
 msgstr "Szczegóły spotkania"
 
-#: core/classes/class.bookingpress.php:7824
+#: core/classes/class.bookingpress.php:8023
 #: core/classes/class.bookingpress_customize.php:144
 #: core/classes/class.bookingpress_customize.php:1355
 #@ bookingpress-appointment-booking
 msgid "ALL"
 msgstr "WSZYSTKO"
 
-#: core/classes/class.bookingpress.php:7848
-#: core/classes/class.bookingpress.php:8141
+#: core/classes/class.bookingpress.php:8047
+#: core/classes/class.bookingpress.php:8340
 #: core/classes/class.bookingpress_customize.php:284
 #: core/classes/class.bookingpress_customize.php:1507
 #@ bookingpress-appointment-booking
 msgid "My Bookings"
 msgstr "Moje rezerwacje"
 
-#: core/classes/class.bookingpress.php:7852
+#: core/classes/class.bookingpress.php:8051
 #: core/classes/class.bookingpress_customize.php:286
 #: core/classes/class.bookingpress_customize.php:1509
 #: core/views/appointment/manage_appointment.php:79
@@ -1462,7 +1476,7 @@ msgstr "Moje rezerwacje"
 msgid "Apply"
 msgstr "Stosować"
 
-#: core/classes/class.bookingpress.php:7853
+#: core/classes/class.bookingpress.php:8052
 #: core/classes/class.bookingpress_customize.php:287
 #: core/classes/class.bookingpress_customize.php:1510
 #: core/views/upgrade_latest_data.php:416
@@ -1470,20 +1484,20 @@ msgstr "Stosować"
 msgid "Search appointments"
 msgstr "Wyszukaj terminy"
 
-#: core/classes/class.bookingpress.php:7854
-#: core/classes/class.bookingpress.php:7855
+#: core/classes/class.bookingpress.php:8053
+#: core/classes/class.bookingpress.php:8054
 #: core/classes/class.bookingpress_customize.php:288
 #: core/classes/class.bookingpress_customize.php:289
 #: core/classes/class.bookingpress_customize.php:1511
 #: core/classes/class.bookingpress_customize.php:1512
-#: core/classes/class.bookingpress_settings.php:631
+#: core/classes/class.bookingpress_settings.php:632
 #: core/views/upgrade_latest_data.php:688
 #: core/views/upgrade_latest_data.php:983
 #@ bookingpress-appointment-booking
 msgid "Please select date"
 msgstr "Proszę wybrać datę"
 
-#: core/classes/class.bookingpress.php:7856
+#: core/classes/class.bookingpress.php:8055
 #: core/classes/class.bookingpress_customize.php:290
 #: core/classes/class.bookingpress_customize.php:1513
 #: core/views/upgrade_latest_data.php:689
@@ -1491,7 +1505,7 @@ msgstr "Proszę wybrać datę"
 msgid "My Appointments"
 msgstr "Moje spotkania"
 
-#: core/classes/class.bookingpress.php:7857
+#: core/classes/class.bookingpress.php:8056
 #: core/classes/class.bookingpress_customize.php:291
 #: core/classes/class.bookingpress_customize.php:1514
 #: core/views/upgrade_latest_data.php:690
@@ -1499,33 +1513,33 @@ msgstr "Moje spotkania"
 msgid "Delete Account"
 msgstr "Usuń konto"
 
-#: core/classes/class.bookingpress.php:7858
+#: core/classes/class.bookingpress.php:8057
 #: core/views/customize/manage_form_customize.php:1091
 #: core/views/upgrade_latest_data.php:724
 #@ bookingpress-appointment-booking
 msgid "Cancel Appointment"
 msgstr "Odwołać spotkanie"
 
-#: core/classes/class.bookingpress.php:7859
+#: core/classes/class.bookingpress.php:8058
 #@ bookingpress-appointment-booking
 msgid "Are you sure you want to cancel the appointment?"
 msgstr "Czy na pewno chcesz odwołać spotkanie?"
 
-#: core/classes/class.bookingpress.php:7860
+#: core/classes/class.bookingpress.php:8059
 #: core/views/customize/manage_form_customize.php:103
 #: core/views/upgrade_latest_data.php:725
 #@ bookingpress-appointment-booking
 msgid "No"
 msgstr "NIE"
 
-#: core/classes/class.bookingpress.php:7861
+#: core/classes/class.bookingpress.php:8060
 #: core/views/customize/manage_form_customize.php:102
 #: core/views/upgrade_latest_data.php:726
 #@ bookingpress-appointment-booking
 msgid "Yes"
 msgstr "Tak"
 
-#: core/classes/class.bookingpress.php:7862
+#: core/classes/class.bookingpress.php:8061
 #: core/views/appointment/manage_appointment.php:250
 #: core/views/appointment/manage_appointment.php:465
 #: core/views/dashboard/manage_dashboard.php:227
@@ -1537,7 +1551,7 @@ msgstr "Tak"
 msgid "ID"
 msgstr "ID"
 
-#: core/classes/class.bookingpress.php:7864
+#: core/classes/class.bookingpress.php:8063
 #: core/views/appointment/manage_appointment.php:153
 #: core/views/appointment/manage_appointment.php:255
 #: core/views/appointment/manage_appointment.php:368
@@ -1558,7 +1572,7 @@ msgstr "ID"
 msgid "Date"
 msgstr "Data"
 
-#: core/classes/class.bookingpress.php:7865
+#: core/classes/class.bookingpress.php:8064
 #: core/views/appointment/manage_appointment.php:55
 #: core/views/appointment/manage_appointment.php:234
 #: core/views/appointment/manage_appointment.php:263
@@ -1580,7 +1594,7 @@ msgstr "Data"
 msgid "Status"
 msgstr "Status"
 
-#: core/classes/class.bookingpress.php:7866
+#: core/classes/class.bookingpress.php:8065
 #: core/views/appointment/manage_appointment.php:281
 #: core/views/customize/manage_form_customize.php:1061
 #: core/views/dashboard/manage_dashboard.php:263
@@ -1589,9 +1603,9 @@ msgstr "Status"
 msgid "Payment"
 msgstr "Zapłata"
 
-#: core/classes/class.bookingpress.php:7867
-#: core/classes/class.bookingpress.php:7872
-#: core/classes/class.bookingpress.php:8189
+#: core/classes/class.bookingpress.php:8066
+#: core/classes/class.bookingpress.php:8071
+#: core/classes/class.bookingpress.php:8388
 #: core/views/appointment/manage_appointment.php:120
 #: core/views/appointment/manage_appointment.php:335
 #: core/views/appointment/manage_appointment.php:536
@@ -1604,7 +1618,7 @@ msgstr "Zapłata"
 msgid "Booking ID"
 msgstr "Identyfikator rezerwacji"
 
-#: core/classes/class.bookingpress.php:7868
+#: core/classes/class.bookingpress.php:8067
 #: core/views/appointment/manage_appointment.php:161
 #: core/views/appointment/manage_appointment.php:376
 #: core/views/appointment/manage_appointment.php:577
@@ -1618,7 +1632,7 @@ msgstr "Identyfikator rezerwacji"
 msgid "Time"
 msgstr "Czas"
 
-#: core/classes/class.bookingpress.php:7869
+#: core/classes/class.bookingpress.php:8068
 #: core/views/appointment/manage_appointment.php:227
 #: core/views/appointment/manage_appointment.php:442
 #: core/views/appointment/manage_appointment.php:643
@@ -1633,7 +1647,7 @@ msgstr "Czas"
 msgid "Payment Details"
 msgstr "Szczegóły płatności"
 
-#: core/classes/class.bookingpress.php:7870
+#: core/classes/class.bookingpress.php:8069
 #: core/views/appointment/manage_appointment.php:230
 #: core/views/appointment/manage_appointment.php:445
 #: core/views/appointment/manage_appointment.php:646
@@ -1646,7 +1660,7 @@ msgstr "Szczegóły płatności"
 msgid "Payment Method"
 msgstr "Metoda płatności"
 
-#: core/classes/class.bookingpress.php:7871
+#: core/classes/class.bookingpress.php:8070
 #: core/views/appointment/manage_appointment.php:238
 #: core/views/appointment/manage_appointment.php:453
 #: core/views/appointment/manage_appointment.php:654
@@ -1658,103 +1672,103 @@ msgstr "Metoda płatności"
 msgid "Total Amount"
 msgstr "Całkowita kwota"
 
-#: core/classes/class.bookingpress.php:7875
+#: core/classes/class.bookingpress.php:8074
 #: core/views/upgrade_latest_data.php:1132
 #@ bookingpress-appointment-booking
 msgid "Confirm Cancellation"
 msgstr "Potwierdź anulowanie"
 
-#: core/classes/class.bookingpress.php:7956
+#: core/classes/class.bookingpress.php:8155
 #: core/classes/class.bookingpress_customize.php:1426
 #@ bookingpress-appointment-booking
 msgid "Fullname"
 msgstr "Imię i nazwisko"
 
-#: core/classes/class.bookingpress.php:7957
+#: core/classes/class.bookingpress.php:8156
 #: core/classes/class.bookingpress_customize.php:1427
 #@ bookingpress-appointment-booking
 msgid "Enter your full name"
 msgstr "Wprowadź swoje imię i nazwisko"
 
-#: core/classes/class.bookingpress.php:7958
+#: core/classes/class.bookingpress.php:8157
 #: core/classes/class.bookingpress_customize.php:1428
 #@ bookingpress-appointment-booking
 msgid "Please enter your full name"
 msgstr "Wpisz imię i nazwisko"
 
-#: core/classes/class.bookingpress.php:7967
+#: core/classes/class.bookingpress.php:8166
 #: core/classes/class.bookingpress_customize.php:1438
 #@ bookingpress-appointment-booking
 msgid "Firstname"
 msgstr "Imię"
 
-#: core/classes/class.bookingpress.php:7968
+#: core/classes/class.bookingpress.php:8167
 #: core/classes/class.bookingpress_customize.php:1439
 #@ bookingpress-appointment-booking
 msgid "Enter your firstname"
 msgstr "Wpisz swoje imię"
 
-#: core/classes/class.bookingpress.php:7969
+#: core/classes/class.bookingpress.php:8168
 #: core/classes/class.bookingpress_customize.php:1440
 #@ bookingpress-appointment-booking
 msgid "Please enter your firstname"
 msgstr "Proszę podaj swoje imię"
 
-#: core/classes/class.bookingpress.php:7978
+#: core/classes/class.bookingpress.php:8177
 #: core/classes/class.bookingpress_customize.php:1450
 #@ bookingpress-appointment-booking
 msgid "Lastname"
 msgstr "Nazwisko"
 
-#: core/classes/class.bookingpress.php:7979
+#: core/classes/class.bookingpress.php:8178
 #: core/classes/class.bookingpress_customize.php:1451
 #@ bookingpress-appointment-booking
 msgid "Enter your lastname"
 msgstr "Wpisz swoje nazwisko"
 
-#: core/classes/class.bookingpress.php:7980
+#: core/classes/class.bookingpress.php:8179
 #: core/classes/class.bookingpress_customize.php:1452
 #@ bookingpress-appointment-booking
 msgid "Please enter your lastname"
 msgstr "Proszę podać swoje nazwisko"
 
-#: core/classes/class.bookingpress.php:7989
+#: core/classes/class.bookingpress.php:8188
 #: core/classes/class.bookingpress_customize.php:1462
 #@ bookingpress-appointment-booking
 msgid "Email Address"
 msgstr "Adres e-mail"
 
-#: core/classes/class.bookingpress.php:7990
+#: core/classes/class.bookingpress.php:8189
 #: core/classes/class.bookingpress_customize.php:1463
 #@ bookingpress-appointment-booking
 msgid "Enter your email address"
 msgstr "Wpisz swój adres e-mail"
 
-#: core/classes/class.bookingpress.php:7991
+#: core/classes/class.bookingpress.php:8190
 #: core/classes/class.bookingpress_customize.php:1464
 #@ bookingpress-appointment-booking
 msgid "Please enter your email address"
 msgstr "Podaj swój adres e-mail"
 
-#: core/classes/class.bookingpress.php:8000
+#: core/classes/class.bookingpress.php:8199
 #: core/classes/class.bookingpress_customize.php:1474
 #@ bookingpress-appointment-booking
 msgid "Phone Number"
 msgstr "Numer telefonu"
 
-#: core/classes/class.bookingpress.php:8001
+#: core/classes/class.bookingpress.php:8200
 #: core/classes/class.bookingpress_customize.php:1475
 #@ bookingpress-appointment-booking
 msgid "Enter your phone number"
 msgstr "Wprowadź swój numer telefonu"
 
-#: core/classes/class.bookingpress.php:8002
+#: core/classes/class.bookingpress.php:8201
 #: core/classes/class.bookingpress_customize.php:1476
 #@ bookingpress-appointment-booking
 msgid "Please enter your phone number"
 msgstr "Proszę podać swój numer telefonu"
 
-#: core/classes/class.bookingpress.php:8011
+#: core/classes/class.bookingpress.php:8210
 #: core/classes/class.bookingpress_customers.php:1284
 #: core/classes/class.bookingpress_customers.php:1323
 #: core/classes/class.bookingpress_customize.php:1487
@@ -1769,38 +1783,38 @@ msgstr "Proszę podać swój numer telefonu"
 msgid "Note"
 msgstr "Notatka"
 
-#: core/classes/class.bookingpress.php:8012
+#: core/classes/class.bookingpress.php:8211
 #: core/classes/class.bookingpress_customize.php:1488
 #@ bookingpress-appointment-booking
 msgid "Enter note details"
 msgstr "Wprowadź szczegóły notatki"
 
-#: core/classes/class.bookingpress.php:8013
+#: core/classes/class.bookingpress.php:8212
 #: core/classes/class.bookingpress_customize.php:1489
 #@ bookingpress-appointment-booking
 msgid "Please enter appointment note"
 msgstr "Proszę wpisać notatkę o spotkaniu"
 
-#: core/classes/class.bookingpress.php:8023
+#: core/classes/class.bookingpress.php:8222
 #: core/views/upgrade_latest_data.php:1243
 #@ bookingpress-appointment-booking
 msgid "I agree with <a target=\"_blank\" href=\"#\">terms & conditions</a>"
 msgstr "Zgadzam się z <a target=\"_blank\" href=\"#\">Warunkami korzystania z usługi</a>"
 
-#: core/classes/class.bookingpress.php:8024
+#: core/classes/class.bookingpress.php:8223
 #: core/views/upgrade_latest_data.php:1245
 #@ bookingpress-appointment-booking
 msgid "Please tick this box if you want to proceed"
 msgstr "Zaznacz to pole, jeśli chcesz kontynuować"
 
-#: core/classes/class.bookingpress.php:8033
+#: core/classes/class.bookingpress.php:8232
 #: core/classes/class.bookingpress_customize.php:1499
 #: core/views/upgrade_latest_data.php:1255
 #@ bookingpress-appointment-booking
 msgid "Enter your username"
 msgstr "Wpisz twoją nazwę użytkownika"
 
-#: core/classes/class.bookingpress.php:8034
+#: core/classes/class.bookingpress.php:8233
 #: core/classes/class.bookingpress_customize.php:1500
 #: core/views/appointment/manage_appointment.php:1111
 #: core/views/calendar/manage_calendar.php:392
@@ -1813,96 +1827,96 @@ msgstr "Wpisz twoją nazwę użytkownika"
 msgid "Username"
 msgstr "Nazwa użytkownika"
 
-#: core/classes/class.bookingpress.php:8035
+#: core/classes/class.bookingpress.php:8234
 #: core/classes/class.bookingpress_customize.php:1501
 #: core/views/upgrade_latest_data.php:1256
 #@ bookingpress-appointment-booking
 msgid "Please enter your username"
 msgstr "Proszę, wpisz swoją nazwę użytkownika"
 
-#: core/classes/class.bookingpress.php:8110
+#: core/classes/class.bookingpress.php:8309
 #@ bookingpress-appointment-booking
 msgid "Book an Appointment"
 msgstr "Zarezerwuj wizytę"
 
-#: core/classes/class.bookingpress.php:8191
+#: core/classes/class.bookingpress.php:8390
 #@ bookingpress-appointment-booking
 msgid "Your Appointment Booked successfully!"
 msgstr "Twoja wizyta została pomyślnie zarezerwowana!"
 
-#: core/classes/class.bookingpress.php:8192
+#: core/classes/class.bookingpress.php:8391
 #@ bookingpress-appointment-booking
 msgid "We have sent your booking information to your email address."
 msgstr "Wysłaliśmy informacje o Twojej rezerwacji na Twój adres e-mail."
 
-#: core/classes/class.bookingpress.php:8196
+#: core/classes/class.bookingpress.php:8395
 #@ bookingpress-appointment-booking
 msgid "Service:"
 msgstr "Praca:"
 
-#: core/classes/class.bookingpress.php:8200
+#: core/classes/class.bookingpress.php:8399
 #@ bookingpress-appointment-booking
 msgid "Date & Time:"
 msgstr "Data i godzina:"
 
-#: core/classes/class.bookingpress.php:8204
+#: core/classes/class.bookingpress.php:8403
 #@ bookingpress-appointment-booking
 msgid "Customer Name:"
 msgstr "Nazwa klienta:"
 
-#: core/classes/class.bookingpress.php:8209
+#: core/classes/class.bookingpress.php:8408
 #@ bookingpress-appointment-booking
 msgid "Add to Calendar"
 msgstr "Dodaj do kalendarza"
 
-#: core/classes/class.bookingpress.php:8215
+#: core/classes/class.bookingpress.php:8414
 #@ bookingpress-appointment-booking
 msgid "Thank you"
 msgstr "Dziękuję"
 
-#: core/classes/class.bookingpress.php:8254
+#: core/classes/class.bookingpress.php:8453
 #@ bookingpress-appointment-booking
 msgid "Sorry to hear that you have requested for cancel the appointment."
 msgstr "Przykro nam, że poprosiłeś o odwołanie spotkania."
 
-#: core/classes/class.bookingpress.php:8255
+#: core/classes/class.bookingpress.php:8454
 #@ bookingpress-appointment-booking
 msgid "We have sent an email notification for cancel appointment. So please click on the button to cancel the appointment."
 msgstr "Wysłaliśmy e-mail z powiadomieniem o anulowaniu wizyty. Dlatego prosimy o kliknięcie przycisku anulowania spotkania."
 
-#: core/classes/class.bookingpress.php:8259
+#: core/classes/class.bookingpress.php:8458
 #@ bookingpress-appointment-booking
 msgid "Appointment canceled"
 msgstr "Wizyta odwołana"
 
-#: core/classes/class.bookingpress.php:8299
+#: core/classes/class.bookingpress.php:8498
 #@ bookingpress-appointment-booking
 msgid "Sorry! Something went wrong. Your payment has been failed."
 msgstr "Przepraszam! Coś poszło nie tak. Twoja płatność nie powiodła się."
 
-#: core/classes/class.bookingpress.php:8303
+#: core/classes/class.bookingpress.php:8502
 #@ bookingpress-appointment-booking
 msgid "Cancel Payment"
 msgstr "Anuluj płatność"
 
-#: core/classes/class.bookingpress.php:8343
+#: core/classes/class.bookingpress.php:8542
 #: core/views/customize/manage_form_customize.php:980
 #: core/views/upgrade_latest_data.php:1117
 #@ bookingpress-appointment-booking
 msgid "Appointment cancellation confirmation"
 msgstr "Potwierdzenie odwołania wizyty"
 
-#: core/classes/class.bookingpress.php:8674
-#: core/classes/class.bookingpress.php:8739
-#: core/classes/class.bookingpress.php:8782
+#: core/classes/class.bookingpress.php:8873
+#: core/classes/class.bookingpress.php:8938
+#: core/classes/class.bookingpress.php:8981
 #: core/classes/class.bookingpress_addons.php:106
 #: core/classes/class.bookingpress_appointment.php:51
 #: core/classes/class.bookingpress_appointment.php:109
 #: core/classes/class.bookingpress_appointment.php:192
 #: core/classes/class.bookingpress_appointment.php:250
 #: core/classes/class.bookingpress_appointment.php:1687
-#: core/classes/class.bookingpress_appointment.php:2024
-#: core/classes/class.bookingpress_appointment.php:2068
+#: core/classes/class.bookingpress_appointment.php:2030
+#: core/classes/class.bookingpress_appointment.php:2087
 #: core/classes/class.bookingpress_calendar.php:90
 #: core/classes/class.bookingpress_calendar.php:332
 #: core/classes/class.bookingpress_calendar.php:394
@@ -1918,10 +1932,10 @@ msgstr "Potwierdzenie odwołania wizyty"
 #: core/classes/class.bookingpress_customers.php:1150
 #: core/classes/class.bookingpress_customers.php:2085
 #: core/classes/class.bookingpress_customers.php:2195
-#: core/classes/class.bookingpress_customers.php:2269
-#: core/classes/class.bookingpress_customers.php:2496
-#: core/classes/class.bookingpress_customers.php:2587
-#: core/classes/class.bookingpress_customers.php:2642
+#: core/classes/class.bookingpress_customers.php:2275
+#: core/classes/class.bookingpress_customers.php:2546
+#: core/classes/class.bookingpress_customers.php:2644
+#: core/classes/class.bookingpress_customers.php:2710
 #: core/classes/class.bookingpress_customize.php:125
 #: core/classes/class.bookingpress_customize.php:357
 #: core/classes/class.bookingpress_customize.php:492
@@ -1961,46 +1975,46 @@ msgstr "Potwierdzenie odwołania wizyty"
 #: core/classes/class.bookingpress_services.php:227
 #: core/classes/class.bookingpress_services.php:1077
 #: core/classes/class.bookingpress_services.php:1116
-#: core/classes/class.bookingpress_services.php:1221
-#: core/classes/class.bookingpress_services.php:1455
-#: core/classes/class.bookingpress_services.php:1515
-#: core/classes/class.bookingpress_services.php:1583
-#: core/classes/class.bookingpress_services.php:1640
-#: core/classes/class.bookingpress_services.php:1725
-#: core/classes/class.bookingpress_settings.php:158
-#: core/classes/class.bookingpress_settings.php:1115
-#: core/classes/class.bookingpress_settings.php:1157
-#: core/classes/class.bookingpress_settings.php:1236
-#: core/classes/class.bookingpress_settings.php:1400
-#: core/classes/class.bookingpress_settings.php:1469
-#: core/classes/class.bookingpress_settings.php:1515
-#: core/classes/class.bookingpress_settings.php:1566
-#: core/classes/class.bookingpress_settings.php:3164
-#: core/classes/class.bookingpress_settings.php:3236
-#: core/classes/class.bookingpress_settings.php:3343
-#: core/classes/class.bookingpress_settings.php:3447
-#: core/classes/class.bookingpress_settings.php:3617
-#: core/classes/class.bookingpress_settings.php:3682
-#: core/classes/class.bookingpress_settings.php:3720
-#: core/classes/class.bookingpress_settings.php:3755
+#: core/classes/class.bookingpress_services.php:1227
+#: core/classes/class.bookingpress_services.php:1502
+#: core/classes/class.bookingpress_services.php:1568
+#: core/classes/class.bookingpress_services.php:1651
+#: core/classes/class.bookingpress_services.php:1708
+#: core/classes/class.bookingpress_services.php:1793
+#: core/classes/class.bookingpress_settings.php:159
+#: core/classes/class.bookingpress_settings.php:1116
+#: core/classes/class.bookingpress_settings.php:1158
+#: core/classes/class.bookingpress_settings.php:1237
+#: core/classes/class.bookingpress_settings.php:1401
+#: core/classes/class.bookingpress_settings.php:1470
+#: core/classes/class.bookingpress_settings.php:1516
+#: core/classes/class.bookingpress_settings.php:1567
+#: core/classes/class.bookingpress_settings.php:3165
+#: core/classes/class.bookingpress_settings.php:3237
+#: core/classes/class.bookingpress_settings.php:3344
+#: core/classes/class.bookingpress_settings.php:3448
+#: core/classes/class.bookingpress_settings.php:3618
+#: core/classes/class.bookingpress_settings.php:3683
+#: core/classes/class.bookingpress_settings.php:3721
+#: core/classes/class.bookingpress_settings.php:3756
 #@ bookingpress-appointment-booking
 msgid "Sorry. Something went wrong while processing the request"
 msgstr "Przepraszam. Coś poszło nie tak podczas przetwarzania żądania"
 
-#: core/classes/class.bookingpress.php:8755
+#: core/classes/class.bookingpress.php:8954
 #@ bookingpress-appointment-booking
 msgid "Debug Logs Cleared Successfully."
 msgstr "Dzienniki debugowania zostały pomyślnie usunięte."
 
-#: core/classes/class.bookingpress.php:8842
+#: core/classes/class.bookingpress.php:9041
 #@ bookingpress-appointment-booking
 msgid "log download successfully"
 msgstr "pobranie dziennika przebiegło pomyślnie"
 
-#: core/classes/class.bookingpress.php:7386
-#: core/classes/class.bookingpress.php:7437
-#: core/classes/class.bookingpress.php:10246
-#: core/classes/class.bookingpress_appointment.php:2119
+#: core/classes/class.bookingpress.php:7585
+#: core/classes/class.bookingpress.php:7636
+#: core/classes/class.bookingpress.php:10445
+#: core/classes/class.bookingpress_appointment.php:2138
 #: core/classes/class.bookingpress_services.php:1168
 #: core/views/services/manage_services.php:501
 #: core/views/wizard/manage_wizard.php:308
@@ -2008,22 +2022,22 @@ msgstr "pobranie dziennika przebiegło pomyślnie"
 msgid "Mins"
 msgstr "Min"
 
-#: core/classes/class.bookingpress.php:7398
-#: core/classes/class.bookingpress.php:7449
-#: core/classes/class.bookingpress.php:10248
+#: core/classes/class.bookingpress.php:7597
+#: core/classes/class.bookingpress.php:7648
+#: core/classes/class.bookingpress.php:10447
 #: core/classes/class.bookingpress_appointment.php:1942
-#: core/classes/class.bookingpress_appointment.php:2136
+#: core/classes/class.bookingpress_appointment.php:2155
 #: core/classes/class.bookingpress_dashboard.php:515
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:3524
 #@ bookingpress-appointment-booking
 msgid "Days"
 msgstr "Dni"
 
-#: core/classes/class.bookingpress.php:7392
-#: core/classes/class.bookingpress.php:7443
-#: core/classes/class.bookingpress.php:10250
-#: core/classes/class.bookingpress_appointment.php:2128
-#: core/classes/class.bookingpress_appointment.php:2133
+#: core/classes/class.bookingpress.php:7591
+#: core/classes/class.bookingpress.php:7642
+#: core/classes/class.bookingpress.php:10449
+#: core/classes/class.bookingpress_appointment.php:2147
+#: core/classes/class.bookingpress_appointment.php:2152
 #: core/classes/class.bookingpress_services.php:1175
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:3522
 #: core/views/services/manage_services.php:502
@@ -2153,9 +2167,9 @@ msgstr "Proszę wybrać stronę"
 #: core/classes/class.bookingpress_appointment.php:749
 #: core/classes/class.bookingpress_appointment.php:912
 #: core/classes/class.bookingpress_customers.php:661
-#: core/classes/class.bookingpress_settings.php:752
-#: core/classes/class.bookingpress_settings.php:768
-#: core/classes/class.bookingpress_settings.php:784
+#: core/classes/class.bookingpress_settings.php:753
+#: core/classes/class.bookingpress_settings.php:769
+#: core/classes/class.bookingpress_settings.php:785
 #@ bookingpress-appointment-booking
 msgid "Please enter email address"
 msgstr "Proszę podać adres e-mail"
@@ -2207,8 +2221,8 @@ msgstr "Wizyta na ten termin została już zarezerwowana"
 msgid "Appointment status changed successfully"
 msgstr "Status spotkania został pomyślnie zmieniony"
 
-#: core/classes/class.bookingpress.php:7395
-#: core/classes/class.bookingpress.php:7446
+#: core/classes/class.bookingpress.php:7594
+#: core/classes/class.bookingpress.php:7645
 #: core/classes/class.bookingpress_appointment.php:1940
 #: core/classes/class.bookingpress_dashboard.php:513
 #: core/views/calendar/manage_calendar.php:43
@@ -2226,23 +2240,23 @@ msgstr "Dzień"
 msgid "To"
 msgstr "Do"
 
-#: core/classes/class.bookingpress_appointment.php:2045
-#: core/classes/class.bookingpress_appointment.php:2093
+#: core/classes/class.bookingpress_appointment.php:2054
+#: core/classes/class.bookingpress_appointment.php:2112
 #@ bookingpress-appointment-booking
 msgid "Appointment has been deleted successfully."
 msgstr "Spotkanie zostało pomyślnie usunięte."
 
-#: core/classes/class.bookingpress.php:7383
-#: core/classes/class.bookingpress.php:7434
-#: core/classes/class.bookingpress_appointment.php:2117
+#: core/classes/class.bookingpress.php:7582
+#: core/classes/class.bookingpress.php:7633
+#: core/classes/class.bookingpress_appointment.php:2136
 #: core/classes/class.bookingpress_services.php:1165
 #@ bookingpress-appointment-booking
 msgid "Min"
 msgstr "Min"
 
-#: core/classes/class.bookingpress.php:7389
-#: core/classes/class.bookingpress.php:7440
-#: core/classes/class.bookingpress_appointment.php:2126
+#: core/classes/class.bookingpress.php:7588
+#: core/classes/class.bookingpress.php:7639
+#: core/classes/class.bookingpress_appointment.php:2145
 #: core/classes/class.bookingpress_services.php:1172
 #@ bookingpress-appointment-booking
 msgid "Hour"
@@ -2284,7 +2298,7 @@ msgstr "Proszę wpisać nazwisko"
 
 #: core/classes/class.bookingpress_appointment.php:754
 #: core/classes/class.bookingpress_customers.php:666
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5561
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5563
 #@ bookingpress-appointment-booking
 msgid "Please enter valid email address"
 msgstr "Proszę wprowadzić poprawny adres email"
@@ -2297,13 +2311,13 @@ msgstr "Dane użytkownika zostały pobrane pomyślnie."
 #: core/classes/class.bookingpress_customers.php:99
 #: core/classes/class.bookingpress_customers.php:1183
 #: core/classes/class.bookingpress_services.php:269
-#: core/classes/class.bookingpress_settings.php:1606
+#: core/classes/class.bookingpress_settings.php:1607
 #@ bookingpress-appointment-booking
 msgid "Something went wrong while updating the file"
 msgstr "Coś poszło nie tak podczas aktualizacji pliku"
 
 #: core/classes/class.bookingpress_customers.php:2238
-#: core/classes/class.bookingpress_customers.php:2546
+#: core/classes/class.bookingpress_customers.php:2596
 #@ bookingpress-appointment-booking
 msgid "Select Existing User"
 msgstr "Wybierz Istniejący użytkownik"
@@ -2313,46 +2327,47 @@ msgstr "Wybierz Istniejący użytkownik"
 msgid "Customer Data."
 msgstr "Dane klienta."
 
-#: core/classes/class.bookingpress_customers.php:2290
+#: core/classes/class.bookingpress_customers.php:2299
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:2911
 #@ bookingpress-appointment-booking
 msgid "Firstname is too long..."
 msgstr "Imię jest za długie..."
 
-#: core/classes/class.bookingpress_customers.php:2296
+#: core/classes/class.bookingpress_customers.php:2312
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:2917
 #@ bookingpress-appointment-booking
 msgid "Lastname is too long..."
 msgstr "Nazwisko jest za długie..."
 
-#: core/classes/class.bookingpress_customers.php:2302
+#: core/classes/class.bookingpress_customers.php:2323
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:2923
 #@ bookingpress-appointment-booking
 msgid "Email address is too long..."
 msgstr "Adres e-mail jest za długi..."
 
-#: core/classes/class.bookingpress_customers.php:2311
+#: core/classes/class.bookingpress_customers.php:2337
 #@ bookingpress-appointment-booking
 msgid "Email address is already exists"
 msgstr "Adres e-mail już istnieje"
 
-#: core/classes/class.bookingpress_customers.php:2372
+#: core/classes/class.bookingpress_customers.php:2409
 #@ bookingpress-appointment-booking
 msgid "Customer has been added succsssfully."
 msgstr "Klient został pomyślnie dodany."
 
-#: core/classes/class.bookingpress_customers.php:2419
+#: core/classes/class.bookingpress_customers.php:2465
 #@ bookingpress-appointment-booking
 msgid "Customer has been updated succsssfully."
 msgstr "Klient został pomyślnie zaktualizowany."
 
-#: core/classes/class.bookingpress_customers.php:2560
+#: core/classes/class.bookingpress_customers.php:2610
 #@ bookingpress-appointment-booking
 msgid "Edit data retrieved successfully"
 msgstr "Edytuj dane pobrane pomyślnie"
 
-#: core/classes/class.bookingpress_customers.php:2612
-#: core/classes/class.bookingpress_customers.php:2665
+#: core/classes/class.bookingpress_customers.php:2672
+#: core/classes/class.bookingpress_customers.php:2678
+#: core/classes/class.bookingpress_customers.php:2733
 #@ bookingpress-appointment-booking
 msgid "Customer has been deleted successfully."
 msgstr "Klient został pomyślnie usunięty."
@@ -2378,6 +2393,7 @@ msgstr "Nie pokazuj więcej"
 #: core/views/wizard/manage_wizard.php:121
 #: core/views/wizard/manage_wizard.php:270
 #: core/views/wizard/manage_wizard.php:342
+#: core/views/wizard/manage_wizard.php:428
 #@ bookingpress-appointment-booking
 msgid "Next"
 msgstr "Następny"
@@ -2410,7 +2426,7 @@ msgstr "Dane ustawień pola zostały pomyślnie zapisane"
 msgid "Customization settings saved successfully."
 msgstr "Ustawienia dostosowywania zostały zapisane pomyślnie."
 
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5348
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5350
 #@ bookingpress-appointment-booking
 msgid "Date &amp; Time"
 msgstr "Data &amp; Czas"
@@ -2541,7 +2557,7 @@ msgstr "Proszę ustawić rozszerzenia, aby sprawdzić poprawność pliku."
 #: core/classes/class.bookingpress_customers.php:1178
 #: core/classes/class.bookingpress_fileupload_class.php:172
 #: core/classes/class.bookingpress_services.php:263
-#: core/classes/class.bookingpress_settings.php:1601
+#: core/classes/class.bookingpress_settings.php:1602
 #@ bookingpress-appointment-booking
 msgid "Invalid file extension. Please select valid file"
 msgstr "Nieprawidłowe rozszerzenie pliku. Proszę wybrać prawidłowy plik"
@@ -2699,7 +2715,7 @@ msgid "Category Data."
 msgstr "Dane kategorii."
 
 #: core/classes/class.bookingpress_service_categories.php:534
-#: core/classes/class.bookingpress_services.php:1556
+#: core/classes/class.bookingpress_services.php:1621
 #@ bookingpress-appointment-booking
 msgid "warning"
 msgstr "ostrzeżenie"
@@ -2745,584 +2761,584 @@ msgid "Please enter price"
 msgstr "Proszę wpisać cenę"
 
 #: core/classes/class.bookingpress_services.php:1089
-#: core/classes/class.bookingpress_settings.php:1067
+#: core/classes/class.bookingpress_settings.php:1068
 #: core/views/appointment/manage_appointment.php:59
 #: core/views/payment/manage_payment.php:42
 #@ bookingpress-appointment-booking
 msgid "All"
 msgstr "Wszystko"
 
-#: core/classes/class.bookingpress_services.php:1240
+#: core/classes/class.bookingpress_services.php:1248
 #@ bookingpress-appointment-booking
 msgid "Service name is too long..."
 msgstr "Nazwa usługi jest za długa..."
 
-#: core/classes/class.bookingpress_services.php:1254
+#: core/classes/class.bookingpress_services.php:1262
 #@ bookingpress-appointment-booking
 msgid "Service time duration cannot be greater than 24 hours"
 msgstr "Czas trwania usługi nie może być dłuższy niż 24 godziny"
 
-#: core/classes/class.bookingpress_services.php:1262
+#: core/classes/class.bookingpress_services.php:1275
 #@ bookingpress-appointment-booking
 msgid "Service time duration cannot be greater than 30 days"
 msgstr "Czas trwania usługi nie może być dłuższy niż 30 dni"
 
-#: core/classes/class.bookingpress_services.php:1284
+#: core/classes/class.bookingpress_services.php:1301
 #@ bookingpress-appointment-booking
 msgid "Category not found"
 msgstr "Nie znaleziono kategorii"
 
-#: core/classes/class.bookingpress_services.php:1309
+#: core/classes/class.bookingpress_services.php:1349
 #@ bookingpress-appointment-booking
 msgid "Service has been updated successfully."
 msgstr "Usługa została pomyślnie zaktualizowana."
 
-#: core/classes/class.bookingpress_services.php:1324
+#: core/classes/class.bookingpress_services.php:1364
 #@ bookingpress-appointment-booking
 msgid "Service has been added successfully."
 msgstr "Usługa została pomyślnie dodana."
 
-#: core/classes/class.bookingpress_services.php:1368
+#: core/classes/class.bookingpress_services.php:1410
 #@ bookingpress-appointment-booking
 msgid "Please add valid data for add service"
 msgstr "Proszę podać prawidłowe dane do dodania usługi"
 
-#: core/classes/class.bookingpress_services.php:1492
+#: core/classes/class.bookingpress_services.php:1539
 #@ bookingpress-appointment-booking
 msgid "Service Data."
 msgstr "Dane serwisowe."
 
-#: core/classes/class.bookingpress_services.php:1546
-#: core/classes/class.bookingpress_services.php:1609
+#: core/classes/class.bookingpress_services.php:1601
+#: core/classes/class.bookingpress_services.php:1677
 #@ bookingpress-appointment-booking
 msgid "Services has been deleted successfully."
 msgstr "Usługi zostały pomyślnie usunięte."
 
-#: core/classes/class.bookingpress_services.php:1553
+#: core/classes/class.bookingpress_services.php:1618
 #@ bookingpress-appointment-booking
 msgid " I am sorry"
 msgstr " przepraszam"
 
-#: core/classes/class.bookingpress_services.php:1553
+#: core/classes/class.bookingpress_services.php:1618
 #@ bookingpress-appointment-booking
 msgid "This service can not be deleted because it has one or more appointments associated with it"
 msgstr "Tej usługi nie można usunąć, ponieważ jest z nią powiązane jedno lub więcej spotkań"
 
-#: core/classes/class.bookingpress_services.php:1612
+#: core/classes/class.bookingpress_services.php:1680
 #@ bookingpress-appointment-booking
 msgid "Warning"
 msgstr "Ostrzeżenie"
 
-#: core/classes/class.bookingpress_services.php:1613
+#: core/classes/class.bookingpress_services.php:1681
 #@ bookingpress-appointment-booking
 msgid "Could not delete service. This service has a appointment in the future."
 msgstr "Nie można usunąć usługi. Ta usługa ma spotkanie w przyszłości."
 
-#: core/classes/class.bookingpress_services.php:1682
+#: core/classes/class.bookingpress_services.php:1750
 #@ bookingpress-appointment-booking
 msgid "Service position has been changed successfully."
 msgstr "Stanowisko serwisowe zostało pomyślnie zmienione."
 
-#: core/classes/class.bookingpress_services.php:1751
+#: core/classes/class.bookingpress_services.php:1819
 #@ bookingpress-appointment-booking
 msgid "Copy"
 msgstr "Kopiuj"
 
-#: core/classes/class.bookingpress_services.php:1774
+#: core/classes/class.bookingpress_services.php:1842
 #@ bookingpress-appointment-booking
 msgid "copy"
 msgstr "Kopiuj"
 
-#: core/classes/class.bookingpress_services.php:1808
+#: core/classes/class.bookingpress_services.php:1876
 #@ bookingpress-appointment-booking
 msgid "Service duplicate successfully"
 msgstr "Pomyślnie zduplikowano usługę"
 
-#: core/classes/class.bookingpress_services.php:1813
+#: core/classes/class.bookingpress_services.php:1881
 #@ bookingpress-appointment-booking
 msgid "No service found..."
 msgstr "Nie znaleziono usługi..."
 
-#: core/classes/class.bookingpress_settings.php:174
+#: core/classes/class.bookingpress_settings.php:175
 #@ bookingpress-appointment-booking
 msgid "Sign out successfully."
 msgstr "Wyloguj się pomyślnie."
 
-#: core/classes/class.bookingpress_settings.php:324
+#: core/classes/class.bookingpress_settings.php:325
 #@ bookingpress-appointment-booking
 msgid "SSL"
 msgstr "SSL"
 
-#: core/classes/class.bookingpress_settings.php:328
+#: core/classes/class.bookingpress_settings.php:329
 #@ bookingpress-appointment-booking
 msgid "TLS"
 msgstr "TLS"
 
-#: core/classes/class.bookingpress.php:227
-#: core/classes/class.bookingpress_settings.php:332
+#: core/classes/class.bookingpress.php:388
+#: core/classes/class.bookingpress_settings.php:333
 #@ bookingpress-appointment-booking
 msgid "Disabled"
 msgstr "Wyłączony"
 
-#: core/classes/class.bookingpress_settings.php:338
+#: core/classes/class.bookingpress_settings.php:339
 #@ bookingpress-appointment-booking
 msgid "5 min"
 msgstr "5 minut"
 
-#: core/classes/class.bookingpress_settings.php:342
+#: core/classes/class.bookingpress_settings.php:343
 #@ bookingpress-appointment-booking
 msgid "10 min"
 msgstr "10 minut"
 
-#: core/classes/class.bookingpress_settings.php:346
+#: core/classes/class.bookingpress_settings.php:347
 #@ bookingpress-appointment-booking
 msgid "15 min"
 msgstr "15 minut"
 
-#: core/classes/class.bookingpress_settings.php:350
+#: core/classes/class.bookingpress_settings.php:351
 #@ bookingpress-appointment-booking
 msgid "20 min"
 msgstr "20 minut"
 
-#: core/classes/class.bookingpress_settings.php:354
+#: core/classes/class.bookingpress_settings.php:355
 #@ bookingpress-appointment-booking
 msgid "25 min"
 msgstr "25 minut"
 
-#: core/classes/class.bookingpress_settings.php:358
+#: core/classes/class.bookingpress_settings.php:359
 #@ bookingpress-appointment-booking
 msgid "30 min"
 msgstr "30 minut"
 
-#: core/classes/class.bookingpress_settings.php:362
+#: core/classes/class.bookingpress_settings.php:363
 #@ bookingpress-appointment-booking
 msgid "35 min"
 msgstr "35 minut"
 
-#: core/classes/class.bookingpress_settings.php:366
+#: core/classes/class.bookingpress_settings.php:367
 #@ bookingpress-appointment-booking
 msgid "40 min"
 msgstr "40 minut"
 
-#: core/classes/class.bookingpress_settings.php:370
+#: core/classes/class.bookingpress_settings.php:371
 #@ bookingpress-appointment-booking
 msgid "45 min"
 msgstr "45 minut"
 
-#: core/classes/class.bookingpress_settings.php:374
+#: core/classes/class.bookingpress_settings.php:375
 #@ bookingpress-appointment-booking
 msgid "50 min"
 msgstr "50 minut"
 
-#: core/classes/class.bookingpress_settings.php:378
+#: core/classes/class.bookingpress_settings.php:379
 #@ bookingpress-appointment-booking
 msgid "55 min"
 msgstr "55 minut"
 
-#: core/classes/class.bookingpress_settings.php:382
+#: core/classes/class.bookingpress_settings.php:383
 #@ bookingpress-appointment-booking
 msgid "1 h"
 msgstr "1 godz"
 
-#: core/classes/class.bookingpress_settings.php:386
+#: core/classes/class.bookingpress_settings.php:387
 #@ bookingpress-appointment-booking
 msgid "1 h 30 min"
 msgstr "1 godz. 30 min"
 
-#: core/classes/class.bookingpress_settings.php:390
+#: core/classes/class.bookingpress_settings.php:391
 #@ bookingpress-appointment-booking
 msgid "2 h"
 msgstr "2 godz"
 
-#: core/classes/class.bookingpress_settings.php:394
+#: core/classes/class.bookingpress_settings.php:395
 #@ bookingpress-appointment-booking
 msgid "2 h 30 min"
 msgstr "2 godz. 30 min"
 
-#: core/classes/class.bookingpress_settings.php:398
+#: core/classes/class.bookingpress_settings.php:399
 #@ bookingpress-appointment-booking
 msgid "3 h"
 msgstr "3 godz"
 
-#: core/classes/class.bookingpress_settings.php:402
+#: core/classes/class.bookingpress_settings.php:403
 #@ bookingpress-appointment-booking
 msgid "3 h 30 min"
 msgstr "3 godz. 30 min"
 
-#: core/classes/class.bookingpress_settings.php:406
+#: core/classes/class.bookingpress_settings.php:407
 #@ bookingpress-appointment-booking
 msgid "4 h"
 msgstr "4 godz"
 
-#: core/classes/class.bookingpress_settings.php:410
+#: core/classes/class.bookingpress_settings.php:411
 #@ bookingpress-appointment-booking
 msgid "4 h 30 min"
 msgstr "4 godziny 30 minut"
 
-#: core/classes/class.bookingpress_settings.php:414
+#: core/classes/class.bookingpress_settings.php:415
 #@ bookingpress-appointment-booking
 msgid "5 h"
 msgstr "5 godz"
 
-#: core/classes/class.bookingpress_settings.php:418
+#: core/classes/class.bookingpress_settings.php:419
 #@ bookingpress-appointment-booking
 msgid "5 h 30 min"
 msgstr "5 godzin 30 minut"
 
-#: core/classes/class.bookingpress_settings.php:422
+#: core/classes/class.bookingpress_settings.php:423
 #@ bookingpress-appointment-booking
 msgid "6 h"
 msgstr "6 godz"
 
-#: core/classes/class.bookingpress_settings.php:426
+#: core/classes/class.bookingpress_settings.php:427
 #@ bookingpress-appointment-booking
 msgid "6 h 30 min"
 msgstr "6 godzin 30 minut"
 
-#: core/classes/class.bookingpress_settings.php:430
+#: core/classes/class.bookingpress_settings.php:431
 #@ bookingpress-appointment-booking
 msgid "7 h"
 msgstr "7 godz"
 
-#: core/classes/class.bookingpress_settings.php:434
+#: core/classes/class.bookingpress_settings.php:435
 #@ bookingpress-appointment-booking
 msgid "7 h 30 min"
 msgstr "7 godz. 30 min"
 
-#: core/classes/class.bookingpress_settings.php:438
+#: core/classes/class.bookingpress_settings.php:439
 #@ bookingpress-appointment-booking
 msgid "8 h"
 msgstr "8 godz"
 
-#: core/classes/class.bookingpress_settings.php:444
-#: core/classes/class.bookingpress_settings.php:449
+#: core/classes/class.bookingpress_settings.php:445
+#: core/classes/class.bookingpress_settings.php:450
 #@ bookingpress-appointment-booking
 msgid "Before value"
 msgstr "Przed wartością"
 
-#: core/classes/class.bookingpress_settings.php:449
-#: core/classes/class.bookingpress_settings.php:459
+#: core/classes/class.bookingpress_settings.php:450
+#: core/classes/class.bookingpress_settings.php:460
 #@ bookingpress-appointment-booking
 msgid "separated with space"
 msgstr "oddzielone spacją"
 
-#: core/classes/class.bookingpress_settings.php:454
-#: core/classes/class.bookingpress_settings.php:459
+#: core/classes/class.bookingpress_settings.php:455
+#: core/classes/class.bookingpress_settings.php:460
 #@ bookingpress-appointment-booking
 msgid "After value"
 msgstr "Po wartości"
 
-#: core/classes/class.bookingpress_settings.php:466
+#: core/classes/class.bookingpress_settings.php:467
 #@ bookingpress-appointment-booking
 msgid "Comma-Dot"
 msgstr "Przecinek-kropka"
 
-#: core/classes/class.bookingpress_settings.php:471
+#: core/classes/class.bookingpress_settings.php:472
 #@ bookingpress-appointment-booking
 msgid "Dot-Comma"
 msgstr "Przecinek i kropka"
 
-#: core/classes/class.bookingpress_settings.php:476
+#: core/classes/class.bookingpress_settings.php:477
 #@ bookingpress-appointment-booking
 msgid "Space-Dot"
 msgstr "Przestrzeń-kropka"
 
-#: core/classes/class.bookingpress_settings.php:481
+#: core/classes/class.bookingpress_settings.php:482
 #@ bookingpress-appointment-booking
 msgid "Space-Comma"
 msgstr "Przecinek kosmiczny"
 
-#: core/classes/class.bookingpress_settings.php:486
-#: core/classes/class.bookingpress_settings.php:1071
+#: core/classes/class.bookingpress_settings.php:487
+#: core/classes/class.bookingpress_settings.php:1072
 #@ bookingpress-appointment-booking
 msgid "Custom"
 msgstr "Zwyczaj"
 
-#: core/classes/class.bookingpress_settings.php:492
+#: core/classes/class.bookingpress_settings.php:493
 #@ bookingpress-appointment-booking
 msgid "On-site"
 msgstr "Na miejscu"
 
-#: core/classes/class.bookingpress_settings.php:585
+#: core/classes/class.bookingpress_settings.php:586
 #@ bookingpress-appointment-booking
 msgid "I am sorry! The selected currency is not supported by PayPal payment gateway. Please proceed with another available payment method."
 msgstr "Przepraszam! Wybrana waluta nie jest obsługiwana przez bramkę płatniczą PayPal. Proszę skorzystać z innej dostępnej metody płatności."
 
-#: core/classes/class.bookingpress_settings.php:586
+#: core/classes/class.bookingpress_settings.php:587
 #@ bookingpress-appointment-booking
 msgid "I am sorry! This email address is already exists. Please enter another email address."
 msgstr "Przepraszam! Ten adres e-mail już istnieje. Proszę podać inny adres e-mail."
 
-#: core/classes/class.bookingpress_settings.php:590
+#: core/classes/class.bookingpress_settings.php:591
 #@ bookingpress-appointment-booking
 msgid "Please select any service to book the appointment"
 msgstr "Aby zarezerwować wizytę, wybierz dowolną usługę"
 
-#: core/classes/class.bookingpress_settings.php:591
+#: core/classes/class.bookingpress_settings.php:592
 #@ bookingpress-appointment-booking
 msgid "Oops! There is no payment method available."
 msgstr "Ups! Nie ma dostępnej metody płatności."
 
-#: core/classes/class.bookingpress_settings.php:593
+#: core/classes/class.bookingpress_settings.php:594
 #@ bookingpress-appointment-booking
 msgid "This is a cancel appointment confirmation message"
 msgstr "To jest wiadomość z potwierdzeniem anulowania spotkania"
 
-#: core/classes/class.bookingpress_settings.php:594
+#: core/classes/class.bookingpress_settings.php:595
 #@ bookingpress-appointment-booking
 msgid "No appointment available for the cancel"
 msgstr "Brak dostępnych terminów umożliwiających anulowanie rezerwacji"
 
-#: core/classes/class.bookingpress_settings.php:624
+#: core/classes/class.bookingpress_settings.php:625
 #@ bookingpress-appointment-booking
 msgid "Please enter name"
 msgstr "Proszę wpisać nazwę"
 
-#: core/classes/class.bookingpress_settings.php:642
+#: core/classes/class.bookingpress_settings.php:643
 #@ bookingpress-appointment-booking
 msgid "Please enter company name"
 msgstr "Proszę wpisać nazwę firmy"
 
-#: core/classes/class.bookingpress_settings.php:649
+#: core/classes/class.bookingpress_settings.php:650
 #@ bookingpress-appointment-booking
 msgid "Please enter company address"
 msgstr "Proszę podać adres firmy"
 
-#: core/classes/class.bookingpress_settings.php:656
+#: core/classes/class.bookingpress_settings.php:657
 #@ bookingpress-appointment-booking
 msgid "Please enter company website"
 msgstr "Proszę wejść na stronę internetową firmy"
 
-#: core/classes/class.bookingpress_settings.php:663
+#: core/classes/class.bookingpress_settings.php:664
 #@ bookingpress-appointment-booking
 msgid "Please enter phone number"
 msgstr "Proszę podać numer telefonu"
 
-#: core/classes/class.bookingpress_settings.php:672
+#: core/classes/class.bookingpress_settings.php:673
 #@ bookingpress-appointment-booking
 msgid "Please enter sender name"
 msgstr "Proszę wpisać nazwę nadawcy"
 
-#: core/classes/class.bookingpress_settings.php:679
+#: core/classes/class.bookingpress_settings.php:680
 #@ bookingpress-appointment-booking
 msgid "Please enter sender email"
 msgstr "Wprowadź adres e-mail nadawcy"
 
-#: core/classes/class.bookingpress_settings.php:686
+#: core/classes/class.bookingpress_settings.php:687
 #@ bookingpress-appointment-booking
 msgid "Please enter sender url"
 msgstr "Proszę wprowadzić adres URL nadawcy"
 
-#: core/classes/class.bookingpress_settings.php:693
+#: core/classes/class.bookingpress_settings.php:694
 #@ bookingpress-appointment-booking
 msgid "Please enter admin email"
 msgstr "Proszę podać adres e-mail administratora"
 
-#: core/classes/class.bookingpress_settings.php:700
+#: core/classes/class.bookingpress_settings.php:701
 #@ bookingpress-appointment-booking
 msgid "Please enter successfull redirection url"
 msgstr "Proszę wprowadzić pomyślny adres URL przekierowania"
 
-#: core/classes/class.bookingpress_settings.php:707
+#: core/classes/class.bookingpress_settings.php:708
 #@ bookingpress-appointment-booking
 msgid "Please enter cancel redirection url"
 msgstr "Proszę wprowadzić adres URL anulowania przekierowania"
 
-#: core/classes/class.bookingpress_settings.php:714
+#: core/classes/class.bookingpress_settings.php:715
 #@ bookingpress-appointment-booking
 msgid "Please enter smtp port"
 msgstr "Proszę podać port smtp"
 
-#: core/classes/class.bookingpress_settings.php:721
+#: core/classes/class.bookingpress_settings.php:722
 #@ bookingpress-appointment-booking
 msgid "Please enter smtp host"
 msgstr "Proszę wpisać host smtp"
 
-#: core/classes/class.bookingpress_settings.php:728
+#: core/classes/class.bookingpress_settings.php:729
 #@ bookingpress-appointment-booking
 msgid "Please enter smtp secure"
 msgstr "Proszę wpisać smtp bezpieczne"
 
-#: core/classes/class.bookingpress_settings.php:735
+#: core/classes/class.bookingpress_settings.php:736
 #@ bookingpress-appointment-booking
 msgid "Please enter gmail client ID"
 msgstr "Proszę wprowadzić identyfikator klienta Gmaila"
 
-#: core/classes/class.bookingpress_settings.php:742
+#: core/classes/class.bookingpress_settings.php:743
 #@ bookingpress-appointment-booking
 msgid "Please enter gmail client secret"
 msgstr "Wprowadź sekret klienta Gmaila"
 
-#: core/classes/class.bookingpress_settings.php:759
-#: core/classes/class.bookingpress_settings.php:775
-#: core/classes/class.bookingpress_settings.php:791
-#: core/classes/class.bookingpress_settings.php:853
-#: core/classes/class.bookingpress_settings.php:860
-#: core/classes/class.bookingpress_settings.php:867
-#: core/classes/class.bookingpress_settings.php:874
-#: core/classes/class.bookingpress_settings.php:881
-#: core/classes/class.bookingpress_settings.php:888
-#: core/classes/class.bookingpress_settings.php:895
-#: core/classes/class.bookingpress_settings.php:902
-#: core/classes/class.bookingpress_settings.php:909
-#: core/classes/class.bookingpress_settings.php:916
-#: core/classes/class.bookingpress_settings.php:923
-#: core/classes/class.bookingpress_settings.php:930
-#: core/classes/class.bookingpress_settings.php:937
+#: core/classes/class.bookingpress_settings.php:760
+#: core/classes/class.bookingpress_settings.php:776
+#: core/classes/class.bookingpress_settings.php:792
+#: core/classes/class.bookingpress_settings.php:854
+#: core/classes/class.bookingpress_settings.php:861
+#: core/classes/class.bookingpress_settings.php:868
+#: core/classes/class.bookingpress_settings.php:875
+#: core/classes/class.bookingpress_settings.php:882
+#: core/classes/class.bookingpress_settings.php:889
+#: core/classes/class.bookingpress_settings.php:896
+#: core/classes/class.bookingpress_settings.php:903
+#: core/classes/class.bookingpress_settings.php:910
+#: core/classes/class.bookingpress_settings.php:917
+#: core/classes/class.bookingpress_settings.php:924
+#: core/classes/class.bookingpress_settings.php:931
+#: core/classes/class.bookingpress_settings.php:938
 #@ bookingpress-appointment-booking
 msgid "Please enter message"
 msgstr "Proszę wpisać wiadomość"
 
-#: core/classes/class.bookingpress_settings.php:800
+#: core/classes/class.bookingpress_settings.php:801
 #@ bookingpress-appointment-booking
 msgid "Please enter merchant email"
 msgstr "Wprowadź adres e-mail sprzedawcy"
 
-#: core/classes/class.bookingpress_settings.php:807
+#: core/classes/class.bookingpress_settings.php:808
 #@ bookingpress-appointment-booking
 msgid "Please enter api username"
 msgstr "Proszę wprowadzić nazwę użytkownika interfejsu API"
 
-#: core/classes/class.bookingpress_settings.php:828
+#: core/classes/class.bookingpress_settings.php:829
 #@ bookingpress-appointment-booking
 msgid "Please enter api password"
 msgstr "Please enter api password"
 
-#: core/classes/class.bookingpress_settings.php:835
+#: core/classes/class.bookingpress_settings.php:836
 #@ bookingpress-appointment-booking
 msgid "Please enter api signature"
 msgstr "Proszę wprowadzić podpis interfejsu API"
 
-#: core/classes/class.bookingpress_settings.php:844
+#: core/classes/class.bookingpress_settings.php:845
 #@ bookingpress-appointment-booking
 msgid "Please enter holiday reason"
 msgstr "Proszę podać powód urlopu"
 
-#: core/classes/class.bookingpress_settings.php:993
+#: core/classes/class.bookingpress_settings.php:994
 #@ bookingpress-appointment-booking
 msgid "Please enter start time"
 msgstr "Proszę podać godzinę rozpoczęcia"
 
-#: core/classes/class.bookingpress_settings.php:1000
+#: core/classes/class.bookingpress_settings.php:1001
 #@ bookingpress-appointment-booking
 msgid "Please enter end time"
 msgstr "Proszę wprowadzić godzinę zakończenia"
 
-#: core/classes/class.bookingpress_settings.php:1047
+#: core/classes/class.bookingpress_settings.php:1048
 #@ bookingpress-appointment-booking
 msgid "Last 1 Day"
 msgstr "Ostatni 1 dzień"
 
-#: core/classes/class.bookingpress_settings.php:1051
+#: core/classes/class.bookingpress_settings.php:1052
 #@ bookingpress-appointment-booking
 msgid "Last 3 Days"
 msgstr "Ostatnie 3 dni"
 
-#: core/classes/class.bookingpress_settings.php:1055
+#: core/classes/class.bookingpress_settings.php:1056
 #@ bookingpress-appointment-booking
 msgid "Last 1 Week"
 msgstr "Ostatni 1 tydzień"
 
-#: core/classes/class.bookingpress_settings.php:1059
+#: core/classes/class.bookingpress_settings.php:1060
 #@ bookingpress-appointment-booking
 msgid "Last 2 Weeks"
 msgstr "Ostatnie 2 tygodnie"
 
-#: core/classes/class.bookingpress_settings.php:1063
+#: core/classes/class.bookingpress_settings.php:1064
 #@ bookingpress-appointment-booking
 msgid "Last Month"
 msgstr "W zeszłym miesiącu"
 
-#: core/classes/class.bookingpress_settings.php:1133
+#: core/classes/class.bookingpress_settings.php:1134
 #@ bookingpress-appointment-booking
 msgid "DaysOff deleted successfully"
 msgstr "Pomyślnie usunięto opcję DaysOff"
 
-#: core/classes/class.bookingpress_settings.php:1212
+#: core/classes/class.bookingpress_settings.php:1213
 #@ bookingpress-appointment-booking
 msgid "DaysOff data retrieved successfully"
 msgstr "Pomyślnie pobrano dane dotyczące dni wolnych"
 
-#: core/classes/class.bookingpress_settings.php:1334
+#: core/classes/class.bookingpress_settings.php:1335
 #@ bookingpress-appointment-booking
 msgid "Holiday already added."
 msgstr "Święto już dodane."
 
-#: core/classes/class.bookingpress_settings.php:1341
+#: core/classes/class.bookingpress_settings.php:1342
 #@ bookingpress-appointment-booking
 msgid "Holiday has been saved successfully."
 msgstr "Wakacje zostały pomyślnie zapisane."
 
-#: core/classes/class.bookingpress_settings.php:1343
+#: core/classes/class.bookingpress_settings.php:1344
 #@ bookingpress-appointment-booking
 msgid "Please fill Break Title"
 msgstr "Proszę wypełnić tytuł przerwy"
 
-#: core/classes/class.bookingpress_settings.php:2423
+#: core/classes/class.bookingpress_settings.php:2424
 #@ bookingpress-appointment-booking
 msgid "Start time is not greater than End time"
 msgstr "Czas rozpoczęcia nie jest dłuższy niż czas zakończenia"
 
-#: core/classes/class.bookingpress_settings.php:2431
+#: core/classes/class.bookingpress_settings.php:2432
 #@ bookingpress-appointment-booking
 msgid "Start time & End time are not same"
 msgstr "Czas rozpoczęcia i czas zakończenia nie są takie same"
 
-#: core/classes/class.bookingpress_settings.php:2443
-#: core/classes/class.bookingpress_settings.php:2500
+#: core/classes/class.bookingpress_settings.php:2444
+#: core/classes/class.bookingpress_settings.php:2501
 #@ bookingpress-appointment-booking
 msgid "Please enter valid time for break"
 msgstr "Proszę podać prawidłowy czas przerwy"
 
-#: core/classes/class.bookingpress_settings.php:2453
-#: core/classes/class.bookingpress_settings.php:2462
+#: core/classes/class.bookingpress_settings.php:2454
+#: core/classes/class.bookingpress_settings.php:2463
 #@ bookingpress-appointment-booking
 msgid "Break time already added"
 msgstr "Czas przerwy został już dodany"
 
-#: core/classes/class.bookingpress_settings.php:2897
+#: core/classes/class.bookingpress_settings.php:2898
 #@ bookingpress-appointment-booking
 msgid "Authorized redirect URI copied successfully"
 msgstr "Pomyślnie skopiowano autoryzowany identyfikator URI przekierowania"
 
-#: core/classes/class.bookingpress_settings.php:3176
+#: core/classes/class.bookingpress_settings.php:3177
 #@ bookingpress-appointment-booking
 msgid "Something went wrong while fetching settings..."
 msgstr "Coś poszło nie tak podczas pobierania ustawień..."
 
-#: core/classes/class.bookingpress_settings.php:3211
+#: core/classes/class.bookingpress_settings.php:3212
 #@ bookingpress-appointment-booking
 msgid "Settings has been fetched successfully"
 msgstr "Ustawienia zostały pobrane pomyślnie"
 
-#: core/classes/class.bookingpress_settings.php:3248
-#: core/classes/class.bookingpress_settings.php:3355
+#: core/classes/class.bookingpress_settings.php:3249
+#: core/classes/class.bookingpress_settings.php:3356
 #@ bookingpress-appointment-booking
 msgid "Something Went wrong while updating settings..."
 msgstr "Coś poszło nie tak podczas aktualizacji ustawień..."
 
-#: core/classes/class.bookingpress_settings.php:3318
-#: core/classes/class.bookingpress_settings.php:3420
+#: core/classes/class.bookingpress_settings.php:3319
+#: core/classes/class.bookingpress_settings.php:3421
 #@ bookingpress-appointment-booking
 msgid "Settings has been updated successfully."
 msgstr "Ustawienia zostały pomyślnie zaktualizowane."
 
-#: core/classes/class.bookingpress_settings.php:3461
+#: core/classes/class.bookingpress_settings.php:3462
 #@ bookingpress-appointment-booking
 msgid "Something went wrong."
 msgstr "Coś poszło nie tak."
 
-#: core/classes/class.bookingpress_settings.php:3593
+#: core/classes/class.bookingpress_settings.php:3594
 #@ bookingpress-appointment-booking
 msgid "Workhours Data."
 msgstr "Dane dotyczące godzin pracy."
 
-#: core/classes/class.bookingpress_settings.php:3659
+#: core/classes/class.bookingpress_settings.php:3660
 #@ bookingpress-appointment-booking
 msgid "Holiday settings updated successfully."
 msgstr "Ustawienia urlopowe zostały pomyślnie zaktualizowane."
 
-#: core/classes/class.bookingpress_settings.php:3783
+#: core/classes/class.bookingpress_settings.php:3784
 #@ bookingpress-appointment-booking
 msgid "This currency is not supported by"
 msgstr "Ta waluta nie jest obsługiwana przez"
@@ -3473,42 +3489,42 @@ msgstr "Proszę skonfigurować podpis PayPal API"
 msgid "Appointment Booking"
 msgstr "Rezerwacja terminu"
 
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5581
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5583
 #@ bookingpress-appointment-booking
 msgid "is required"
 msgstr "jest wymagane"
 
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6569
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6579
 #@ bookingpress-appointment-booking
 msgid "Please enter customer phone number"
 msgstr "Proszę podać numer telefonu klienta"
 
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6843
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6853
 #@ bookingpress-appointment-booking
 msgid "Google Calendar"
 msgstr "kalendarz Google"
 
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6844
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6854
 #@ bookingpress-appointment-booking
 msgid "Yahoo Calendar"
 msgstr "Kalendarz Yahoo"
 
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6845
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6855
 #@ bookingpress-appointment-booking
 msgid "Outlook Calendar"
 msgstr "Kalendarz Outlooka"
 
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6846
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:6856
 #@ bookingpress-appointment-booking
 msgid "iCal Calendar"
 msgstr "Kalendarz iCal"
 
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5224
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5226
 #@ bookingpress-appointment-booking
 msgid "Please enter customer name"
 msgstr "Proszę wpisać nazwę klienta"
 
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5229
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:5231
 #@ bookingpress-appointment-booking
 msgid "Please enter customer email"
 msgstr "Proszę podać adres e-mail klienta"
@@ -3597,7 +3613,7 @@ msgstr "Data rozpoczęcia"
 msgid "End date"
 msgstr "Data końcowa"
 
-#: core/classes/class.bookingpress.php:8204
+#: core/classes/class.bookingpress.php:8403
 #: core/views/appointment/manage_appointment.php:39
 #: core/views/payment/manage_payment.php:22
 #@ bookingpress-appointment-booking
@@ -3656,7 +3672,6 @@ msgstr "Nie znaleziona nagrania!"
 #: core/views/dashboard/manage_dashboard.php:306
 #: core/views/dashboard/manage_dashboard.php:489
 #: core/views/services/manage_services.php:329
-#: core/views/wizard/manage_wizard.php:533
 #@ bookingpress-appointment-booking
 msgid "Close"
 msgstr "Zamknąć"
@@ -4985,10 +5000,10 @@ msgstr "Tryb"
 msgid "Transaction ID"
 msgstr "Identyfikator transakcji"
 
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:9017
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:9116
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:10615
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:10700
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:9027
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:9126
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:10625
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:10710
 #: core/views/payment/manage_payment.php:149
 #: core/views/payment/manage_payment.php:347
 #: core/views/payment/manage_payment.php:482
@@ -5652,7 +5667,7 @@ msgstr "Kliknij tutaj, aby zobaczyć pełny dziennik"
 msgid "SMTP Test Full Log"
 msgstr "Pełny dziennik testu SMTP"
 
-#: core/classes/class.bookingpress.php:3813
+#: core/classes/class.bookingpress.php:4012
 #: core/views/settings/payment_setting_tab.php:10
 #@ bookingpress-appointment-booking
 msgid "Payment Settings"
@@ -5993,62 +6008,62 @@ msgstr "Podtytuł"
 msgid "Content"
 msgstr "Treść"
 
-#: core/views/wizard/manage_wizard.php:428
+#: core/views/wizard/manage_wizard.php:540
 #@ bookingpress-appointment-booking
 msgid "Finish"
 msgstr "Skończyć"
 
-#: core/views/wizard/manage_wizard.php:440
+#: core/views/wizard/manage_wizard.php:441
 #@ bookingpress-appointment-booking
 msgid "Ready"
 msgstr "Gotowy"
 
-#: core/views/wizard/manage_wizard.php:478
+#: core/views/wizard/manage_wizard.php:479
 #@ bookingpress-appointment-booking
 msgid "Congratulations!"
 msgstr "Gratulacje!"
 
-#: core/views/wizard/manage_wizard.php:479
+#: core/views/wizard/manage_wizard.php:480
 #@ bookingpress-appointment-booking
 msgid "Hurray!! Everything is ready to accept your first online booking now"
 msgstr "Hurra!! Wszystko jest już gotowe do przyjęcia Twojej pierwszej rezerwacji online"
 
-#: core/views/wizard/manage_wizard.php:483
+#: core/views/wizard/manage_wizard.php:484
 #@ bookingpress-appointment-booking
 msgid "Your site is ready & below are the details"
 msgstr "Twoja witryna jest gotowa. Poniżej znajdują się szczegóły"
 
-#: core/views/wizard/manage_wizard.php:501
+#: core/views/wizard/manage_wizard.php:502
 #@ bookingpress-appointment-booking
 msgid "[bookingpress_form]"
 msgstr "[bookingpress_form]"
 
-#: core/views/wizard/manage_wizard.php:505
+#: core/views/wizard/manage_wizard.php:506
 #@ bookingpress-appointment-booking
 msgid "[bookingpress_my_appointments]"
 msgstr "[bookingpress_my_appointments]"
 
-#: core/views/wizard/manage_wizard.php:511
+#: core/views/wizard/manage_wizard.php:512
 #@ bookingpress-appointment-booking
 msgid "Useful Links"
 msgstr "Przydatne linki"
 
-#: core/views/wizard/manage_wizard.php:514
+#: core/views/wizard/manage_wizard.php:515
 #@ bookingpress-appointment-booking
 msgid "Documentation"
 msgstr "Dokumentacja"
 
-#: core/views/wizard/manage_wizard.php:517
+#: core/views/wizard/manage_wizard.php:518
 #@ bookingpress-appointment-booking
 msgid "Get 24x7 Support"
 msgstr "Uzyskaj wsparcie 24x7"
 
-#: core/views/wizard/manage_wizard.php:520
+#: core/views/wizard/manage_wizard.php:521
 #@ bookingpress-appointment-booking
 msgid "Explore Features"
 msgstr "Przeglądaj funkcje"
 
-#: core/views/wizard/manage_wizard.php:542
+#: core/views/wizard/manage_wizard.php:558
 #@ bookingpress-appointment-booking
 msgid "Close and Exit Wizard Without Saving"
 msgstr "Zamknij i wyjdź z kreatora bez zapisywania"
@@ -6063,20 +6078,20 @@ msgstr "Wyświetl formularz rezerwacji frontonu w celu rezerwacji spotkań"
 msgid "Display booked appointments"
 msgstr "Wyświetl zarezerwowane spotkania"
 
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:4978
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:4980
 #, php-format
 #@ bookingpress-appointment-booking
 msgid "%1$s to %2$s"
 msgstr "%1$s do %2$s"
 
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:4981
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:4987
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:4983
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:4989
 #, php-format
 #@ bookingpress-appointment-booking
 msgid "%1$s - %2$s"
 msgstr "%1$s - %2$s"
 
-#: core/classes/frontend/class.bookingpress_appointment_bookings.php:4984
+#: core/classes/frontend/class.bookingpress_appointment_bookings.php:4986
 #, php-format
 #@ bookingpress-appointment-booking
 msgid "%1$s"
@@ -6527,17 +6542,17 @@ msgstr "Czas rozpoczęcia wieczorem"
 msgid "Night Start Time"
 msgstr "Czas rozpoczęcia nocy"
 
-#: core/classes/class.bookingpress_settings.php:814
+#: core/classes/class.bookingpress_settings.php:815
 #@ bookingpress-appointment-booking
 msgid "Please enter client ID"
 msgstr "Proszę wprowadzić identyfikator klienta"
 
-#: core/classes/class.bookingpress_settings.php:821
+#: core/classes/class.bookingpress_settings.php:822
 #@ bookingpress-appointment-booking
 msgid "Please enter client secret"
 msgstr "Proszę wprowadzić sekret klienta"
 
-#: core/classes/class.bookingpress_settings.php:1423
+#: core/classes/class.bookingpress_settings.php:1424
 #@ bookingpress-appointment-booking
 msgid " Test BookingPress WordPress default mail"
 msgstr "Przetestuj domyślną pocztę WordPress BookingPress"
@@ -6615,61 +6630,61 @@ msgstr "Zaleca się użycie metody wyskakującej zamiast dotychczasowej metody, 
 msgid "Auto login user after successful booking"
 msgstr "Automatyczne logowanie użytkownika po udanej rezerwacji"
 
-#: core/classes/class.bookingpress.php:7561
+#: core/classes/class.bookingpress.php:7760
 #, php-format
 #@ bookingpress-appointment-booking
 msgid "Dear %1$s %2$s,%3$sYou have successfully scheduled appointment.%3$sThank you for choosing us,%3$s%4$s"
 msgstr "Drogi %1$s %2$s,%3$s Pomyślnie zaplanowałeś spotkanie.%3$sDziękujemy za wybranie nas,%3$s%4$s"
 
-#: core/classes/class.bookingpress.php:7562
+#: core/classes/class.bookingpress.php:7761
 #, php-format
 #@ bookingpress-appointment-booking
 msgid "Dear %1$s %2$s,%3$sThe %4$s appointment is scheduled and it is waiting for a confirmation.%3$sThank you for choosing us,%3$s%5$s"
 msgstr "Drogi %1$s %2$s,%3$sWizyta %4$s jest zaplanowana i oczekuje na potwierdzenie.%3$sDziękujemy za wybranie nas,%3$s%5$s"
 
-#: core/classes/class.bookingpress.php:7563
+#: core/classes/class.bookingpress.php:7762
 #, php-format
 #@ bookingpress-appointment-booking
 msgid "Dear %1$s %2$s,%3$sThe %4$s appointment, has been rejected.%3$sThank you for choosing us,%3$s%5$s"
 msgstr "Drogi %1$s %2$s,%3$sT %4$s spotkanie zostało odrzucone.%3$sDziękujemy za wybranie nas,%3$s%5$s"
 
-#: core/classes/class.bookingpress.php:7564
+#: core/classes/class.bookingpress.php:7763
 #, php-format
 #@ bookingpress-appointment-booking
 msgid "Dear %1$s %2$s,%3$sThe %4$s appointment, has been canceled.%3$sThank you for choosing us,%3$s%5$s"
 msgstr "Drogi %1$s %2$s,%3$sT %4$s spotkanie zostało odwołane.%3$sDziękujemy za wybranie nas,%3$s%5$s"
 
-#: core/classes/class.bookingpress.php:7565
+#: core/classes/class.bookingpress.php:7764
 #, php-format
 #@ bookingpress-appointment-booking
 msgid "Hi%1$sPlease book your appointment with following URL: %1$s%2$s%1$sThanks,%1$s%3$s"
 msgstr "Cześć%1$sProszę zarezerwować wizytę pod następującym adresem URL: %1$s%2$s%1$sDzięki,%1$s%3$s"
 
-#: core/classes/class.bookingpress.php:7590
+#: core/classes/class.bookingpress.php:7789
 #, php-format
 #@ bookingpress-appointment-booking
 msgid "Hi administrator,%1$sYou have one confirmed %2$s appointment. The appointment is added to your schedule.%1$sThank you,%1$s%3$s"
 msgstr "Witaj administratorze,%1$sMasz jedno potwierdzone spotkanie %2$s. Spotkanie zostało dodane do Twojego harmonogramu.%1$sDziękujemy,%1$s%3$s"
 
-#: core/classes/class.bookingpress.php:7591
+#: core/classes/class.bookingpress.php:7790
 #, php-format
 #@ bookingpress-appointment-booking
 msgid "Hi administrator,%1$sYou have new appointment in %2$s. The appointment is waiting for a confirmation.%1$sThank you,%1$s%3$s"
 msgstr "Witaj administratorze,%1$sMasz nowe spotkanie w %2$s. Spotkanie oczekuje na potwierdzenie.%1$sDziękujemy,%1$s%3$s"
 
-#: core/classes/class.bookingpress.php:7592
+#: core/classes/class.bookingpress.php:7791
 #, php-format
 #@ bookingpress-appointment-booking
 msgid "Hi administrator,%1$sYour %2$s appointment, has been rejected.%1$sThank you,%1$s%3$s"
 msgstr "Witaj administratorze, spotkanie %1$sRok %2$s zostało odrzucone.%1$sDziękujemy,%1$s%3$s"
 
-#: core/classes/class.bookingpress.php:7593
+#: core/classes/class.bookingpress.php:7792
 #, php-format
 #@ bookingpress-appointment-booking
 msgid "Hi administrator,%1$sYour %2$s appointment, has been canceled.%1$sThank you,%1$s%3$s"
 msgstr "Witaj administratorze, spotkanie %1$sRok %2$s zostało odwołane.%1$sDziękujemy,%1$s%3$s"
 
-#: core/classes/class.bookingpress.php:7594
+#: core/classes/class.bookingpress.php:7793
 #, php-format
 #@ bookingpress-appointment-booking
 msgid "Hi administrator,%1$sFollowing appointment URL is shared with customer. %1$s%2$s%1$sThank you,%1$s%3$s"
@@ -6702,7 +6717,7 @@ msgstr "Drogi %1$s %2$s,%3$sTo dotyczy Twojej ostatniej płatności i harmonogra
 msgid "Dear Administrator,%1$sOne of the recently booked appointment has conflict with another appointment with booking ID - %2$s on our booking platform. So, an immediate action is required to handle the refund process for their payment.%1$s%1$sBelow are the appointment and payment details for your reference:%1$sAppointment Date: %3$s%1$sAppointment Time: %4$s%1$sPayment ID: %5$s%1$sPayment Amount: %6$s%1$sPayment Gateway: %7$s%1$sFirst name %17$s Last name: %8$s %9$s%1$sCustomer Full Name: %10$s%1$sCustomer Email: %11$s%1$sCustomer Phone: %12$s%1$s%1$sBest Regards,%1$s%13$s%1$s%14$s%1$s%15$s%1$s%16$s"
 msgstr "Drogi Administratorze,%1$sJedno z ostatnio zarezerwowanych spotkań koliduje z innym spotkaniem z identyfikatorem rezerwacji - %2$s na naszej platformie rezerwacji. Dlatego wymagane jest natychmiastowe działanie, aby obsłużyć proces zwrotu płatności.%1$s%1$sPoniżej znajdują się szczegóły spotkania i płatności w celach informacyjnych:%1$sData spotkania: %3$s%1$sGodzina spotkania: %4$s%1$sIdentyfikator płatności: %5$s%1$sKwota płatności: %6$s%1$sBrama płatności: %7$s%1$sImię %17$s Nazwisko: %8$s %9$s%1$sImię i nazwisko klienta: %10$s%1$sE-mail klienta: %11$s%1$sTelefon klienta: %12$s%1$s%1$sPozdrowienia,%1$s%13$s%1$s%14$s%1$s%15$s%1$s%16$s"
 
-#: core/classes/class.bookingpress.php:227
+#: core/classes/class.bookingpress.php:388
 #@ bookingpress-appointment-booking
 msgid "Enabled"
 msgstr "Włączony"
@@ -6744,13 +6759,13 @@ msgstr "Plik nie mógł zostać przesłany ze względów bezpieczeństwa, poniew
 msgid "Please upload jpg/png/webp file only"
 msgstr "Proszę przesłać tylko plik jpg/png/webp"
 
-#: core/classes/class.bookingpress.php:2090
+#: core/classes/class.bookingpress.php:2289
 #: core/classes/class.bookingpress_customize.php:106
 #@ bookingpress-appointment-booking
 msgid "From BookingPress version 1.1.11, the two Elementor widgets are deprecated. Please click below button to update with the latest."
 msgstr "Od wersji BookingPress 1.1.11, dwa widżety Elementor są przestarzałe. Kliknij poniższy przycisk, aby zaktualizować do najnowszej wersji."
 
-#: core/classes/class.bookingpress.php:2092
+#: core/classes/class.bookingpress.php:2291
 #: core/classes/class.bookingpress_customize.php:107
 #@ bookingpress-appointment-booking
 msgid "Update Elementor Widgets"
@@ -6855,7 +6870,7 @@ msgstr "Zezwól na anulowanie spotkania"
 msgid "Booking & Appointment - Repute Infosystems"
 msgstr "Booking & Appointment - Repute Infosystems"
 
-#: core/classes/class.bookingpress.php:4641
+#: core/classes/class.bookingpress.php:4840
 #@ bookingpress-appointment-booking
 msgid "Black Friday Sale 🔥"
 msgstr "Wyprzedaż z okazji Czarnego Piątku 🔥"
@@ -6892,7 +6907,7 @@ msgstr "Podręcznik (Zarezerwowany przez administratora)"
 msgid "booked by admin"
 msgstr "zarezerwowane przez administratora"
 
-#: core/classes/class.bookingpress.php:4643
+#: core/classes/class.bookingpress.php:4842
 #@ bookingpress-appointment-booking
 msgid "Spring Sale 💐"
 msgstr "Wyprzedaż Wiosenna 💐"
@@ -7054,7 +7069,7 @@ msgstr "Kolumna CSV"
 msgid "- Ignore this field -"
 msgstr "- Zignoruj to pole -"
 
-#: core/classes/class.bookingpress.php:4639
+#: core/classes/class.bookingpress.php:4838
 #, php-format
 #@ bookingpress-appointment-booking
 msgid "Birthday Sale %1$s"
@@ -7093,6 +7108,41 @@ msgstr "Lite vs Premium"
 #. translators: plugin header field 'Version'
 #: bookingpress-appointment-booking.php:0
 #@ bookingpress-appointment-booking
-msgid "1.1.49"
-msgstr "1.1.49"
+msgid "1.1.50"
+msgstr "1.1.50"
+
+#: core/classes/class.bookingpress.php:330
+#@ bookingpress-appointment-booking
+msgid "Wizard finished successfully"
+msgstr "Kreator zakończył pracę pomyślnie"
+
+#: core/views/wizard/manage_wizard.php:529
+#@ bookingpress-appointment-booking
+msgid "Want your customers to promote your business for you?"
+msgstr "Chcesz, aby Twoi klienci promowali Twoją firmę?"
+
+#: core/views/wizard/manage_wizard.php:530
+#@ bookingpress-appointment-booking
+msgid "Install AffiliatePress and reward them with commissions for every booking they bring!"
+msgstr "Zainstaluj AffiliatePress i nagradzaj swoich partnerów prowizjami za każdą dokonaną rezerwację!"
+
+#: core/views/wizard/manage_wizard.php:535
+#@ bookingpress-appointment-booking
+msgid "Want stunning forms without coding?"
+msgstr "Chcesz stworzyć efektowne formularze bez programowania?"
+
+#: core/views/wizard/manage_wizard.php:536
+#@ bookingpress-appointment-booking
+msgid "Install ARForms - the most powerful drag-and-drop form builder for WordPress!"
+msgstr "Zainstaluj ARForms – najpotężniejszy kreator formularzy metodą przeciągnij i upuść dla WordPressa!"
+
+#: core/classes/class.bookingpress_appointment.php:2059
+#@ bookingpress-appointment-booking
+msgid "Either appointment deleted or not found."
+msgstr "Spotkanie zostało usunięte lub nie zostało znalezione."
+
+#: core/classes/class.bookingpress_services.php:1606
+#@ bookingpress-appointment-booking
+msgid "Either service already deletd or service id not found."
+msgstr "Usługa została już usunięta lub identyfikator usługi nie został znaleziony."
 

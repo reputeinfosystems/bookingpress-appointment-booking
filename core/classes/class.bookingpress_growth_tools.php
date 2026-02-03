@@ -330,7 +330,7 @@ if( !class_exists( 'bookingpress_growth_tools') ){
                         if ( ! empty( $package_url ) ) {
                             if ( $upgrader->install( $package_url ) === true ) {
                                 activate_plugin( 'arforms-form-builder/arforms-form-builder.php' );
-                                $arm_install_activate = 1;
+                                $arf_install_activate = 1;
                             } 
                         }
                     }
@@ -482,7 +482,7 @@ if( !class_exists( 'bookingpress_growth_tools') ){
                         if ( ! empty( $package_url ) ) {
                             if ( $upgrader->install( $package_url ) === true ) {
                                 activate_plugin( 'affiliatepress-affiliate-marketing/affiliatepress-affiliate-marketing.php' );
-                                $arm_install_activate = 1;
+                                $arp_install_activate = 1;
                             }
                         }
                     }

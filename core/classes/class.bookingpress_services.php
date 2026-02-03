@@ -1210,23 +1210,31 @@ if (! class_exists('bookingpress_services') ) {
          *
          * @return void
          */
-        function bookingpress_add_service()
+        function bookingpress_add_service($is_api = false)
         {
             global $wpdb, $tbl_bookingpress_categories, $tbl_bookingpress_services,$bookingpress_global_options;
 
-            $bpa_check_authorization = $this->bpa_check_authentication( 'add_services', true, 'bpa_wp_nonce' );
+            if($is_api == true){
+                $is_error = $this->bookingpress_validate_token();
+                if( is_wp_error( $is_error ) ){
+                    return $is_error;
+                }
+            } else {
+                $bpa_check_authorization = $this->bpa_check_authentication( 'add_services', true, 'bpa_wp_nonce' );
             
-            if( preg_match( '/error/', $bpa_check_authorization ) ){
-                $bpa_auth_error = explode( '^|^', $bpa_check_authorization );
-                $bpa_error_msg = !empty( $bpa_auth_error[1] ) ? $bpa_auth_error[1] : esc_html__( 'Sorry. Something went wrong while processing the request', 'bookingpress-appointment-booking');
-                $response = array();
-                $response['variant'] = 'error';
-                $response['title'] = esc_html__( 'Error', 'bookingpress-appointment-booking');
-                $response['msg'] = $bpa_error_msg;
+                if( preg_match( '/error/', $bpa_check_authorization ) ){
+                    $bpa_auth_error = explode( '^|^', $bpa_check_authorization );
+                    $bpa_error_msg = !empty( $bpa_auth_error[1] ) ? $bpa_auth_error[1] : esc_html__( 'Sorry. Something went wrong while processing the request', 'bookingpress-appointment-booking');
+                    $response = array();
+                    $response['variant'] = 'error';
+                    $response['title'] = esc_html__( 'Error', 'bookingpress-appointment-booking');
+                    $response['msg'] = $bpa_error_msg;
 
-                wp_send_json( $response );
-                die;
+                    wp_send_json( $response );
+                    die;
+                }
             }
+            
 
             $service_id   = isset($_POST['service_update_id']) ? intval($_POST['service_update_id']) : ''; // phpcs:ignore WordPress.Security.NonceVerification
             $service_name = ! empty($_POST['service_name']) ? trim(sanitize_text_field($_POST['service_name'])) : ''; // phpcs:ignore WordPress.Security.NonceVerification
@@ -1252,16 +1260,25 @@ if (! class_exists('bookingpress_services') ) {
                 $response['variant'] = 'error';
                 $response['title']   = esc_html__('Error', 'bookingpress-appointment-booking');
                 $response['msg']     = esc_html__('Service time duration cannot be greater than 24 hours', 'bookingpress-appointment-booking') . '.';
-                wp_send_json($response);
-                die();
+                if($is_api){
+                    return $response;
+                }else{
+                    wp_send_json($response);
+                    die();
+                }
+                
             }
             if ($service_duration_unit == 'd' && $bpa_service_duration > 30 ) { 
                 $response            = array();
                 $response['variant'] = 'error';
                 $response['title']   = esc_html__('Error', 'bookingpress-appointment-booking');
                 $response['msg']     = esc_html__('Service time duration cannot be greater than 30 days', 'bookingpress-appointment-booking') . '.';
-                wp_send_json($response);
-                die();
+                if($is_api){
+                    return $response;
+                }else{
+                    wp_send_json($response);
+                    die();
+                }
             }
             $service_price       = isset($_POST['service_price']) ? floatval($_POST['service_price']) : 0; // phpcs:ignore WordPress.Security.NonceVerification
             $service_category    = isset($_POST['service_category']) ? intval($_POST['service_category']) : 0; // phpcs:ignore WordPress.Security.NonceVerification
@@ -1283,8 +1300,12 @@ if (! class_exists('bookingpress_services') ) {
                     $response['title']   = esc_html__('Error', 'bookingpress-appointment-booking');
                     $response['msg']     = esc_html__('Category not found', 'bookingpress-appointment-booking');
 
-                    wp_send_json($response);
-                    die();
+                    if($is_api){
+                        return $response;
+                    }else{
+                        wp_send_json($response);
+                        die();
+                    }
                 }
             }
 
@@ -1302,7 +1323,26 @@ if (! class_exists('bookingpress_services') ) {
                         $this->bookingpress_add_service_meta($service_id, 'service_image_details', maybe_serialize( array() ) );
                     }
 
-                    $wpdb->update($tbl_bookingpress_services, $args, array( 'bookingpress_service_id' => $service_id ));
+                    $update_args = array();
+                    $update_args["bookingpress_category_id"] = $service_category;
+                    $update_args["bookingpress_service_description"] = $service_description;
+
+                    if(!empty($service_name)){
+                        $update_args["bookingpress_service_name"] = $service_name;
+                    }
+                    if( '' !== $service_price ){
+                        $update_args["bookingpress_service_price"] = $service_price;
+                    }
+                    if(!empty($service_duration_val)){
+                        $update_args["bookingpress_service_duration_val"] = $service_duration_val;
+                    }
+                    if(!empty($service_duration_unit)){
+                        $update_args["bookingpress_service_duration_unit"] = $service_duration_unit;
+                    }
+                    
+                    
+
+                    $wpdb->update($tbl_bookingpress_services, $update_args, array( 'bookingpress_service_id' => $service_id ));
                     $response['service_id'] = $service_id;
                     $response['variant']    = 'success';
                     $response['title']      = esc_html__('Success', 'bookingpress-appointment-booking');
@@ -1365,9 +1405,16 @@ if (! class_exists('bookingpress_services') ) {
                     }
                 }
             } elseif (empty($service_name) ) {
+                $response['variant'] = 'error';
+                $response['title']   = esc_html__('Error', 'bookingpress-appointment-booking');
                 $response['msg'] = esc_html__('Please add valid data for add service', 'bookingpress-appointment-booking') . '.';
             }
-            wp_send_json($response);
+            if($is_api == true){
+                return $response;
+            }else{
+                wp_send_json($response);
+            }
+            
         }
         
         /**
@@ -1503,23 +1550,30 @@ if (! class_exists('bookingpress_services') ) {
          * @param  mixed $service_id
          * @return void
          */
-        function bookingpress_delete_service( $service_id = '' )
+        function bookingpress_delete_service( $service_id = '', $is_api = false )
         {
             global $wpdb, $tbl_bookingpress_services, $tbl_bookingpress_servicesmeta,$tbl_bookingpress_appointment_bookings;
             $response              = array();
             $return                = false;
-            $bpa_check_authorization = $this->bpa_check_authentication( 'delete_services', true, 'bpa_wp_nonce' );
+            if($is_api == true){
+                $is_error = $this->bookingpress_validate_token();
+                if( is_wp_error( $is_error ) ){
+                    return $is_error;
+                }
+            } else {
+                $bpa_check_authorization = $this->bpa_check_authentication( 'delete_services', true, 'bpa_wp_nonce' );
             
-            if( preg_match( '/error/', $bpa_check_authorization ) ){
-                $bpa_auth_error = explode( '^|^', $bpa_check_authorization );
-                $bpa_error_msg = !empty( $bpa_auth_error[1] ) ? $bpa_auth_error[1] : esc_html__( 'Sorry. Something went wrong while processing the request', 'bookingpress-appointment-booking');
-
-                $response['variant'] = 'error';
-                $response['title'] = esc_html__( 'Error', 'bookingpress-appointment-booking');
-                $response['msg'] = $bpa_error_msg;
-
-                wp_send_json( $response );
-                die;
+                if( preg_match( '/error/', $bpa_check_authorization ) ){
+                    $bpa_auth_error = explode( '^|^', $bpa_check_authorization );
+                    $bpa_error_msg = !empty( $bpa_auth_error[1] ) ? $bpa_auth_error[1] : esc_html__( 'Sorry. Something went wrong while processing the request', 'bookingpress-appointment-booking');
+    
+                    $response['variant'] = 'error';
+                    $response['title'] = esc_html__( 'Error', 'bookingpress-appointment-booking');
+                    $response['msg'] = $bpa_error_msg;
+    
+                    wp_send_json( $response );
+                    die;
+                }
             }
 
             $service_id          = isset($_POST['delete_id']) ? intval($_POST['delete_id']) : $service_id; // phpcs:ignore WordPress.Security.NonceVerification
@@ -1535,18 +1589,29 @@ if (! class_exists('bookingpress_services') ) {
                     $total_services = $wpdb->get_results('SELECT * FROM ' . $tbl_bookingpress_services . ' order by bookingpress_service_position DESC', ARRAY_A);// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Reason: $tbl_bookingpress_services is table name defined globally. False Positive alarm
                     $new_position   = count($total_services) - 1;
                     $service        = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . $tbl_bookingpress_services . ' WHERE bookingpress_service_id = %d', $service_id ), ARRAY_A);// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Reason: $tbl_bookingpress_services is table name defined globally. False Positive alarm
-                    if ($service['bookingpress_service_position'] != $new_position ) {
+                    if ($service['bookingpress_service_position'] != $new_position && $is_api == false) {
                         $this->bookingpress_position_services($service['bookingpress_service_position'], $new_position);
                     }
-                    $wpdb->delete($tbl_bookingpress_services, array( 'bookingpress_service_id' => $service_id ), array( '%d' ));
-                    $wpdb->delete($tbl_bookingpress_servicesmeta, array( 'bookingpress_service_id' => $service_id ), array( '%d' ));
-					do_action( 'bookingpress_after_delete_service', $service_id );																	
-                    $response['variant'] = 'success';
-                    $response['title']   = esc_html__('Success', 'bookingpress-appointment-booking');
-                    $response['msg']     = esc_html__('Services has been deleted successfully.', 'bookingpress-appointment-booking');
-                    $return              = true;
+                    $is_deleted = $wpdb->delete($tbl_bookingpress_services, array( 'bookingpress_service_id' => $service_id ), array( '%d' ));
+                    if($is_deleted){
+                        $wpdb->delete($tbl_bookingpress_servicesmeta, array( 'bookingpress_service_id' => $service_id ), array( '%d' ));
+                        do_action( 'bookingpress_after_delete_service', $service_id );																	
+                        $response['variant'] = 'success';
+                        $response['title']   = esc_html__('Success', 'bookingpress-appointment-booking');
+                        $response['msg']     = esc_html__('Services has been deleted successfully.', 'bookingpress-appointment-booking');
+                        $return              = true;
+                    }else{
+                        $response['variant'] = 'error';
+                        $response['title']   = esc_html__('Error', 'bookingpress-appointment-booking');
+                        $response['msg']     = esc_html__('Either service already deletd or service id not found.', 'bookingpress-appointment-booking');
+                        $return              = true;
+                    }
+                    
                     if (isset($_POST['action']) && sanitize_text_field($_POST['action']) == 'bookingpress_delete_service' ) { // phpcs:ignore WordPress.Security.NonceVerification
                         wp_send_json($response);
+                    }
+                    if($is_api){
+                        return $response;
                     }
                     return $return;
                 } else {
@@ -1558,6 +1623,9 @@ if (! class_exists('bookingpress_services') ) {
                     $return              = false;
                     if (isset($_POST['action']) && sanitize_text_field($_POST['action']) == 'bookingpress_delete_service' ) { // phpcs:ignore WordPress.Security.NonceVerification
                         wp_send_json($response);
+                    }
+                    if($is_api){
+                        return $response;
                     }
                     return $return;
                 }

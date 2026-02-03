@@ -107,7 +107,7 @@
         <el-row v-if="items.length > 0">
             <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
                 <el-container class="bpa-table-container">
-                    <div class="bpa-back-loader-container" v-if="is_display_loader == '1'">
+                    <div class="bpa-back-loader-container bpa-back-loader-inner-container" v-if="is_display_loader == '1'">
                         <div class="bpa-back-loader"></div>
                     </div>
                     <div class="bpa-tc__wrapper" v-if="current_screen_size == 'desktop'">

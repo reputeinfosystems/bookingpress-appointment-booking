@@ -55,7 +55,7 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
 
             if( $BookingPress->bpa_is_pro_exists() && $BookingPress->bpa_is_pro_active() ){
                 if( !empty( $BookingPress->bpa_pro_plugin_version() ) && version_compare( $BookingPress->bpa_pro_plugin_version(), '1.5', '>' ) ){
-                    add_filter( 'bookingpress_front_booking_dynamic_on_load_methods', array( $this, 'bookingpress_booking_dynamic_on_load_methods_func_with_pro'));
+                    add_filter( 'bookingpress_front_booking_dynamic_on_load_methods', array( $this, 'bookingpress_booking_dynamic_on_load_methods_func_with_pro'), 9);
                 } else {
                     add_filter('bookingpress_front_booking_dynamic_on_load_methods', array( $this, 'bookingpress_booking_dynamic_on_load_methods_func' ), 10, 1);
                 }
@@ -4449,19 +4449,21 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
          * @param  mixed $check_only_one_slot    Check only for one available slots or not 
          * @return void
          */
-        function bookingpress_retrieve_timeslots( $selected_date = '' , $return = false, $check_for_whole_days = false, $check_only_one_slot = false, $total_booked_appiontments = [] ){
+        function bookingpress_retrieve_timeslots( $selected_date = '' , $return = false, $check_for_whole_days = false, $check_only_one_slot = false, $total_booked_appiontments = [], $is_api = false ){
             
             global $wpdb, $BookingPress, $tbl_bookingpress_services, $bookingpress_global_options, $bookingpress_other_debug_log_id, $tbl_bookingpress_appointment_bookings, $bookingpress_services, $bookingpress_other_debug_log_id;
 
-            $response              = array();
-            $wpnonce               = isset($_REQUEST['_wpnonce']) ? sanitize_text_field($_REQUEST['_wpnonce']) : '';
-            $bpa_verify_nonce_flag = wp_verify_nonce($wpnonce, 'bpa_wp_nonce');
-            if (! $bpa_verify_nonce_flag ) {
-                $response['variant'] = 'error';
-                $response['title']   = esc_html__('Error', 'bookingpress-appointment-booking');
-                $response['msg']     = esc_html__('Sorry, Your request can not be processed due to security reason.', 'bookingpress-appointment-booking');
-                echo wp_json_encode($response);
-                exit();
+            if( !$is_api ){
+                $response              = array();
+                $wpnonce               = isset($_REQUEST['_wpnonce']) ? sanitize_text_field($_REQUEST['_wpnonce']) : '';
+                $bpa_verify_nonce_flag = wp_verify_nonce($wpnonce, 'bpa_wp_nonce');
+                if (! $bpa_verify_nonce_flag ) {
+                    $response['variant'] = 'error';
+                    $response['title']   = esc_html__('Error', 'bookingpress-appointment-booking');
+                    $response['msg']     = esc_html__('Sorry, Your request can not be processed due to security reason.', 'bookingpress-appointment-booking');
+                    echo wp_json_encode($response);
+                    exit();
+                }
             }
             if(!empty($_POST['appointment_data_obj']) && !is_array($_POST['appointment_data_obj'])) {
                 $_POST['appointment_data_obj'] = !empty( $_POST['appointment_data_obj'] ) ? json_decode( stripslashes_deep( $_POST['appointment_data_obj'] ), true ) : array(); //phpcs:ignore
@@ -4592,8 +4594,8 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
             }
 
             /** Check if it includes the overnight bookings - two dates */
+            $all_matched = true;
             if( 'd' != $selected_service_duration_unit ){
-                $all_matched = true;
                 $prevStartDate = null;
                 $next_avail_date = null;
                 foreach( $service_timings as $st_key => $st_value ){
@@ -5860,101 +5862,7 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
 				directives: { ' . $bookingpress_dynamic_directive_data . ' },
 				data(){
                     
-                    var bpa_check_username = ( rule, value, callback ) =>{
-                        const vm = this;
-                        
-                        if( "undefined" == vm.appointment_step_form_data.check_username_validation || false == vm.appointment_step_form_data.check_username_validation ){
-                            if( "undefined" != vm.appointment_step_form_data.invalid_customer_username && true == vm.appointment_step_form_data.invalid_customer_username ){
-                                return callback( new Error( vm.appointment_step_form_data.invalid_customer_message ) );
-                            } else {
-                                return callback();
-                            }
-                        }
-
-                        var bkp_wpnonce_pre = "' . $bookingpress_nonce . '";
-                        var bkp_wpnonce_pre_fetch = document.getElementById("_wpnonce");
-                        if(typeof bkp_wpnonce_pre_fetch=="undefined" || bkp_wpnonce_pre_fetch==null)
-                        {
-                            bkp_wpnonce_pre_fetch = bkp_wpnonce_pre;
-                        }
-                        else {
-                            bkp_wpnonce_pre_fetch = bkp_wpnonce_pre_fetch.value;
-                        }
-                        let bookingpress_username_value = value;
-                        
-                        var bookingpress_username = { action:"bookingpress_validate_username", _username: bookingpress_username_value, _wpnonce:bkp_wpnonce_pre_fetch};
-                        axios.post( appoint_ajax_obj.ajax_url, Qs.stringify( bookingpress_username ) )
-                        .then( function (response) {
-                            vm.appointment_step_form_data.check_username_validation = false;
-                            '.$bookingpress_password_check_data.';
-                            if(response.data.variant == "error"){
-                                vm.appointment_step_form_data.invalid_customer_username = true;
-                                vm.appointment_step_form_data.invalid_customer_message = response.data.msg;
-                                return callback(new Error( response.data.msg ));
-                            } else {
-                                if(this.$refs.appointment_step_form_data && "undefined" != typeof vm.appointment_step_form_data.form_fields.customer_password){
-                                    this.$refs.appointment_step_form_data.clearValidate("customer_password");
-                                }
-                                vm.appointment_step_form_data.invalid_customer_username = false;
-                                callback();
-                            }
-                        }.bind(this) )
-                        .catch( function (error) {
-                            vm.bookingpress_set_error_msg(error)
-                        });
-                    };
-                    
-					var bookingpress_return_data = ' . $bookingpress_dynamic_data_fields . ';
-					bookingpress_return_data["jsCurrentDate"] = new Date('. ( !empty( $bookingpress_site_date ) ? '"'.$bookingpress_site_date.'"' : '' ) .');
-					bookingpress_return_data["jsCurrentDateFormatted"] = new Date ('. ( !empty( $bookingpress_site_current_date ) ? '"'.$bookingpress_site_current_date.'"' : '' ) .');
-                    if( "Invalid Date" == bookingpress_return_data["jsCurrentDateFormatted"] ){
-                        bookingpress_return_data["jsCurrentDateFormatted"] = new Date( "'.date('c', strtotime($bookingpress_site_current_date) ).'" );
-                    }
-                    bookingpress_return_data["jsCurrentOnlyDate"] = bookingpress_return_data["jsCurrentDateFormatted"].toISOString().split("T")[0];
-					bookingpress_return_data["appointment_step_form_data"]["stime"] = ' . ( time() + 14921 ) . ';
-					bookingpress_return_data["appointment_step_form_data"]["spam_captcha"] = "";
-					bookingpress_return_data["hide_category_service"] = "' . $this->bookingpress_hide_category_service . '";
-					bookingpress_return_data["default_date_format"] = "' . $this->bookingpress_default_date_format . '";
-					bookingpress_return_data["customer_details_rule"] = ' . wp_json_encode($this->bookingpress_form_fields_error_msg_arr) . ';
-
-                    if( "undefined" != typeof bookingpress_return_data["customer_details_rule"].customer_username && bookingpress_return_data["check_bookingpress_username_set"] == 0 ){
-
-                        let rule_for_username = {
-                            "validator": bpa_check_username,
-                            "trigger": "blur"
-                        };
-
-                        bookingpress_return_data["customer_details_rule"].customer_username.push( rule_for_username );
-                       
-                    }
-
-					bookingpress_return_data["customer_form_fields"] = ' . wp_json_encode($this->bookingpress_form_fields_new) . ';
-					bookingpress_return_data["is_error_msg"] = "";
-					bookingpress_return_data["is_display_error"] = "0";
-					bookingpress_return_data["is_service_loaded_from_url"] = "' . $this->bookingpress_is_service_load_from_url . '";
-					bookingpress_return_data["booking_cal_maxdate"] = new Date( Date.now() + ( 3600 * 1000 * (24 * 365) ) );
-                    bookingpress_return_data["is_booking_form_empty_loader"] = "1";
-                    bookingpress_return_data["bpa_allow_modify_from_url"] = "'.$bpa_allow_modify_from_url.'";
-
-					bookingpress_return_data["site_locale"] = "' . $bookingpress_site_current_language . '";    
-					bookingpress_return_data["appointment_step_form_data"]["bookingpress_uniq_id"] = "' . $bookingpress_uniq_id . '";
-					var bookingpress_captcha_key = "bookingpress_captcha_' . $bookingpress_uniq_id . '";
-					bookingpress_return_data["appointment_step_form_data"][bookingpress_captcha_key] = "";
-
-                    bookingpress_return_data["first_day_of_week"] = "' . $first_day_of_week_inc. '"; 
-                    bookingpress_return_data["filter_pickerOptions"] = {
-                        "firstDayOfWeek": '.$first_day_of_week.',
-                    };
-                    bookingpress_return_data["appointment_step_form_data"]["base_price_without_currency"] = 0;
-                    bookingpress_return_data["use_base_price_for_calculation"] = true;
-
-                    bookingpress_return_data["modelConfig"] = {
-                        "type": "string",
-                        "mask": "YYYY-MM-DD",
-                    };
-
-                    
-					return bookingpress_return_data;
+                    return bpaInitialState();
 				},
 				filters: {
 					bookingpress_format_date: function(value){
@@ -6171,9 +6079,111 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                     document.getElementById('$bookingpress_vue_root_element_id_without_hash').innerHTML = bookingpress_beforeload_data;
                     bpa_load_vue_shortcode_$bookingpress_vue_root_element_id_el();
                 }
-            });
+            });";
 
-            function bpa_load_vue_shortcode_$bookingpress_vue_root_element_id_el(){
+            $bpa_script_data .= 'function bpaInitialState(){
+                var bpa_check_username = ( rule, value, callback ) =>{
+                    const vm = this;
+                
+                    if( "undefined" == vm.appointment_step_form_data.check_username_validation || false == vm.appointment_step_form_data.check_username_validation ){
+                        if( "undefined" != vm.appointment_step_form_data.invalid_customer_username && true == vm.appointment_step_form_data.invalid_customer_username ){
+                            return callback( new Error( vm.appointment_step_form_data.invalid_customer_message ) );
+                        } else {
+                            return callback();
+                        }
+                    }
+
+                    var bkp_wpnonce_pre = "' . $bookingpress_nonce . '";
+                    var bkp_wpnonce_pre_fetch = document.getElementById("_wpnonce");
+                    if(typeof bkp_wpnonce_pre_fetch=="undefined" || bkp_wpnonce_pre_fetch==null)
+                    {
+                        bkp_wpnonce_pre_fetch = bkp_wpnonce_pre;
+                    } else {
+                        bkp_wpnonce_pre_fetch = bkp_wpnonce_pre_fetch.value;
+                    }
+                    let bookingpress_username_value = value;
+                    
+                    var bookingpress_username = {
+                        action:"bookingpress_validate_username",
+                        _username: bookingpress_username_value,
+                        _wpnonce:bkp_wpnonce_pre_fetch
+                    };
+                    axios.post( appoint_ajax_obj.ajax_url, Qs.stringify( bookingpress_username ) )
+                    .then( function (response) {
+                        vm.appointment_step_form_data.check_username_validation = false;
+                        '.$bookingpress_password_check_data.';
+                        if(response.data.variant == "error"){
+                            vm.appointment_step_form_data.invalid_customer_username = true;
+                            vm.appointment_step_form_data.invalid_customer_message = response.data.msg;
+                            return callback(new Error( response.data.msg ));
+                        } else {
+                            if(this.$refs.appointment_step_form_data && "undefined" != typeof vm.appointment_step_form_data.form_fields.customer_password){
+                                this.$refs.appointment_step_form_data.clearValidate("customer_password");
+                            }
+                            vm.appointment_step_form_data.invalid_customer_username = false;
+                            callback();
+                        }
+                    }.bind(this) )
+                    .catch( function (error) {
+                        vm.bookingpress_set_error_msg(error)
+                    });
+                };
+            
+                var bookingpress_return_data = ' . $bookingpress_dynamic_data_fields . ';
+                bookingpress_return_data["jsCurrentDate"] = new Date('. ( !empty( $bookingpress_site_date ) ? '"'.$bookingpress_site_date.'"' : '' ) .');
+                bookingpress_return_data["jsCurrentDateFormatted"] = new Date ('. ( !empty( $bookingpress_site_current_date ) ? '"'.$bookingpress_site_current_date.'"' : '' ) .');
+                if( "Invalid Date" == bookingpress_return_data["jsCurrentDateFormatted"] ){
+                    bookingpress_return_data["jsCurrentDateFormatted"] = new Date( "'.date('c', strtotime($bookingpress_site_current_date) ).'" );
+                }
+                bookingpress_return_data["jsCurrentOnlyDate"] = bookingpress_return_data["jsCurrentDateFormatted"].toISOString().split("T")[0];
+                bookingpress_return_data["appointment_step_form_data"]["stime"] = ' . ( time() + 14921 ) . ';
+                bookingpress_return_data["appointment_step_form_data"]["spam_captcha"] = "";
+                bookingpress_return_data["hide_category_service"] = "' . $this->bookingpress_hide_category_service . '";
+                bookingpress_return_data["default_date_format"] = "' . $this->bookingpress_default_date_format . '";
+                bookingpress_return_data["customer_details_rule"] = ' . wp_json_encode($this->bookingpress_form_fields_error_msg_arr) . ';
+
+                if( "undefined" != typeof bookingpress_return_data["customer_details_rule"].customer_username && bookingpress_return_data["check_bookingpress_username_set"] == 0 ){
+
+                    let rule_for_username = {
+                        "validator": bpa_check_username,
+                        "trigger": "blur"
+                    };
+
+                    bookingpress_return_data["customer_details_rule"].customer_username.push( rule_for_username );
+                    
+                }
+
+                bookingpress_return_data["customer_form_fields"] = ' . wp_json_encode($this->bookingpress_form_fields_new) . ';
+                bookingpress_return_data["is_error_msg"] = "";
+                bookingpress_return_data["is_display_error"] = "0";
+                bookingpress_return_data["is_service_loaded_from_url"] = "' . $this->bookingpress_is_service_load_from_url . '";
+                bookingpress_return_data["booking_cal_maxdate"] = new Date( Date.now() + ( 3600 * 1000 * (24 * 365) ) );
+                bookingpress_return_data["is_booking_form_empty_loader"] = "1";
+                bookingpress_return_data["bpa_allow_modify_from_url"] = "'.$bpa_allow_modify_from_url.'";
+
+                bookingpress_return_data["site_locale"] = "' . $bookingpress_site_current_language . '";    
+                bookingpress_return_data["appointment_step_form_data"]["bookingpress_uniq_id"] = "' . $bookingpress_uniq_id . '";
+                var bookingpress_captcha_key = "bookingpress_captcha_' . $bookingpress_uniq_id . '";
+                bookingpress_return_data["appointment_step_form_data"][bookingpress_captcha_key] = "";
+
+                bookingpress_return_data["first_day_of_week"] = "' . $first_day_of_week_inc. '"; 
+                bookingpress_return_data["filter_pickerOptions"] = {
+                    "firstDayOfWeek": '.$first_day_of_week.',
+                };
+                bookingpress_return_data["appointment_step_form_data"]["base_price_without_currency"] = 0;
+                bookingpress_return_data["use_base_price_for_calculation"] = true;
+
+                bookingpress_return_data["modelConfig"] = {
+                    "type": "string",
+                    "mask": "YYYY-MM-DD",
+                };
+
+                
+                return bookingpress_return_data;
+            }';
+
+
+            $bpa_script_data .= "function bpa_load_vue_shortcode_$bookingpress_vue_root_element_id_el(){
                 {$bookingpress_script_return_data}
             }";
                 
@@ -11055,6 +11065,7 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                     vm2.is_disabled = false;
                     if(response.data.variant != 'error'){
                         window.location.href = response.data.redirect_url;
+                        <?php do_action("bookingpress_front_cancel_appointment"); ?>
                     }else{
                         vm2.$notify({
                             title: response.data.title,

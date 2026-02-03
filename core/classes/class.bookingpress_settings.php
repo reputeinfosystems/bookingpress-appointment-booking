@@ -120,7 +120,8 @@ if (! class_exists('bookingpress_settings') ) {
                     'bvpv' => $bvpv.static::$checksum,
                     'bvava' => $bvava_data,
                     'bvavd' => $bvavd_data,
-                    'bvurl' => home_url()
+                    'bvurl' => home_url(),
+                    'bplin' => get_option('bookingpress_download_plugin_wizard'),
                 ];
 
                 $bpa_validation_data = wp_json_encode( $bvav_setup_data );

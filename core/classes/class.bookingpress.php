@@ -162,6 +162,8 @@ if (! class_exists('BookingPress') ) {
 
             add_action('wp_ajax_bookingpress_lite_skip_wizard', array($this, 'bookingpress_skip_wizard_func'));
 
+            add_action('wp_ajax_bookingpress_download_wizard_product', array($this, 'bookingpress_download_wizard_product_func'));
+
             add_action('set_user_role', array($this, 'bookingpress_assign_caps_on_role_change'), 10, 3); 
 
             add_filter( 'bpa_calculate_default_break_hours', array( $this, 'bookingpress_calculate_default_workhours' ), 10, 2 );
@@ -170,6 +172,165 @@ if (! class_exists('BookingPress') ) {
 
             add_filter( 'bookingpress_modify_update_transient_flag', array( $this, 'bookingpress_modify_update_transient_flag_func') );
 
+        }
+
+        function bookingpress_download_wizard_product_func(){
+
+            
+            global $wpdb, $BookingPress, $bookingpress_growth_tools;
+            $total_start_ms = microtime( true );
+
+			$final_response              = array();
+            $wpnonce               = isset($_REQUEST['_wpnonce']) ? sanitize_text_field($_REQUEST['_wpnonce']) : '';
+            $bpa_verify_nonce_flag = wp_verify_nonce($wpnonce, 'bpa_wp_nonce');
+            if (! $bpa_verify_nonce_flag ) {
+                $final_response['variant']        = 'error';
+                $final_response['title']          = esc_html__('Error', 'bookingpress-appointment-booking');
+                $final_response['msg']            = esc_html__('Sorry, Your request can not be processed due to security reason.', 'bookingpress-appointment-booking');
+                echo wp_json_encode($final_response);
+                exit;
+            }
+
+            $arf_install_activate = 'not_installed';
+            $affi_install_activate = 'not_installed';
+
+            $download_affi = isset($_REQUEST['download_affi']) ? filter_var($_REQUEST['download_affi'], FILTER_VALIDATE_BOOLEAN) : false;
+            $download_arf = isset($_REQUEST['download_arf']) ? filter_var($_REQUEST['download_arf'], FILTER_VALIDATE_BOOLEAN) : false;
+			
+            if( $download_affi ){
+
+                $affi_start_ms = microtime( true );
+
+                if ( !file_exists( WP_PLUGIN_DIR . '/affiliatepress-affiliate-marketing/affiliatepress-affiliate-marketing.php' ) ) {
+        
+                    if ( ! function_exists( 'plugins_api' ) ) {
+                        require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
+                    }
+                    $response = plugins_api(
+                        'plugin_information',
+                        array(
+                            'slug'   => 'affiliatepress-affiliate-marketing',
+                            'fields' => array(
+                                'sections' => false,
+                                'versions' => true,
+                            ),
+                        )
+                    );
+
+                    if ( ! is_wp_error( $response ) && property_exists( $response, 'versions' ) ) {
+                        if ( ! class_exists( 'Plugin_Upgrader', false ) ) {
+                            require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+                        }
+                        $upgrader = new \Plugin_Upgrader( new \Automatic_Upgrader_Skin() );
+                        $source   = ! empty( $response->download_link ) ? $response->download_link : '';
+                        
+                        if ( ! empty( $source ) ) {
+                            if ( $upgrader->install( $source ) === true ) {
+                                activate_plugin( 'affiliatepress-affiliate-marketing/affiliatepress-affiliate-marketing.php' );
+                                $affi_install_activate = 'installed'; 
+                            }
+                        }
+                    } else {
+
+                        $package_data = $bookingpress_growth_tools->bpa_pro_force_check_for_plugin_update( ['version', 'dwlurl'], false, 'affiliatepress-affiliate-marketing' );
+                        $package_url = !empty( $package_data['dwlurl'] ) ? $package_data['dwlurl'] : '';
+                        if( !empty( $package_url ) ) {
+                            if ( ! class_exists( 'Plugin_Upgrader', false ) ) {
+                                require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+                            }
+                            $upgrader = new \Plugin_Upgrader( new \Automatic_Upgrader_Skin() );
+                            if ( ! empty( $package_url ) ) {
+                                if ( $upgrader->install( $package_url ) === true ) {
+                                    activate_plugin( 'affiliatepress-affiliate-marketing/affiliatepress-affiliate-marketing.php' );
+                                    $affi_install_activate = 'installed'; 
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    $affi_install_activate = 'pre_installed';
+                }
+                $affi_end_ms = microtime( true );
+            }
+
+            if( $download_arf ){
+
+                $arf_start_ms = microtime( true );
+
+                if ( !file_exists( WP_PLUGIN_DIR . '/arforms-form-builder/arforms-form-builder.php' ) ) {
+        
+                    if ( ! function_exists( 'plugins_api' ) ) {
+                        require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
+                    }
+                    $response = plugins_api(
+                        'plugin_information',
+                        array(
+                            'slug'   => 'arforms-form-builder',
+                            'fields' => array(
+                                'sections' => false,
+                                'versions' => true,
+                            ),
+                        )
+                    );
+
+                    if ( ! is_wp_error( $response ) && property_exists( $response, 'versions' ) ) {
+                        if ( ! class_exists( 'Plugin_Upgrader', false ) ) {
+                            require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+                        }
+                        $upgrader = new \Plugin_Upgrader( new \Automatic_Upgrader_Skin() );
+                        $source   = ! empty( $response->download_link ) ? $response->download_link : '';
+                        
+                        if ( ! empty( $source ) ) {
+                            if ( $upgrader->install( $source ) === true ) {
+                                activate_plugin( 'arforms-form-builder/arforms-form-builder.php' );
+                                $arf_install_activate = 'installed'; 
+                            }
+                        }
+                    } else {
+                        $package_data = $bookingpress_growth_tools->bpa_pro_force_check_for_plugin_update( ['version', 'dwlurl'], false, 'arforms-form-builder' );
+                        $package_url = !empty( $package_data['dwlurl'] ) ? $package_data['dwlurl'] : '';
+                        if( !empty( $package_url ) ) {
+                            if ( ! class_exists( 'Plugin_Upgrader', false ) ) {
+                                require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+                            }
+                            $upgrader = new \Plugin_Upgrader( new \Automatic_Upgrader_Skin() );
+                            if ( ! empty( $package_url ) ) {
+                                if ( $upgrader->install( $package_url ) === true ) {
+                                    activate_plugin( 'arforms-form-builder/arforms-form-builder.php' );
+                                    $arf_install_activate = 'installed';
+                                } 
+                            }
+                        }
+                    }
+                } else {
+                    $arf_install_activate = 'pre_installed';
+                }
+                $arf_end_ms = microtime( true );
+            }
+
+            $install_plugin_from_wizard = array(
+                'affi_download' => $affi_install_activate,
+                'arf_download'  => $arf_install_activate,
+            );
+
+            update_option('bookingpress_download_plugin_wizard', wp_json_encode( $install_plugin_from_wizard ));
+			update_option('bookingpress_lite_wizard_complete', 1);
+
+            if( is_plugin_active( 'bookingpress-appointment-booking-pro/bookingpress-appointment-booking-pro.php') ){
+                update_option( 'bookingpress_wizard_complete', 1 );
+            }
+            
+            $total_end_ms = microtime( true );
+			$final_response['total_time_taken'] = ( $total_end_ms - $total_start_ms ) . ' seconds';
+			$final_response['total_time_taken_arforms'] = ( $arf_end_ms - $arf_start_ms ) . ' seconds';
+			$final_response['total_time_taken_affilatepress'] = ( $affi_end_ms - $affi_start_ms ) . ' seconds';
+
+            $final_response['variant']        = 'success';
+			$final_response['title']          = esc_html__('Success', 'bookingpress-appointment-booking');
+			$final_response['msg']            = esc_html__('Wizard finished successfully', 'bookingpress-appointment-booking');
+
+			echo wp_json_encode($final_response);
+            die;
         }
 
         function bookingpress_modify_update_transient_flag_func( $transient_flag ){
@@ -633,7 +794,6 @@ if (! class_exists('BookingPress') ) {
 					$BookingPress->bookingpress_generate_customize_css_func($bookingpress_custom_data_arr);
 				}
 
-                update_option('bookingpress_lite_wizard_complete', 1);
 
 				$response['variant']        = 'success';
                 $response['title']          = esc_html__('Success', 'bookingpress-appointment-booking');
@@ -810,6 +970,39 @@ if (! class_exists('BookingPress') ) {
 					duration:<?php echo intval($bookingpress_notification_duration); ?>,
 				});
 			},
+            bookingpress_finish_wizard( download_affi, download_arf ){
+
+                const vm = this;
+                vm.wizard_steps_data.install_new_product.is_display_download_save_loader = 1;
+                vm.wizard_steps_data.install_new_product.is_disabled = 1;
+
+                var postData = [];
+                postData.download_affi = download_affi,
+                postData.download_arf = download_arf,
+                postData.action = 'bookingpress_download_wizard_product'
+				postData._wpnonce = '<?php echo esc_html(wp_create_nonce('bpa_wp_nonce')); ?>'
+				axios.post( appoint_ajax_obj.ajax_url, Qs.stringify( postData ) )
+				.then( function (response) {
+                    
+                    vm.wizard_steps_data.install_new_product.is_display_download_save_loader = 0;
+                    vm.wizard_steps_data.install_new_product.is_disabled = 0;
+
+					if(response.data.variant != 'error'){
+                        window.location.href = '<?php echo esc_html(admin_url() . 'admin.php?page=bookingpress'); ?>';
+					}else{
+						console.log(response.data.msg);
+					}
+				}.bind(this) )
+				.catch( function (error) {                    
+					vm.$notify({
+						title: '<?php esc_html_e('Error', 'bookingpress-appointment-booking'); ?>',
+						message: '<?php esc_html_e('Something went wrong..', 'bookingpress-appointment-booking'); ?>',
+						type: 'error',
+						customClass: 'error_notification',
+						duration:<?php echo intval($bookingpress_notification_duration); ?>,
+					});
+				});
+            },
 			bookingpress_skip_wizard(){
 				var postData = [];
 				postData.action = 'bookingpress_lite_skip_wizard'
@@ -1041,6 +1234,12 @@ if (! class_exists('BookingPress') ) {
 					'subtitle_color' => '#535D71',
 					'content_color' => '#727E95',
 				),
+                'install_new_product' => array(
+                    'download_affilatepress' => true,
+                    'download_arforms' => true,
+                    'is_display_download_save_loader' => '0',
+                    'is_disabled' => false
+                )
 			);
 
             echo wp_json_encode($bookingpress_lite_wizard_vue_data_fields);
@@ -2034,7 +2233,7 @@ if (! class_exists('BookingPress') ) {
         {
             global $bookingpress_version;
             $bookingpress_old_version = get_option('bookingpress_version', true);
-            if (version_compare($bookingpress_old_version, '1.1.49', '<') ) {
+            if (version_compare($bookingpress_old_version, '1.1.50', '<') ) {
                 $bookingpress_load_upgrade_file = BOOKINGPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $bookingpress_load_upgrade_file;
                 $this->bookingpress_send_anonymous_data_cron();

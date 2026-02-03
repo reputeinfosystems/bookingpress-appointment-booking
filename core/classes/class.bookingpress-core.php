@@ -12,6 +12,7 @@ if( !class_exists('BookingPress_Core') ){
         var $action_name;
         var $nonce_action;
         var $nonce_field;
+
         protected static $checksum;
 
         public function load(){
@@ -397,6 +398,54 @@ if( !class_exists('BookingPress_Core') ){
             return $transient_value;
 
 
+        }
+
+        public function bookingpress_validate_token(){
+            global $wpdb, $tbl_bookingpress_restapi_settings;
+
+            if ( ! defined( 'REST_REQUEST' ) ) {
+                return new WP_Error(
+                    'rest_only',
+                    __( 'This function can only be called via REST API.', 'bookingpress-rest-api' ),
+                    ['status' => 403]
+                );
+            }
+    
+            $headers = function_exists('getallheaders') ? getallheaders() : [];
+            $auth_header = $headers[ 'X-Bookingpress-Api-Key' ];
+
+            if ( empty( $auth_header ) ) {
+                return new WP_Error(
+                    'missing_auth',
+                    __( 'Missing or invalid Authorization header.', 'bookingpress-appointment-booking' ),
+                    [ 'status' => 401 ]
+                );
+            }
+
+            $api_key = trim( $auth_header );
+
+            $stored_key =  $wpdb->get_var( $wpdb->prepare( "SELECT api_setting_value FROM {$tbl_bookingpress_restapi_settings} WHERE api_setting_name = %s", 'api_security_key'));
+
+            if ( empty( $stored_key ) || $api_key !== $stored_key ) {
+                return new WP_Error(
+                    'invalid_api_key',
+                    __( 'Unauthorized. Invalid API key.', 'bookingpress-appointment-booking' ),
+                    [ 'status' => 403 ]
+                );
+            }
+
+            $expiration_date = $wpdb->get_var( $wpdb->prepare( "SELECT api_setting_value FROM {$tbl_bookingpress_restapi_settings} WHERE api_setting_name = %s", 'key_expiry_date' ) );
+            $expiration_key_type = $wpdb->get_var( $wpdb->prepare( "SELECT api_setting_value FROM {$tbl_bookingpress_restapi_settings} WHERE api_setting_name = %s", 'api_key_expiry_time' ) );
+
+            if( 4 != $expiration_key_type && date('Y-m-d', current_time('timestamp') ) > date('Y-m-d', strtotime( $expiration_date ) ) ){
+                return new WP_Error(
+                    'expired_api_key',
+                    __( 'Unauthorized. API key has been expired. Please generate the new API key and try again.', 'bookingpress-rest-api' ),
+                    [ 'status' => 403 ]
+                );
+            }
+            
+            return true;
         }
 
     }

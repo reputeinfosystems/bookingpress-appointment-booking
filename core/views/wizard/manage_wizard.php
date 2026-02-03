@@ -425,7 +425,8 @@
 								<?php esc_html_e( 'Prev', 'bookingpress-appointment-booking' ); ?>
 							</el-button>
 							<el-button class="bpa-btn bpa-btn--primary bpa-btn__medium" @click="bookingpress_next_tab('styling_options')">
-								<?php esc_html_e( 'Finish', 'bookingpress-appointment-booking' ); ?>								
+								<?php esc_html_e( 'Next', 'bookingpress-appointment-booking' ); ?>
+								<span class="material-icons-round">east</span>
 							</el-button>
 						</div>
 					</div>
@@ -520,18 +521,33 @@
 										<?php esc_html_e( 'Explore Features', 'bookingpress-appointment-booking' ); ?>
 									</el-button>
 								</div>
-								<div class="bpa-sdi__social-links">
-									<a href="https://www.facebook.com/BookingPressPlugin" target="_blank"><img src="<?php echo esc_url(BOOKINGPRESS_IMAGES_URL . '/fb-filled-circle.png'); ?>"></a>
-									<a href="https://www.youtube.com/c/BookingPress" target="_blank"><img src="<?php echo esc_url(BOOKINGPRESS_IMAGES_URL . '/yt-filled-circle.png'); ?>"></a>
-								</div>
 							</div>
 						</div>
-					</div>
-					<div class="bpa-tpb__foot-action-btns">
-						<div class="bpa-fab--wrapper">
-							<el-button class="bpa-btn bpa-btn__medium" @click="bookingpress_skip_wizard">
-								<?php esc_html_e( 'Close', 'bookingpress-appointment-booking' ); ?>
+						<div class="bpa-fsb-site-detail-item-row __bpa-has-btns __bpa-instalaltion-tab">
+							<?php if ( !file_exists( WP_PLUGIN_DIR . '/affiliatepress-affiliate-marketing/affiliatepress-affiliate-marketing.php' ) ) { ?>
+							<div class="bpa_download_affi_arf_link">
+								<span class="bpa_download_heading"><?php esc_html_e('Want your customers to promote your business for you?', 'bookingpress-appointment-booking'); ?></span>
+								<el-checkbox class="bpa_instalaltion_check_btn" v-model="wizard_steps_data.install_new_product.download_affilatepress"><?php esc_html_e('Install AffiliatePress and reward them with commissions for every booking they bring!','bookingpress-appointment-booking'); ?></el-checkbox>
+							</div>
+							<?php } 
+							if ( !file_exists( WP_PLUGIN_DIR . '/arforms-form-builder/arforms-form-builder.php' ) ) { ?>
+							<div class="bpa_download_affi_arf_link bpa-arf_download">
+								<span class="bpa_download_heading"><?php esc_html_e('Want stunning forms without coding?', 'bookingpress-appointment-booking'); ?></span>
+								<el-checkbox class="bpa-form-control--checkbox bpa_instalaltion_check_btn" v-model="wizard_steps_data.install_new_product.download_arforms"><?php esc_html_e('Install ARForms - the most powerful drag-and-drop form builder for WordPress!','bookingpress-appointment-booking'); ?></el-checkbox>
+							</div>
+							<?php } ?>
+							<el-button class="bpa-btn bpa-btn--primary" :class="(wizard_steps_data.install_new_product.is_display_download_save_loader == '1') ? 'bpa-btn--is-loader' : ''" @click="bookingpress_finish_wizard(wizard_steps_data.install_new_product.download_affilatepress,wizard_steps_data.install_new_product.download_arforms)" :disabled="wizard_steps_data.install_new_product.is_disabled" >					
+								<span class="bpa-btn__label"><?php esc_html_e( 'Finish', 'bookingpress-appointment-booking' ); ?></span>
+								<div class="bpa-btn--loader__circles">				    
+									<div></div>
+									<div></div>
+									<div></div>
+								</div>
 							</el-button>
+							<div class="bpa-sdi__social-links">
+								<a href="https://www.facebook.com/BookingPressPlugin" target="_blank"><img src="<?php echo esc_url(BOOKINGPRESS_IMAGES_URL . '/fb-filled-circle.png'); ?>"></a>
+								<a href="https://www.youtube.com/c/BookingPress" target="_blank"><img src="<?php echo esc_url(BOOKINGPRESS_IMAGES_URL . '/yt-filled-circle.png'); ?>"></a>
+							</div>
 						</div>
 					</div>
 				</div>

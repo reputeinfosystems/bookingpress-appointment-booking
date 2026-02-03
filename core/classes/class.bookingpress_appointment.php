@@ -2012,24 +2012,32 @@ if (! class_exists('bookingpress_appointment') ) {
          * @param  mixed $appointment_id   Appointment ID which you want to delete
          * @return void
          */
-        function bookingpress_delete_appointment( $appointment_id = '' )
+        function bookingpress_delete_appointment( $appointment_id = '', $is_api = false )
         {
             global $wpdb,$tbl_bookingpress_appointment_bookings,$tbl_bookingpress_payment_logs;
             $response              = array();
 
-            $bpa_check_authorization = $this->bpa_check_authentication( 'delete_appointments', true, 'bpa_wp_nonce' );
+            if($is_api == true){
+                $is_error = $this->bookingpress_validate_token();
+                if( is_wp_error( $is_error ) ){
+                    return $is_error;
+                }
+            } else {
+                $bpa_check_authorization = $this->bpa_check_authentication( 'delete_appointments', true, 'bpa_wp_nonce' );
             
-            if( preg_match( '/error/', $bpa_check_authorization ) ){
-                $bpa_auth_error = explode( '^|^', $bpa_check_authorization );
-                $bpa_error_msg = !empty( $bpa_auth_error[1] ) ? $bpa_auth_error[1] : esc_html__( 'Sorry. Something went wrong while processing the request', 'bookingpress-appointment-booking');
+                if( preg_match( '/error/', $bpa_check_authorization ) ){
+                    $bpa_auth_error = explode( '^|^', $bpa_check_authorization );
+                    $bpa_error_msg = !empty( $bpa_auth_error[1] ) ? $bpa_auth_error[1] : esc_html__( 'Sorry. Something went wrong while processing the request', 'bookingpress-appointment-booking');
 
-                $response['variant'] = 'error';
-                $response['title'] = esc_html__( 'Error', 'bookingpress-appointment-booking');
-                $response['msg'] = $bpa_error_msg;
+                    $response['variant'] = 'error';
+                    $response['title'] = esc_html__( 'Error', 'bookingpress-appointment-booking');
+                    $response['msg'] = $bpa_error_msg;
 
-                wp_send_json( $response );
-                die;
+                    wp_send_json( $response );
+                    die;
+                }
             }
+            
 
             $appointment_id      = isset($_POST['delete_id']) ? intval($_POST['delete_id']) : $appointment_id; // phpcs:ignore WordPress.Security.NonceVerification
             $response['variant'] = 'error';
@@ -2038,15 +2046,26 @@ if (! class_exists('bookingpress_appointment') ) {
             $return              = false;
             if (! empty($appointment_id) ) {
                 do_action('bookingpress_before_delete_appointment', $appointment_id);
-                $wpdb->delete($tbl_bookingpress_appointment_bookings, array( 'bookingpress_appointment_booking_id' => $appointment_id ), array( '%d' ));
-                $wpdb->delete($tbl_bookingpress_payment_logs, array( 'bookingpress_appointment_booking_ref' => $appointment_id ), array( '%d' ));
-                $response['variant'] = 'success';
-                $response['title']   = esc_html__('Success', 'bookingpress-appointment-booking');
-                $response['msg']     = esc_html__('Appointment has been deleted successfully.', 'bookingpress-appointment-booking');
-                $return              = true;
+                $is_deleted = $wpdb->delete($tbl_bookingpress_appointment_bookings, array( 'bookingpress_appointment_booking_id' => $appointment_id ), array( '%d' ));
+                if($is_deleted){
+                    $wpdb->delete($tbl_bookingpress_payment_logs, array( 'bookingpress_appointment_booking_ref' => $appointment_id ), array( '%d' ));
+                    $response['variant'] = 'success';
+                    $response['title']   = esc_html__('Success', 'bookingpress-appointment-booking');
+                    $response['msg']     = esc_html__('Appointment has been deleted successfully.', 'bookingpress-appointment-booking');
+                    $return              = true;
+                }else{
+                    $response['variant'] = 'error';
+                    $response['title']   = esc_html__('Error', 'bookingpress-appointment-booking');
+                    $response['msg']     = esc_html__('Either appointment deleted or not found.', 'bookingpress-appointment-booking');
+                    $return              = false;
+                }
+                
             }
-            if (isset($_POST['action']) && sanitize_text_field($_POST['action']) == 'bookingpress_delete_appointment' ) { // phpcs:ignore
+            if ( $is_api && isset($_POST['action']) && sanitize_text_field($_POST['action']) == 'bookingpress_delete_appointment' ) { // phpcs:ignore
                 wp_send_json($response);
+            }
+            if($is_api){
+                return $response;
             }
             return $return;
         }
