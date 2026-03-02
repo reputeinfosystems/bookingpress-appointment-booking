@@ -14,7 +14,7 @@ $bookingpress_summary_content_note = $BookingPress->bookingpress_get_customize_s
 $bookingpress_summary_content_note = stripslashes_deep( $bookingpress_summary_content_note );
 ?>
 
-<div class="bpa-frontend-main-container" :class="bookingpress_container_dynamic_class" id="bookingpress_booking_form_<?php echo esc_html($bookingpress_uniq_id); ?>">
+<div class="bpa-frontend-main-container bpa-frontend-main-booking-calendar" :class="bookingpress_container_dynamic_class" id="bookingpress_booking_form_<?php echo esc_html($bookingpress_uniq_id); ?>">
     <?php wp_nonce_field('bpa_wp_nonce'); ?>
     <div class="bpa-front-loader-container" v-if="is_booking_form_empty_loader == '1'">
         <div class="bpa-front-loader">

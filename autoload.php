@@ -95,7 +95,7 @@ if( !file_exists( $import_folder_path .'/index.php') ){
 }
 
 global $bookingpress_version;
-$bookingpress_version = '1.1.52';
+$bookingpress_version = '1.1.53';
 define('BOOKINGPRESS_VERSION', $bookingpress_version);
 
 global $bookingpress_ajaxurl;
@@ -125,6 +125,10 @@ if( !empty( $wp_version ) && version_compare( $wp_version, '5.3.0', '<' ) ) {
 
 if( file_exists(BOOKINGPRESS_CLASSES_DIR . '/class.bookingpress-core.php') ){
     require_once BOOKINGPRESS_CLASSES_DIR . '/class.bookingpress-core.php';
+}
+
+if( file_exists( BOOKINGPRESS_CLASSES_DIR . '/class.bookingpress-db.php' ) ){
+    require_once BOOKINGPRESS_CLASSES_DIR . '/class.bookingpress-db.php';
 }
 
 if (file_exists(BOOKINGPRESS_CLASSES_DIR . '/class.bookingpress.php') ) {

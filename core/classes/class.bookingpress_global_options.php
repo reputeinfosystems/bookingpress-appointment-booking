@@ -54,27 +54,15 @@ if (! class_exists('BookingPress_Global_Options') ) {
             
 
             global $bookingpress_settings_table_exists, $bookingpress_customize_settings_table_exists;
+            $bookingpress_settings_table_exists = 1;
+            $bookingpress_customize_settings_table_exists = 1;
 
-            if( 1 != $bookingpress_settings_table_exists ){
-                $check_table = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(1) FROM information_schema.tables WHERE table_schema=%s AND table_name=%s",DB_NAME,$tbl_bookingpress_settings));
-                if( 1 == $check_table ){
-                    $bookingpress_settings_table_exists = 1;
-                }
-            }
-
-            if( 1 != $bookingpress_customize_settings_table_exists ){
-                $check_customize_table = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(1) FROM information_schema.tables WHERE table_schema=%s AND table_name=%s", DB_NAME, $tbl_bookingpress_customize_settings) );
-                if( 1 == $check_customize_table ){
-                    $bookingpress_customize_settings_table_exists = 1;
-                }
-            }
 
             $default_date_format = 'F j, Y';
             $default_time_format = 'g:i a';
             $bpa_converted_time_format = 'hh:mm';
             
             $bpa_general_settings_data = array();
-            if($bookingpress_settings_table_exists == 1) {
 
                 // Get all the general settings
                 $bpa_cached_general_settings = wp_cache_get( 'bookingpress_all_general_settings' );
@@ -116,7 +104,6 @@ if (! class_exists('BookingPress_Global_Options') ) {
                 } elseif ($default_time_format == 'bookingpress-wp-inherit-time-format'){
                     $default_time_format = get_option('time_format'); 
                 }
-            }
 
             $global_data = array(
                 'name'                         => 'Appointment Booking',
@@ -225,6 +212,10 @@ if (! class_exists('BookingPress_Global_Options') ) {
                             'value' => '%share_appointment_url%',
                             'name'  => '%share_appointment_url%',
                         ),
+                        array(
+                            'value' => '%appointment_weekday%',
+                            'name'  => '%appointment_weekday%',
+                        )
                     )
                 ),
                 'country_lists'                => '[{"code":"ad","name":"Andorra"},{"code":"ae","name":"United Arab Emirates"},{"code":"af","name":"Afghanistan"},{"code":"ag","name":"Antigua & Barbuda"},{"code":"ai","name":"Anguilla"},{"code":"al","name":"Albania"},{"code":"am","name":"Armenia"},{"code":"ao","name":"Angola"},{"code":"aq","name":"Antarctica"},{"code":"ar","name":"Argentina"},{"code":"as","name":"American Samoa"},{"code":"at","name":"Austria"},{"code":"au","name":"Australia"},{"code":"aw","name":"Aruba"},{"code":"ax","name":"Aland Islands"},{"code":"az","name":"Azerbaijan"},{"code":"ba","name":"Bosnia & Herzegovina"},{"code":"bb","name":"Barbados"},{"code":"bd","name":"Bangladesh"},{"code":"be","name":"Belgium"},{"code":"bf","name":"Burkina Faso"},{"code":"bg","name":"Bulgaria"},{"code":"bh","name":"Bahrain"},{"code":"bi","name":"Burundi"},{"code":"bj","name":"Benin"},{"code":"bm","name":"Bermuda"},{"code":"bn","name":"Brunei"},{"code":"bo","name":"Bolivia"},{"code":"br","name":"Brazil"},{"code":"bs","name":"Bahamas"},{"code":"bt","name":"Bhutan"},{"code":"bv","name":"Bouvet Island"},{"code":"bw","name":"Botswana"},{"code":"by","name":"Belarus"},{"code":"bz","name":"Belize"},{"code":"ca","name":"Canada"},{"code":"cc","name":"Cocos (Keeling) Islands"},{"code":"cd","name":"Congo - Kinshasa"},{"code":"cf","name":"Central African Republic"},{"code":"cg","name":"Congo - Brazzaville"},{"code":"ch","name":"Switzerland"},{"code":"ci","name":"Cote D\'Ivoire (Ivory Coast)"},{"code":"ck","name":"Cook Islands"},{"code":"cl","name":"Chile"},{"code":"cm","name":"Cameroon"},{"code":"cn","name":"China"},{"code":"co","name":"Colombia"},{"code":"cr","name":"Costa Rica"},{"code":"cu","name":"Cuba"},{"code":"cv","name":"Cape Verde"},{"code":"cx","name":"Christmas Island"},{"code":"cy","name":"Cyprus"},{"code":"cz","name":"Czechia"},{"code":"de","name":"Germany"},{"code":"dj","name":"Djibouti"},{"code":"dk","name":"Denmark"},{"code":"dm","name":"Dominica"},{"code":"do","name":"Dominican Republic"},{"code":"dz","name":"Algeria"},{"code":"ec","name":"Ecuador"},{"code":"ee","name":"Estonia"},{"code":"eg","name":"Egypt"},{"code":"eh","name":"Western Sahara"},{"code":"er","name":"Eritrea"},{"code":"es","name":"Spain"},{"code":"et","name":"Ethiopia"},{"code":"fi","name":"Finland"},{"code":"fj","name":"Fiji"},{"code":"fk","name":"Falkland Islands"},{"code":"fm","name":"Micronesia"},{"code":"fo","name":"Faroe Islands"},{"code":"fr","name":"France"},{"code":"ga","name":"Gabon"},{"code":"gb","name":"United Kingdom"},{"code":"gd","name":"Grenada"},{"code":"ge","name":"Georgia"},{"code":"gf","name":"French Guiana"},{"code":"gh","name":"Ghana"},{"code":"gi","name":"Gibraltar"},{"code":"gl","name":"Greenland"},{"code":"gm","name":"Gambia"},{"code":"gn","name":"Guinea"},{"code":"gp","name":"Guadeloupe"},{"code":"gq","name":"Equatorial Guinea"},{"code":"gr","name":"Greece"},{"code":"gs","name":"South Georgia & South Sandwich Islands"},{"code":"gt","name":"Guatemala"},{"code":"gu","name":"Guam"},{"code":"gw","name":"Guinea-Bissau"},{"code":"gy","name":"Guyana"},{"code":"hk","name":"Hong Kong"},{"code":"hm","name":"Heard & McDonald Islands"},{"code":"hn","name":"Honduras"},{"code":"hr","name":"Croatia"},{"code":"ht","name":"Haiti"},{"code":"hu","name":"Hungary"},{"code":"id","name":"Indonesia"},{"code":"ie","name":"Ireland"},{"code":"il","name":"Israel"},{"code":"in","name":"India"},{"code":"io","name":"British Indian Ocean Territory"},{"code":"iq","name":"Iraq"},{"code":"ir","name":"Iran"},{"code":"is","name":"Iceland"},{"code":"it","name":"Italy"},{"code":"jm","name":"Jamaica"},{"code":"jo","name":"Jordan"},{"code":"jp","name":"Japan"},{"code":"ke","name":"Kenya"},{"code":"kg","name":"Kyrgyzstan"},{"code":"kh","name":"Cambodia"},{"code":"ki","name":"Kiribati"},{"code":"km","name":"Comoros"},{"code":"kn","name":"St. Kitts & Nevis"},{"code":"kp","name":"North Korea"},{"code":"kr","name":"South Korea"},{"code":"kw","name":"Kuwait"},{"code":"ky","name":"Cayman Islands"},{"code":"kz","name":"Kazakhstan"},{"code":"la","name":"Laos"},{"code":"lb","name":"Lebanon"},{"code":"lc","name":"St. Lucia"},{"code":"li","name":"Liechtenstein"},{"code":"lk","name":"Sri Lanka"},{"code":"lr","name":"Liberia"},{"code":"ls","name":"Lesotho"},{"code":"lt","name":"Lithuania"},{"code":"lu","name":"Luxembourg"},{"code":"lv","name":"Latvia"},{"code":"ly","name":"Libya"},{"code":"ma","name":"Morocco"},{"code":"mc","name":"Monaco"},{"code":"md","name":"Moldova"},{"code":"me","name":"Montenegro"},{"code":"mg","name":"Madagascar"},{"code":"mh","name":"Marshall Islands"},{"code":"mk","name":"Macedonia"},{"code":"ml","name":"Mali"},{"code":"mm","name":"Myanmar (Burma)"},{"code":"mn","name":"Mongolia"},{"code":"mn","name":"Mongolian Tugrik"},{"code":"mo","name":"Macau"},{"code":"mp","name":"Northern Mariana Islands"},{"code":"mq","name":"Martinique"},{"code":"mr","name":"Mauritania"},{"code":"ms","name":"Montserrat"},{"code":"mt","name":"Malta"},{"code":"mu","name":"Mauritius"},{"code":"mv","name":"Maldives"},{"code":"mw","name":"Malawi"},{"code":"mx","name":"Mexico"},{"code":"my","name":"Malaysia"},{"code":"mz","name":"Mozambique"},{"code":"na","name":"Namibia"},{"code":"nc","name":"New Caledonia"},{"code":"ne","name":"Niger"},{"code":"nf","name":"Norfolk Island"},{"code":"ng","name":"Nigeria"},{"code":"ni","name":"Nicaragua"},{"code":"nl","name":"Netherlands"},{"code":"no","name":"Norway"},{"code":"np","name":"Nepal"},{"code":"nr","name":"Nauru"},{"code":"nu","name":"Niue"},{"code":"nz","name":"New Zealand"},{"code":"om","name":"Oman"},{"code":"pa","name":"Panama"},{"code":"pe","name":"Peru"},{"code":"pf","name":"French Polynesia"},{"code":"pg","name":"Papua New Guinea"},{"code":"ph","name":"Philippines"},{"code":"pk","name":"Pakistan"},{"code":"pl","name":"Poland"},{"code":"pm","name":"St. Pierre & Miquelon"},{"code":"pn","name":"Pitcairn"},{"code":"pr","name":"Puerto Rico"},{"code":"ps","name":"Palestinian Territories"},{"code":"pt","name":"Portugal"},{"code":"pw","name":"Palau"},{"code":"py","name":"Paraguay"},{"code":"qa","name":"Qatar"},{"code":"re","name":"Reunion"},{"code":"ro","name":"Romania"},{"code":"ru","name":"Russia"},{"code":"rw","name":"Rwanda"},{"code":"rs","name":"Serbia"},{"code":"sa","name":"Saudi Arabia"},{"code":"sb","name":"Solomon Islands"},{"code":"sc","name":"Seychelles"},{"code":"sd","name":"Sudan"},{"code":"se","name":"Sweden"},{"code":"sg","name":"Singapore"},{"code":"sh","name":"St. Helena"},{"code":"si","name":"Slovenia"},{"code":"sj","name":"Svalbard & Jan Mayen"},{"code":"sk","name":"Slovakia"},{"code":"sl","name":"Sierra Leone"},{"code":"sm","name":"San Marino"},{"code":"sn","name":"Senegal"},{"code":"so","name":"Somalia"},{"code":"sr","name":"Suriname"},{"code":"ss","name":"South Sudan"},{"code":"st","name":"Sao Tome and Principe"},{"code":"sv","name":"El Salvador"},{"code":"sy","name":"Syria"},{"code":"sz","name":"Swaziland"},{"code":"tc","name":"Turks & Caicos Islands"},{"code":"td","name":"Chad"},{"code":"tf","name":"French Southern Territories"},{"code":"tg","name":"Togo"},{"code":"th","name":"Thailand"},{"code":"tj","name":"Tajikistan"},{"code":"tk","name":"Tokelau"},{"code":"tl","name":"Timor-Leste"},{"code":"tm","name":"Turkmenistan"},{"code":"tn","name":"Tunisia"},{"code":"to","name":"Tonga"},{"code":"tr","name":"Turkey"},{"code":"tt","name":"Trinidad & Tobago"},{"code":"tv","name":"Tuvalu"},{"code":"tw","name":"Taiwan"},{"code":"tz","name":"Tanzania"},{"code":"ua","name":"Ukraine"},{"code":"ug","name":"Uganda"},{"code":"um","name":"U.S. Outlying Islands"},{"code":"us","name":"United States"},{"code":"uy","name":"Uruguay"},{"code":"uz","name":"Uzbekistan"},{"code":"va","name":"Vatican City"},{"code":"vc","name":"St. Vincent & Grenadines"},{"code":"ve","name":"Venezuela"},{"code":"vg","name":"British Virgin Islands"},{"code":"vi","name":"U.S. Virgin Islands"},{"code":"vn","name":"Vietnam"},{"code":"vu","name":"Vanuatu"},{"code":"wf","name":"Wallis & Futuna"},{"code":"ws","name":"Samoa"},{"code":"ye","name":"Yemen"},{"code":"yt","name":"Mayotte"},{"code":"za","name":"South Africa"},{"code":"zm","name":"Zambia"},{"code":"zw","name":"Zimbabwe"}]',
@@ -533,15 +524,21 @@ if (! class_exists('BookingPress_Global_Options') ) {
             // Get all the customize settings
             /* global $tbl_bookingpress_customize_settings; */
             $bpa_customize_settings_data = array();
-            if( 1 == $bookingpress_customize_settings_table_exists ){
-   
-                $bpa_cached_customize_settings = wp_cache_get( 'bookingpress_all_customize_settings' );
-                if( false === $bpa_cached_customize_settings ){
-                    $bookingpress_all_customize_settings = $wpdb->get_results( "SELECT bookingpress_setting_name,bookingpress_setting_value,bookingpress_setting_type FROM {$tbl_bookingpress_customize_settings} ORDER BY bookingpress_setting_type ASC" );// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_customize_settings is table name defined globally.
-                    wp_cache_set( 'bookingpress_all_customize_settings', $bookingpress_all_customize_settings );
-                } else {
-                    $bookingpress_all_customize_settings = $bpa_cached_customize_settings;
-                }
+      
+                //$bpa_cached_customize_settings = wp_cache_get( 'bookingpress_all_customize_settings' );
+                //if( false === $bpa_cached_customize_settings ){
+                    $customize_settings_args = [
+                        'columns'       => 'bookingpress_setting_name, bookingpress_setting_value, bookingpress_setting_type',
+                        'table'         => $tbl_bookingpress_customize_settings,
+                        'where'         => 'WHERE 1=1'
+                    ];
+
+                    $bookingpress_all_customize_settings = BookingPressDb::bpa_fetch_records( $customize_settings_args );
+                    //$bookingpress_all_customize_settings = $wpdb->get_results( "SELECT bookingpress_setting_name,bookingpress_setting_value,bookingpress_setting_type FROM {$tbl_bookingpress_customize_settings} ORDER BY bookingpress_setting_type ASC" );// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_customize_settings is table name defined globally.
+                    //wp_cache_set( 'bookingpress_all_customize_settings', $bookingpress_all_customize_settings );
+                //} else {
+                    //$bookingpress_all_customize_settings = $bpa_cached_customize_settings;
+                //}
 
                 if( !empty( $bookingpress_all_customize_settings ) ){
                     foreach( $bookingpress_all_customize_settings as $cs_key => $cs_value ){
@@ -553,7 +550,6 @@ if (! class_exists('BookingPress_Global_Options') ) {
                         $bpa_customize_settings_data[ $customize_type ][ $cs_value->bookingpress_setting_name ] = $cs_value->bookingpress_setting_value;
                     }
                 }
-            }
 
             $global_data['customize_settings'] = $bpa_customize_settings_data;
 

@@ -255,6 +255,7 @@ if (! class_exists('BookingPress') ) {
                     $affi_install_activate = 'pre_installed';
                 }
                 $affi_end_ms = microtime( true );
+                $final_response['total_time_taken_affilatepress'] = ( $affi_end_ms - $affi_start_ms ) . ' seconds';
             }
 
             if( $download_arf ){
@@ -310,6 +311,7 @@ if (! class_exists('BookingPress') ) {
                     $arf_install_activate = 'pre_installed';
                 }
                 $arf_end_ms = microtime( true );
+                $final_response['total_time_taken_arforms'] = ( $arf_end_ms - $arf_start_ms ) . ' seconds';
             }
 
             $install_plugin_from_wizard = array(
@@ -326,8 +328,6 @@ if (! class_exists('BookingPress') ) {
             
             $total_end_ms = microtime( true );
 			$final_response['total_time_taken'] = ( $total_end_ms - $total_start_ms ) . ' seconds';
-			$final_response['total_time_taken_arforms'] = ( $arf_end_ms - $arf_start_ms ) . ' seconds';
-			$final_response['total_time_taken_affilatepress'] = ( $affi_end_ms - $affi_start_ms ) . ' seconds';
 
             $final_response['variant']        = 'success';
 			$final_response['title']          = esc_html__('Success', 'bookingpress-appointment-booking');
@@ -1410,10 +1410,11 @@ if (! class_exists('BookingPress') ) {
         function bookingpress_get_sysinfo_func()
         {
             global $BookingPress;
-
-            $is_debug_mode_enabled = $BookingPress->bookingpress_get_settings( 'debug_mode', 'general_setting' );
             
             if (! empty($_REQUEST['bookingpress_sysinfo']) && ( $_REQUEST['bookingpress_sysinfo'] == 'bkp999repute' ) && 'true' == $is_debug_mode_enabled  ) {
+
+                $is_debug_mode_enabled = $BookingPress->bookingpress_get_settings( 'debug_mode', 'general_setting' );
+
                 include 'wp-load.php';
                 include_once ABSPATH . 'wp-admin/includes/plugin.php';
 
@@ -2237,7 +2238,7 @@ if (! class_exists('BookingPress') ) {
         {
             global $bookingpress_version;
             $bookingpress_old_version = get_option('bookingpress_version', true);
-            if (version_compare($bookingpress_old_version, '1.1.52', '<') ) {
+            if (version_compare($bookingpress_old_version, '1.1.53', '<') ) {
                 $bookingpress_load_upgrade_file = BOOKINGPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $bookingpress_load_upgrade_file;
                 $this->bookingpress_send_anonymous_data_cron();
@@ -5599,8 +5600,9 @@ if (! class_exists('BookingPress') ) {
                 return $this->bookingpress_get_customize_settings_lagecy( $setting_name, $setting_type );
             }
             global $bookingpress_global_options, $bookingpress_settings_table_exists;
+            
             if( 1 != $bookingpress_settings_table_exists ){
-                return '';
+                return is_array( $setting_name ) ? [] : '';
             }
             $bookingpress_options                    = $bookingpress_global_options->bookingpress_global_options();
             
@@ -5657,15 +5659,15 @@ if (! class_exists('BookingPress') ) {
                 array_unshift( $setting_names, $settings_placeholders );
                 $settings_query_where = call_user_func_array(array( $wpdb, 'prepare' ), $setting_names );
                 
-                $customize_setting_value = wp_cache_get($customize_setting_key);
+                //$customize_setting_value = wp_cache_get($customize_setting_key);
 
-                if($customize_setting_value === false){
+                //if($customize_setting_value === false){
                     $bookingpress_get_setting  = $wpdb->get_results( $wpdb->prepare( "SELECT bookingpress_setting_name,bookingpress_setting_value FROM `{$tbl_bookingpress_customize_settings}` WHERE {$settings_query_where} AND bookingpress_setting_type = %s", $setting_type ), ARRAY_A ); //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason $tbl_bookingpress_customize_settings is a table query and $settings_query_where is already passed through wpdb->prepare function
-                    wp_cache_set($customize_setting_key,$bookingpress_get_setting);
-                }
-                else{
-                    $bookingpress_get_setting  = $customize_setting_value;
-                }
+                    //wp_cache_set($customize_setting_key,$bookingpress_get_setting);
+                //}
+                //else{
+                    //$bookingpress_get_setting  = $customize_setting_value;
+                //}
                 
                 if( !empty( $bookingpress_get_setting ) ){
                     $bookingpress_setting_value = array();
@@ -6001,7 +6003,7 @@ if (! class_exists('BookingPress') ) {
             );
         }
 
-        public function bookingpress_retrieve_off_days( $start_date = '', $number_of_days = 366, $selected_service = '', $selected_service_duration = '', $selected_staffmember = '' ){
+        public function bookingpress_retrieve_off_days( $start_date = '', $number_of_days = 366, $selected_service = '', $selected_service_duration = '', $selected_staffmember = '', $daysoff_details1 = [] ){
 
             global $wpdb, $tbl_bookingpress_default_daysoff, $tbl_bookingpress_default_workhours, $BookingPress;
 
@@ -6034,11 +6036,12 @@ if (! class_exists('BookingPress') ) {
 
             }
 
-            $daysoff_details = $wpdb->get_results("SELECT bookingpress_dayoff_date,bookingpress_repeat FROM {$tbl_bookingpress_default_daysoff} {$bpa_default_daysoff_where}", ARRAY_A);// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_default_daysoff is table name defined globally. False alarm
-
             $default_off_dates = array();
             $repeative_off_dates = array();
 
+            if( !isset ( $daysoff_details ) || ( !empty( $_POST['action'] ) && 'bookingpress_get_disable_date' == $_POST['action'] ) ){
+                $daysoff_details = $wpdb->get_results("SELECT bookingpress_dayoff_date,bookingpress_repeat FROM {$tbl_bookingpress_default_daysoff} {$bpa_default_daysoff_where}", ARRAY_A);// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_default_daysoff is table name defined globally. False alarm
+            }
             if( !empty( $retrieve_default_holidays['offdays'] ) ){    
                 $daysoff_details = array_merge( $daysoff_details, $retrieve_default_holidays['offdays']);
             }
@@ -6077,8 +6080,6 @@ if (! class_exists('BookingPress') ) {
             } else {
 
             }
-
-
             $bpa_begin_date = new DateTime( $start_date );
             $bpa_end_date = new DateTime( $end_date );
 
@@ -6445,6 +6446,117 @@ if (! class_exists('BookingPress') ) {
 
         }
 
+        function bookingpress_retrieve_holidays( $start_date =  '', $end_date = '', $type = 'company' ){
+
+            global $wpdb, $tbl_bookingpress_default_daysoff;
+
+            $block_dates = [];
+            
+            if( empty( $start_date ) || empty( $end_date ) ){
+                return $block_dates;
+            }
+
+            if( empty( $type ) || 'company' == $type ){
+
+                $args = [
+                    'columns'       => 'DATE(bookingpress_dayoff_date) as off_date, bookingpress_dayoff_enddate as off_end_date, bookingpress_repeat',
+                    'table'         => $tbl_bookingpress_default_daysoff,
+                    'where'         => $wpdb->prepare( 'WHERE bookingpress_dayoff_parent = %d AND ((bookingpress_dayoff_date BETWEEN %s AND %s) OR bookingpress_repeat = %d)', 0, $start_date, $end_date, 1 ),
+                    'type'          => ARRAY_A
+                ];
+                $daysoff_data       = BookingPressDb::bpa_fetch_records( $args );
+
+                $block_dates = $this->bp_expand_dayoffs_map(
+                    $daysoff_data,
+                    $start_date,
+                    $end_date
+                );
+
+            }
+
+            $block_dates = apply_filters( 'bookingpress_retrieve_advanced_repeated_holidays_'. $type, $block_dates, $start_date, $end_date );
+
+            return $block_dates;
+
+        }
+
+        function bp_expand_dayoffs_map($rules, $window_start, $window_end) {
+
+            $window_start_ts = strtotime($window_start);
+            $window_end_ts   = strtotime($window_end);
+
+            $start_year = (int)date('Y', $window_start_ts);
+            $end_year   = (int)date('Y', $window_end_ts);
+
+            $dayoff_map = [];
+
+            foreach ($rules as $r) {
+
+                if (empty($r['off_date'])) {
+                    continue;
+                }
+
+                $from = strtotime($r['off_date']);
+
+                // If end date empty → single day
+                $to = !empty($r['off_end_date'])
+                    ? strtotime($r['off_end_date'])
+                    : $from;
+
+                $repeat = !empty($r['bookingpress_repeat']);
+
+                /*
+                |--------------------------------------------------
+                | NON-REPEATING → use original dates only
+                |--------------------------------------------------
+                */
+                if (!$repeat) {
+
+                    if ($to < $window_start_ts || $from > $window_end_ts) {
+                        continue;
+                    }
+
+                    for ($ts = $from; $ts <= $to; $ts += 86400) {
+                        $d = date('Y-m-d', $ts);
+                        $dayoff_map[] = $d;
+                    }
+
+                    continue;
+                }
+
+                /*
+                |--------------------------------------------------
+                | YEARLY REPEAT → expand for each year in window
+                |--------------------------------------------------
+                */
+
+                $md_start = date('m-d', $from);
+                $md_end   = date('m-d', $to);
+
+                for ($y = $start_year; $y <= $end_year; $y++) {
+
+                    $range_start = strtotime("$y-$md_start");
+                    $range_end   = strtotime("$y-$md_end");
+
+                    if (!$range_start || !$range_end) {
+                        continue; // handles invalid dates like Feb 29
+                    }
+
+                    if ($range_end < $window_start_ts || $range_start > $window_end_ts) {
+                        continue;
+                    }
+
+                    for ($ts = $range_start; $ts <= $range_end; $ts += 86400) {
+                        $d = date('Y-m-d', $ts);
+                        $dayoff_map[] = $d;
+                    }
+                }
+            }
+
+            return $dayoff_map;
+        }
+
+
         function bookingpress_check_for_the_holidays( $selected_date = '', $selected_service_id = '', $type = 'company' ){
             global $tbl_bookingpress_default_daysoff, $wpdb;
 
@@ -6457,7 +6569,16 @@ if (! class_exists('BookingPress') ) {
             if( 'company' == $type || empty( $type ) ){
                 /** Check if selected days is in holiday */
                 $bpa_default_daysoff_where = $wpdb->prepare( 'WHERE (bookingpress_dayoff_date >= %s OR bookingpress_repeat = %d)', $selected_date .' 00:00:00',1);
-                $daysoff_details = $wpdb->get_results("SELECT bookingpress_dayoff_date,bookingpress_repeat FROM {$tbl_bookingpress_default_daysoff} {$bpa_default_daysoff_where}");// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_default_daysoff is table name defined globally. False alarm
+
+                $args = [
+                    'columns'   => 'bookingpress_dayoff_date,bookingpress_repeat',
+                    'table'     => $tbl_bookingpress_default_daysoff,
+                    'where'     => $bpa_default_daysoff_where
+                ];
+
+                $daysoff_details = BookingPressDb::bpa_fetch_records( $args );
+
+                //$daysoff_details = $wpdb->get_results("SELECT bookingpress_dayoff_date,bookingpress_repeat FROM {$tbl_bookingpress_default_daysoff} {$bpa_default_daysoff_where}");// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_default_daysoff is table name defined globally. False alarm
     
                 $is_holiday = false;
                 if( !empty( $daysoff_details ) ){
@@ -6502,7 +6623,15 @@ if (! class_exists('BookingPress') ) {
             $service_time_duration_unit = $service_time_duration['time_unit'];            
             
             if (! empty($selected_service_id) ) {
-                $service_data = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$tbl_bookingpress_services} WHERE bookingpress_service_id = %d", $selected_service_id), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason $tbl_bookingpress_services is a table name
+                //$service_data = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$tbl_bookingpress_services} WHERE bookingpress_service_id = %d", $selected_service_id), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason $tbl_bookingpress_services is a table name
+                $service_args = [
+                    'columns'   => '*',
+                    'table'     => $tbl_bookingpress_services,
+                    'where'     => $wpdb->prepare( 'WHERE bookingpress_service_id = %d', $selected_service_id ),
+                    'type'      => ARRAY_A,
+                    'is_single' => true
+                ];
+                $service_data = BookingPressDb::bpa_fetch_records( $service_args );
                 if (! empty($service_data) ) {
                     $service_time_duration      = esc_html($service_data['bookingpress_service_duration_val']);
                     $service_time_duration_unit = esc_html($service_data['bookingpress_service_duration_unit']);
@@ -6530,18 +6659,39 @@ if (! class_exists('BookingPress') ) {
                 $default_timeslot_step = $service_step_duration_val;
             }
 
-            $get_default_work_hours_data = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$tbl_bookingpress_default_workhours} WHERE bookingpress_workday_key = %s AND bookingpress_is_break = 0 AND bookingpress_start_time IS NOT NULL", $current_day), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_default_workhours is table name defined globally. False Positive alarm
-
+            /** New Changes Start */
+            $work_args = [
+                'table' => $tbl_bookingpress_default_workhours,
+                'where' => 'WHERE bookingpress_start_time IS NOT NULL',
+                'type'  => ARRAY_A
+            ];
+            $all_workhour_data = BookingPressDb::bpa_fetch_records( $work_args );
+            
             $workhour_data = array();
             $workhours_break_data = array();
-
-            $is_holiday = $this->bookingpress_check_for_the_holidays( $selected_date, $selected_service_id );
-
-            if( true == $is_holiday ){
-                return $service_timings;
+            $all_week_workhour_data = [
+                $current_day => [
+                    'workhours' => [],
+                    'break_data' => []
+                ]
+            ];
+            foreach( $all_workhour_data as $workhour_details ){
+                if( 1 == $workhour_details['bookingpress_is_break'] && $current_day == $workhour_details['bookingpress_workday_key'] ){
+                    $all_week_workhour_data[ $current_day ][ 'break_data' ][] = $workhour_details;
+                } else {
+                    if( $current_day == $workhour_details['bookingpress_workday_key'] ){
+                        $all_week_workhour_data[ $current_day ][ 'workhours' ] = $workhour_details;
+                    }
+                
+                }
             }
+            /** New Changes End */
 
-            $get_default_work_hous_break_data = $wpdb->get_results($wpdb->prepare("SELECT * FROM {$tbl_bookingpress_default_workhours} WHERE bookingpress_workday_key = %s AND bookingpress_is_break = 1 AND bookingpress_start_time IS NOT NULL", $current_day), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_default_workhours is table name defined globally. False Positive alarm
+
+            $get_default_work_hours_data = $all_week_workhour_data[ $current_day ][ 'workhours'];
+
+
+            $get_default_work_hous_break_data = $all_week_workhour_data[ $current_day ][ 'break_data'];
 
             if( !empty( $get_default_work_hous_break_data )  ){
                 foreach( $get_default_work_hous_break_data as $default_workhour_data ){
@@ -7337,13 +7487,16 @@ if (! class_exists('BookingPress') ) {
             $get_s_id = !empty( $_GET['s_id'] ) ? intval( $_GET['s_id'] ) : '';
             $get_s_id = apply_filters( 'bookingpress_modify_s_id_before_retrieving_service', $get_s_id );
 
+            $where_s_ids = [];
 
             if( !empty( $get_s_id ) && isset( $_GET['allow_modify'] ) && 0 === intval( $_GET['allow_modify'] )){
                 $where_clause .= $wpdb->prepare( ' AND bookingpress_service_id = %d', intval( $_GET['s_id'] ) );
+                $where_s_ids[] = $_GET['s_id'];
                 $consider_where = true;
             } else if( !empty( $service ) ){
                 $where_clause .= ' AND bookingpress_service_id IN ('.$service.')';
                 $consider_where = true;
+                $where_s_ids[] = explode( ',', $service );
             } else if ( isset( $bookingpress_category ) && 0 < $bookingpress_category ){
                 $where_clause .= ' AND bookingpress_category_id IN ('.$bookingpress_category.')';
                 $consider_where = true;
@@ -7354,16 +7507,19 @@ if (! class_exists('BookingPress') ) {
                 $consider_where = true;
             }
 
-            $db_all_services_without_where = $wpdb->get_results( "SELECT * FROM {$tbl_bookingpress_services} ORDER BY bookingpress_service_position ASC", ARRAY_A );// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_services is table name defined globally.
+            /* $db_all_services_without_where = $wpdb->get_results( "SELECT * FROM {$tbl_bookingpress_services} ORDER BY bookingpress_service_position ASC", ARRAY_A );// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_services is table name defined globally.
            
             $db_all_services = array();
-            if( !empty( $where_clause ) ){
-                $db_all_services = $wpdb->get_results( "SELECT * FROM {$tbl_bookingpress_services} WHERE 1 = 1 $where_clause ORDER BY bookingpress_service_position ASC", ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_services is table name defined globally.
-            }
-            if( count( $db_all_services ) == 0 && 0 < count( $db_all_services_without_where ) ){
-                $db_all_services = $db_all_services_without_where;
-            }
-
+            if( !empty( $where_clause ) ){ */
+            $all_services_args = [
+                'columns'       => '*',
+                'table'         => $tbl_bookingpress_services,
+                'where'         => 'WHERE 1=1 '. $where_clause,
+                'order_by'      => 'ORDER BY bookingpress_service_position ASC',
+                'type'          => ARRAY_A
+            ];
+            $db_all_services = BookingPressDb::bpa_fetch_records( $all_services_args );
+            
             $bookingpress_display_service_description = $this->bookingpress_get_customize_settings('display_service_description', 'booking_form');
 
             $min_text = $this->bookingpress_get_customize_settings('book_appointment_min_text', 'booking_form'); 
@@ -7374,10 +7530,13 @@ if (! class_exists('BookingPress') ) {
             );
 
             if( !empty( $db_all_services ) ){
+                $s_ids = array_column( $db_all_services, 'bookingpress_service_id');
+                $service_metas = $this->bookingpress_get_all_service_meta_map( $s_ids );
                 foreach( $db_all_services as $skey => $svalue ){
                     $svalue['is_visible'] = true;
                     $svalue['is_visible_with_flag'] = true;
-                    $services_meta = $this->bookingpress_get_service_meta( $svalue['bookingpress_service_id'] );
+                    
+                    $services_meta = $service_metas[ $svalue['bookingpress_service_id'] ] ?? [];//$this->bookingpress_get_service_meta( $svalue['bookingpress_service_id'] );
                     $svalue['services_meta'] = $services_meta;
 
                     $service_price = $svalue['bookingpress_service_price'];
@@ -7465,7 +7624,7 @@ if (! class_exists('BookingPress') ) {
                         'service_ids' => $category_ids_data['service_ids']
                     );
                 } else {
-                    $category_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$tbl_bookingpress_categories} WHERE bookingpress_category_id = %d", $category_id ), ARRAY_A );// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_categories is table name defined globally.
+                    $category_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$tbl_bookingpress_categories} WHERE bookingpress_category_id = %d", $category_id ), ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_categories is table name defined globally.
                     $bpa_category_data[ $category_data['bookingpress_category_id'] ] = array(
                         'category_id' => intval( $category_data['bookingpress_category_id'] ),
                         'category_key' => $category_data['bookingpress_category_name'],
@@ -7528,6 +7687,45 @@ if (! class_exists('BookingPress') ) {
 
             return $services_meta;
         }
+
+        function bookingpress_get_all_service_meta_map($service_ids = []) {
+            global $wpdb, $tbl_bookingpress_servicesmeta;
+
+            static $cache = [];
+            
+
+            // Normalize key for cache
+            $cache_key = empty($service_ids)
+                ? 'all' : implode(',', array_map('intval', $service_ids));
+
+            if (isset($cache[$cache_key])) {
+                return $cache[$cache_key];
+            }
+
+            $where = '';
+            if (!empty($service_ids)) {
+                $placeholders = implode(',', array_fill(0, count($service_ids), '%d'));
+                $where = $wpdb->prepare(
+                    "WHERE bookingpress_service_id IN ($placeholders)",
+                    ...$service_ids
+                );
+            }
+
+            $rows = $wpdb->get_results( "SELECT bookingpress_service_id, bookingpress_servicemeta_name, bookingpress_servicemeta_value FROM {$tbl_bookingpress_servicesmeta} $where", ARRAY_A ); //phpcs:ignore
+
+            $map = [];
+
+            if (!empty($rows)) {
+                foreach ($rows as $row) {
+                    $map[$row['bookingpress_service_id']] [$row['bookingpress_servicemeta_name']] = $this->bookingpress_json_decode($row['bookingpress_servicemeta_value'], true);
+                }
+            }
+
+            $cache[$cache_key] = $map;
+            return $map;
+        }
+
+
         
         /**
          * bookingpress_json_decode
@@ -7557,6 +7755,83 @@ if (! class_exists('BookingPress') ) {
             return $return_array;
         }
 
+        public function bpa_group_service_by_categories( $all_services, $all_categories ){
+            global $wpdb, $tbl_bookingpress_categories;
+
+            $bookingpress_services_details = [];
+
+            $bookingpress_currency_name   = $this->bookingpress_get_settings('payment_default_currency', 'payment_setting');
+            $bookingpress_currency_symbol = ! empty($bookingpress_currency_name) ? $this->bookingpress_get_currency_symbol($bookingpress_currency_name) : '';
+
+            foreach( $all_categories as $cat ){
+                $category_id   = (int)$cat['category_id'];
+                $category_name = ($category_id === 0) ? esc_html__('Uncategorized', 'bookingpress-appointment-booking') : ($cat['category_name'] ?? '');
+
+                $group = [
+                    'category_id'       => $category_id,
+                    'category_name'     => $category_name,
+                    'category_services' => []
+                ];
+
+                if (empty($cat['service_ids'])) {
+                    $bookingpress_services_details[] = $group;
+                    continue;
+                }
+
+                foreach ($cat['service_ids'] as $service_id) {
+                    if (!isset($all_services[$service_id])) {
+                        continue;
+                    }
+
+                    $bookingpress_service_val = $all_services[ $service_id ];
+
+                    $bookingpress_service_price = $this->bookingpress_price_formatter_with_currency_symbol($bookingpress_service_val['bookingpress_service_price'], $bookingpress_currency_symbol);
+
+                    $bookingpress_service_duration_unit = isset($bookingpress_service_val['bookingpress_service_duration_unit']) ? $bookingpress_service_val['bookingpress_service_duration_unit'] : '';
+					$bookingpress_service_duration = isset($bookingpress_service_val['bookingpress_service_duration_val']) ? $bookingpress_service_val['bookingpress_service_duration_val'] : '';								
+
+                    $bookingpress_service_duration_formatted = $bookingpress_service_duration." ".$bookingpress_service_duration_unit;
+								
+                    if($bookingpress_service_duration == 1 && $bookingpress_service_duration_unit == 'm'){
+                        $bookingpress_service_duration_formatted = $bookingpress_service_duration." ".esc_html__( 'Min', 'bookingpress-appointment-booking' ); 
+                    }
+                    if($bookingpress_service_duration > 1 && $bookingpress_service_duration_unit == 'm'){
+                        $bookingpress_service_duration_formatted = $bookingpress_service_duration." ".esc_html__( 'Mins', 'bookingpress-appointment-booking' ); 
+                    }
+                    if($bookingpress_service_duration == 1 && $bookingpress_service_duration_unit == 'h'){
+                        $bookingpress_service_duration_formatted = $bookingpress_service_duration." ".esc_html__( 'Hour', 'bookingpress-appointment-booking' ); 
+                    }
+                    if($bookingpress_service_duration > 1 && $bookingpress_service_duration_unit == 'h'){
+                        $bookingpress_service_duration_formatted = $bookingpress_service_duration." ".esc_html__( 'Hours', 'bookingpress-appointment-booking' ); 
+                    }
+                    if($bookingpress_service_duration == 1 && $bookingpress_service_duration_unit == 'd'){
+                        $bookingpress_service_duration_formatted = $bookingpress_service_duration." ".esc_html__( 'Day', 'bookingpress-appointment-booking' ); 
+                    }
+                    if($bookingpress_service_duration > 1 && $bookingpress_service_duration_unit == 'd'){
+                        $bookingpress_service_duration_formatted = $bookingpress_service_duration." ".esc_html__( 'Days', 'bookingpress-appointment-booking' ); 
+                    }
+
+                    $group['category_services'][] = [
+                        'service_id'                     => $bookingpress_service_val['bookingpress_service_id'],
+                        'service_name'                   => stripslashes_deep($bookingpress_service_val['bookingpress_service_name']),
+                        'service_price'                  => $bookingpress_service_price,
+                        'service_price_without_currency' => $bookingpress_service_val['bookingpress_service_price'],
+                        'service_price_currency'         => $bookingpress_currency_symbol,
+                        'service_duration'               => $bookingpress_service_val['bookingpress_service_duration_val'],
+                        'service_duration_unit'          => $bookingpress_service_val['bookingpress_service_duration_unit'],
+                        'service_duration_formatted'      => $bookingpress_service_duration_formatted,   
+                    ];
+                }
+
+                if (!empty($group['category_services'])) {
+                    $bookingpress_services_details[] = $group;
+                }
+            }
+
+            return $bookingpress_services_details;
+
+        }
+
         /**
          * Get service data with category grouping
          *
@@ -7573,6 +7848,7 @@ if (! class_exists('BookingPress') ) {
 
             //Get all uncategorized services
             $bookingpress_get_uncategorized_services = $wpdb->get_results($wpdb->prepare("SELECT * FROM $tbl_bookingpress_services WHERE bookingpress_category_id = %d ORDER BY bookingpress_service_id DESC", 0), ARRAY_A); //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $tbl_bookingpress_services is table name
+            
             if(!empty($bookingpress_get_uncategorized_services)){
                 foreach($bookingpress_get_uncategorized_services as $uncat_ser_key => $uncat_ser_val){
                     $bookingpress_service_price = $this->bookingpress_price_formatter_with_currency_symbol($uncat_ser_val['bookingpress_service_price'], $bookingpress_currency_symbol);
@@ -10355,6 +10631,9 @@ if (! class_exists('BookingPress') ) {
                 $template_content = str_replace('%booking_id%', $bookingpress_booking_id, $template_content);
                 $template_content = str_replace('%appointment_date%', $bookingpress_appointment_date, $template_content);
                 $template_content = str_replace('%appointment_time%',$bookingpress_appointment_start_time. ' - '.$bookingpress_appointment_end_time,$template_content);
+
+                $weekday_name = date_i18n('l', strtotime($bookingpress_appointment_date));
+                $template_content = str_replace('%appointment_weekday%', $weekday_name, $template_content);
                 
                 $bookingpress_appointment_booking_id = ! empty($bookingpress_appointment_data['bookingpress_appointment_booking_id']) ? intval($bookingpress_appointment_data['bookingpress_appointment_booking_id']) : '';
 

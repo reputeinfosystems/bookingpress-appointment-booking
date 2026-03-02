@@ -1594,7 +1594,7 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
 
             $end_ms = microtime( true );
             $response['time_taken'] = ( $end_ms - $start_ms ) . ' seconds';
-
+            
             echo json_encode( $response );
             die;
 
@@ -1683,6 +1683,13 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
 
             $bookingpress_max_date = date('Y-m-d', strtotime( $bookingpress_start_date . ' +' . $get_period_available_for_booking . ' days') );
 
+            /** New Holiday Calculations */
+            $daysoff_start_date = date('Y-m-d', current_time('timestamp') );
+            $daysoff_end_date   = $bookingpress_max_date;
+            
+            $holidays_data = $BookingPress->bookingpress_retrieve_holidays( $daysoff_start_date, $daysoff_end_date );
+            /** New Holiday Calculations */
+
             $max_service_capacity = 1;
             $max_service_capacity = apply_filters( 'bookingpress_retrieve_capacity', $max_service_capacity, $bookingpress_selected_service );
            
@@ -1730,7 +1737,7 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
             $bookingpress_start_date_without_time = date('Y-m-d', strtotime( $bookingpress_start_date ) );
             
             /** Get the default days off in the above limit */
-            $bpa_retrieves_default_disabled_dates = $BookingPress->bookingpress_retrieve_off_days( $bookingpress_start_date_without_time, ( $get_period_available_for_booking + 1 ), $bookingpress_selected_service, $selected_service_duration_in_min, $bookingpress_selected_staffmember_id );
+            $bpa_retrieves_default_disabled_dates = $BookingPress->bookingpress_retrieve_off_days( $bookingpress_start_date_without_time, ( $get_period_available_for_booking + 1 ), $bookingpress_selected_service, $selected_service_duration_in_min, $bookingpress_selected_staffmember_id, $holidays_data );
 
             //$bpa_retrieves_default_disabled_dates = array_merge( $bpa_retrieves_default_disabled_dates, $posted_disabled_dates );
 
@@ -1822,7 +1829,7 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
 
 				$bpa_check_datetime = $dt->format( 'Y-m-d H:i:s');
 				$front_timings_data = $bookingpress_appointment_bookings->bookingpress_retrieve_timeslots( $bpa_check_date, true, false, false, $total_booked_appiontments );
-
+                
                 $is_overnight_booking = false;
                 if( !empty( $front_timings_data['consider_overnight_booking'] ) && true == $front_timings_data['consider_overnight_booking'] ){
                     $is_overnight_booking  = true;
@@ -1846,7 +1853,7 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                 }
 
                 $bookingpress_allow_to_disable_booked_date = apply_filters('bookingpress_allow_to_disable_booked_date',true,$bookingpress_selected_service);
-
+                
                 if( $total_booked == $total_available_slots && $bookingpress_allow_to_disable_booked_date == true ){
                     $front_timings_data_combined = [];
                 }
@@ -1909,7 +1916,7 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                     }
                 }
             }
-
+            
             if( empty( $working_hour_details ) && false == $stop_check ){
                 $working_hour_updated_data = $this->bookingpress_retrieve_timeslot_data_callback( $max_end_date, true, true );
                 
@@ -5319,7 +5326,8 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
 
             $bookingpress_front_vue_data_fields['bookingpress_all_categories'] = $bpa_all_categories;
 
-            $bookingpress_service_details = $BookingPress->get_bookingpress_service_data_group_with_category();
+            $bookingpress_service_details = $BookingPress->bpa_group_service_by_categories( $bpa_all_services, $bpa_all_categories );
+
 
             // Get labels and tabs names generated from customize
             // -----------------------------------------------------
@@ -5922,8 +5930,15 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                 $bookingpress_formatted_timeslot = $bookingpress_inherit_from_wordpress_arr[$bookingpress_wp_default_time_format];
             }
 
-            $bookingpress_script_return_data .= 'app = new Vue({ 
-				el: "' . $bookingpress_vue_root_element_id . '",
+            $bookingpress_script_return_data .= '
+            let container = document.querySelector(".bpa-frontend-main-booking-calendar");
+            let finalId = "'.$bookingpress_vue_root_element_id_without_hash.'";
+            if( null != container ){
+                finalId = container.getAttribute("id");
+            }
+            
+            app = new Vue({ 
+				el: `#${finalId}`,
 				components: {},
 				directives: { ' . $bookingpress_dynamic_directive_data . ' },
 				data(){
@@ -6296,7 +6311,7 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
             // Get categories
 
             $bookingpress_front_vue_data_fields['appointment_step_form_data']['is_waiting_list'] = 0;
-            $bookingpress_search_query_where = 'WHERE 1=1 ';
+            $bookingpress_search_query_where = 'WHERE 1=1';
             $bookingpress_search_query_join  = '';
             if (! empty($bookingpress_category) ) {
                 $bookingpress_search_query_where .= " AND category.bookingpress_category_id IN ({$bookingpress_category})";
@@ -6308,7 +6323,6 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                 $bookingpress_search_query_where .= " AND service.bookingpress_service_id IN ({$bookingpress_service})";
                 $bookingpress_front_vue_data_fields['appointment_step_form_data']['total_services'] = $bookingpress_service;
             }
-
             
             $bookingpress_front_vue_data_fields['appointment_step_form_data']['check_username_validation'] = false;
             $bookingpress_front_vue_data_fields['appointment_step_form_data']['invalid_customer_username'] = false;
@@ -6366,8 +6380,15 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                 $bookingpress_service_cache_param .= '_' . $bookingpress_service;
             }
 
-            //$service_data = $wpdb->get_results("SELECT * FROM {$tbl_bookingpress_services} WHERE bookingpress_category_id = {$default_service_category} {$bookingpress_service_search_query_where} ORDER BY bookingpress_service_position", ARRAY_A);               
-            $all_service_data = $wpdb->get_results("SELECT * FROM {$tbl_bookingpress_services} WHERE 1=1 {$bookingpress_service_search_query_where} ORDER BY bookingpress_service_position", ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $tbl_bookingpress_services is a table name. false alarm
+            //$service_data = $wpdb->get_results("SELECT * FROM {$tbl_bookingpress_services} WHERE bookingpress_category_id = {$default_service_category} {$bookingpress_service_search_query_where} ORDER BY bookingpress_service_position", ARRAY_A);
+            $all_services_args = [
+                'columns'       => '*',
+                'table'         => $tbl_bookingpress_services,
+                'where'         => 'WHERE 1=1 '. $bookingpress_service_search_query_where,
+                'order_by'      => 'ORDER BY bookingpress_service_position ASC',
+                'type'          => ARRAY_A
+            ];
+            $all_service_data = BookingPressDb::bpa_fetch_records($all_services_args);//$wpdb->get_results("SELECT * FROM {$tbl_bookingpress_services} WHERE 1=1 {$bookingpress_service_search_query_where} ORDER BY bookingpress_service_position", ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $tbl_bookingpress_services is a table name. false alarm
             $service_data = array();
             $temp_service_data = array();
             $bpa_services_categories_data = array();

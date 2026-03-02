@@ -3,9 +3,9 @@ Contributors: reputeinfosystems
 Tags: booking, appointment, booking calendar, scheduling, booking system
 Donate link: https://bookingpressplugin.com/
 Requires at least: 5.3.0
-Tested up to: 6.9
+Tested up to: 6.9.1
 Requires PHP: 5.6
-Stable tag: 1.1.52
+Stable tag: 1.1.53
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -220,9 +220,13 @@ Please follow the steps for installation:
 
 == Changelog ==
 
-= 1.1.52 =
-* Front-end form loading improvement
+= 1.1.53 =
+* Added a new %appointment_weekday% placeholder for email notifications to display the weekday name of the appointment date.
+* Updated appointment counters in the Customer Panel to show counts for Approved, Pending, and Completed appointments for a more accurate overview.
 * Other minor bug fixes
+
+= 1.1.52 =
+* Minor bug fixes
 
 = 1.1.51 =
 * Fixed: date & time step not loading properly in specific case 
