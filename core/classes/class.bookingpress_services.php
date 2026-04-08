@@ -1356,6 +1356,10 @@ if (! class_exists('bookingpress_services') ) {
                     $date                                     = current_time('mysql');
                     $args['bookingpress_service_position']    = $service_position;
                     $args['bookingpress_servicedate_created'] = $date;
+
+                    $args['bookingpress_color_mode'] = 'preset';
+                    $args['bookingpress_color_scheme'] = self::bookingpress_get_next_service_color_scheme();
+
                     $wpdb->insert($tbl_bookingpress_services, $args);
                     $service_id             = $wpdb->insert_id;
                     $response['service_id'] = $service_id;
@@ -1415,6 +1419,35 @@ if (! class_exists('bookingpress_services') ) {
                 wp_send_json($response);
             }
             
+        }
+
+        public static function bookingpress_get_next_service_color_scheme() {
+            global $wpdb, $tbl_bookingpress_services;
+        
+            $total_schemes = 25;
+        
+            $last_scheme = $wpdb->get_var(
+                "SELECT bookingpress_color_scheme FROM {$tbl_bookingpress_services}
+                 WHERE bookingpress_color_mode = 'preset'
+                   AND bookingpress_color_scheme IS NOT NULL
+                   AND bookingpress_color_scheme != ''
+                 ORDER BY bookingpress_service_id DESC
+                 LIMIT 1"
+            );
+        
+            if ( empty( $last_scheme ) ) {
+                return 'scheme_1';
+            }
+        
+            if ( preg_match( '/^scheme_(\d+)$/', $last_scheme, $matches ) ) {
+                $last_number = (int) $matches[1];
+            } else {
+                $last_number = 0;
+            }
+        
+            $next_number = ( $last_number % $total_schemes ) + 1;
+        
+            return 'scheme_' . $next_number;
         }
         
         /**

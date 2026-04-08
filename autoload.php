@@ -95,7 +95,7 @@ if( !file_exists( $import_folder_path .'/index.php') ){
 }
 
 global $bookingpress_version;
-$bookingpress_version = '1.1.53';
+$bookingpress_version = '1.5.1';
 define('BOOKINGPRESS_VERSION', $bookingpress_version);
 
 global $bookingpress_ajaxurl;
@@ -369,6 +369,17 @@ function bpa_plugin_api_call( $res, $action, $args ){
 
     return $res;
 }
+
+/** PSR-4 Autoloading Structure */
+if( file_exists( __DIR__ .'/vendor/autoload.php' ) ){
+    require_once __DIR__ .'/vendor/autoload.php';
+
+    if( class_exists( 'BookingPress\BookingPressLoader' ) ){
+        new BookingPress\BookingPressLoader();
+    }
+}
+/** PSR-4 Autoloading Structure */
+
 
 add_action( 'init', 'bpa_lite_validate_plugin_update' );
 

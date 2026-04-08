@@ -43,6 +43,7 @@ if( !class_exists('BookingPress_Core') ){
                 $this->nonce_action = $nonce_action;
                 $this->nonce_field = !empty( $_REQUEST['_wpnonce'] ) ? sanitize_text_field( $_REQUEST['_wpnonce'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
                 $bpa_valid_nonce = $this->bpa_check_nonce();
+                
 
                 if( false == $bpa_valid_nonce ){
                     return 'error^|^' . esc_html__('Sorry, Your request can not be processed due to security reason.', 'bookingpress-appointment-booking');
@@ -59,12 +60,12 @@ if( !class_exists('BookingPress_Core') ){
          * @return void
          */
         private function bpa_retrieve_capabilities(){
-
+            
             if( '' == trim( $this->action_name ) ){
                 return false;
             }
 
-            $bpa_caps = array(
+            /*$bpa_caps = array(
                 'bookingpress_appointments' => array(
                     'retrieve_appointments',
                     'add_appointments',
@@ -177,14 +178,16 @@ if( !class_exists('BookingPress_Core') ){
                 
             );
 
-            $bpa_caps = apply_filters( 'bookingpress_modify_capability_data', $bpa_caps );
+            $bpa_caps = apply_filters( 'bookingpress_modify_capability_data', $bpa_caps );*/
+
+            $bpa_caps = \BookingPress\core\Permissions::retrieve_capabilities();
 
             if( empty( $bpa_caps ) ){
                 return false;
             }
 
             $bpa_user_cap = false;
-            foreach( $bpa_caps as $capability => $bpa_action ){
+            foreach( $bpa_caps as $capability => $bpa_action ){   
                 if( !empty( $bpa_action ) && in_array( $this->action_name, $bpa_action ) && current_user_can( $capability ) ){
                     $bpa_user_cap = true;
                     break;
@@ -194,6 +197,7 @@ if( !class_exists('BookingPress_Core') ){
             return $bpa_user_cap;
 
         }
+        
         
         /**
          * bpa_check_nonce

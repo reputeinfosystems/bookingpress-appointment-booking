@@ -136,7 +136,7 @@ if (! class_exists('bookingpress_dashboard') ) {
          * @param  mixed $appointment_new_status   New status for update appointment
          * @return void
          */
-        function bookingpress_change_upcoming_appointment_status( $update_appointment_id = '', $appointment_new_status = '' )
+        function bookingpress_change_upcoming_appointment_status( $update_appointment_id = '', $appointment_new_status = '', $return_data = false )
         {
             global $wpdb, $BookingPress, $tbl_bookingpress_appointment_bookings, $tbl_bookingpress_payment_logs, $bookingpress_email_notifications;
             
@@ -152,7 +152,12 @@ if (! class_exists('bookingpress_dashboard') ) {
                 $response['title'] = esc_html__( 'Error', 'bookingpress-appointment-booking');
                 $response['msg'] = $bpa_error_msg;
 
-                wp_send_json( $response );
+                if( $return_data ) {
+                    return $response;
+                } else {
+                    wp_send_json( $response );
+                    die;
+                }
                 die;
             }
             
@@ -178,7 +183,7 @@ if (! class_exists('bookingpress_dashboard') ) {
                     $is_appointment_already_booked = $wpdb->get_var($wpdb->prepare("SELECT * FROM {$tbl_bookingpress_appointment_bookings} WHERE bookingpress_appointment_booking_id != %d AND (bookingpress_appointment_status = %s OR bookingpress_appointment_status = %s) AND bookingpress_appointment_date = %s AND bookingpress_appointment_time = %s AND bookingpress_service_id = %d", $appointment_update_id, '2', '1', $bookingpress_appointment_date, $bookingpress_appointment_start_time, $bookingpress_booked_appointment_service_id)); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_appointment_bookings is table name defined globally. False Positive alarm
                     
                     $is_appointment_already_booked = apply_filters('bookinpress_is_appointment_book_for_change_status', $is_appointment_already_booked, $booked_appointment_details);
-                }                
+                }
 
                 if ($is_appointment_already_booked > 0 ) {
                     $return = 0;               
@@ -268,12 +273,19 @@ if (! class_exists('bookingpress_dashboard') ) {
                     $return = 1;
                 }
             }
+
+            
             if (isset($_POST['action']) && sanitize_text_field($_POST['action']) != 'bookingpress_change_upcoming_appointment_status' ) { // phpcs:ignore WordPress.Security.NonceVerification
                 return intval($return); 
                 exit(); 
             } else {
-                echo esc_html($return);                 
-                exit;
+
+                if( $return_data ) {
+                    return intval($return);
+                } else {
+                    echo esc_html($return);
+                    exit();
+                }
             }
         }
         
@@ -376,6 +388,11 @@ if (! class_exists('bookingpress_dashboard') ) {
             $pending_appointments                = $wpdb->get_var("SELECT COUNT(bookingpress_appointment_booking_id) FROM {$tbl_bookingpress_appointment_bookings} WHERE bookingpress_appointment_status = '2' AND {$appointments_search_query}"); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $tbl_bookingpress_appointment_bookings is a table name. false alarm
             $return_data['pending_appointments'] = $pending_appointments;
             $total_revenue = $wpdb->get_var( "SELECT( ( SELECT SUM(bookingpress_paid_amount) FROM $tbl_bookingpress_payment_logs WHERE {$payment_search_query} {$payment_status_check} ) as total FROM $tbl_bookingpress_payment_logs GROUP BY total;"); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $tbl_bookingpress_payment_logs is a table name. false alarm
+
+            /* Completed */
+            $completed_appointments = $wpdb->get_var("SELECT COUNT(bookingpress_appointment_booking_id) FROM {$tbl_bookingpress_appointment_bookings} WHERE bookingpress_appointment_status = '6' AND {$appointments_search_query}"); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $tbl_bookingpress_appointment_bookings is a table name. false alarm
+            $return_data['total_completed_appointment'] = $completed_appointments;
+            /* Completed */
              
             //$total_revenue = $wpdb->get_var("SELECT SUM(bookingpress_paid_amount) FROM {$tbl_bookingpress_payment_logs} WHERE {$payment_search_query} {$payment_status_check}"); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $tbl_bookingpress_payment_logs is a table name. false alarm
             $total_revenue = !empty($total_revenue) ? $total_revenue : 0;              

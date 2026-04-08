@@ -2,10 +2,10 @@
 Contributors: reputeinfosystems
 Tags: booking, appointment, booking calendar, scheduling, booking system
 Donate link: https://bookingpressplugin.com/
-Requires at least: 5.3.0
-Tested up to: 6.9.1
+Requires at least: 6.5
+Tested up to: 7.0
 Requires PHP: 5.6
-Stable tag: 1.1.53
+Stable tag: 1.5.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -219,6 +219,13 @@ Please follow the steps for installation:
 13. BookingPress - General Settings
 
 == Changelog ==
+
+= 1.5.1 =
+* Minor bug fixes
+
+= 1.5 =
+* New: Backend Calendar has been completely redesigned to improve usability, performance, and overall scheduling experience
+* Other minor bug fixes
 
 = 1.1.53 =
 * Added a new %appointment_weekday% placeholder for email notifications to display the weekday name of the appointment date.

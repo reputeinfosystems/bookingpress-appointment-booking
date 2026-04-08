@@ -320,7 +320,7 @@ if (! class_exists('bookingpress_calendar') ) {
          *
          * @return void
          */
-        function bookingpress_get_edit_appointment_data_func()
+        function bookingpress_get_edit_appointment_data_func( $return = false )
         {
             global $wpdb,$BookingPress,$tbl_bookingpress_appointment_bookings;
             $response              = array();
@@ -335,7 +335,11 @@ if (! class_exists('bookingpress_calendar') ) {
                 $response['title'] = esc_html__( 'Error', 'bookingpress-appointment-booking');
                 $response['msg'] = $bpa_error_msg;
 
-                wp_send_json( $response );
+                if( $return ) {
+                    return $response;
+                } else {
+                    wp_send_json( $response );
+                }
                 die;
             }
 
@@ -373,7 +377,11 @@ if (! class_exists('bookingpress_calendar') ) {
 
             $appointment_data = apply_filters('bookingpress_modify_edit_appointment_data', $appointment_data);
 
-            echo wp_json_encode($appointment_data);
+            if( $return ) {
+                return $appointment_data;
+            } else {
+                echo wp_json_encode($appointment_data);
+            }
             exit();
         }
         
@@ -542,7 +550,7 @@ if (! class_exists('bookingpress_calendar') ) {
          *
          * @return void
          */
-        function bookingpress_save_appointment_booking_func($validate = false)
+        function bookingpress_save_appointment_booking_func($validate = false, $return = false)
         {
             global $wpdb, $BookingPress, $tbl_bookingpress_entries, $bookingpress_payment_gateways, $tbl_bookingpress_payment_logs, $tbl_bookingpress_appointment_bookings, $bookingpress_email_notifications,$bookingpress_debug_payment_log_id, $bookingpress_other_debug_log_id;
             $response              = array();
@@ -553,7 +561,8 @@ if (! class_exists('bookingpress_calendar') ) {
 			}
 
             $bpa_check_authorization = $this->bpa_check_authentication( 'add_calendar_appointments', true, 'bpa_wp_nonce' );
-            
+
+
             if( preg_match( '/error/', $bpa_check_authorization ) ){
                 $bpa_auth_error = explode( '^|^', $bpa_check_authorization );
                 $bpa_error_msg = !empty( $bpa_auth_error[1] ) ? $bpa_auth_error[1] : esc_html__( 'Sorry. Something went wrong while processing the request', 'bookingpress-appointment-booking');
@@ -562,8 +571,12 @@ if (! class_exists('bookingpress_calendar') ) {
                 $response['title'] = esc_html__( 'Error', 'bookingpress-appointment-booking');
                 $response['msg'] = $bpa_error_msg;
 
-                wp_send_json( $response );
-                die;
+                if( $return ){
+                    return $response;
+                } else {
+                    wp_send_json( $response );
+                    die;
+                }
             }
 
             $response['variant'] = 'error';
@@ -571,6 +584,7 @@ if (! class_exists('bookingpress_calendar') ) {
             $response['msg']     = esc_html__('Something went wrong..', 'bookingpress-appointment-booking');
 
             do_action( 'bookingpress_other_debug_log_entry', 'appointment_debug_logs', 'Backend add/update appointment posted data', 'bookingpress_admin_add_update_appointment', $_POST, $bookingpress_other_debug_log_id ); // phpcs:ignore WordPress.Security.NonceVerification
+
 
             if (! empty($_REQUEST) && ! empty($_REQUEST['appointment_data']) ) { // phpcs:ignore WordPress.Security.NonceVerification
              // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $_REQUEST['search_data'] contains mixed array and it's been sanitized properly further
@@ -602,12 +616,20 @@ if (! class_exists('bookingpress_calendar') ) {
                         $bookingpress_check_custom_time_validation = apply_filters( 'bookingpress_check_custom_time_validation',$bookingpress_check_custom_time_validation,$bookingpress_appointment_data);
 
                         if(!empty($bookingpress_check_custom_time_validation)){                                
-                           echo wp_send_json($bookingpress_check_custom_time_validation); // phpcs:ignore
-                           exit();                           
+                           if( $return ){
+                                return $bookingpress_check_custom_time_validation;
+                           } else {
+                                echo wp_send_json($bookingpress_check_custom_time_validation); // phpcs:ignore
+                                exit();                           
+                           }
                         }
 
-                        echo wp_json_encode($validate_response); // phpcs: ignore
-                        exit();   
+                        if( $return ){
+                            return $validate_response;
+                        } else {
+                            echo wp_json_encode($validate_response); // phpcs: ignore
+                            exit();   
+                        }
                     }
                 }
 
@@ -689,8 +711,12 @@ if (! class_exists('bookingpress_calendar') ) {
                                 $response['variant'] = 'error';
                                 $response['title']   = esc_html__('Error', 'bookingpress-appointment-booking');
                                 $response['msg']     = esc_html__('Appointment already booked for this slot', 'bookingpress-appointment-booking');
-                                echo wp_json_encode($response);
-                                exit();
+                                if( $return ){
+                                    return $response;
+                                } else {
+                                    echo wp_json_encode($response);
+                                    exit();
+                                }
                             }                            
                         }
 
@@ -711,11 +737,15 @@ if (! class_exists('bookingpress_calendar') ) {
                                 }
                                 $response['msg']     = $message;
 
-                                echo wp_json_encode($response);
-                                exit();
+                                if( $return ){
+                                    return $response;
+                                } else {
+                                    echo wp_json_encode($response);
+                                    exit();
+                                }
                             }
 
-                        }                        
+                        }
 
                         // get existing appointment data
                         do_action( 'bookingpress_other_debug_log_entry', 'appointment_debug_logs', 'Backend get existing appointment data', 'bookingpress_admin_add_update_appointment', $appointment_details, $bookingpress_other_debug_log_id );
@@ -807,8 +837,12 @@ if (! class_exists('bookingpress_calendar') ) {
                                     $message = $customize_timeing_bookingpress_validation['block_reason'];
                                 }
                                 $response['msg']     = $message;                                
-                                echo wp_json_encode($response);
-                                exit();
+                                if( $return ){
+                                    return $response;
+                                } else {
+                                    echo wp_json_encode($response);
+                                    exit();
+                                }
                             }
 
                         }
@@ -843,8 +877,12 @@ if (! class_exists('bookingpress_calendar') ) {
                         $is_recurring_appointments = (isset($bookingpress_appointment_data['is_recurring_appointments']))?$bookingpress_appointment_data['is_recurring_appointments']:'';
                         if($is_recurring_appointments == 'true'){
                             $response = apply_filters('bookingpress_add_backend_recurring_appointment', $response,$bookingpress_appointment_data, $bookingpress_entry_details);
-                            echo wp_json_encode($response);
-                            exit();
+                            if( $return ){
+                                return $response;
+                            } else {
+                                echo wp_json_encode($response);
+                                exit();
+                            }
                         }
                                                 
                         $bookingpress_entry_details = apply_filters('bookingpress_modify_backend_add_appointment_entry_data', $bookingpress_entry_details, $bookingpress_appointment_data);
@@ -872,6 +910,9 @@ if (! class_exists('bookingpress_calendar') ) {
                             $response['variant'] = 'success';
                             $response['title']   = esc_html__('Success', 'bookingpress-appointment-booking');
                             $response['msg']     = esc_html__('Appointment has been booked successfully.', 'bookingpress-appointment-booking');
+                            if( $return == true ){
+                                $response['payment_log_id'] = $payment_log_id;
+                            }
                         }
                     }
                 } else {
@@ -879,8 +920,12 @@ if (! class_exists('bookingpress_calendar') ) {
                 }
             }
 
-            echo wp_json_encode($response);
-            exit();
+            if( $return ){
+                return $response;
+            } else {
+                echo wp_json_encode($response);
+                exit();
+            }
         }
 
         /**
@@ -950,14 +995,14 @@ if (! class_exists('bookingpress_calendar') ) {
             // Fetch Services Details
             $bookingpress_services_details2                                     = array();
             $bookingpress_services_details2[]                                   = array(
-            'category_name'     => '',
-            'category_services' => array(
-            '0' => array(
-            'service_id'    => 0,
-            'service_name'  => esc_html__('Select Services', 'bookingpress-appointment-booking'),
-            'service_price' => '',
-            ),
-            ),
+                'category_name'     => '',
+                'category_services' => array(
+                    '0' => array(
+                        'service_id'    => 0,
+                        'service_name'  => esc_html__('Select Services', 'bookingpress-appointment-booking'),
+                        'service_price' => '',
+                    ),
+                ),
             );
             $bookingpress_services_details                                      = $BookingPress->get_bookingpress_service_data_group_with_category();
             $bookingpress_calendar_vue_data_fields['appointment_services_data'] = $bookingpress_services_details;
@@ -1045,7 +1090,7 @@ if (! class_exists('bookingpress_calendar') ) {
          *
          * @return void
          */
-        function bookingpress_get_customer_list_func() {
+        function bookingpress_get_customer_list_func( $return_response = false ) {
 
 			global $wpdb, $BookingPress, $BookingPressPro;
 			$response                       = array();
@@ -1060,6 +1105,9 @@ if (! class_exists('bookingpress_calendar') ) {
                 $response['title'] = esc_html__( 'Error', 'bookingpress-appointment-booking');
                 $response['msg'] = $bpa_error_msg;
 
+                if ( $return_response ) {
+                    return $response;
+                }
                 wp_send_json( $response );
                 die;
             }
@@ -1070,7 +1118,7 @@ if (! class_exists('bookingpress_calendar') ) {
             $search_user_str = ! empty( $_REQUEST['search_user_str'] ) ? ( sanitize_text_field($_REQUEST['search_user_str'] )) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
             $bookingpress_customer_id = ! empty( $_REQUEST['customer_id'] ) ? ( sanitize_text_field($_REQUEST['customer_id'] )) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 
-			if(!empty($search_user_str)) {                  
+			if(!empty($search_user_str)) {
                 $response['variant'] = 'success';
                 $response['title'] = esc_html__('Success', 'bookingpress-appointment-booking');
                 $response['msg'] = esc_html__('Data retrieved successfully', 'bookingpress-appointment-booking');
@@ -1078,6 +1126,9 @@ if (! class_exists('bookingpress_calendar') ) {
                 $bookingpress_appointment_customers_details = $BookingPress->bookingpress_get_appointment_customer_list($search_user_str,$bookingpress_customer_id);			
                 $response['appointment_customers_details'] = $bookingpress_appointment_customers_details;
             }    
+			if ( $return_response ) {
+				return $response;
+			}
 			echo wp_json_encode($response);
 			exit;
 		}

@@ -1,0 +1,704 @@
+body.folded.bookingpress_page_bookingpress-calendar #wpcontent {
+    padding-left: 0 !important
+}
+
+.bpa-app-main {
+    padding: 0 !important;
+}
+
+body.folded .bpa-dialog--fullscreen.is-fullscreen {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.bpa-calendar-root .logo-text{
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.bpa-calendar-root .calendar-header{
+    padding: 20px;
+}
+
+.bpa-calendar-root .header-center .title{ font-size: 18px; font-weight: 400;}
+
+.bpa-calendar-root .header-btn,
+.bpa-calendar-root .nav-btn,
+.bpa-calendar-root .add-btn{
+    min-height: 40px !important;
+    border-radius: 10px !important;
+}
+
+.bpa-calendar-root .add-btn{ margin-left: 0 !important;}
+.bpa-calendar-root .bpa-today-btn{ font-size: 14px !important; font-weight: 400 !important; border-radius: 10px !important;}
+.bpa-calendar-root .nav-controls .bp-select__selected-item{ font-weight: 400; font-size: 14px;}
+.bpa-calendar-root .view-select .bp-select__wrapper{ border-radius: 10px !important }
+
+.bpa-calendar-root .bpa-header-cell .day-name{ font-weight: 400 !important; color: #727E95 !important;}
+.bpa-calendar-root .bpa-header-cell .day-number{ font-size: 18px !important;}
+.bpa-calendar-root .bpa-header-cell .day-header .day-number{ width: 26px !important; height: 26px !important; text-align: center; line-height: 24px; border-radius: 6px;}
+.bpa-calendar-root .bpa-header-cell .day-header.is-today .day-number{  background: #2CD38E1A; }
+/* .bpa-calendar-root .bpa-header-cell .day-header{ padding: 16px 16px 0;} */
+
+.time-column.is-today{ background: transparent !important; }
+
+.bpa-booking-filters-popper{ border-radius: 20px !important; width: 360px !important; padding: 24px !important;}
+
+.filters-popover .popover-footer .bp-button.apply-btn{ border-radius: 10px !important; max-height: 40px !important; min-width: 150px; }
+.bpa-booking-filters-popper .popover-header{ padding: 4px 4px 24px; }
+.bpa-booking-filters-popper .popover-title{ font-size: 16px; }
+
+.bpa-booking-filters-popper .filter-select .bp-select__placeholder,
+.bpa-booking-filters-popper .filter-select .bp-select__selected-item{
+    font-size: 16px !important;
+    font-weight: 400;
+}
+
+.filter-field-shell{ gap: 0px !important; border-radius: 12px !important;}
+.filter-field-icon{ width: 20px !important; height:  20px !important; }
+.filter-field-icon svg{ width: 20px !important; height: 20px !important;}
+
+.filter-select .bp-select__wrapper{
+    padding: 0px 8px !important;
+}
+
+.bpa-display-settings-popper{ border-radius: 20px !important; padding: 24px !important; width: 300px !important;}
+.bpa-display-settings-popper .popover-header h3{ font-size: 16px; font-weight: 400;}
+.bpa-display-settings-popper .filter-item{ padding: 10px; }
+.bpa-display-settings-popper .filter-item .bp-checkbox__label .field-label{ font-size: 16px; font-weight: 400;}
+.bpa-display-settings-popper .filter-item .bp-checkbox__inner{ width: 20px !important; height: 20px !important; }
+.bpa-display-settings-popper .filter-item .bp-checkbox__inner::after{ font-size: 13px }
+
+.bookingpress-appointment-dialog-container:has(.--bpa-active) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 99;
+}
+
+.bp-ui-row[type="flex"] {
+    display: flex;
+}
+
+.bpa-btn {
+    cursor: pointer;
+}
+
+.bpa-btn--primary {
+    border: none;
+}
+
+.bpa-btn-secondary {
+    border: 1px solid var(--bpa-gt-gray-400);
+}
+
+.bp-button.bpa-btn span svg {
+    fill: none;
+}
+
+.bp-select-dropdown__item {
+    margin: 0 0 4px;
+}
+
+.bp-popper.is-pure:has(.bp-select-dropdown) {
+    border-radius: var(--bpa-radius-8px);
+}
+
+.bp-dialog__header {
+    display: none;
+}
+
+.bp-select__wrapper .bp-select__input-wrapper .bp-select__input,
+.bp-input__wrapper .bp-input__inner {
+    padding: 10px 0px;
+    box-shadow: none;
+    border: none;
+}
+
+.bpa-custom-checkbox--is-label {
+    cursor: pointer;
+}
+
+.bookingpress-customer-dialog-container:has(.--bpa-active) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 99;
+}
+
+.bp-select__wrapper.is-filterable {
+    cursor: pointer;
+}
+
+.bp-select-group__wrap:not(:last-of-type) {
+    padding-bottom: 24px;
+}
+
+.bp-select-group__wrap:not(:last-of-type)::after {
+    content: '';
+    position: absolute;
+    display: block;
+    left: 20px;
+    right: 20px;
+    bottom: 12px;
+    height: 1px;
+    background: #E4E7ED;
+}
+
+.bpa-dialog--fullscreen .bpa-form-body-row>.bp-ui-row>.bp-ui-col {
+    margin-bottom: 20px;
+}
+
+.bp-form-item__error {
+    color: var(--bpa-sc-danger);
+    font-size: 12px;
+    line-height: 16px;
+    left: 16px;
+    margin-top: 6px;
+    padding-top: 0;
+    padding-left: 20px;
+}
+
+.bp-form-item__error::before {
+    content: 'error_outline';
+    position: absolute;
+    left: 0;
+    top: calc(50% - 8px);
+    font-size: 16px;
+    font-family: 'Material Icons Round';
+    -webkit-font-feature-settings: 'liga';
+    font-feature-settings: 'liga';
+}
+
+.bp-checkbox__inner {
+    display: inline-block;
+    position: relative;
+    border: 1px solid #DCDFE6;
+    border-radius: 2px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 14px;
+    height: 14px;
+    background-color: #FFF;
+    z-index: 1;
+    -webkit-transition: border-color .25s cubic-bezier(.71, -.46, .29, 1.46), background-color .25s cubic-bezier(.71, -.46, .29, 1.46);
+    transition: border-color .25s cubic-bezier(.71, -.46, .29, 1.46), background-color .25s cubic-bezier(.71, -.46, .29, 1.46);
+}
+
+.bp-checkbox__inner::after {
+    width: auto;
+    height: auto;
+    content: 'done';
+    font-family: 'Material Icons Round';
+    -webkit-font-feature-settings: 'liga';
+    font-feature-settings: 'liga';
+    font-size: 16px;
+    border: none;
+    color: var(--bpa-cl-white);
+    left: 2px;
+    top: 0px;
+    line-height: 18px;
+}
+
+.bp-checkbox__inner::after {
+    transform: rotate(45deg) scaleY(0);
+}
+
+.bp-checkbox__input.is-checked .bp-checkbox__inner::after {
+    transform: rotate(0deg) scaleY(1);
+}
+
+.bp-select-dropdown__item.is-disabled {
+    opacity: 0.5;
+}
+
+.bpa-dialog-body .bp-upload {
+    justify-content: left;
+}
+
+.bpa-dialog-body .bp-upload .bp-upload-dragger {
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent !important;
+    padding: 0 !important;
+}
+
+.bp-ui-root .bpa-form-control.--bpa-country-dropdown {
+    border: none !important;
+}
+
+.bp-ui-root .bpa-form-control.bp-tel-input .vti__dropdown,
+.bp-dialog .bpa-form-control.bp-tel-input .vti__dropdown {
+    margin: 0 !important;
+    min-width: auto;
+}
+
+.bp-ui-root .bpa-form-control.bp-tel-input .vti__input,
+.bp-dialog .bpa-form-control.bp-tel-input .vti__input {
+    padding: 0 16px;
+}
+
+.bp-ui-root .bpa-form-control.bp-tel-input .vti__dropdown-list.below,
+.bp-dialog .bpa-form-control.bp-tel-input .vti__dropdown-list.below {
+    left: -16px;
+    top: 40px;
+    border-radius: 0;
+    width: 390px;
+}
+
+.bpa-today-btn {
+    min-height: 40px !important;
+}
+
+.bpa-dialog.bpa-dialog--reschedule-modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 0;
+}
+
+.bpa-dialog.bpa-dialog--reschedule-modal .bp-dialog__header.show-close {
+    display: block;
+    height: 88px;
+    padding: 30px 32px;
+    position: relative;
+}
+
+.bpa-dialog.bpa-dialog--reschedule-modal .bp-dialog__header .bp-dialog__title {
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 32px;
+    color: var(--bpa-dt-black-400);
+}
+
+.bpa-dialog.bpa-dialog--reschedule-modal .bp-dialog__body {
+    padding: 32px !important;
+}
+
+.bpa-dialog.bpa-dialog--reschedule-modal .bp-dialog__header .bp-dialog__headerbtn {
+    top: 50%;
+    right: 15px;
+    transform: translateY(-50%);
+}
+
+.bpa-dialog.bpa-dialog--reschedule-modal .bp-dialog__header .bp-dialog__headerbtn .bp-icon {
+    color: var(--bpa-dt-black-300) !important;
+    font-size: 20px;
+}
+
+.bpa-form-customer-name-col {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    align-items: start;
+    gap: 16px;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    color: var(--bpa-dt-black-400);
+}
+
+.bpa-form-customer-name {
+    position: relative;
+}
+
+.bpa-form-customer-name:after {
+    position: absolute;
+    content: '';
+    width: 1px;
+    height: 20px;
+    background-color: var(--bpa-gt-gray-400);
+    right: -9px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+
+.bp-notification {
+    top: 60px !important;
+    border-radius: var(--bpa-radius-6px);
+    border-color: var(--bpa-gt-gray-400);
+    padding-top: 16px;
+    padding-bottom: 16px;
+    box-shadow: 1px 3px 8px rgba(184, 193, 211, 0.4);
+    width: 320px;
+    align-items: center;
+    z-index: 9998 !important
+}
+
+.bp-notification .bp-notification__title {
+    font-size: 15px;
+    font-weight: 500;
+    color: #303133;
+}
+
+/* ============================================
+   Reschedule Dialog
+   ============================================ */
+
+.bookingpress-reschedule-dialog-container:has(.--bpa-active) {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 99;
+}
+
+.bpa-dialog.bpa-dialog--reschedule-modal .bp-overlay {
+    background: rgba(32, 44, 69, 0.38);
+}
+
+.bpa-dialog.bpa-dialog--reschedule-modal .bp-dialog {
+    width: 660px;
+    max-width: 96vw;
+    border-radius: var(--bpa-radius-16px);
+    box-shadow: var(--bpa-app-shadow-lg);
+    overflow: hidden;
+}
+
+/* -- Customer / Service row -- */
+.bpa-reschedule-customer-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-bottom: 24px;
+}
+
+.bpa-reschedule-customer-name {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    color: var(--bpa-dt-black-400);
+}
+
+.-reschedule-divider {
+    width: 1px;
+    height: 20px;
+    background-color: var(--bpa-gt-gray-400);
+    flex-shrink: 0;
+}
+
+.bpa-reschedule-service-name {
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    color: var(--bpa-dt-black-400);
+}
+
+/* -- Timeline wrapper -- */
+.bpa-reschedule-timeline {
+    position: relative;
+    padding-left: 28px;
+}
+
+/* Connecting line between dots */
+.bpa-reschedule-timeline--from::before {
+    content: '';
+    position: absolute;
+    left: -23px;
+    top: 10px;
+    bottom: 10px;
+    width: 2px;
+    background: var(--bpa-gt-gray-300);
+    height: 100%;
+}
+
+/* -- Timeline item -- */
+.bpa-reschedule-timeline-item {
+    position: relative;
+    padding-bottom: 45px;
+}
+
+.bpa-reschedule-timeline-item.bpa-reschedule-timeline--from:after {
+    content: '';
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    height: 1px;
+    background: var(--bpa-gt-gray-300);
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.bpa-reschedule-timeline-item:last-child {
+    padding-bottom: 0;
+}
+
+/* -- Timeline dots -- */
+.bpa-reschedule-timeline-dot {
+    position: absolute;
+    left: -28px;
+    top: 4px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    z-index: 1;
+}
+
+.bpa-reschedule-dot--gray {
+    background: var(--bpa-dt-black-100);
+}
+
+.bpa-reschedule-dot--green {
+    background: var(--bpa-pt-main-green);
+}
+
+/* -- Section labels -- */
+.bpa-reschedule-section-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 18px;
+    margin-bottom: 12px;
+}
+
+.bpa-reschedule-label--from {
+    color: var(--bpa-dt-black-200);
+}
+
+/* -- From: read-only info -- */
+.bpa-reschedule-from-info {
+    display: flex;
+    align-items: center;
+    gap: 0;
+}
+
+.bpa-reschedule-from-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.bpa-reschedule-field-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.bpa-reschedule-field-icon svg {
+    display: block;
+}
+
+.bpa-reschedule-from-text {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    color: var(--bpa-dt-black-400);
+    white-space: nowrap;
+}
+
+.bpa-reschedule-from-separator {
+    width: 1px;
+    height: 20px;
+    background: var(--bpa-gt-gray-400);
+    margin: 0 16px;
+    flex-shrink: 0;
+}
+
+.bpa-reschedule-divider {
+    width: 1px;
+    height: 20px;
+    display: flex;
+    position: relative;
+    background: var(--bpa-gt-gray-400);
+}
+
+/* -- To: editable fields -- */
+.bpa-reschedule-to-fields {
+    display: flex;
+    gap: 12px;
+}
+
+.bpa-reschedule-to-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+}
+
+.bpa-reschedule-to-field--date {
+    flex: 1;
+    min-width: 0;
+}
+
+.bpa-reschedule-to-field--time {
+    flex: 1;
+    min-width: 0;
+}
+
+.bpa-reschedule-field-label {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+    color: var(--bpa-dt-black-200);
+    margin-bottom: 6px;
+}
+
+/* -- Footer -- */
+.bpa-reschedule-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding-top: 28px;
+}
+
+.bpa-reschedule-footer .bpa-btn--primary {
+    min-width: 120px;
+}
+
+/* -- Responsive -- */
+@media (max-width: 640px) {
+    .bpa-reschedule-to-fields {
+        flex-direction: column;
+    }
+
+    .bpa-reschedule-from-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .bpa-reschedule-from-separator {
+        display: none;
+    }
+}
+
+.bpa-aaf__service-selection-col {
+    display: flex;
+    width: 100%;
+    gap: 7px;
+}
+
+.bpa-aaf--extra-popover {
+    box-shadow: unset !important;
+    width: 400px !important;
+}
+
+.bp-radio__inner {
+    width: 20px;
+    height: 20px;
+}
+
+.bp-radio__inner::after {
+    width: 10px;
+    height: 10px;
+}
+
+.--bpa-is-field-separator {
+    width: 100% !important;
+    margin-bottom: 2px !important;
+    max-width: 100% !important;
+    flex: none;
+    height: 1px !important;
+}
+
+.bookingpress-reschedule-dialog-container .bp-overlay-dialog{
+    background:rgba(0,0,0,0.4);
+}
+
+@media( max-width: 768px ){
+    .bpa-mobile-toolbar-btn svg{
+        margin:0 !important;
+    }
+}
+.event-drawer-handle{
+    display: none;
+}
+.bp-ui-drawer__content .popover-details{
+    padding-left: 10px;
+}
+
+/** Menu Style */
+.bpa-standalone-sidebar{min-height: unset;}
+.bp-ui-wrapper__mobile-content{ display: flex;}
+.bp-ui-wrapper__mobile-content .bpa-header-navbar{ padding: 0; }
+.bp-ui-wrapper__mobile-content .bpa-header-navbar .bpa-navbar-nav ul{ left: 0; right: unset; top: 0; transform:translateX(0); height: 100%; overflow-y:auto;}
+.bpa-nav-item-dropdown-items{ z-index: 9999 !important;}
+.add-btn.add-btn-mobile span svg{margin:0 !important;}
+@media all and (min-width:769px){
+    .bp-ui-wrapper__sidebar:has(.bpa-standalone-sidebar){ display: none;}
+}
+
+#bookingpress-calendar .bpa-header-navbar .bpa-navbar-nav ul{ top:0 !important; }
+
+#bookingpress-calendar .bpa-ni-dropdown-menu .bpa-ni-dropdown-menu--item{ margin-bottom: 0 !important;}
+/** Menu Style */
+
+
+/** Reschedule Loader Design */
+.bpa-reschedule-form .bp-form{
+    position: relative;
+}
+.bpa-reschedule-form .bp-form .bpa-back-loader-container{
+    background: #fff;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: translate(0px, 0px);
+    justify-content: center;
+}
+.bpa-reschedule-form .bp-form .bpa-back-loader-container .bpa-back-loader{
+    position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.bookingpress-reschedule-dialog-container{ width: 600px; max-width: 600px; }
+.bookingpress-reschedule-dialog-container .--is-custom-reschedule{ width: 700px; max-width: 100%; }
+
+.bookingpress-reschedule-dialog-container .--is-custom-reschedule .bpa-reschedule-to-field .bp-ui-row{ gap: 20px;}
+.bpa-grid-scroll-container{ overflow-x:hidden !important; }
+
+.bpa-reschedule-to-field .bp-row{ gap: 12px;}
+/** Reschedule Loader Design */
+
+
+.bpa-event-details-popper .popover-row-icon{ position: relative; top: 2px;}
+
+@media( max-width: 576px ){
+    .bpa-event-details-popper{
+        position:fixed !important;
+        top:50% !important;
+        left:50% !important;
+        width: 70% !important;
+        transform: translate(-50%, -50%) !important;
+    
+    }
+    body:has(.bookingpress-reschedule-dialog-container .bpa-dialog.bpa-dialog--reschedule-modal) #wpadminbar {
+        z-index: 1 !important;
+      }
+    .bookingpress-reschedule-dialog-container .bpa-dialog.bpa-dialog--reschedule-modal{
+        width: 100%;
+        height: 100%;
+        z-index: 99999 !important;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        left: 50%;        
+        border-radius: 0;
+    }
+    .bpa-reschedule-footer{
+        justify-content: center;
+    }
+}
+
+@media all and ( max-width:767px ){
+    .bpa-staff-header-navbar__mob{
+        display: none !important;
+    }
+    #wpbody-content:has(.bpa-staff-sidebar-navigation-folded){
+        margin-left: 0 !important;
+    }
+    #wpbody-content:has(.bpa-staff-sidebar-navigation-folded) #bookingpress-calendar{
+        width: 100% !important;
+    }
+}
+
+.calendar-page-loader{ position:fixed !important; top: 0 !important; left:0 !important; width:100%; height:100%; display:flex; justify-content:center; align-items:center; transform:translate(0) !important; z-index:9999 !important;}

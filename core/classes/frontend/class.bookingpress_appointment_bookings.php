@@ -1509,7 +1509,7 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
             $bookingpress_appointment_data = !empty($_POST['appointment_data_obj']) ? array_map( array( $BookingPress, 'appointment_sanatize_field' ), $_POST['appointment_data_obj'] ) : array(); // phpcs:ignore
             
             if(empty($bookingpress_selected_service)){
-                $bookingpress_selected_service = $bookingpress_appointment_data['selected_service'];
+                $bookingpress_selected_service = isset( $bookingpress_appointment_data['selected_service'] ) ? $bookingpress_appointment_data['selected_service'] : 0;
             }
 
             $before_daysoff_dates = $daysoff_dates;
@@ -3374,8 +3374,8 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                 .bpa-front-tabs .bpa-front-tab-menu .bpa_focusable:focus,
 		        .el-table.bpa_focusable th.el-table__cell:focus,
                 .bpa-front-customer-panel-container .bpa_focusable:focus,
-		.bpa-cp-ls__tab-menu .bpa-tm__item:focus,
-		.bpa-cp-ls__tab-menu .bpa-tm__item.bpa_focusable:focus,
+		        .bpa-cp-ls__tab-menu .bpa-tm__item:focus,
+		        .bpa-cp-ls__tab-menu .bpa-tm__item.bpa_focusable:focus,
                 .bpa-front-customer-panel-container .bpa_focusable.el-pagination ul li:focus, 
                 .bpa-front-customer-panel-container .bpa_focusable.el-pagination button:focus i{
                     outline: 1px solid '.$detect_background_color['outline_color'].' !important;
@@ -4556,6 +4556,7 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
 
 
             $selected_service_id =  ! empty($_POST['service_id']) ? intval($_POST['service_id']) : 0;
+
             if( empty( $selected_service_id ) ){
                 $selected_service_id = !empty( $_POST['appointment_data_obj']['selected_service'] ) ? intval( $_POST['appointment_data_obj']['selected_service'] ) : ( !empty( $_POST['selected_service'] ) ? intval( $_POST['selected_service'] ) : 0 );
             }
@@ -4563,6 +4564,7 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
             if( empty( $selected_date ) ){
                 $selected_date       = ! empty($_POST['selected_date']) ? date('Y-m-d', strtotime(sanitize_text_field($_POST['selected_date']))) : date('Y-m-d',current_time('timestamp'));
             }
+
             $service_timings = array();          
 
             $service_timings_data = array(
@@ -4603,7 +4605,6 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
             $bookingpress_hide_already_booked_slot = $BookingPress->bookingpress_get_customize_settings( 'hide_already_booked_slot', 'booking_form' );
             $bookingpress_hide_already_booked_slot = ( $bookingpress_hide_already_booked_slot == 'true' ) ? 1 : 0;
             $bookingpress_hide_already_booked_slot = apply_filters( 'bookingpress_change_hide_already_booked_slot_for_service', $bookingpress_hide_already_booked_slot, $selected_service_id);
-                
 
             $bpa_appointment_edit_id = !empty( $_POST['appointment_data_obj']['appointment_update_id'] ) ? intval( $_POST['appointment_data_obj']['appointment_update_id'] ) : 0;
 
@@ -7689,6 +7690,7 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                 if( /mounted/.test( myVar ) ){
                     allow_scroll = false;
                 }
+                
                 if( allow_scroll ){
 					window.scrollTo({
 						top: pos,
@@ -8711,6 +8713,7 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                 var bookingpress_scroll_pos = document.querySelector("#bookingpress_booking_form_"+vm.appointment_step_form_data.bookingpress_uniq_id);
                 bookingpress_scroll_pos = bookingpress_scroll_pos.getBoundingClientRect();
                 var bookingpress_scroll_position = (bookingpress_scroll_pos.top + window.scrollY) - 300;
+                
                 window.scrollTo({
 					top: bookingpress_scroll_position,
 				});
@@ -8725,6 +8728,7 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                 var bookingpress_scroll_pos = document.querySelector("#bookingpress_booking_form_"+vm.appointment_step_form_data.bookingpress_uniq_id);
                 bookingpress_scroll_pos = bookingpress_scroll_pos.getBoundingClientRect();
                 var bookingpress_scroll_position = (bookingpress_scroll_pos.top + window.scrollY) - 300;
+                
                 window.scrollTo({
 					top: bookingpress_scroll_position,
 				});
@@ -8906,9 +8910,7 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                 this.$nextTick(() => {
                     if (!this.$refs.appointment_step_form_data) return;                    
                     const phoneValue = this.appointment_step_form_data.customer_phone;
-                    console.log("called ... " + phoneValue);
                     if (/^[\d\+\s\-\(\)]+$/.test(phoneValue.trim())) {
-                        console.log("inside this..... one")
                         this.$refs.appointment_step_form_data.clearValidate(["customer_phone"]);
                     }
                 });
@@ -10247,12 +10249,12 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                         allow_scroll = false;
                     }
                     if( allow_scroll ){
-                    setTimeout(function(){
-                        window.scrollTo({
-                            top: pos,
-                            behavior: "smooth",
-                        });
-                    }, 500);
+                        setTimeout(function(){
+                            window.scrollTo({
+                                top: pos,
+                                behavior: "smooth",
+                            });
+                        }, 500);
                     }
                 }
 
@@ -10300,6 +10302,7 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
 
                     }, 1000);
                 }
+                
                 if(current_tab == "basic_details" || next_tab == "basic_details"){
                     setTimeout(() => {
                         document.querySelector(".bpa-front-tabs--panel-body.__bpa-is-active")
@@ -10307,8 +10310,9 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                         ?.focus();
                     }, 10);
                 }
-                if(next_tab == "summary"){
-                    setTimeout(() => {
+                if( window.innerWidth > 576 ){
+                    if(next_tab == "summary"){
+                        setTimeout(() => {
                             let find_first_pg = document.querySelector(".bpa-front-module--payment-methods .bpa-front-module--pm-body__item");
                             if(find_first_pg !== null){
                                 find_first_pg.focus();
@@ -10318,8 +10322,8 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                                     find_first_pg.focus();
                                 }
                             }
-                            
-                    }, 10);
+                        }, 10);
+                    }
                 }
                 if(current_tab == "service" || next_tab == "service"){
                     setTimeout(() => {

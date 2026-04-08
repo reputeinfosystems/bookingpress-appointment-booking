@@ -1724,8 +1724,53 @@ if( version_compare( $bookingpress_old_version, '1.1.23', '<') ){
 
 }
 
+if( version_compare( $bookingpress_old_version, '1.5', '<') ){
+    global $wpdb, $tbl_bookingpress_services;
+
+    $wpdb->query( "ALTER TABLE {$tbl_bookingpress_services} ADD bookingpress_color_mode VARCHAR(20) NOT NULL default 'preset' AFTER bookingpress_service_position" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_services is table name defined globally. False Positive alarm
+    $wpdb->query( "ALTER TABLE {$tbl_bookingpress_services} ADD bookingpress_color_scheme VARCHAR(50) NULL DEFAULT NULL AFTER bookingpress_color_mode" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_services is table name defined globally. False Positive alarm
+
+
+    $total_schemes = 25;
+
+    $services = $wpdb->get_results(
+        "SELECT bookingpress_service_id, bookingpress_color_scheme 
+         FROM {$tbl_bookingpress_services}
+         ORDER BY bookingpress_service_id ASC",
+        ARRAY_A
+    );
+
+    if ( !empty( $services ) ) {
+        $position = 0;
+    
+        foreach ( $services as $service ) {
+    
+            // Skip if already assigned (important for safety)
+            if ( ! empty( $service['bookingpress_color_scheme'] ) ) {
+                continue;
+            }
+    
+            // Generate scheme key
+            $scheme_number = ($position % $total_schemes) + 1;
+            $scheme_key    = 'scheme_' . $scheme_number;
+    
+            // Update DB
+            $wpdb->update(
+                $tbl_bookingpress_services,
+                [ 'bookingpress_color_mode' => 'preset', 'bookingpress_color_scheme' => $scheme_key ],
+                [ 'bookingpress_service_id' => $service['bookingpress_service_id'] ],
+                [ '%s', '%s' ],
+                [ '%d' ]
+            );
+    
+            $position++;
+        }   
+    }
+
+}
+
 $BookingPress->bookingpress_cleanup_transient_data_hook_callback();
-$bookingpress_new_version = '1.1.53';
+$bookingpress_new_version = '1.5.1';
 update_option('bookingpress_new_version_installed', 1);
 update_option('bookingpress_version', $bookingpress_new_version);
 update_option('bookingpress_updated_date_' . $bookingpress_new_version, current_time('mysql'));

@@ -40,7 +40,7 @@ if(!empty($request_module) && $request_module != 'lite_wizard'){
                 <?php if (current_user_can('bookingpress_calendar') ) { ?>
                 <li class="bpa-nav-item <?php echo ( 'calendar' == $request_module ) ? '__active' : ''; ?>">
 					<?php //phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped --Reason - URL is escaped properly ?>
-                    <a href="<?php echo add_query_arg('page', esc_html($bookingpress_slugs->bookingpress_calendar), esc_url(admin_url() . 'admin.php?page=bookingpress')); ?>" class="bpa-nav-link">
+                    <a href="<?php echo add_query_arg('page', 'bookingpress-calendar', esc_url(admin_url() . 'admin.php?page=bookingpress')); ?>" class="bpa-nav-link">
                         <div class="bpa-nav-link--icon">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M20 3h-1V2c0-.55-.45-1-1-1s-1 .45-1 1v1H7V2c0-.55-.45-1-1-1s-1 .45-1 1v1H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-1 18H5c-.55 0-1-.45-1-1V8h16v12c0 .55-.45 1-1 1z"/></svg>
                         </div>
