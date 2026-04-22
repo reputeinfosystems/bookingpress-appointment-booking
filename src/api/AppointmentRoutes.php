@@ -270,7 +270,7 @@ class AppointmentRoutes extends Base {
                 'end_date'      => ( !empty( $appointment_detail['bookingpress_appointment_end_date'] ) && $appointment_detail['bookingpress_appointment_end_date'] != '0000-00-00' ) ? $appointment_detail['bookingpress_appointment_end_date'] : $appointment_detail['bookingpress_appointment_date'],
                 'start_time'    => date('H:i', strtotime($appointment_detail['bookingpress_appointment_time'])),
                 'end_time'      => date('H:i', strtotime($appointment_detail['bookingpress_appointment_end_time'])),
-                'serviceName'   => $appointment_detail['bookingpress_service_name'],
+                'serviceName'   => stripslashes_deep($appointment_detail['bookingpress_service_name']),
                 'serviceId'     => $appointment_detail['bookingpress_service_id'],
                 'status'        => $appointment_detail['bookingpress_appointment_status'],
                 'isPast'        => strtotime( $appointment_detail['bookingpress_appointment_date'] . ' ' . $appointment_detail['bookingpress_appointment_time'] ) < current_time('timestamp') ? true : false,

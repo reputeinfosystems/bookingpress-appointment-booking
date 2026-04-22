@@ -5,7 +5,7 @@ Donate link: https://bookingpressplugin.com/
 Requires at least: 6.5
 Tested up to: 7.0
 Requires PHP: 5.6
-Stable tag: 1.5.1
+Stable tag: 1.5.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -220,6 +220,12 @@ Please follow the steps for installation:
 
 == Changelog ==
 
+= 1.5.2 =
+* Added a Pending Appointment indicator in the Month View of the calendar.
+* Resolved an issue where WordPress custom time formats were not applied in the booking form
+* Other minor bug fixes
+
+
 = 1.5.1 =
 * Minor bug fixes
 
@@ -233,20 +239,6 @@ Please follow the steps for installation:
 * Other minor bug fixes
 
 = 1.1.52 =
-* Minor bug fixes
-
-= 1.1.51 =
-* Fixed: date & time step not loading properly in specific case 
-* Other minor bug fixes
-
-= 1.1.50 =
-* Updated Saudi Riyal currency symbol
-* Other minor bug fixes
-
-= 1.1.49 =
-* Minor bug fixes
-
-= 1.1.48 =
 * Minor bug fixes
 
 For a complete list of changelogs of earlier versions, please check the website [here](https://www.bookingpressplugin.com/documents/changelog/#free-version)

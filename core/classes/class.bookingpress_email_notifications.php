@@ -793,7 +793,7 @@ if (! class_exists('bookingpress_email_notifications') ) {
                         $bookingpress_email_header_data .= 'X-Mailer: PHPMailer ' . $phpmailer_version . " (https://github.com/PHPMailer/PHPMailer)\r\n";
                         if(!empty($cc_emails) && is_array($cc_emails)){
                             $bookingpress_email_header_data .= "Cc: ".implode(',', $cc_emails)."\r\n";
-                        }
+                        }                     
                         
                         $bookingpress_email_header_data .= "MIME-Version: 1.0\r\n";
                         $bookingpress_email_header_data .= "Content-Transfer-Encoding: 7bit\r\n";
@@ -825,11 +825,13 @@ if (! class_exists('bookingpress_email_notifications') ) {
                             $bookingpress_email_content .= $file_content;
                         }
                         $bookingpress_email_content .= "\r\n--{$boundary}--\r\n";
+                    } else {
+                        $bookingpress_email_content = $email_content;
                     }
 
                     if (@mail($email_to, $email_subject, $bookingpress_email_content, $bookingpress_email_header_data) ) {
                          $is_mail_sent = 1;
-                    }
+                    }                   
                     break;
                 case 'wp_mail':
                     $bookingpress_email_header_data = 'From: ' . $from_name . '<' . $from_email . "> \r\n";

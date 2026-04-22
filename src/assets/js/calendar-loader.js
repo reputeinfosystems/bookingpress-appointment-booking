@@ -37,8 +37,6 @@ document.onreadystatechange = () => {
 
         bookingpress_calendar.mount('#bookingpress-calendar');
         window.BookingPressCalendarApp = bookingpress_calendar;
-
-        getEvents();
     }
 }
 

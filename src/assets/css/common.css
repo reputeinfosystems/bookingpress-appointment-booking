@@ -580,6 +580,10 @@ body.folded .bpa-dialog--fullscreen.is-fullscreen {
     width: 400px !important;
 }
 
+.bpa-aaf--extra-popover .bpa-aaf__extras-body{
+    overflow-y:visible;
+}
+
 .bp-radio__inner {
     width: 20px;
     height: 20px;

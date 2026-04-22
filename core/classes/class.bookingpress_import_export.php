@@ -1286,6 +1286,8 @@ if (! class_exists('bookingpress_import_export') ) {
                                                     $bookingpress_category_id = 0;
                                                 }
                                                 $single_import_record['bookingpress_category_id'] = $bookingpress_category_id;
+                                                $single_import_record['bookingpress_color_mode'] = 'preset';
+                                                $single_import_record['bookingpress_color_scheme'] = bookingpress_services::bookingpress_get_next_service_color_scheme();
                                                 unset($single_import_record['bookingpress_service_id']);
                                                 
                                                 $wpdb->insert($tbl_bookingpress_services, $single_import_record);

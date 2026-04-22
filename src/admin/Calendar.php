@@ -74,7 +74,7 @@ class Calendar extends Base {
         foreach( $categories as $category ) {
             $all_categories[] = [
                 'value' => $category['bookingpress_category_id'],
-                'label' => $category['bookingpress_category_name']
+                'label' => stripslashes_deep($category['bookingpress_category_name'])
             ];
         }
 
@@ -84,7 +84,7 @@ class Calendar extends Base {
         foreach( $all_services as $service_data ){
             $services_list[] = [
                 'value' => $service_data['bookingpress_service_id'],
-                'label' => $service_data['bookingpress_service_name']
+                'label' => stripslashes_deep($service_data['bookingpress_service_name'])
             ];
         }
 
@@ -391,6 +391,12 @@ class Calendar extends Base {
 
         $bookingpress_phone_country_option = $BookingPress->bookingpress_get_settings('default_phone_country_code', 'general_setting');
         $data['customer_phone_country'] = $bookingpress_phone_country_option;
+
+        $bookingpress_allow_customer_create = $BookingPress->bookingpress_get_settings('allow_wp_user_create', 'customer_setting');
+        $bookingpress_allow_customer_create = ! empty($bookingpress_allow_customer_create) ? $bookingpress_allow_customer_create : 'false';
+        $bookingpress_allow_customer_create = $bookingpress_allow_customer_create == 'true' ? true : false;
+
+        $data['allow_customer_wp_user_create'] = $bookingpress_allow_customer_create;
 
         $data['bookingpress_tel_input_props'] = array(
             'defaultCountry' => $bookingpress_phone_country_option,

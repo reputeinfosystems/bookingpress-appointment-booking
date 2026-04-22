@@ -1769,8 +1769,15 @@ if( version_compare( $bookingpress_old_version, '1.5', '<') ){
 
 }
 
+if( version_compare( $bookingpress_old_version, '1.5.2', '<') ){
+
+    $tbl_bookingpress_entries_meta = $wpdb->prefix . 'bookingpress_entries_meta';
+
+    $wpdb->query("ALTER TABLE {$tbl_bookingpress_entries_meta} CHANGE `bookingpress_entry_meta_value` `bookingpress_entry_meta_value` LONGTEXT NULL DEFAULT NULL"); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $bookingpress_entries_meta is table name defined globally. False Positive alarm 
+}
+
 $BookingPress->bookingpress_cleanup_transient_data_hook_callback();
-$bookingpress_new_version = '1.5.1';
+$bookingpress_new_version = '1.5.2';
 update_option('bookingpress_new_version_installed', 1);
 update_option('bookingpress_version', $bookingpress_new_version);
 update_option('bookingpress_updated_date_' . $bookingpress_new_version, current_time('mysql'));

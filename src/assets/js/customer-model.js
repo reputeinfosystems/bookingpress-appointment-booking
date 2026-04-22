@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 const initNewCustomerDialog = () => {
-    const moduleData = getModuleData('bookingpress-customer-model');
+    const moduleData = getModuleData('bookingpress-appointment-model');
 
     const BookingPressCustomerDialogConfig = {
         data() {
@@ -50,7 +50,7 @@ const initNewCustomerDialog = () => {
                 bookingpress_tel_input_props: moduleData.bookingpress_tel_input_props,
                 rules: {
                     wp_user: [
-                        { required: true, message: 'Please select WordPress user', trigger: 'blur' }
+                        { required: moduleData.allow_customer_wp_user_create, message: 'Please select WordPress user', trigger: 'blur' }
                     ],
                     username: [
                         { required: true, message: 'Please enter username', trigger: 'blur' }

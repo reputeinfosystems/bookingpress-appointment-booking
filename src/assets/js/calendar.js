@@ -1,8 +1,107 @@
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-import { effectScope, computed, watch, isRef, getCurrentInstance, ref, shallowRef, defineComponent, h, Fragment, inject, onMounted, onUnmounted, createVNode, Text, readonly, openBlock, createElementBlock, normalizeStyle, normalizeClass, withModifiers, createCommentVNode, createElementVNode, toDisplayString as toDisplayString$1, renderList, reactive, resolveComponent, unref, createStaticVNode, withCtx, createTextVNode, TransitionGroup, createBlock, resolveDynamicComponent, normalizeProps, guardReactiveProps, onBeforeUpdate, nextTick, provide, watchEffect, createSlots, markRaw, compile as compile$1, createApp } from "vue";
-import { e as en } from "../i18n/en.js";
+import { effectScope, computed, watch, isRef, getCurrentInstance, ref, shallowRef, defineComponent, h, Fragment, inject, onMounted, onUnmounted, createVNode, Text, readonly, openBlock, createElementBlock, normalizeClass, renderList, unref, createElementVNode, toDisplayString as toDisplayString$1, createCommentVNode, normalizeStyle, withModifiers, createBlock, reactive, resolveComponent, createStaticVNode, withCtx, createTextVNode, TransitionGroup, resolveDynamicComponent, normalizeProps, guardReactiveProps, onBeforeUpdate, nextTick, provide, watchEffect, createSlots, markRaw, compile as compile$1, createApp } from "vue";
+/*!
+  * shared v10.0.8
+  * (c) 2025 kazuya kawaguchi
+  * Released under the MIT License.
+  */
+function warn$1(msg, err) {
+  if (typeof console !== "undefined") {
+    console.warn(`[intlify] ` + msg);
+  }
+}
+const hasWarned$1 = {};
+function warnOnce$1(msg) {
+  if (!hasWarned$1[msg]) {
+    hasWarned$1[msg] = true;
+    warn$1(msg);
+  }
+}
+const inBrowser$1 = typeof window !== "undefined";
+const RE_ARGS$1 = /\{([0-9a-zA-Z]+)\}/g;
+function format$2(message, ...args) {
+  if (args.length === 1 && isObject$1(args[0])) {
+    args = args[0];
+  }
+  if (!args || !args.hasOwnProperty) {
+    args = {};
+  }
+  return message.replace(RE_ARGS$1, (match, identifier) => {
+    return args.hasOwnProperty(identifier) ? args[identifier] : "";
+  });
+}
+const makeSymbol = (name, shareable = false) => !shareable ? Symbol(name) : Symbol.for(name);
+const isNumber$1 = (val) => typeof val === "number" && isFinite(val);
+const isRegExp$1 = (val) => toTypeString$1(val) === "[object RegExp]";
+const isEmptyObject$1 = (val) => isPlainObject$9(val) && Object.keys(val).length === 0;
+const assign$1 = Object.assign;
+const _create$1 = Object.create;
+const create$1 = (obj = null) => _create$1(obj);
+let _globalThis$1;
+const getGlobalThis$1 = () => {
+  return _globalThis$1 || (_globalThis$1 = typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : create$1());
+};
+const hasOwnProperty$1 = Object.prototype.hasOwnProperty;
+function hasOwn$1(obj, key) {
+  return hasOwnProperty$1.call(obj, key);
+}
+const isArray$1 = Array.isArray;
+const isFunction$1 = (val) => typeof val === "function";
+const isString$1 = (val) => typeof val === "string";
+const isBoolean$1 = (val) => typeof val === "boolean";
+const isObject$1 = (val) => val !== null && typeof val === "object";
+const objectToString$1 = Object.prototype.toString;
+const toTypeString$1 = (value) => objectToString$1.call(value);
+const isPlainObject$9 = (val) => toTypeString$1(val) === "[object Object]";
+function createEmitter() {
+  const events = /* @__PURE__ */ new Map();
+  const emitter = {
+    events,
+    on(event, handler) {
+      const handlers = events.get(event);
+      const added = handlers && handlers.push(handler);
+      if (!added) {
+        events.set(event, [handler]);
+      }
+    },
+    off(event, handler) {
+      const handlers = events.get(event);
+      if (handlers) {
+        handlers.splice(handlers.indexOf(handler) >>> 0, 1);
+      }
+    },
+    emit(event, payload) {
+      (events.get(event) || []).slice().map((handler) => handler(payload));
+      (events.get("*") || []).slice().map((handler) => handler(event, payload));
+    }
+  };
+  return emitter;
+}
+const isNotObjectOrIsArray = (val) => !isObject$1(val) || isArray$1(val);
+function deepCopy(src, des) {
+  if (isNotObjectOrIsArray(src) || isNotObjectOrIsArray(des)) {
+    throw new Error("Invalid value");
+  }
+  const stack = [{ src, des }];
+  while (stack.length) {
+    const { src: src2, des: des2 } = stack.pop();
+    Object.keys(src2).forEach((key) => {
+      if (key === "__proto__") {
+        return;
+      }
+      if (isObject$1(src2[key]) && !isObject$1(des2[key])) {
+        des2[key] = Array.isArray(src2[key]) ? [] : create$1();
+      }
+      if (isNotObjectOrIsArray(des2[key]) || isNotObjectOrIsArray(src2[key])) {
+        des2[key] = src2[key];
+      } else {
+        stack.push({ src: src2[key], des: des2[key] });
+      }
+    });
+  }
+}
 /*!
   * shared v10.0.8
   * (c) 2025 kazuya kawaguchi
@@ -52,13 +151,12 @@ function format$1(message, ...args) {
     return args.hasOwnProperty(identifier) ? args[identifier] : "";
   });
 }
-const makeSymbol = (name, shareable = false) => !shareable ? Symbol(name) : Symbol.for(name);
 const generateFormatCacheKey = (locale, key, source) => friendlyJSONstringify({ l: locale, k: key, s: source });
 const friendlyJSONstringify = (json) => JSON.stringify(json).replace(/\u2028/g, "\\u2028").replace(/\u2029/g, "\\u2029").replace(/\u0027/g, "\\u0027");
 const isNumber = (val) => typeof val === "number" && isFinite(val);
 const isDate = (val) => toTypeString(val) === "[object Date]";
 const isRegExp = (val) => toTypeString(val) === "[object RegExp]";
-const isEmptyObject = (val) => isPlainObject$7(val) && Object.keys(val).length === 0;
+const isEmptyObject = (val) => isPlainObject$8(val) && Object.keys(val).length === 0;
 const assign = Object.assign;
 const _create = Object.create;
 const create = (obj = null) => _create(obj);
@@ -107,9 +205,9 @@ const isPromise = (val) => {
 };
 const objectToString = Object.prototype.toString;
 const toTypeString = (value) => objectToString.call(value);
-const isPlainObject$7 = (val) => toTypeString(val) === "[object Object]";
+const isPlainObject$8 = (val) => toTypeString(val) === "[object Object]";
 const toDisplayString = (val) => {
-  return val == null ? "" : isArray(val) || isPlainObject$7(val) && val.toString === objectToString ? JSON.stringify(val, null, 2) : String(val);
+  return val == null ? "" : isArray(val) || isPlainObject$8(val) && val.toString === objectToString ? JSON.stringify(val, null, 2) : String(val);
 };
 function join(items, separator = "") {
   return items.reduce((str, item, index) => index === 0 ? str + item : str + separator + item, "");
@@ -144,53 +242,6 @@ function generateCodeFrame(source, start = 0, end = source.length) {
     }
   }
   return res.join("\n");
-}
-function createEmitter() {
-  const events = /* @__PURE__ */ new Map();
-  const emitter = {
-    events,
-    on(event, handler) {
-      const handlers = events.get(event);
-      const added = handlers && handlers.push(handler);
-      if (!added) {
-        events.set(event, [handler]);
-      }
-    },
-    off(event, handler) {
-      const handlers = events.get(event);
-      if (handlers) {
-        handlers.splice(handlers.indexOf(handler) >>> 0, 1);
-      }
-    },
-    emit(event, payload) {
-      (events.get(event) || []).slice().map((handler) => handler(payload));
-      (events.get("*") || []).slice().map((handler) => handler(event, payload));
-    }
-  };
-  return emitter;
-}
-const isNotObjectOrIsArray = (val) => !isObject(val) || isArray(val);
-function deepCopy(src, des) {
-  if (isNotObjectOrIsArray(src) || isNotObjectOrIsArray(des)) {
-    throw new Error("Invalid value");
-  }
-  const stack = [{ src, des }];
-  while (stack.length) {
-    const { src: src2, des: des2 } = stack.pop();
-    Object.keys(src2).forEach((key) => {
-      if (key === "__proto__") {
-        return;
-      }
-      if (isObject(src2[key]) && !isObject(des2[key])) {
-        des2[key] = Array.isArray(src2[key]) ? [] : create();
-      }
-      if (isNotObjectOrIsArray(des2[key]) || isNotObjectOrIsArray(src2[key])) {
-        des2[key] = src2[key];
-      } else {
-        stack.push({ src: src2[key], des: des2[key] });
-      }
-    });
-  }
 }
 /*!
   * message-compiler v10.0.8
@@ -1951,7 +2002,7 @@ function fallbackWithLocaleChain(ctx, fallback, start) {
     while (isArray(block)) {
       block = appendBlockToChain(chain, block, fallback);
     }
-    const defaults = isArray(fallback) || !isPlainObject$7(fallback) ? fallback : fallback["default"] ? fallback["default"] : null;
+    const defaults = isArray(fallback) || !isPlainObject$8(fallback) ? fallback : fallback["default"] ? fallback["default"] : null;
     block = isString(defaults) ? [defaults] : defaults;
     if (isArray(block)) {
       appendBlockToChain(chain, block, false);
@@ -1988,7 +2039,7 @@ function appendItemToChain(chain, target, blocks) {
       follow = target[target.length - 1] !== "!";
       const locale = target.replace(/!/g, "");
       chain.push(locale);
-      if ((isArray(blocks) || isPlainObject$7(blocks)) && blocks[locale]) {
+      if ((isArray(blocks) || isPlainObject$8(blocks)) && blocks[locale]) {
         follow = blocks[locale];
       }
     }
@@ -2515,10 +2566,10 @@ function createCoreContext(options = {}) {
   const version = isString(options.version) ? options.version : VERSION$1;
   const locale = isString(options.locale) || isFunction(options.locale) ? options.locale : DEFAULT_LOCALE;
   const _locale = isFunction(locale) ? DEFAULT_LOCALE : locale;
-  const fallbackLocale = isArray(options.fallbackLocale) || isPlainObject$7(options.fallbackLocale) || isString(options.fallbackLocale) || options.fallbackLocale === false ? options.fallbackLocale : _locale;
-  const messages = isPlainObject$7(options.messages) ? options.messages : createResources(_locale);
-  const datetimeFormats = isPlainObject$7(options.datetimeFormats) ? options.datetimeFormats : createResources(_locale);
-  const numberFormats = isPlainObject$7(options.numberFormats) ? options.numberFormats : createResources(_locale);
+  const fallbackLocale = isArray(options.fallbackLocale) || isPlainObject$8(options.fallbackLocale) || isString(options.fallbackLocale) || options.fallbackLocale === false ? options.fallbackLocale : _locale;
+  const messages = isPlainObject$8(options.messages) ? options.messages : createResources(_locale);
+  const datetimeFormats = isPlainObject$8(options.datetimeFormats) ? options.datetimeFormats : createResources(_locale);
+  const numberFormats = isPlainObject$8(options.numberFormats) ? options.numberFormats : createResources(_locale);
   const modifiers = assign(create(), options.modifiers, getDefaultLinkedModifiers());
   const pluralRules = options.pluralRules || create();
   const missing = isFunction(options.missing) ? options.missing : null;
@@ -2527,7 +2578,7 @@ function createCoreContext(options = {}) {
   const fallbackFormat = !!options.fallbackFormat;
   const unresolving = !!options.unresolving;
   const postTranslation = isFunction(options.postTranslation) ? options.postTranslation : null;
-  const processor = isPlainObject$7(options.processor) ? options.processor : null;
+  const processor = isPlainObject$8(options.processor) ? options.processor : null;
   const warnHtmlMessage = isBoolean(options.warnHtmlMessage) ? options.warnHtmlMessage : true;
   const escapeParameter = !!options.escapeParameter;
   const messageCompiler = isFunction(options.messageCompiler) ? options.messageCompiler : _compiler;
@@ -2686,12 +2737,12 @@ function datetime(context, ...args) {
     }
     datetimeFormat = datetimeFormats[targetLocale] || {};
     format2 = datetimeFormat[key];
-    if (isPlainObject$7(format2))
+    if (isPlainObject$8(format2))
       break;
     handleMissing(context, key, targetLocale, missingWarn, type);
     from = to;
   }
-  if (!isPlainObject$7(format2) || !isString(targetLocale)) {
+  if (!isPlainObject$8(format2) || !isString(targetLocale)) {
     return unresolving ? NOT_REOSLVED : key;
   }
   let id = `${targetLocale}__${key}`;
@@ -2756,7 +2807,7 @@ function parseDateTimeArgs(...args) {
   }
   if (isString(arg2)) {
     options.key = arg2;
-  } else if (isPlainObject$7(arg2)) {
+  } else if (isPlainObject$8(arg2)) {
     Object.keys(arg2).forEach((key) => {
       if (DATETIME_FORMAT_OPTIONS_KEYS.includes(key)) {
         overrides[key] = arg2[key];
@@ -2767,10 +2818,10 @@ function parseDateTimeArgs(...args) {
   }
   if (isString(arg3)) {
     options.locale = arg3;
-  } else if (isPlainObject$7(arg3)) {
+  } else if (isPlainObject$8(arg3)) {
     overrides = arg3;
   }
-  if (isPlainObject$7(arg4)) {
+  if (isPlainObject$8(arg4)) {
     overrides = arg4;
   }
   return [options.key || "", value, options, overrides];
@@ -2834,12 +2885,12 @@ function number(context, ...args) {
     }
     numberFormat = numberFormats[targetLocale] || {};
     format2 = numberFormat[key];
-    if (isPlainObject$7(format2))
+    if (isPlainObject$8(format2))
       break;
     handleMissing(context, key, targetLocale, missingWarn, type);
     from = to;
   }
-  if (!isPlainObject$7(format2) || !isString(targetLocale)) {
+  if (!isPlainObject$8(format2) || !isString(targetLocale)) {
     return unresolving ? NOT_REOSLVED : key;
   }
   let id = `${targetLocale}__${key}`;
@@ -2885,7 +2936,7 @@ function parseNumberArgs(...args) {
   const value = arg1;
   if (isString(arg2)) {
     options.key = arg2;
-  } else if (isPlainObject$7(arg2)) {
+  } else if (isPlainObject$8(arg2)) {
     Object.keys(arg2).forEach((key) => {
       if (NUMBER_FORMAT_OPTIONS_KEYS.includes(key)) {
         overrides[key] = arg2[key];
@@ -2896,10 +2947,10 @@ function parseNumberArgs(...args) {
   }
   if (isString(arg3)) {
     options.locale = arg3;
-  } else if (isPlainObject$7(arg3)) {
+  } else if (isPlainObject$8(arg3)) {
     overrides = arg3;
   }
-  if (isPlainObject$7(arg4)) {
+  if (isPlainObject$8(arg4)) {
     overrides = arg4;
   }
   return [options.key || "", value, options, overrides];
@@ -2956,9 +3007,9 @@ function createMessageContext(options = {}) {
     return !msg ? options.parent ? options.parent.message(key) : DEFAULT_MESSAGE : msg;
   }
   const _modifier = (name) => options.modifiers ? options.modifiers[name] : DEFAULT_MODIFIER;
-  const normalize = isPlainObject$7(options.processor) && isFunction(options.processor.normalize) ? options.processor.normalize : DEFAULT_NORMALIZE;
-  const interpolate = isPlainObject$7(options.processor) && isFunction(options.processor.interpolate) ? options.processor.interpolate : DEFAULT_INTERPOLATE;
-  const type = isPlainObject$7(options.processor) && isString(options.processor.type) ? options.processor.type : DEFAULT_MESSAGE_DATA_TYPE;
+  const normalize = isPlainObject$8(options.processor) && isFunction(options.processor.normalize) ? options.processor.normalize : DEFAULT_NORMALIZE;
+  const interpolate = isPlainObject$8(options.processor) && isFunction(options.processor.interpolate) ? options.processor.interpolate : DEFAULT_INTERPOLATE;
+  const type = isPlainObject$8(options.processor) && isString(options.processor.type) ? options.processor.type : DEFAULT_MESSAGE_DATA_TYPE;
   const linked = (key, ...args) => {
     const [arg1, arg2] = args;
     let type2 = "text";
@@ -3261,7 +3312,7 @@ function parseTranslateArgs(...args) {
     options.plural = arg2;
   } else if (isString(arg2)) {
     options.default = arg2;
-  } else if (isPlainObject$7(arg2) && !isEmptyObject(arg2)) {
+  } else if (isPlainObject$8(arg2) && !isEmptyObject(arg2)) {
     options.named = arg2;
   } else if (isArray(arg2)) {
     options.list = arg2;
@@ -3270,7 +3321,7 @@ function parseTranslateArgs(...args) {
     options.plural = arg3;
   } else if (isString(arg3)) {
     options.default = arg3;
-  } else if (isPlainObject$7(arg3)) {
+  } else if (isPlainObject$8(arg3)) {
     assign(options, arg3);
   }
   return [key, options];
@@ -3520,16 +3571,16 @@ function setupDevtoolsPlugin(pluginDescriptor, setupFn) {
 const VERSION = "10.0.8";
 function initFeatureFlags() {
   if (typeof __VUE_I18N_FULL_INSTALL__ !== "boolean") {
-    getGlobalThis().__VUE_I18N_FULL_INSTALL__ = true;
+    getGlobalThis$1().__VUE_I18N_FULL_INSTALL__ = true;
   }
   if (typeof __VUE_I18N_LEGACY_API__ !== "boolean") {
-    getGlobalThis().__VUE_I18N_LEGACY_API__ = true;
+    getGlobalThis$1().__VUE_I18N_LEGACY_API__ = true;
   }
   if (typeof __INTLIFY_DROP_MESSAGE_COMPILER__ !== "boolean") {
-    getGlobalThis().__INTLIFY_DROP_MESSAGE_COMPILER__ = false;
+    getGlobalThis$1().__INTLIFY_DROP_MESSAGE_COMPILER__ = false;
   }
   if (typeof __INTLIFY_PROD_DEVTOOLS__ !== "boolean") {
-    getGlobalThis().__INTLIFY_PROD_DEVTOOLS__ = false;
+    getGlobalThis$1().__INTLIFY_PROD_DEVTOOLS__ = false;
   }
 }
 const I18nWarnCodes = {
@@ -3546,7 +3597,7 @@ const warnMessages = {
   [I18nWarnCodes.DEPRECATE_TC]: `'tc' and '$tc' has been deprecated in v10. Use 't' or '$t' instead. 'tc' and '$tc’ are going to remove in v11.`
 };
 function getWarnMessage(code, ...args) {
-  return format$1(warnMessages[code], ...args);
+  return format$2(warnMessages[code], ...args);
 }
 const I18nErrorCodes = {
   // composer module errors
@@ -3595,18 +3646,18 @@ const SetPluralRulesSymbol = makeSymbol("__setPluralRules");
 const InejctWithOptionSymbol = /* @__PURE__ */ makeSymbol("__injectWithOption");
 const DisposeSymbol = /* @__PURE__ */ makeSymbol("__dispose");
 function handleFlatJson(obj) {
-  if (!isObject(obj)) {
+  if (!isObject$1(obj)) {
     return obj;
   }
   if (isMessageAST(obj)) {
     return obj;
   }
   for (const key in obj) {
-    if (!hasOwn(obj, key)) {
+    if (!hasOwn$1(obj, key)) {
       continue;
     }
     if (!key.includes(".")) {
-      if (isObject(obj[key])) {
+      if (isObject$1(obj[key])) {
         handleFlatJson(obj[key]);
       }
     } else {
@@ -3619,10 +3670,10 @@ function handleFlatJson(obj) {
           throw new Error(`unsafe key: ${subKeys[i]}`);
         }
         if (!(subKeys[i] in currentObj)) {
-          currentObj[subKeys[i]] = create();
+          currentObj[subKeys[i]] = create$1();
         }
-        if (!isObject(currentObj[subKeys[i]])) {
-          warn(getWarnMessage(I18nWarnCodes.IGNORE_OBJ_FLATTEN, {
+        if (!isObject$1(currentObj[subKeys[i]])) {
+          warn$1(getWarnMessage(I18nWarnCodes.IGNORE_OBJ_FLATTEN, {
             key: subKeys[i]
           }));
           hasStringValue = true;
@@ -3642,7 +3693,7 @@ function handleFlatJson(obj) {
       }
       if (!isMessageAST(currentObj)) {
         const target = currentObj[subKeys[lastIndex]];
-        if (isObject(target)) {
+        if (isObject$1(target)) {
           handleFlatJson(target);
         }
       }
@@ -3652,25 +3703,25 @@ function handleFlatJson(obj) {
 }
 function getLocaleMessages(locale, options) {
   const { messages, __i18n, messageResolver, flatJson } = options;
-  const ret = isPlainObject$7(messages) ? messages : isArray(__i18n) ? create() : { [locale]: create() };
-  if (isArray(__i18n)) {
+  const ret = isPlainObject$9(messages) ? messages : isArray$1(__i18n) ? create$1() : { [locale]: create$1() };
+  if (isArray$1(__i18n)) {
     __i18n.forEach((custom) => {
       if ("locale" in custom && "resource" in custom) {
         const { locale: locale2, resource } = custom;
         if (locale2) {
-          ret[locale2] = ret[locale2] || create();
+          ret[locale2] = ret[locale2] || create$1();
           deepCopy(resource, ret[locale2]);
         } else {
           deepCopy(resource, ret);
         }
       } else {
-        isString(custom) && deepCopy(JSON.parse(custom), ret);
+        isString$1(custom) && deepCopy(JSON.parse(custom), ret);
       }
     });
   }
   if (messageResolver == null && flatJson) {
     for (const key in ret) {
-      if (hasOwn(ret, key)) {
+      if (hasOwn$1(ret, key)) {
         handleFlatJson(ret[key]);
       }
     }
@@ -3681,7 +3732,7 @@ function getComponentOptions(instance) {
   return instance.type;
 }
 function adjustI18nResources(gl, options, componentOptions) {
-  let messages = isObject(options.messages) ? options.messages : create();
+  let messages = isObject$1(options.messages) ? options.messages : create$1();
   if ("__i18nGlobal" in componentOptions) {
     messages = getLocaleMessages(gl.locale.value, {
       messages,
@@ -3695,7 +3746,7 @@ function adjustI18nResources(gl, options, componentOptions) {
     });
   }
   {
-    if (isObject(options.datetimeFormats)) {
+    if (isObject$1(options.datetimeFormats)) {
       const locales2 = Object.keys(options.datetimeFormats);
       if (locales2.length) {
         locales2.forEach((locale) => {
@@ -3703,7 +3754,7 @@ function adjustI18nResources(gl, options, componentOptions) {
         });
       }
     }
-    if (isObject(options.numberFormats)) {
+    if (isObject$1(options.numberFormats)) {
       const locales2 = Object.keys(options.numberFormats);
       if (locales2.length) {
         locales2.forEach((locale) => {
@@ -3734,29 +3785,29 @@ function createComposer(options = {}) {
   const { __root, __injectWithOption } = options;
   const _isGlobal = __root === void 0;
   const flatJson = options.flatJson;
-  const _ref = inBrowser ? ref : shallowRef;
-  let _inheritLocale = isBoolean(options.inheritLocale) ? options.inheritLocale : true;
+  const _ref = inBrowser$1 ? ref : shallowRef;
+  let _inheritLocale = isBoolean$1(options.inheritLocale) ? options.inheritLocale : true;
   const _locale = _ref(
     // prettier-ignore
-    __root && _inheritLocale ? __root.locale.value : isString(options.locale) ? options.locale : DEFAULT_LOCALE
+    __root && _inheritLocale ? __root.locale.value : isString$1(options.locale) ? options.locale : DEFAULT_LOCALE
   );
   const _fallbackLocale = _ref(
     // prettier-ignore
-    __root && _inheritLocale ? __root.fallbackLocale.value : isString(options.fallbackLocale) || isArray(options.fallbackLocale) || isPlainObject$7(options.fallbackLocale) || options.fallbackLocale === false ? options.fallbackLocale : _locale.value
+    __root && _inheritLocale ? __root.fallbackLocale.value : isString$1(options.fallbackLocale) || isArray$1(options.fallbackLocale) || isPlainObject$9(options.fallbackLocale) || options.fallbackLocale === false ? options.fallbackLocale : _locale.value
   );
   const _messages = _ref(getLocaleMessages(_locale.value, options));
-  const _datetimeFormats = _ref(isPlainObject$7(options.datetimeFormats) ? options.datetimeFormats : { [_locale.value]: {} });
-  const _numberFormats = _ref(isPlainObject$7(options.numberFormats) ? options.numberFormats : { [_locale.value]: {} });
-  let _missingWarn = __root ? __root.missingWarn : isBoolean(options.missingWarn) || isRegExp(options.missingWarn) ? options.missingWarn : true;
-  let _fallbackWarn = __root ? __root.fallbackWarn : isBoolean(options.fallbackWarn) || isRegExp(options.fallbackWarn) ? options.fallbackWarn : true;
-  let _fallbackRoot = __root ? __root.fallbackRoot : isBoolean(options.fallbackRoot) ? options.fallbackRoot : true;
+  const _datetimeFormats = _ref(isPlainObject$9(options.datetimeFormats) ? options.datetimeFormats : { [_locale.value]: {} });
+  const _numberFormats = _ref(isPlainObject$9(options.numberFormats) ? options.numberFormats : { [_locale.value]: {} });
+  let _missingWarn = __root ? __root.missingWarn : isBoolean$1(options.missingWarn) || isRegExp$1(options.missingWarn) ? options.missingWarn : true;
+  let _fallbackWarn = __root ? __root.fallbackWarn : isBoolean$1(options.fallbackWarn) || isRegExp$1(options.fallbackWarn) ? options.fallbackWarn : true;
+  let _fallbackRoot = __root ? __root.fallbackRoot : isBoolean$1(options.fallbackRoot) ? options.fallbackRoot : true;
   let _fallbackFormat = !!options.fallbackFormat;
-  let _missing = isFunction(options.missing) ? options.missing : null;
-  let _runtimeMissing = isFunction(options.missing) ? defineCoreMissingHandler(options.missing) : null;
-  let _postTranslation = isFunction(options.postTranslation) ? options.postTranslation : null;
-  let _warnHtmlMessage = __root ? __root.warnHtmlMessage : isBoolean(options.warnHtmlMessage) ? options.warnHtmlMessage : true;
+  let _missing = isFunction$1(options.missing) ? options.missing : null;
+  let _runtimeMissing = isFunction$1(options.missing) ? defineCoreMissingHandler(options.missing) : null;
+  let _postTranslation = isFunction$1(options.postTranslation) ? options.postTranslation : null;
+  let _warnHtmlMessage = __root ? __root.warnHtmlMessage : isBoolean$1(options.warnHtmlMessage) ? options.warnHtmlMessage : true;
   let _escapeParameter = !!options.escapeParameter;
-  const _modifiers = __root ? __root.modifiers : isPlainObject$7(options.modifiers) ? options.modifiers : {};
+  const _modifiers = __root ? __root.modifiers : isPlainObject$9(options.modifiers) ? options.modifiers : {};
   let _pluralRules = options.pluralRules || __root && __root.pluralRules;
   let _context;
   const getCoreContext = () => {
@@ -3783,11 +3834,11 @@ function createComposer(options = {}) {
     {
       ctxOptions.datetimeFormats = _datetimeFormats.value;
       ctxOptions.numberFormats = _numberFormats.value;
-      ctxOptions.__datetimeFormatters = isPlainObject$7(_context) ? _context.__datetimeFormatters : void 0;
-      ctxOptions.__numberFormatters = isPlainObject$7(_context) ? _context.__numberFormatters : void 0;
+      ctxOptions.__datetimeFormatters = isPlainObject$9(_context) ? _context.__datetimeFormatters : void 0;
+      ctxOptions.__numberFormatters = isPlainObject$9(_context) ? _context.__numberFormatters : void 0;
     }
     {
-      ctxOptions.__v_emitter = isPlainObject$7(_context) ? _context.__v_emitter : void 0;
+      ctxOptions.__v_emitter = isPlainObject$9(_context) ? _context.__v_emitter : void 0;
     }
     const ctx = createCoreContext(ctxOptions);
     _isGlobal && setFallbackContext(ctx);
@@ -3823,7 +3874,7 @@ function createComposer(options = {}) {
   const datetimeFormats = /* @__PURE__ */ computed(() => _datetimeFormats.value);
   const numberFormats = /* @__PURE__ */ computed(() => _numberFormats.value);
   function getPostTranslationHandler() {
-    return isFunction(_postTranslation) ? _postTranslation : null;
+    return isFunction$1(_postTranslation) ? _postTranslation : null;
   }
   function setPostTranslationHandler(handler) {
     _postTranslation = handler;
@@ -3859,11 +3910,11 @@ function createComposer(options = {}) {
       }
     }
     if (warnType !== "translate exists" && // for not `te` (e.g `t`)
-    isNumber(ret) && ret === NOT_REOSLVED || warnType === "translate exists" && !ret) {
+    isNumber$1(ret) && ret === NOT_REOSLVED || warnType === "translate exists" && !ret) {
       const [key, arg2] = argumentParser();
-      if (__root && isString(key) && isResolvedTranslateMessage(warnType, arg2)) {
+      if (__root && isString$1(key) && isResolvedTranslateMessage(warnType, arg2)) {
         if (_fallbackRoot && (isTranslateFallbackWarn(_fallbackWarn, key) || isTranslateMissingWarn(_missingWarn, key))) {
-          warn(getWarnMessage(I18nWarnCodes.FALLBACK_TO_ROOT, {
+          warn$1(getWarnMessage(I18nWarnCodes.FALLBACK_TO_ROOT, {
             key,
             type: warnType
           }));
@@ -3888,23 +3939,23 @@ function createComposer(options = {}) {
     }
   };
   function t(...args) {
-    return wrapWithDeps((context) => Reflect.apply(translate, null, [context, ...args]), () => parseTranslateArgs(...args), "translate", (root) => Reflect.apply(root.t, root, [...args]), (key) => key, (val) => isString(val));
+    return wrapWithDeps((context) => Reflect.apply(translate, null, [context, ...args]), () => parseTranslateArgs(...args), "translate", (root) => Reflect.apply(root.t, root, [...args]), (key) => key, (val) => isString$1(val));
   }
   function rt(...args) {
     const [arg1, arg2, arg3] = args;
-    if (arg3 && !isObject(arg3)) {
+    if (arg3 && !isObject$1(arg3)) {
       throw createI18nError(I18nErrorCodes.INVALID_ARGUMENT);
     }
-    return t(...[arg1, arg2, assign({ resolvedMessage: true }, arg3 || {})]);
+    return t(...[arg1, arg2, assign$1({ resolvedMessage: true }, arg3 || {})]);
   }
   function d(...args) {
-    return wrapWithDeps((context) => Reflect.apply(datetime, null, [context, ...args]), () => parseDateTimeArgs(...args), "datetime format", (root) => Reflect.apply(root.d, root, [...args]), () => MISSING_RESOLVE_VALUE, (val) => isString(val));
+    return wrapWithDeps((context) => Reflect.apply(datetime, null, [context, ...args]), () => parseDateTimeArgs(...args), "datetime format", (root) => Reflect.apply(root.d, root, [...args]), () => MISSING_RESOLVE_VALUE, (val) => isString$1(val));
   }
   function n(...args) {
-    return wrapWithDeps((context) => Reflect.apply(number, null, [context, ...args]), () => parseNumberArgs(...args), "number format", (root) => Reflect.apply(root.n, root, [...args]), () => MISSING_RESOLVE_VALUE, (val) => isString(val));
+    return wrapWithDeps((context) => Reflect.apply(number, null, [context, ...args]), () => parseNumberArgs(...args), "number format", (root) => Reflect.apply(root.n, root, [...args]), () => MISSING_RESOLVE_VALUE, (val) => isString$1(val));
   }
   function normalize(values) {
-    return values.map((val) => isString(val) || isNumber(val) || isBoolean(val) ? createTextNode(String(val)) : val);
+    return values.map((val) => isString$1(val) || isNumber$1(val) || isBoolean$1(val) ? createTextNode(String(val)) : val);
   }
   const interpolate = (val) => val;
   const processor = {
@@ -3923,13 +3974,13 @@ function createComposer(options = {}) {
         _context2.processor = null;
       }
       return ret;
-    }, () => parseTranslateArgs(...args), "translate", (root) => root[TranslateVNodeSymbol](...args), (key) => [createTextNode(key)], (val) => isArray(val));
+    }, () => parseTranslateArgs(...args), "translate", (root) => root[TranslateVNodeSymbol](...args), (key) => [createTextNode(key)], (val) => isArray$1(val));
   }
   function numberParts(...args) {
-    return wrapWithDeps((context) => Reflect.apply(number, null, [context, ...args]), () => parseNumberArgs(...args), "number format", (root) => root[NumberPartsSymbol](...args), NOOP_RETURN_ARRAY, (val) => isString(val) || isArray(val));
+    return wrapWithDeps((context) => Reflect.apply(number, null, [context, ...args]), () => parseNumberArgs(...args), "number format", (root) => root[NumberPartsSymbol](...args), NOOP_RETURN_ARRAY, (val) => isString$1(val) || isArray$1(val));
   }
   function datetimeParts(...args) {
-    return wrapWithDeps((context) => Reflect.apply(datetime, null, [context, ...args]), () => parseDateTimeArgs(...args), "datetime format", (root) => root[DatetimePartsSymbol](...args), NOOP_RETURN_ARRAY, (val) => isString(val) || isArray(val));
+    return wrapWithDeps((context) => Reflect.apply(datetime, null, [context, ...args]), () => parseDateTimeArgs(...args), "datetime format", (root) => root[DatetimePartsSymbol](...args), NOOP_RETURN_ARRAY, (val) => isString$1(val) || isArray$1(val));
   }
   function setPluralRules(rules) {
     _pluralRules = rules;
@@ -3940,13 +3991,13 @@ function createComposer(options = {}) {
       if (!key) {
         return false;
       }
-      const targetLocale = isString(locale2) ? locale2 : _locale.value;
+      const targetLocale = isString$1(locale2) ? locale2 : _locale.value;
       const message = getLocaleMessage(targetLocale);
       const resolved = _context.messageResolver(message, key);
-      return isMessageAST(resolved) || isMessageFunction(resolved) || isString(resolved);
+      return isMessageAST(resolved) || isMessageFunction(resolved) || isString$1(resolved);
     }, () => [key], "translate exists", (root) => {
       return Reflect.apply(root.te, root, [key, locale2]);
-    }, NOOP_RETURN_FALSE, (val) => isBoolean(val));
+    }, NOOP_RETURN_FALSE, (val) => isBoolean$1(val));
   }
   function resolveMessages(key) {
     let messages2 = null;
@@ -3972,7 +4023,7 @@ function createComposer(options = {}) {
     if (flatJson) {
       const _message = { [locale2]: message };
       for (const key in _message) {
-        if (hasOwn(_message, key)) {
+        if (hasOwn$1(_message, key)) {
           handleFlatJson(_message[key]);
         }
       }
@@ -3986,7 +4037,7 @@ function createComposer(options = {}) {
     const _message = { [locale2]: message };
     if (flatJson) {
       for (const key in _message) {
-        if (hasOwn(_message, key)) {
+        if (hasOwn$1(_message, key)) {
           handleFlatJson(_message[key]);
         }
       }
@@ -4004,7 +4055,7 @@ function createComposer(options = {}) {
     clearDateTimeFormat(_context, locale2, format2);
   }
   function mergeDateTimeFormat(locale2, format2) {
-    _datetimeFormats.value[locale2] = assign(_datetimeFormats.value[locale2] || {}, format2);
+    _datetimeFormats.value[locale2] = assign$1(_datetimeFormats.value[locale2] || {}, format2);
     _context.datetimeFormats = _datetimeFormats.value;
     clearDateTimeFormat(_context, locale2, format2);
   }
@@ -4017,12 +4068,12 @@ function createComposer(options = {}) {
     clearNumberFormat(_context, locale2, format2);
   }
   function mergeNumberFormat(locale2, format2) {
-    _numberFormats.value[locale2] = assign(_numberFormats.value[locale2] || {}, format2);
+    _numberFormats.value[locale2] = assign$1(_numberFormats.value[locale2] || {}, format2);
     _context.numberFormats = _numberFormats.value;
     clearNumberFormat(_context, locale2, format2);
   }
   composerID++;
-  if (__root && inBrowser) {
+  if (__root && inBrowser$1) {
     watch(__root.locale, (val) => {
       if (_inheritLocale) {
         _locale.value = val;
@@ -4300,11 +4351,11 @@ function getLocaleMessageValue(messages) {
   const value = {};
   Object.keys(messages).forEach((key) => {
     const v = messages[key];
-    if (isFunction(v) && "source" in v) {
+    if (isFunction$1(v) && "source" in v) {
       value[key] = getMessageFunctionDetails(v);
     } else if (isMessageAST(v) && v.loc && v.loc.source) {
       value[key] = v.loc.source;
-    } else if (isObject(v)) {
+    } else if (isObject$1(v)) {
       value[key] = getLocaleMessageValue(v);
     } else {
       value[key] = v;
@@ -4469,36 +4520,36 @@ function editScope(payload, i18n2) {
   const composer = getComposer$2(payload.nodeId, i18n2);
   if (composer) {
     const [field] = payload.path;
-    if (field === "locale" && isString(payload.state.value)) {
+    if (field === "locale" && isString$1(payload.state.value)) {
       composer.locale.value = payload.state.value;
-    } else if (field === "fallbackLocale" && (isString(payload.state.value) || isArray(payload.state.value) || isObject(payload.state.value))) {
+    } else if (field === "fallbackLocale" && (isString$1(payload.state.value) || isArray$1(payload.state.value) || isObject$1(payload.state.value))) {
       composer.fallbackLocale.value = payload.state.value;
-    } else if (field === "inheritLocale" && isBoolean(payload.state.value)) {
+    } else if (field === "inheritLocale" && isBoolean$1(payload.state.value)) {
       composer.inheritLocale = payload.state.value;
     }
   }
 }
 function convertComposerOptions(options) {
-  const locale = isString(options.locale) ? options.locale : DEFAULT_LOCALE;
-  const fallbackLocale = isString(options.fallbackLocale) || isArray(options.fallbackLocale) || isPlainObject$7(options.fallbackLocale) || options.fallbackLocale === false ? options.fallbackLocale : locale;
-  const missing = isFunction(options.missing) ? options.missing : void 0;
-  const missingWarn = isBoolean(options.silentTranslationWarn) || isRegExp(options.silentTranslationWarn) ? !options.silentTranslationWarn : true;
-  const fallbackWarn = isBoolean(options.silentFallbackWarn) || isRegExp(options.silentFallbackWarn) ? !options.silentFallbackWarn : true;
-  const fallbackRoot = isBoolean(options.fallbackRoot) ? options.fallbackRoot : true;
+  const locale = isString$1(options.locale) ? options.locale : DEFAULT_LOCALE;
+  const fallbackLocale = isString$1(options.fallbackLocale) || isArray$1(options.fallbackLocale) || isPlainObject$9(options.fallbackLocale) || options.fallbackLocale === false ? options.fallbackLocale : locale;
+  const missing = isFunction$1(options.missing) ? options.missing : void 0;
+  const missingWarn = isBoolean$1(options.silentTranslationWarn) || isRegExp$1(options.silentTranslationWarn) ? !options.silentTranslationWarn : true;
+  const fallbackWarn = isBoolean$1(options.silentFallbackWarn) || isRegExp$1(options.silentFallbackWarn) ? !options.silentFallbackWarn : true;
+  const fallbackRoot = isBoolean$1(options.fallbackRoot) ? options.fallbackRoot : true;
   const fallbackFormat = !!options.formatFallbackMessages;
-  const modifiers = isPlainObject$7(options.modifiers) ? options.modifiers : {};
+  const modifiers = isPlainObject$9(options.modifiers) ? options.modifiers : {};
   const pluralizationRules = options.pluralizationRules;
-  const postTranslation = isFunction(options.postTranslation) ? options.postTranslation : void 0;
-  const warnHtmlMessage = isString(options.warnHtmlInMessage) ? options.warnHtmlInMessage !== "off" : true;
+  const postTranslation = isFunction$1(options.postTranslation) ? options.postTranslation : void 0;
+  const warnHtmlMessage = isString$1(options.warnHtmlInMessage) ? options.warnHtmlInMessage !== "off" : true;
   const escapeParameter = !!options.escapeParameterHtml;
-  const inheritLocale = isBoolean(options.sync) ? options.sync : true;
+  const inheritLocale = isBoolean$1(options.sync) ? options.sync : true;
   let messages = options.messages;
-  if (isPlainObject$7(options.sharedMessages)) {
+  if (isPlainObject$9(options.sharedMessages)) {
     const sharedMessages = options.sharedMessages;
     const locales = Object.keys(sharedMessages);
     messages = locales.reduce((messages2, locale2) => {
       const message = messages2[locale2] || (messages2[locale2] = {});
-      assign(message, sharedMessages[locale2]);
+      assign$1(message, sharedMessages[locale2]);
       return messages2;
     }, messages || {});
   }
@@ -4575,17 +4626,17 @@ function createVueI18n(options = {}) {
     },
     // silentTranslationWarn
     get silentTranslationWarn() {
-      return isBoolean(composer.missingWarn) ? !composer.missingWarn : composer.missingWarn;
+      return isBoolean$1(composer.missingWarn) ? !composer.missingWarn : composer.missingWarn;
     },
     set silentTranslationWarn(val) {
-      composer.missingWarn = isBoolean(val) ? !val : val;
+      composer.missingWarn = isBoolean$1(val) ? !val : val;
     },
     // silentFallbackWarn
     get silentFallbackWarn() {
-      return isBoolean(composer.fallbackWarn) ? !composer.fallbackWarn : composer.fallbackWarn;
+      return isBoolean$1(composer.fallbackWarn) ? !composer.fallbackWarn : composer.fallbackWarn;
     },
     set silentFallbackWarn(val) {
-      composer.fallbackWarn = isBoolean(val) ? !val : val;
+      composer.fallbackWarn = isBoolean$1(val) ? !val : val;
     },
     // modifiers
     get modifiers() {
@@ -4647,26 +4698,26 @@ function createVueI18n(options = {}) {
       let list = null;
       let named = null;
       {
-        warnOnce(getWarnMessage(I18nWarnCodes.DEPRECATE_TC));
+        warnOnce$1(getWarnMessage(I18nWarnCodes.DEPRECATE_TC));
       }
-      if (!isString(arg1)) {
+      if (!isString$1(arg1)) {
         throw createI18nError(I18nErrorCodes.INVALID_ARGUMENT);
       }
       const key = arg1;
-      if (isString(arg2)) {
+      if (isString$1(arg2)) {
         options2.locale = arg2;
-      } else if (isNumber(arg2)) {
+      } else if (isNumber$1(arg2)) {
         options2.plural = arg2;
-      } else if (isArray(arg2)) {
+      } else if (isArray$1(arg2)) {
         list = arg2;
-      } else if (isPlainObject$7(arg2)) {
+      } else if (isPlainObject$9(arg2)) {
         named = arg2;
       }
-      if (isString(arg3)) {
+      if (isString$1(arg3)) {
         options2.locale = arg3;
-      } else if (isArray(arg3)) {
+      } else if (isArray$1(arg3)) {
         list = arg3;
-      } else if (isPlainObject$7(arg3)) {
+      } else if (isPlainObject$9(arg3)) {
         named = arg3;
       }
       return Reflect.apply(composer.t, composer, [
@@ -4898,7 +4949,7 @@ function getInterpolateArg({ slots }, keys) {
         arg[key] = slot();
       }
       return arg;
-    }, create());
+    }, create$1());
   }
 }
 function getFragmentableTag() {
@@ -4907,14 +4958,14 @@ function getFragmentableTag() {
 const TranslationImpl = /* @__PURE__ */ defineComponent({
   /* eslint-disable */
   name: "i18n-t",
-  props: assign({
+  props: assign$1({
     keypath: {
       type: String,
       required: true
     },
     plural: {
       type: [Number, String],
-      validator: (val) => isNumber(val) || !isNaN(val)
+      validator: (val) => isNumber$1(val) || !isNaN(val)
     }
   }, baseFormatProps),
   /* eslint-enable */
@@ -4927,46 +4978,46 @@ const TranslationImpl = /* @__PURE__ */ defineComponent({
     });
     return () => {
       const keys = Object.keys(slots).filter((key) => key !== "_");
-      const options = create();
+      const options = create$1();
       if (props.locale) {
         options.locale = props.locale;
       }
       if (props.plural !== void 0) {
-        options.plural = isString(props.plural) ? +props.plural : props.plural;
+        options.plural = isString$1(props.plural) ? +props.plural : props.plural;
       }
       const arg = getInterpolateArg(context, keys);
       const children = i18n2[TranslateVNodeSymbol](props.keypath, arg, options);
-      const assignedAttrs = assign(create(), attrs);
-      const tag = isString(props.tag) || isObject(props.tag) ? props.tag : getFragmentableTag();
+      const assignedAttrs = assign$1(create$1(), attrs);
+      const tag = isString$1(props.tag) || isObject$1(props.tag) ? props.tag : getFragmentableTag();
       return h(tag, assignedAttrs, children);
     };
   }
 });
 const Translation = TranslationImpl;
 function isVNode(target) {
-  return isArray(target) && !isString(target[0]);
+  return isArray$1(target) && !isString$1(target[0]);
 }
 function renderFormatter(props, context, slotKeys, partFormatter) {
   const { slots, attrs } = context;
   return () => {
     const options = { part: true };
-    let overrides = create();
+    let overrides = create$1();
     if (props.locale) {
       options.locale = props.locale;
     }
-    if (isString(props.format)) {
+    if (isString$1(props.format)) {
       options.key = props.format;
-    } else if (isObject(props.format)) {
-      if (isString(props.format.key)) {
+    } else if (isObject$1(props.format)) {
+      if (isString$1(props.format.key)) {
         options.key = props.format.key;
       }
       overrides = Object.keys(props.format).reduce((options2, prop) => {
-        return slotKeys.includes(prop) ? assign(create(), options2, { [prop]: props.format[prop] }) : options2;
-      }, create());
+        return slotKeys.includes(prop) ? assign$1(create$1(), options2, { [prop]: props.format[prop] }) : options2;
+      }, create$1());
     }
     const parts = partFormatter(...[props.value, options, overrides]);
     let children = [options.key];
-    if (isArray(parts)) {
+    if (isArray$1(parts)) {
       children = parts.map((part, index) => {
         const slot = slots[part.type];
         const node = slot ? slot({ [part.type]: part.value, index, parts }) : [part.value];
@@ -4975,18 +5026,18 @@ function renderFormatter(props, context, slotKeys, partFormatter) {
         }
         return node;
       });
-    } else if (isString(parts)) {
+    } else if (isString$1(parts)) {
       children = [parts];
     }
-    const assignedAttrs = assign(create(), attrs);
-    const tag = isString(props.tag) || isObject(props.tag) ? props.tag : getFragmentableTag();
+    const assignedAttrs = assign$1(create$1(), attrs);
+    const tag = isString$1(props.tag) || isObject$1(props.tag) ? props.tag : getFragmentableTag();
     return h(tag, assignedAttrs, children);
   };
 }
 const NumberFormatImpl = /* @__PURE__ */ defineComponent({
   /* eslint-disable */
   name: "i18n-n",
-  props: assign({
+  props: assign$1({
     value: {
       type: Number,
       required: true
@@ -5012,7 +5063,7 @@ const NumberFormat = NumberFormatImpl;
 const DatetimeFormatImpl = /* @__PURE__ */ defineComponent({
   /* eslint-disable */
   name: "i18n-d",
-  props: assign({
+  props: assign$1({
     value: {
       type: [Number, Date],
       required: true
@@ -5059,7 +5110,7 @@ function vTDirective(i18n2) {
   };
   const register = (el, binding) => {
     const [textContent, composer] = _process(binding);
-    if (inBrowser && i18n2.global === composer) {
+    if (inBrowser$1 && i18n2.global === composer) {
       el.__i18nWatcher = watch(composer.locale, () => {
         binding.instance && binding.instance.$forceUpdate();
       });
@@ -5068,7 +5119,7 @@ function vTDirective(i18n2) {
     el.textContent = textContent;
   };
   const unregister = (el) => {
-    if (inBrowser && el.__i18nWatcher) {
+    if (inBrowser$1 && el.__i18nWatcher) {
       el.__i18nWatcher();
       el.__i18nWatcher = void 0;
       delete el.__i18nWatcher;
@@ -5099,9 +5150,9 @@ function vTDirective(i18n2) {
   };
 }
 function parseValue(value) {
-  if (isString(value)) {
+  if (isString$1(value)) {
     return { path: value };
-  } else if (isPlainObject$7(value)) {
+  } else if (isPlainObject$9(value)) {
     if (!("path" in value)) {
       throw createI18nError(I18nErrorCodes.REQUIRED_VALUE, "path");
     }
@@ -5114,20 +5165,20 @@ function makeParams(value) {
   const { path, locale, args, choice, plural } = value;
   const options = {};
   const named = args || {};
-  if (isString(locale)) {
+  if (isString$1(locale)) {
     options.locale = locale;
   }
-  if (isNumber(choice)) {
+  if (isNumber$1(choice)) {
     options.plural = choice;
   }
-  if (isNumber(plural)) {
+  if (isNumber$1(plural)) {
     options.plural = plural;
   }
   return [path, named, options];
 }
 function apply(app, i18n2, ...options) {
-  const pluginOptions = isPlainObject$7(options[0]) ? options[0] : {};
-  const globalInstall = isBoolean(pluginOptions.globalInstall) ? pluginOptions.globalInstall : true;
+  const pluginOptions = isPlainObject$9(options[0]) ? options[0] : {};
+  const globalInstall = isBoolean$1(pluginOptions.globalInstall) ? pluginOptions.globalInstall : true;
   if (globalInstall) {
     [Translation.name, "I18nT"].forEach((name) => app.component(name, Translation));
     [NumberFormat.name, "I18nN"].forEach((name) => app.component(name, NumberFormat));
@@ -5139,8 +5190,8 @@ function apply(app, i18n2, ...options) {
 }
 const I18nInjectionKey = /* @__PURE__ */ makeSymbol("global-vue-i18n");
 function createI18n(options = {}, VueI18nLegacy) {
-  const __legacyMode = __VUE_I18N_LEGACY_API__ && isBoolean(options.legacy) ? options.legacy : __VUE_I18N_LEGACY_API__;
-  const __globalInjection = isBoolean(options.globalInjection) ? options.globalInjection : true;
+  const __legacyMode = __VUE_I18N_LEGACY_API__ && isBoolean$1(options.legacy) ? options.legacy : __VUE_I18N_LEGACY_API__;
+  const __globalInjection = isBoolean$1(options.globalInjection) ? options.globalInjection : true;
   const __instances = /* @__PURE__ */ new Map();
   const [globalScope, __global] = createGlobal(options, __legacyMode);
   const symbol = /* @__PURE__ */ makeSymbol("vue-i18n");
@@ -5165,7 +5216,7 @@ function createI18n(options = {}, VueI18nLegacy) {
       }
       app.__VUE_I18N_SYMBOL__ = symbol;
       app.provide(app.__VUE_I18N_SYMBOL__, i18n2);
-      if (isPlainObject$7(options2[0])) {
+      if (isPlainObject$9(options2[0])) {
         const opts = options2[0];
         i18n2.__composerExtend = opts.__composerExtend;
         i18n2.__vueI18nExtend = opts.__vueI18nExtend;
@@ -5240,7 +5291,7 @@ function useI18n(options = {}) {
     let composer2 = getComposer(i18n2, instance, options.__useComponent);
     if (composer2 == null) {
       {
-        warn(getWarnMessage(I18nWarnCodes.NOT_FOUND_PARENT_SCOPE));
+        warn$1(getWarnMessage(I18nWarnCodes.NOT_FOUND_PARENT_SCOPE));
       }
       composer2 = gl;
     }
@@ -5249,7 +5300,7 @@ function useI18n(options = {}) {
   const i18nInternal = i18n2;
   let composer = i18nInternal.__getInstance(instance);
   if (composer == null) {
-    const composerOptions = assign({}, options);
+    const composerOptions = assign$1({}, options);
     if ("__i18n" in componentOptions) {
       composerOptions.__i18n = componentOptions.__i18n;
     }
@@ -5281,7 +5332,7 @@ function getI18nInstance(instance) {
   return i18n2;
 }
 function getScope(options, componentOptions) {
-  return isEmptyObject(options) ? "__i18n" in componentOptions ? "local" : "global" : !options.useScope ? "local" : options.useScope;
+  return isEmptyObject$1(options) ? "__i18n" in componentOptions ? "local" : "global" : !options.useScope ? "local" : options.useScope;
 }
 function getGlobalComposer(i18n2) {
   return i18n2.mode === "composition" ? i18n2.global : i18n2.global.__composer;
@@ -5398,7 +5449,7 @@ registerMessageCompiler(compile);
 registerMessageResolver(resolveValue);
 registerLocaleFallbacker(fallbackWithLocaleChain);
 {
-  const target = getGlobalThis();
+  const target = getGlobalThis$1();
   target.__INTLIFY__ = true;
   setDevToolsHook(target.__INTLIFY_DEVTOOLS_GLOBAL_HOOK__);
 }
@@ -5439,6 +5490,10 @@ const DEFAULT_POPOVER_CONFIG = {
   enableRescheduleAppointmentButton: true,
   additionalDetails: []
 };
+const calendar$3 = { "today": "Today", "month": "Month", "week": "Week", "timeline": "Timeline", "filter": "Filter", "displaySettings": "Card Fields", "apply": "Save", "addNew": "Add New", "addAppointment": "Add Appointment", "allDay": "All Day", "close": "Close", "saveComingSoon": "Save Coming Soon", "extraDetails": "Extra Details", "noStaff": "-", "noLocation": "-" };
+const en = {
+  calendar: calendar$3
+};
 const calendar$2 = { "today": "Hoy", "week": "Semana", "timeline": "Línea de tiempo", "filter": "Filtrar", "displaySettings": "Campos de tarjeta", "apply": "Guardar", "addNew": "Añadir nuevo", "allDay": "Todo el día", "close": "Cerrar", "extraDetails": "Detalles adicionales", "noStaff": "—", "noLocation": "—" };
 const es = {
   calendar: calendar$2
@@ -5466,6 +5521,9 @@ const i18n = createI18n({
 });
 const DEFAULT_DATA_TIME_FORMAT = "H:i";
 const DATE_ONLY_INPUT_PATTERN = /^(\d{4})-(\d{1,2})-(\d{1,2})$/;
+const CALENDAR_TIME_FORMAT_TOKENS = ["H", "G", "h", "g", "i", "s", "A", "a"];
+const CALENDAR_TIME_FORMAT_TOKEN_SET = new Set(CALENDAR_TIME_FORMAT_TOKENS);
+const DAYJS_TIME_TOKEN_PATTERN = /(?:HH|hh|mm)/;
 let configuredTimeFormat = DEFAULT_TIME_FORMAT;
 let hasExplicitTimeFormat = false;
 function getLocale() {
@@ -5477,20 +5535,146 @@ function hasProvidedTimeFormat(value) {
   }
   return value !== null && value !== void 0;
 }
+function isCalendarTimeFormatToken(value) {
+  return CALENDAR_TIME_FORMAT_TOKEN_SET.has(value);
+}
+function isAsciiLetter(value) {
+  return /^[A-Za-z]$/.test(value);
+}
+function pushLiteral(segments, value) {
+  if (!value) {
+    return;
+  }
+  const lastSegment = segments[segments.length - 1];
+  if ((lastSegment == null ? void 0 : lastSegment.type) === "literal") {
+    lastSegment.value += value;
+    return;
+  }
+  segments.push({ type: "literal", value });
+}
+function tokenizeCalendarTimeFormat(format2) {
+  const segments = [];
+  let index = 0;
+  while (index < format2.length) {
+    const current = format2[index];
+    if (current === "\\") {
+      const escaped = format2[index + 1];
+      pushLiteral(segments, escaped ?? current);
+      index += escaped ? 2 : 1;
+      continue;
+    }
+    if (current === "[") {
+      const closingIndex = format2.indexOf("]", index + 1);
+      if (closingIndex !== -1) {
+        pushLiteral(segments, format2.slice(index + 1, closingIndex));
+        index = closingIndex + 1;
+        continue;
+      }
+    }
+    if (isAsciiLetter(current)) {
+      const wordStart = index;
+      while (index < format2.length && isAsciiLetter(format2[index])) {
+        index += 1;
+      }
+      const word = format2.slice(wordStart, index);
+      if (word.length > 1 && Array.from(word).some((char) => !isCalendarTimeFormatToken(char))) {
+        pushLiteral(segments, word);
+        continue;
+      }
+      for (const char of word) {
+        if (isCalendarTimeFormatToken(char)) {
+          segments.push({ type: "token", value: char });
+        } else {
+          pushLiteral(segments, char);
+        }
+      }
+      continue;
+    }
+    pushLiteral(segments, current);
+    index += 1;
+  }
+  return segments;
+}
+function hasCalendarTimeFormatToken(format2) {
+  return tokenizeCalendarTimeFormat(format2).some((segment) => segment.type === "token");
+}
+function getFormatOutsideBracketLiterals(format2) {
+  let outside = "";
+  let index = 0;
+  while (index < format2.length) {
+    const current = format2[index];
+    if (current === "\\") {
+      index += format2[index + 1] ? 2 : 1;
+      continue;
+    }
+    if (current === "[") {
+      const closingIndex = format2.indexOf("]", index + 1);
+      if (closingIndex !== -1) {
+        index = closingIndex + 1;
+        continue;
+      }
+    }
+    outside += current;
+    index += 1;
+  }
+  return outside;
+}
 function normalizeDayJsTimeFormat(value) {
   const trimmed = value.trim();
-  if (/^(HH|H):mm(?::ss)?$/.test(trimmed)) {
-    const hourToken = trimmed.startsWith("HH") ? "H" : "G";
-    const secondToken = trimmed.includes(":ss") ? ":s" : "";
-    return `${hourToken}:i${secondToken}`;
+  if (!DAYJS_TIME_TOKEN_PATTERN.test(getFormatOutsideBracketLiterals(trimmed))) {
+    return null;
   }
-  if (/^(hh|h):mm(?::ss)?(?:\s*[Aa])$/.test(trimmed)) {
-    const hourToken = trimmed.startsWith("hh") ? "h" : "g";
-    const meridiemToken = trimmed.endsWith("a") ? "a" : "A";
-    const secondToken = trimmed.includes(":ss") ? ":s" : "";
-    return `${hourToken}:i${secondToken} ${meridiemToken}`;
+  let result = "";
+  let index = 0;
+  while (index < trimmed.length) {
+    const current = trimmed[index];
+    if (current === "\\") {
+      const escaped = trimmed[index + 1];
+      result += escaped ? `${current}${escaped}` : current;
+      index += escaped ? 2 : 1;
+      continue;
+    }
+    if (current === "[") {
+      const closingIndex = trimmed.indexOf("]", index + 1);
+      if (closingIndex !== -1) {
+        result += trimmed.slice(index, closingIndex + 1);
+        index = closingIndex + 1;
+        continue;
+      }
+    }
+    const twoCharacterToken = trimmed.slice(index, index + 2);
+    switch (twoCharacterToken) {
+      case "HH":
+        result += "H";
+        index += 2;
+        continue;
+      case "hh":
+        result += "h";
+        index += 2;
+        continue;
+      case "mm":
+        result += "i";
+        index += 2;
+        continue;
+      case "ss":
+        result += "s";
+        index += 2;
+        continue;
+    }
+    switch (current) {
+      case "H":
+        result += "G";
+        break;
+      case "h":
+        result += "g";
+        break;
+      default:
+        result += current;
+        break;
+    }
+    index += 1;
   }
-  return null;
+  return hasCalendarTimeFormatToken(result) ? result : null;
 }
 function normalizeCalendarTimeFormat(value) {
   if (typeof value === "number") {
@@ -5518,7 +5702,7 @@ function normalizeCalendarTimeFormat(value) {
   if (normalized === "12" || normalized === "12h" || normalized === "12hr" || normalized === "12hrs" || normalized === "12-hour" || normalized === "12 hours" || normalized === "12hour" || normalized === "12hours" || normalized === "ampm" || normalized === "am/pm") {
     return DEFAULT_TIME_FORMAT;
   }
-  if (/[GH]/.test(trimmed) || /[ghaA]/.test(trimmed)) {
+  if (hasCalendarTimeFormatToken(trimmed)) {
     return trimmed;
   }
   return DEFAULT_TIME_FORMAT;
@@ -5535,8 +5719,12 @@ function toTwelveHour(hours) {
 }
 function formatTimeParts(hours, minutes, seconds, format2) {
   let result = "";
-  for (const token of format2) {
-    switch (token) {
+  for (const segment of tokenizeCalendarTimeFormat(format2)) {
+    if (segment.type === "literal") {
+      result += segment.value;
+      continue;
+    }
+    switch (segment.value) {
       case "H":
         result += pad2(hours);
         break;
@@ -5560,9 +5748,6 @@ function formatTimeParts(hours, minutes, seconds, format2) {
         break;
       case "a":
         result += hours >= 12 ? "pm" : "am";
-        break;
-      default:
-        result += token;
         break;
     }
   }
@@ -5733,7 +5918,7 @@ function formatMinuteLabel(totalMinutes) {
   return formatNormalizedTime(hours, minutes, 0);
 }
 const MINUTES_IN_DAY = 24 * 60;
-function isPlainObject$6(value) {
+function isPlainObject$7(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 function toFiniteNumber(value) {
@@ -5835,7 +6020,7 @@ function applyGridFields(target, source) {
   }
 }
 function applyTimeRange(target, timeRange) {
-  if (!isPlainObject$6(timeRange)) {
+  if (!isPlainObject$7(timeRange)) {
     return;
   }
   const startMinute = parseTimeRangeValue(timeRange.start);
@@ -5932,10 +6117,10 @@ function expandGridConfigForBookings(config, bookings = []) {
 }
 function resolveGridConfig(config = {}) {
   const normalized = { ...DEFAULT_GRID_CONFIG };
-  if (isPlainObject$6(config)) {
+  if (isPlainObject$7(config)) {
     applyGridFields(normalized, config);
     applyTimeRange(normalized, config.timeRange);
-    if (isPlainObject$6(config.gridConfig)) {
+    if (isPlainObject$7(config.gridConfig)) {
       applyGridFields(normalized, config.gridConfig);
       applyTimeRange(normalized, config.gridConfig.timeRange);
     }
@@ -6198,7 +6383,7 @@ const DEFAULT_CALENDAR_UI_TEXT = {
     price: "Price"
   }
 };
-function isPlainObject$5(value) {
+function isPlainObject$6(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 function getLocaleOverride(overrides, locale) {
@@ -6228,7 +6413,7 @@ function getLocaleOverride(overrides, locale) {
   return void 0;
 }
 function mergeDeep(base, override) {
-  if (!isPlainObject$5(base) || !isPlainObject$5(override)) {
+  if (!isPlainObject$6(base) || !isPlainObject$6(override)) {
     return override ?? base;
   }
   const result = { ...base };
@@ -6237,7 +6422,7 @@ function mergeDeep(base, override) {
       continue;
     }
     const current = base[key];
-    if (isPlainObject$5(current) && isPlainObject$5(value)) {
+    if (isPlainObject$6(current) && isPlainObject$6(value)) {
       result[key] = mergeDeep(current, value);
       continue;
     }
@@ -6434,6 +6619,8 @@ function computeAllDayLayout(bookings, days) {
   if (bookings.length === 0 || days.length === 0) return [];
   const dayStarts = days.map((d) => startOfDay(d).getTime());
   const dayEnds = days.map((d) => startOfDay(d).getTime() + 864e5);
+  const visibleStart = dayStarts[0];
+  const visibleEnd = dayEnds[dayEnds.length - 1];
   const sorted = [...bookings].sort((a, b) => {
     const d = a.startDate.getTime() - b.startDate.getTime();
     return d !== 0 ? d : b.endDate.getTime() - a.endDate.getTime();
@@ -6469,7 +6656,9 @@ function computeAllDayLayout(bookings, days) {
       row: assignedRow,
       startCol,
       endCol,
-      spanCols: endCol - startCol + 1
+      spanCols: endCol - startCol + 1,
+      continuesBefore: bStart < visibleStart,
+      continuesAfter: bEnd > visibleEnd
     });
   }
   return rows;
@@ -6910,10 +7099,10 @@ function useDragResize(getConfig, getDays, getColumnWidth, callbacks) {
     getDragPreviewFixedStyle
   };
 }
-function isPlainObject$4(value) {
+function isPlainObject$5(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
-function normalizeBooleanLike$3(value) {
+function normalizeBooleanLike$4(value) {
   if (typeof value === "boolean") {
     return value;
   }
@@ -6960,17 +7149,17 @@ function normalizeFilterValues$1(value) {
 function formatLabel$1(value) {
   return value.replace(/[_-]+/g, " ").replace(/([a-z])([A-Z])/g, "$1 $2").trim().replace(/\s+/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
-function normalizeLookupKey$1(value) {
+function normalizeLookupKey$2(value) {
   return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, "");
 }
-function getValueByAliases$1(source, keys) {
+function getValueByAliases$2(source, keys) {
   for (const [entryKey, entryValue] of Object.entries(source)) {
-    const normalizedEntryKey = normalizeLookupKey$1(entryKey);
+    const normalizedEntryKey = normalizeLookupKey$2(entryKey);
     if (!normalizedEntryKey) {
       continue;
     }
     for (const key of keys) {
-      if (normalizedEntryKey === normalizeLookupKey$1(key)) {
+      if (normalizedEntryKey === normalizeLookupKey$2(key)) {
         return entryValue;
       }
     }
@@ -6980,7 +7169,7 @@ function getValueByAliases$1(source, keys) {
 function readTextValue$1(sources, keys) {
   for (const source of sources) {
     for (const key of keys) {
-      const value = normalizeTextValue$1(getValueByAliases$1(source, [key]));
+      const value = normalizeTextValue$1(getValueByAliases$2(source, [key]));
       if (value) {
         return value;
       }
@@ -6991,7 +7180,7 @@ function readTextValue$1(sources, keys) {
 function readFilterValue$1(sources, keys) {
   for (const source of sources) {
     for (const key of keys) {
-      const value = normalizeFilterValue$1(getValueByAliases$1(source, [key]));
+      const value = normalizeFilterValue$1(getValueByAliases$2(source, [key]));
       if (value !== null) {
         return value;
       }
@@ -7012,11 +7201,11 @@ function normalizeServiceSelection(entry) {
       categoryName: ""
     };
   }
-  if (!isPlainObject$4(entry)) {
+  if (!isPlainObject$5(entry)) {
     return null;
   }
-  const serviceCandidate = isPlainObject$4(entry.service) ? entry.service : null;
-  const categoryCandidate = isPlainObject$4(entry.category) ? entry.category : null;
+  const serviceCandidate = isPlainObject$5(entry.service) ? entry.service : null;
+  const categoryCandidate = isPlainObject$5(entry.category) ? entry.category : null;
   const serviceSources = serviceCandidate ? [serviceCandidate, entry] : [entry];
   const categorySources = categoryCandidate ? [categoryCandidate, entry] : [entry];
   const serviceId = readFilterValue$1(serviceSources, ["serviceId", "serviceID", "service_id", "service_ids", "serviceIds", "id", "value"]);
@@ -7079,12 +7268,12 @@ function buildCategoryLabel(items) {
 function buildFallbackSelection(source, metadata) {
   const serviceSources = [];
   const categorySources = [];
-  if (isPlainObject$4(source)) {
+  if (isPlainObject$5(source)) {
     const sourceRecord = source;
     serviceSources.push(sourceRecord);
     categorySources.push(sourceRecord);
   }
-  if (isPlainObject$4(metadata)) {
+  if (isPlainObject$5(metadata)) {
     serviceSources.push(metadata);
     categorySources.push(metadata);
   }
@@ -7103,11 +7292,11 @@ function buildFallbackSelection(source, metadata) {
   };
 }
 function resolveBookingServiceSummary(source) {
-  const metadata = isPlainObject$4(source.metadata) ? source.metadata : null;
-  const rawServicesData = source.servicesData ?? (isPlainObject$4(source) ? getValueByAliases$1(source, ["servicesData", "services_data"]) : void 0) ?? (metadata ? getValueByAliases$1(metadata, ["servicesData", "services_data"]) : void 0);
+  const metadata = isPlainObject$5(source.metadata) ? source.metadata : null;
+  const rawServicesData = source.servicesData ?? (isPlainObject$5(source) ? getValueByAliases$2(source, ["servicesData", "services_data"]) : void 0) ?? (metadata ? getValueByAliases$2(metadata, ["servicesData", "services_data"]) : void 0);
   const parsedItems = normalizeServiceSelections(rawServicesData);
   const hasServicesData = rawServicesData !== void 0 && rawServicesData !== null;
-  const isMultiService = normalizeBooleanLike$3(source.isMultiService) ?? normalizeBooleanLike$3(metadata == null ? void 0 : metadata.isMultiService) ?? hasServicesData;
+  const isMultiService = normalizeBooleanLike$4(source.isMultiService) ?? normalizeBooleanLike$4(metadata == null ? void 0 : metadata.isMultiService) ?? hasServicesData;
   const fallbackSelection = buildFallbackSelection(source, metadata);
   const items = parsedItems.length > 0 ? parsedItems : hasServicesData ? [] : fallbackSelection ? [fallbackSelection] : [];
   const serviceValues = uniqueFilterValues$1(items.flatMap((item) => normalizeFilterValues$1(item.serviceId ?? item.serviceName)));
@@ -7124,10 +7313,10 @@ function resolveBookingServiceSummary(source) {
 function resolveBookingServiceLabel(source) {
   return resolveBookingServiceSummary(source).serviceLabel;
 }
-function isPlainObject$3(value) {
+function isPlainObject$4(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
-function normalizeBooleanLike$2(value) {
+function normalizeBooleanLike$3(value) {
   if (typeof value === "boolean") {
     return value;
   }
@@ -7190,17 +7379,17 @@ function isZeroLikeStaffId(value) {
 function formatLabel(value) {
   return value.replace(/[_-]+/g, " ").replace(/([a-z])([A-Z])/g, "$1 $2").trim().replace(/\s+/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
-function normalizeLookupKey(value) {
+function normalizeLookupKey$1(value) {
   return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, "");
 }
-function getValueByAliases(source, keys) {
+function getValueByAliases$1(source, keys) {
   for (const [entryKey, entryValue] of Object.entries(source)) {
-    const normalizedEntryKey = normalizeLookupKey(entryKey);
+    const normalizedEntryKey = normalizeLookupKey$1(entryKey);
     if (!normalizedEntryKey) {
       continue;
     }
     for (const key of keys) {
-      if (normalizedEntryKey === normalizeLookupKey(key)) {
+      if (normalizedEntryKey === normalizeLookupKey$1(key)) {
         return entryValue;
       }
     }
@@ -7210,7 +7399,7 @@ function getValueByAliases(source, keys) {
 function readTextValue(sources, keys) {
   for (const source of sources) {
     for (const key of keys) {
-      const value = normalizeTextValue(getValueByAliases(source, [key]));
+      const value = normalizeTextValue(getValueByAliases$1(source, [key]));
       if (value) {
         return value;
       }
@@ -7222,7 +7411,7 @@ function readTextValues(sources, keys) {
   const values = [];
   for (const source of sources) {
     for (const key of keys) {
-      const resolvedValues = normalizeTextValues(getValueByAliases(source, [key]));
+      const resolvedValues = normalizeTextValues(getValueByAliases$1(source, [key]));
       if (resolvedValues.length > 0) {
         values.push(...resolvedValues);
       }
@@ -7233,7 +7422,7 @@ function readTextValues(sources, keys) {
 function readFilterValue(sources, keys) {
   for (const source of sources) {
     for (const key of keys) {
-      const value = normalizeFilterValue(getValueByAliases(source, [key]));
+      const value = normalizeFilterValue(getValueByAliases$1(source, [key]));
       if (value !== null) {
         return value;
       }
@@ -7245,7 +7434,7 @@ function readFilterValues(sources, keys) {
   const values = [];
   for (const source of sources) {
     for (const key of keys) {
-      values.push(...normalizeFilterValues(getValueByAliases(source, [key])));
+      values.push(...normalizeFilterValues(getValueByAliases$1(source, [key])));
     }
   }
   return uniqueFilterValues(values);
@@ -7261,10 +7450,10 @@ function normalizeStaffAssignment(entry) {
       staffName: label
     };
   }
-  if (!isPlainObject$3(entry)) {
+  if (!isPlainObject$4(entry)) {
     return null;
   }
-  const nestedStaff = isPlainObject$3(entry.staff) ? entry.staff : null;
+  const nestedStaff = isPlainObject$4(entry.staff) ? entry.staff : null;
   const sources = nestedStaff ? [nestedStaff, entry] : [entry];
   const staffId = readFilterValue(sources, [
     "staffId",
@@ -7348,10 +7537,10 @@ function buildStaffLabel(items) {
 }
 function buildFallbackAssignments(source, metadata) {
   const sources = [];
-  if (isPlainObject$3(source)) {
+  if (isPlainObject$4(source)) {
     sources.push(source);
   }
-  if (isPlainObject$3(metadata)) {
+  if (isPlainObject$4(metadata)) {
     sources.push(metadata);
   }
   const staffIds = readFilterValues(sources, [
@@ -7410,12 +7599,12 @@ function buildFallbackAssignments(source, metadata) {
   }];
 }
 function resolveBookingStaffSummary(source) {
-  const sourceRecord = isPlainObject$3(source) ? source : null;
-  const metadata = isPlainObject$3(source.metadata) ? source.metadata : null;
-  const rawStaffData = source.StaffData ?? source.staffData ?? (sourceRecord ? getValueByAliases(sourceRecord, ["StaffData", "staffData", "staff_data"]) : void 0) ?? (metadata ? getValueByAliases(metadata, ["StaffData", "staffData", "staff_data"]) : void 0);
+  const sourceRecord = isPlainObject$4(source) ? source : null;
+  const metadata = isPlainObject$4(source.metadata) ? source.metadata : null;
+  const rawStaffData = source.StaffData ?? source.staffData ?? (sourceRecord ? getValueByAliases$1(sourceRecord, ["StaffData", "staffData", "staff_data"]) : void 0) ?? (metadata ? getValueByAliases$1(metadata, ["StaffData", "staffData", "staff_data"]) : void 0);
   const parsedItems = normalizeStaffAssignments(rawStaffData);
   const hasStaffData = rawStaffData !== void 0 && rawStaffData !== null;
-  const isMultiStaff = normalizeBooleanLike$2(source.isMultiStaff) ?? normalizeBooleanLike$2(metadata == null ? void 0 : metadata.isMultiStaff) ?? hasStaffData;
+  const isMultiStaff = normalizeBooleanLike$3(source.isMultiStaff) ?? normalizeBooleanLike$3(metadata == null ? void 0 : metadata.isMultiStaff) ?? hasStaffData;
   const fallbackItems = buildFallbackAssignments(source, metadata);
   const items = parsedItems.length > 0 ? parsedItems : hasStaffData ? [] : fallbackItems;
   const staffValues = uniqueFilterValues(items.flatMap((item) => normalizeFilterValues(item.staffId ?? item.staffName)));
@@ -7435,6 +7624,7 @@ const cancelledIconSrc = "data:image/svg+xml,%3csvg%20width='14'%20height='14'%2
 const rejectedIconSrc = "data:image/svg+xml,%3csvg%20width='14'%20height='14'%20viewBox='0%200%2014%2014'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3crect%20width='14'%20height='14'%20rx='7'%20fill='%23FF3377'/%3e%3cline%20x1='3.75'%20y1='7.04999'%20x2='10.25'%20y2='7.04999'%20stroke='white'%20stroke-width='1.5'%20stroke-linecap='round'/%3e%3c/svg%3e";
 const noShowIconSrc = "data:image/svg+xml,%3csvg%20width='14'%20height='14'%20viewBox='0%200%2014%2014'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3crect%20width='14'%20height='14'%20rx='7'%20fill='%23247FE0'/%3e%3cpath%20d='M3.36453%208.37317C3.0104%207.91309%202.83333%207.68305%202.83333%206.99998C2.83333%206.3169%203.0104%206.08688%203.36453%205.6268C4.07164%204.70816%205.25752%203.66669%206.99995%203.66669C8.74239%203.66669%209.92825%204.70816%2010.6354%205.6268C10.9895%206.08688%2011.1666%206.3169%2011.1666%206.99998C11.1666%207.68305%2010.9895%207.91309%2010.6354%208.37317C9.92825%209.29179%208.74239%2010.3333%206.99995%2010.3333C5.25752%2010.3333%204.07164%209.29179%203.36453%208.37317Z'%20stroke='white'/%3e%3cpath%20d='M8.04166%207.00003C8.04166%207.57533%207.57531%208.04168%207%208.04168C6.4247%208.04168%205.95835%207.57533%205.95835%207.00003C5.95835%206.42472%206.4247%205.95837%207%205.95837C7.57531%205.95837%208.04166%206.42472%208.04166%207.00003Z'%20fill='white'%20stroke='white'/%3e%3c/svg%3e";
 const completedIconSrc = "data:image/svg+xml,%3csvg%20width='14'%20height='14'%20viewBox='0%200%2014%2014'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3crect%20width='14'%20height='14'%20rx='7'%20fill='%2310B981'/%3e%3cpath%20d='M3.99951%207.05747L5.96013%209L9.99951%205'%20stroke='white'%20stroke-width='1.5'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/svg%3e";
+const waitingListIconSrc = "data:image/svg+xml,%3csvg%20width='16'%20height='16'%20viewBox='0%200%2016%2016'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M8%200C3.6%200%200%203.6%200%208C0%2012.4%203.6%2016%208%2016C12.4%2016%2016%2012.4%2016%208C16%203.6%2012.4%200%208%200ZM9.6%2010.96C9.2%2011.2%208.72%2011.04%208.48%2010.64L7.28%208.4C7.2%208.24%207.2%208.16%207.2%208V4C7.2%203.52%207.52%203.2%208%203.2C8.48%203.2%208.8%203.52%208.8%204V7.76L9.92%209.84C10.08%2010.24%2010%2010.72%209.6%2010.96Z'%20fill='%239F74F5'/%3e%3c/svg%3e";
 const DEFAULT_STATUS_TONE = {
   background: "rgba(73, 90, 120, 0.4)",
   border: "rgba(158, 172, 201, 0.28)",
@@ -7510,6 +7700,18 @@ const STATUS_DEFINITIONS = [
       background: "rgba(16, 185, 129, 0.18)",
       border: "rgba(16, 185, 129, 0.34)",
       fill: "#10B981"
+    },
+    aliases: []
+  },
+  {
+    key: "waiting-list",
+    label: "Waiting List",
+    value: 7,
+    iconSrc: waitingListIconSrc,
+    tone: {
+      background: "rgba(159, 116, 245, 0.18)",
+      border: "rgba(159, 116, 245, 0.34)",
+      fill: "#9F74F5"
     },
     aliases: []
   }
@@ -7602,11 +7804,13 @@ const RAW_JSON_CORE_FIELDS = /* @__PURE__ */ new Set([
   "serviceId",
   "servicesData",
   "isMultiService",
+  "totalMultiServices",
   "status",
   "statusLabel",
   "staffMemberName",
   "staffMemberId",
   "isMultiStaff",
+  "totalMultiStaff",
   "StaffData",
   "staffData",
   "location",
@@ -7672,7 +7876,7 @@ function formatDateOnly(date) {
   const day = `${date.getDate()}`.padStart(2, "0");
   return `${year}-${month}-${day}`;
 }
-function isPlainObject$2(value) {
+function isPlainObject$3(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 function extractExtraLoaderFields(entry) {
@@ -7712,7 +7916,7 @@ function normalizeOptionLabel(value) {
   const trimmed = value.trim();
   return trimmed || void 0;
 }
-function normalizeBooleanLike$1(value) {
+function normalizeBooleanLike$2(value) {
   if (typeof value === "boolean") {
     return value;
   }
@@ -7727,6 +7931,36 @@ function normalizeBooleanLike$1(value) {
     if (normalized === "false" || normalized === "0") return false;
   }
   return void 0;
+}
+function normalizePositiveInteger(value) {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    const count = Math.trunc(value);
+    return count > 1 ? count : void 0;
+  }
+  if (typeof value === "string") {
+    const parsed = Number(value.trim());
+    if (Number.isFinite(parsed)) {
+      const count = Math.trunc(parsed);
+      return count > 1 ? count : void 0;
+    }
+  }
+  return void 0;
+}
+function resolveMultiServiceTotal(entry, nestedMetadata, serviceSummary) {
+  const explicitCount = normalizePositiveInteger(entry.totalMultiServices) ?? normalizePositiveInteger(nestedMetadata.totalMultiServices) ?? normalizePositiveInteger(nestedMetadata.total_multi_services);
+  if (explicitCount !== void 0) {
+    return explicitCount;
+  }
+  const derivedCount = serviceSummary.items.length > 1 ? serviceSummary.items.length : serviceSummary.serviceValues.length > 1 ? serviceSummary.serviceValues.length : void 0;
+  return serviceSummary.isMultiService ? derivedCount : void 0;
+}
+function resolveMultiStaffTotal(entry, nestedMetadata, staffSummary) {
+  const explicitCount = normalizePositiveInteger(entry.totalMultiStaff) ?? normalizePositiveInteger(nestedMetadata.totalMultiStaff) ?? normalizePositiveInteger(nestedMetadata.total_multi_staff);
+  if (explicitCount !== void 0) {
+    return explicitCount;
+  }
+  const derivedCount = staffSummary.items.length > 1 ? staffSummary.items.length : staffSummary.staffValues.length > 1 ? staffSummary.staffValues.length : void 0;
+  return staffSummary.isMultiStaff ? derivedCount : void 0;
 }
 function normalizeDateInput(value) {
   if (!(value instanceof Date) && typeof value !== "string" && typeof value !== "number") {
@@ -7745,11 +7979,11 @@ function cloneStaffAssignments(items) {
 }
 function buildBookingMetadata(entry, status, statusDefinition) {
   const extraLoaderFields = extractExtraLoaderFields(entry);
-  const nestedMetadata = isPlainObject$2(entry.metadata) ? entry.metadata : {};
-  const isPast = normalizeBooleanLike$1(entry.isPast) ?? normalizeBooleanLike$1(nestedMetadata.isPast);
-  const allowResize = normalizeBooleanLike$1(entry.allowResize) ?? normalizeBooleanLike$1(nestedMetadata.allowResize);
-  const preventResize = normalizeBooleanLike$1(entry.preventResize) ?? normalizeBooleanLike$1(nestedMetadata.preventResize);
-  const isDayService = normalizeBooleanLike$1(entry.isDayService) ?? normalizeBooleanLike$1(nestedMetadata.isDayService);
+  const nestedMetadata = isPlainObject$3(entry.metadata) ? entry.metadata : {};
+  const isPast = normalizeBooleanLike$2(entry.isPast) ?? normalizeBooleanLike$2(nestedMetadata.isPast);
+  const allowResize = normalizeBooleanLike$2(entry.allowResize) ?? normalizeBooleanLike$2(nestedMetadata.allowResize);
+  const preventResize = normalizeBooleanLike$2(entry.preventResize) ?? normalizeBooleanLike$2(nestedMetadata.preventResize);
+  const isDayService = normalizeBooleanLike$2(entry.isDayService) ?? normalizeBooleanLike$2(nestedMetadata.isDayService);
   const customerId = normalizeFilterOptionValue(entry.customerId ?? nestedMetadata.customerId);
   const serviceSummary = resolveBookingServiceSummary({
     ...entry,
@@ -7763,6 +7997,8 @@ function buildBookingMetadata(entry, status, statusDefinition) {
   const staffData = cloneStaffAssignments(staffSummary.items);
   const staffMemberId = staffSummary.items.length === 1 ? staffSummary.staffValues[0] : void 0;
   const locationId = resolveLocationId(entry, nestedMetadata);
+  const totalMultiServices = resolveMultiServiceTotal(entry, nestedMetadata, serviceSummary);
+  const totalMultiStaff = resolveMultiStaffTotal(entry, nestedMetadata, staffSummary);
   return {
     ...nestedMetadata,
     ...extraLoaderFields,
@@ -7772,6 +8008,7 @@ function buildBookingMetadata(entry, status, statusDefinition) {
     ...isDayService !== void 0 ? { isDayService } : {},
     ...customerId !== void 0 ? { customerId } : {},
     ...serviceSummary.isMultiService ? { isMultiService: true } : {},
+    ...totalMultiServices !== void 0 ? { totalMultiServices } : {},
     serviceId,
     serviceName: serviceSummary.isMultiService ? serviceSummary.serviceLabel : serviceSummary.serviceLabel || entry.serviceName,
     ...entry.servicesData !== void 0 ? { servicesData: entry.servicesData } : nestedMetadata.servicesData !== void 0 ? { servicesData: nestedMetadata.servicesData } : {},
@@ -7781,6 +8018,7 @@ function buildBookingMetadata(entry, status, statusDefinition) {
     ...staffMemberId !== void 0 ? { staffMemberId } : {},
     ...staffData.length > 0 ? { StaffData: staffData } : {},
     ...staffSummary.isMultiStaff ? { isMultiStaff: true } : {},
+    ...totalMultiStaff !== void 0 ? { totalMultiStaff } : {},
     location: entry.location || "",
     ...locationId !== void 0 ? { locationId, loationId: locationId } : {},
     price: entry.price ? typeof entry.price === "number" ? `$${entry.price}.00` : entry.price : ""
@@ -7808,7 +8046,7 @@ function buildAllDayTitle(entry) {
   const customerName = normalizeOptionalString(entry.customerName);
   const serviceName = normalizeOptionalString(resolveBookingServiceLabel({
     ...entry,
-    metadata: isPlainObject$2(entry.metadata) ? entry.metadata : null
+    metadata: isPlainObject$3(entry.metadata) ? entry.metadata : null
   }));
   if (customerName && serviceName && customerName !== serviceName) {
     return `${customerName} | ${serviceName}`;
@@ -7816,21 +8054,22 @@ function buildAllDayTitle(entry) {
   return customerName ?? serviceName ?? `Booking #${entry.id}`;
 }
 function isDayServiceEntry(entry) {
-  const nestedMetadata = isPlainObject$2(entry.metadata) ? entry.metadata : {};
-  return normalizeBooleanLike$1(entry.isDayService) ?? normalizeBooleanLike$1(nestedMetadata.isDayService) ?? false;
+  const nestedMetadata = isPlainObject$3(entry.metadata) ? entry.metadata : {};
+  return normalizeBooleanLike$2(entry.isDayService) ?? normalizeBooleanLike$2(nestedMetadata.isDayService) ?? false;
 }
 function toAllDayBooking(entry) {
   const { startDate, endDate } = resolveEntryDateRange(entry);
   const status = normalizeStatus(entry.status);
   const statusDefinition = getStatusDefinition(status) ?? getStatusDefinition(entry.statusLabel);
   const customerName = normalizeOptionalString(entry.customerName);
+  const nestedMetadata = isPlainObject$3(entry.metadata) ? entry.metadata : {};
   const serviceSummary = resolveBookingServiceSummary({
     ...entry,
-    metadata: isPlainObject$2(entry.metadata) ? entry.metadata : null
+    metadata: nestedMetadata
   });
   const staffSummary = resolveBookingStaffSummary({
     ...entry,
-    metadata: isPlainObject$2(entry.metadata) ? entry.metadata : null
+    metadata: nestedMetadata
   });
   const serviceName = normalizeOptionalString(
     serviceSummary.isMultiService ? serviceSummary.serviceLabel : serviceSummary.serviceLabel || entry.serviceName
@@ -7838,6 +8077,8 @@ function toAllDayBooking(entry) {
   const serviceId = serviceSummary.isMultiService ? serviceSummary.items.length === 1 ? serviceSummary.serviceValues[0] : void 0 : serviceSummary.items.length === 1 ? serviceSummary.serviceValues[0] : normalizeFilterOptionValue(entry.serviceId);
   const metadata = buildBookingMetadata(entry, status, statusDefinition);
   const isPast = typeof metadata.isPast === "boolean" ? metadata.isPast : void 0;
+  const totalMultiServices = resolveMultiServiceTotal(entry, nestedMetadata, serviceSummary);
+  const totalMultiStaff = resolveMultiStaffTotal(entry, nestedMetadata, staffSummary);
   return {
     id: String(entry.id),
     startDate,
@@ -7847,10 +8088,13 @@ function toAllDayBooking(entry) {
     ...customerName ? { customerName } : {},
     ...serviceName ? { serviceName } : {},
     ...serviceId !== void 0 ? { serviceId } : {},
+    ...serviceSummary.isMultiService ? { isMultiService: true } : {},
+    ...totalMultiServices !== void 0 ? { totalMultiServices } : {},
     ...staffSummary.staffLabel ? { staffMemberName: staffSummary.staffLabel } : {},
     ...staffSummary.items.length === 1 ? { staffMemberId: staffSummary.staffValues[0] } : {},
     ...staffSummary.items.length > 0 ? { StaffData: cloneStaffAssignments(staffSummary.items) } : {},
     ...staffSummary.isMultiStaff ? { isMultiStaff: true } : {},
+    ...totalMultiStaff !== void 0 ? { totalMultiStaff } : {},
     status,
     metadata,
     theme: entry.theme
@@ -7921,7 +8165,7 @@ function toTimeBooking(entry) {
   const endTime = endTimeValue ?? formatTimeForDataEntry(end);
   const startTimeVal = startTimeValValue ?? formatTimeForExtendedDataEntry(start, start);
   const endTimeVal = endTimeValValue ?? formatTimeForExtendedDataEntry(end, start);
-  const nestedMetadata = isPlainObject$2(entry.metadata) ? entry.metadata : {};
+  const nestedMetadata = isPlainObject$3(entry.metadata) ? entry.metadata : {};
   const serviceSummary = resolveBookingServiceSummary({
     ...entry,
     metadata: nestedMetadata
@@ -7930,10 +8174,12 @@ function toTimeBooking(entry) {
     ...entry,
     metadata: nestedMetadata
   });
-  const allowResize = normalizeBooleanLike$1(entry.allowResize) ?? normalizeBooleanLike$1(nestedMetadata.allowResize);
-  const preventResize = normalizeBooleanLike$1(entry.preventResize) ?? normalizeBooleanLike$1(nestedMetadata.preventResize);
-  const isPast = normalizeBooleanLike$1(entry.isPast) ?? normalizeBooleanLike$1(nestedMetadata.isPast);
+  const allowResize = normalizeBooleanLike$2(entry.allowResize) ?? normalizeBooleanLike$2(nestedMetadata.allowResize);
+  const preventResize = normalizeBooleanLike$2(entry.preventResize) ?? normalizeBooleanLike$2(nestedMetadata.preventResize);
+  const isPast = normalizeBooleanLike$2(entry.isPast) ?? normalizeBooleanLike$2(nestedMetadata.isPast);
   const serviceId = serviceSummary.isMultiService ? serviceSummary.items.length === 1 ? serviceSummary.serviceValues[0] : void 0 : serviceSummary.items.length === 1 ? serviceSummary.serviceValues[0] : normalizeFilterOptionValue(entry.serviceId);
+  const totalMultiServices = resolveMultiServiceTotal(entry, nestedMetadata, serviceSummary);
+  const totalMultiStaff = resolveMultiStaffTotal(entry, nestedMetadata, staffSummary);
   return {
     id: String(entry.id),
     start,
@@ -7949,10 +8195,13 @@ function toTimeBooking(entry) {
     // In a real API, this would come from the entry
     serviceId,
     serviceName: serviceSummary.isMultiService ? serviceSummary.serviceLabel : serviceSummary.serviceLabel || entry.serviceName,
+    ...serviceSummary.isMultiService ? { isMultiService: true } : {},
+    ...totalMultiServices !== void 0 ? { totalMultiServices } : {},
     ...staffSummary.staffLabel ? { staffMemberName: staffSummary.staffLabel } : {},
     ...staffSummary.items.length === 1 ? { staffMemberId: staffSummary.staffValues[0] } : {},
     ...staffSummary.items.length > 0 ? { StaffData: cloneStaffAssignments(staffSummary.items) } : {},
     ...staffSummary.isMultiStaff ? { isMultiStaff: true } : {},
+    ...totalMultiStaff !== void 0 ? { totalMultiStaff } : {},
     customerName: entry.customerName,
     status,
     ...allowResize !== void 0 ? { allowResize } : {},
@@ -7961,7 +8210,7 @@ function toTimeBooking(entry) {
     theme: entry.theme
   };
 }
-function normalizeBooleanLike(value) {
+function normalizeBooleanLike$1(value) {
   if (typeof value === "boolean") {
     return value;
   }
@@ -7997,11 +8246,11 @@ function resolveTimeBookingIsPast(booking) {
 }
 function resolveTimeBookingResizeEnabled(booking) {
   var _a, _b;
-  const allowResize = normalizeBooleanLike(booking.allowResize) ?? normalizeBooleanLike((_a = booking.metadata) == null ? void 0 : _a.allowResize);
+  const allowResize = normalizeBooleanLike$1(booking.allowResize) ?? normalizeBooleanLike$1((_a = booking.metadata) == null ? void 0 : _a.allowResize);
   if (allowResize !== void 0) {
     return allowResize;
   }
-  const preventResize = normalizeBooleanLike(booking.preventResize) ?? normalizeBooleanLike((_b = booking.metadata) == null ? void 0 : _b.preventResize);
+  const preventResize = normalizeBooleanLike$1(booking.preventResize) ?? normalizeBooleanLike$1((_b = booking.metadata) == null ? void 0 : _b.preventResize);
   if (preventResize !== void 0) {
     return !preventResize;
   }
@@ -8058,7 +8307,7 @@ function buildDisplaySettingsRegistry(labelOverrides = {}) {
   ];
 }
 const extraDisplaySettings = [];
-function isPlainObject$1(value) {
+function isPlainObject$2(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 function normalizeDisplaySetting(setting, defaultSection = PRIMARY_SECTION) {
@@ -8073,7 +8322,7 @@ function normalizeDisplaySetting(setting, defaultSection = PRIMARY_SECTION) {
       section: defaultSection
     };
   }
-  if (!isPlainObject$1(setting)) {
+  if (!isPlainObject$2(setting)) {
     return null;
   }
   const { id, visible, label, section } = setting;
@@ -8101,7 +8350,7 @@ function normalizeDisplaySettingsConfig(settings) {
       extraDisplayFields: []
     };
   }
-  if (!isPlainObject$1(settings)) {
+  if (!isPlainObject$2(settings)) {
     return {
       fields: [],
       extraDisplayFields: []
@@ -8122,7 +8371,7 @@ function normalizeDisplaySettingsConfig(settings) {
           label: value.trim() || void 0
         };
       }
-      if (isPlainObject$1(value)) {
+      if (isPlainObject$2(value)) {
         return {
           id,
           ...value
@@ -8246,7 +8495,7 @@ function normalizeDisplayFieldValue(value) {
   }
   return "";
 }
-function isPlainObject(value) {
+function isPlainObject$1(value) {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 function resolveServiceDisplayValue(booking) {
@@ -8263,7 +8512,7 @@ function resolveFormFieldDisplayValue(metadata, fieldId) {
   if (!Array.isArray(formFieldEntries)) {
     return "";
   }
-  const values = formFieldEntries.filter((entry) => isPlainObject(entry)).filter((entry) => {
+  const values = formFieldEntries.filter((entry) => isPlainObject$1(entry)).filter((entry) => {
     const entryId = entry.id;
     return typeof entryId === "string" || typeof entryId === "number" ? String(entryId).trim() === fieldId : false;
   }).map((entry) => normalizeDisplayFieldValue(entry.value)).filter(Boolean);
@@ -8308,14 +8557,157 @@ function resolveTimeBookingDisplayFieldValue(booking, fieldId) {
   }
   return normalizeDisplayFieldValue((_c = booking.metadata) == null ? void 0 : _c[fieldId]);
 }
+function isPlainObject(value) {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+function normalizeLookupKey(value) {
+  return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, "");
+}
+function getValueByAliases(source, keys) {
+  if (!source) {
+    return void 0;
+  }
+  for (const [entryKey, entryValue] of Object.entries(source)) {
+    const normalizedEntryKey = normalizeLookupKey(entryKey);
+    if (!normalizedEntryKey) {
+      continue;
+    }
+    if (keys.some((key) => normalizedEntryKey === normalizeLookupKey(key))) {
+      return entryValue;
+    }
+  }
+  return void 0;
+}
+function normalizeBooleanLike(value) {
+  if (typeof value === "boolean") {
+    return value;
+  }
+  if (typeof value === "number") {
+    if (value === 1) return true;
+    if (value === 0) return false;
+  }
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+    if (normalized === "true" || normalized === "1") return true;
+    if (normalized === "false" || normalized === "0") return false;
+  }
+  return void 0;
+}
+function normalizePositiveCount(value) {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    const count = Math.trunc(value);
+    return count > 1 ? count : null;
+  }
+  if (typeof value === "string") {
+    const parsed = Number(value.trim());
+    if (Number.isFinite(parsed)) {
+      const count = Math.trunc(parsed);
+      return count > 1 ? count : null;
+    }
+  }
+  return null;
+}
+function getExplicitCount(booking, aliases) {
+  const bookingRecord = booking;
+  const metadata = isPlainObject(booking.metadata) ? booking.metadata : null;
+  return normalizePositiveCount(getValueByAliases(bookingRecord, aliases)) ?? normalizePositiveCount(getValueByAliases(metadata, aliases));
+}
+function getExplicitBoolean(booking, aliases) {
+  const bookingRecord = booking;
+  const metadata = isPlainObject(booking.metadata) ? booking.metadata : null;
+  return normalizeBooleanLike(getValueByAliases(bookingRecord, aliases)) ?? normalizeBooleanLike(getValueByAliases(metadata, aliases));
+}
+function getMultiStaffCount(booking) {
+  const explicitMultiStaff = getExplicitBoolean(booking, ["isMultiStaff", "is_multi_staff"]);
+  const explicitCount = getExplicitCount(booking, ["totalMultiStaff", "total_multi_staff"]);
+  if (explicitCount && explicitMultiStaff !== false) {
+    return explicitCount;
+  }
+  const staffSummary = resolveBookingStaffSummary(booking);
+  const derivedCount = staffSummary.items.length > 1 ? staffSummary.items.length : staffSummary.staffValues.length > 1 ? staffSummary.staffValues.length : null;
+  return (explicitMultiStaff ?? staffSummary.isMultiStaff) && derivedCount ? derivedCount : null;
+}
+function getMultiServiceCount(booking) {
+  const explicitMultiService = getExplicitBoolean(booking, ["isMultiService", "is_multi_service"]);
+  const explicitCount = getExplicitCount(booking, ["totalMultiServices", "total_multi_services"]);
+  if (explicitCount && explicitMultiService !== false) {
+    return explicitCount;
+  }
+  const serviceSummary = resolveBookingServiceSummary(booking);
+  const derivedCount = serviceSummary.items.length > 1 ? serviceSummary.items.length : serviceSummary.serviceValues.length > 1 ? serviceSummary.serviceValues.length : null;
+  return (explicitMultiService ?? serviceSummary.isMultiService) && derivedCount ? derivedCount : null;
+}
+function getBookingMultiIndicators(booking) {
+  const staffCount = getMultiStaffCount(booking);
+  const serviceCount = getMultiServiceCount(booking);
+  const indicators = [];
+  if (staffCount) {
+    indicators.push({ kind: "staff", count: staffCount });
+  }
+  if (serviceCount) {
+    indicators.push({ kind: "service", count: serviceCount });
+  }
+  return indicators;
+}
+const staffIconUrl = "data:image/svg+xml,%3csvg%20width='10'%20height='10'%20viewBox='0%200%2010%2010'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M8.33345%209.28564V8.33329C8.33345%207.82813%208.13278%207.34366%207.77558%206.98646C7.41838%206.62926%206.93391%206.42859%206.42875%206.42859H3.5717C3.06654%206.42859%202.58207%206.62926%202.22487%206.98646C1.86767%207.34366%201.66699%207.82813%201.66699%208.33329V9.28564'%20stroke='black'%20stroke-opacity='0.75'%20stroke-width='1.1'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3cpath%20d='M4.99943%204.52376C6.05137%204.52376%206.90413%203.671%206.90413%202.61906C6.90413%201.56712%206.05137%200.714355%204.99943%200.714355C3.94749%200.714355%203.09473%201.56712%203.09473%202.61906C3.09473%203.671%203.94749%204.52376%204.99943%204.52376Z'%20stroke='black'%20stroke-opacity='0.75'%20stroke-width='1.1'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/svg%3e";
+const multiServiceIconUrl = "data:image/svg+xml,%3csvg%20width='14'%20height='14'%20viewBox='0%200%2014%2014'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M2.21335%207.01698C2.5267%205.45025%202.68337%204.66688%203.20106%204.16233C3.29674%204.06908%203.40025%203.98423%203.51046%203.90869C4.10673%203.5%204.90562%203.5%206.50339%203.5H7.49675C9.09456%203.5%209.89343%203.5%2010.4897%203.90869C10.5999%203.98423%2010.7034%204.06908%2010.7991%204.16233C11.3168%204.66688%2011.4734%205.45025%2011.7868%207.01698C12.2367%209.26631%2012.4616%2010.391%2011.9438%2011.1879C11.85%2011.3322%2011.7406%2011.4657%2011.6175%2011.5859C10.9376%2012.25%209.79065%2012.25%207.49675%2012.25H6.50339C4.2095%2012.25%203.06256%2012.25%202.38265%2011.5859C2.25953%2011.4657%202.1501%2011.3322%202.05635%2011.1879C1.53855%2010.391%201.76348%209.26631%202.21335%207.01698Z'%20stroke='black'%20stroke-opacity='0.75'/%3e%3cpath%20d='M8.74984%205.83329C9.072%205.83329%209.33317%205.57213%209.33317%205.24996C9.33317%204.92779%209.072%204.66663%208.74984%204.66663C8.42767%204.66663%208.1665%204.92779%208.1665%205.24996C8.1665%205.57213%208.42767%205.83329%208.74984%205.83329Z'%20fill='black'%20fill-opacity='0.75'/%3e%3cpath%20d='M5.24984%205.83329C5.572%205.83329%205.83317%205.57213%205.83317%205.24996C5.83317%204.92779%205.572%204.66663%205.24984%204.66663C4.92767%204.66663%204.6665%204.92779%204.6665%205.24996C4.6665%205.57213%204.92767%205.83329%205.24984%205.83329Z'%20fill='black'%20fill-opacity='0.75'/%3e%3cpath%20d='M5.25%203.49996V2.91663C5.25%201.95013%206.03347%201.16663%207%201.16663C7.96652%201.16663%208.75%201.95013%208.75%202.91663V3.49996'%20stroke='black'%20stroke-opacity='0.75'%20stroke-linecap='round'/%3e%3c/svg%3e";
+const _hoisted_1$e = ["src"];
+const _hoisted_2$c = ["src"];
+const _hoisted_3$c = { class: "booking-indicator-count" };
+const _sfc_main$g = /* @__PURE__ */ defineComponent({
+  __name: "BpaBookingIndicators",
+  props: {
+    booking: {},
+    size: { default: "default" }
+  },
+  setup(__props) {
+    const props = __props;
+    const indicators = computed(() => getBookingMultiIndicators(props.booking));
+    return (_ctx, _cache) => {
+      return indicators.value.length > 0 ? (openBlock(), createElementBlock("span", {
+        key: 0,
+        class: normalizeClass(["booking-indicators bpa-booking-indicator-wrapper", `is-${__props.size}`]),
+        "aria-hidden": "true"
+      }, [
+        (openBlock(true), createElementBlock(Fragment, null, renderList(indicators.value, (indicator) => {
+          return openBlock(), createElementBlock("span", {
+            key: indicator.kind,
+            class: normalizeClass(["booking-indicator bpa-booking-indicator", [`is-${indicator.kind}`, `bpa-booking-indicator--${indicator.kind}`]])
+          }, [
+            indicator.kind === "staff" ? (openBlock(), createElementBlock("img", {
+              key: 0,
+              class: "booking-indicator-icon",
+              src: unref(staffIconUrl),
+              alt: ""
+            }, null, 8, _hoisted_1$e)) : (openBlock(), createElementBlock("img", {
+              key: 1,
+              class: "booking-indicator-icon",
+              src: unref(multiServiceIconUrl),
+              alt: ""
+            }, null, 8, _hoisted_2$c)),
+            createElementVNode("span", _hoisted_3$c, toDisplayString$1(indicator.count), 1)
+          ], 2);
+        }), 128))
+      ], 2)) : createCommentVNode("", true);
+    };
+  }
+});
+const _export_sfc = (sfc, props) => {
+  const target = sfc.__vccOpts || sfc;
+  for (const [key, val] of props) {
+    target[key] = val;
+  }
+  return target;
+};
+const BpaBookingIndicators = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["__scopeId", "data-v-7aaea9cc"]]);
 const _hoisted_1$d = { class: "booking-content" };
 const _hoisted_2$b = { class: "booking-header" };
 const _hoisted_3$b = {
-  key: 0,
+  key: 1,
   class: "status-icon",
   "aria-hidden": "true"
 };
-const _hoisted_4$8 = ["src"];
+const _hoisted_4$9 = ["src"];
 const _hoisted_5$8 = {
   key: 1,
   width: "14",
@@ -8361,7 +8753,7 @@ const _hoisted_9$7 = {
   "stroke-linecap": "round",
   "stroke-linejoin": "round"
 };
-const _hoisted_10$6 = {
+const _hoisted_10$7 = {
   key: 3,
   width: "12",
   height: "12",
@@ -8560,13 +8952,18 @@ const _sfc_main$f = /* @__PURE__ */ defineComponent({
               class: "customer-name",
               style: normalizeStyle({ color: colors.value.text })
             }, toDisplayString$1(titleText.value), 5),
+            !isSmallCard.value ? (openBlock(), createBlock(BpaBookingIndicators, {
+              key: 0,
+              booking: __props.positioned.booking,
+              style: normalizeStyle({ "--booking-indicator-text-color": colors.value.text })
+            }, null, 8, ["booking", "style"])) : createCommentVNode("", true),
             !isSmallCard.value && density.value.showStatus ? (openBlock(), createElementBlock("span", _hoisted_3$b, [
               statusIconSrc.value ? (openBlock(), createElementBlock("img", {
                 key: 0,
                 class: "status-icon-image",
                 src: statusIconSrc.value,
                 alt: ""
-              }, null, 8, _hoisted_4$8)) : (openBlock(), createElementBlock("svg", _hoisted_5$8, [..._cache[2] || (_cache[2] = [
+              }, null, 8, _hoisted_4$9)) : (openBlock(), createElementBlock("svg", _hoisted_5$8, [..._cache[2] || (_cache[2] = [
                 createElementVNode("rect", {
                   width: "14",
                   height: "14",
@@ -8613,7 +9010,7 @@ const _sfc_main$f = /* @__PURE__ */ defineComponent({
                       r: "7"
                     }, null, -1),
                     createElementVNode("polyline", { points: "8.21 13.89 7 23 12 20 17 23 15.79 13.88" }, null, -1)
-                  ])])) : getFieldIconKind(entry.field.id) === "location" ? (openBlock(), createElementBlock("svg", _hoisted_10$6, [..._cache[6] || (_cache[6] = [
+                  ])])) : getFieldIconKind(entry.field.id) === "location" ? (openBlock(), createElementBlock("svg", _hoisted_10$7, [..._cache[6] || (_cache[6] = [
                     createElementVNode("path", { d: "M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" }, null, -1),
                     createElementVNode("circle", {
                       cx: "12",
@@ -8680,14 +9077,7 @@ const _sfc_main$f = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _export_sfc = (sfc, props) => {
-  const target = sfc.__vccOpts || sfc;
-  for (const [key, val] of props) {
-    target[key] = val;
-  }
-  return target;
-};
-const BpaBookingCard = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["__scopeId", "data-v-83373b11"]]);
+const BpaBookingCard = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["__scopeId", "data-v-b84ed44e"]]);
 const filterEmployeeIconUrl = "data:image/svg+xml,%3csvg%20width='20'%20height='20'%20viewBox='0%200%2020%2020'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M16.6669%2018.5713V16.6666C16.6669%2015.6563%2016.2656%2014.6873%2015.5512%2013.9729C14.8368%2013.2585%2013.8678%2012.8572%2012.8575%2012.8572H7.14339C6.13307%2012.8572%205.16414%2013.2585%204.44973%2013.9729C3.73533%2014.6873%203.33398%2015.6563%203.33398%2016.6666V18.5713'%20stroke='%23535D71'%20stroke-width='1.1'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3cpath%20d='M9.99984%209.04752C12.1037%209.04752%2013.8092%207.34199%2013.8092%205.23812C13.8092%203.13424%2012.1037%201.42871%209.99984%201.42871C7.89596%201.42871%206.19043%203.13424%206.19043%205.23812C6.19043%207.34199%207.89596%209.04752%209.99984%209.04752Z'%20stroke='%23535D71'%20stroke-width='1.1'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/svg%3e";
 const filterLocationIconUrl = "data:image/svg+xml,%3csvg%20width='20'%20height='20'%20viewBox='0%200%2020%2020'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M16.8582%208.28567C16.8582%2012.5658%2012.11%2017.0234%2010.5156%2018.4001C10.367%2018.5118%2010.1862%2018.5722%2010.0004%2018.5722C9.81455%2018.5722%209.63374%2018.5118%209.4852%2018.4001C7.89076%2017.0234%203.14258%2012.5658%203.14258%208.28567C3.14258%206.46687%203.8651%204.72255%205.15119%203.43646C6.43728%202.15037%208.18159%201.42786%2010.0004%201.42786C11.8192%201.42786%2013.5635%202.15037%2014.8496%203.43646C16.1357%204.72255%2016.8582%206.46687%2016.8582%208.28567Z'%20stroke='%23535D71'%20stroke-width='1.1'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3cpath%20d='M9.99941%2010.8573C11.4197%2010.8573%2012.5711%209.70597%2012.5711%208.28567C12.5711%206.86537%2011.4197%205.71399%209.99941%205.71399C8.57911%205.71399%207.42773%206.86537%207.42773%208.28567C7.42773%209.70597%208.57911%2010.8573%209.99941%2010.8573Z'%20stroke='%23535D71'%20stroke-width='1.1'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/svg%3e";
 const filterServiceIconUrl = "data:image/svg+xml,%3csvg%20width='20'%20height='20'%20viewBox='0%200%2020%2020'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M2.97967%2010.4526C3.43909%208.15554%203.6688%207.00698%204.42782%206.26723C4.56811%206.13051%204.71988%206.0061%204.88145%205.89535C5.75569%205.29614%206.92699%205.29614%209.26959%205.29614H10.726C13.0687%205.29614%2014.2399%205.29614%2015.1142%205.89535C15.2758%206.0061%2015.4275%206.13051%2015.5678%206.26723C16.3268%207.00698%2016.5565%208.15554%2017.016%2010.4526C17.6755%2013.7505%2018.0053%2015.3995%2017.2461%2016.5679C17.1087%2016.7795%2016.9482%2016.9752%2016.7678%2017.1515C15.7709%2018.1251%2014.0893%2018.1251%2010.726%2018.1251H9.26959C5.90637%2018.1251%204.22476%2018.1251%203.22789%2017.1515C3.04739%2016.9752%202.88694%2016.7795%202.74949%2016.5679C1.9903%2015.3995%202.32009%2013.7505%202.97967%2010.4526Z'%20stroke='%23535D71'/%3e%3cpath%20d='M12.5633%208.71736C13.0356%208.71736%2013.4185%208.33445%2013.4185%207.8621C13.4185%207.38975%2013.0356%207.00684%2012.5633%207.00684C12.0909%207.00684%2011.708%207.38975%2011.708%207.8621C11.708%208.33445%2012.0909%208.71736%2012.5633%208.71736Z'%20fill='%23535D71'/%3e%3cpath%20d='M7.43144%208.71761C7.90378%208.71761%208.2867%208.33469%208.2867%207.86234C8.2867%207.38999%207.90378%207.00708%207.43144%207.00708C6.95909%207.00708%206.57617%207.38999%206.57617%207.86234C6.57617%208.33469%206.95909%208.71761%207.43144%208.71761Z'%20fill='%23535D71'/%3e%3cpath%20d='M7.43164%205.29605V4.44079C7.43164%203.02375%208.58034%201.875%209.99743%201.875C11.4145%201.875%2012.5632%203.02375%2012.5632%204.44079V5.29605'%20stroke='%23535D71'%20stroke-linecap='round'/%3e%3c/svg%3e";
@@ -8695,7 +9085,7 @@ const filterStatusIconUrl = "data:image/svg+xml,%3csvg%20width='20'%20height='20
 const _hoisted_1$c = { class: "popover-header" };
 const _hoisted_2$a = { class: "popover-title" };
 const _hoisted_3$a = ["aria-label"];
-const _hoisted_4$7 = { class: "filters-popover-body" };
+const _hoisted_4$8 = { class: "filters-popover-body" };
 const _hoisted_5$7 = { class: "filter-field-shell" };
 const _hoisted_6$7 = {
   class: "filter-field-icon",
@@ -8717,7 +9107,7 @@ const _hoisted_9$6 = {
   viewBox: "0 0 24 24",
   fill: "none"
 };
-const _hoisted_10$5 = { class: "popover-footer" };
+const _hoisted_10$6 = { class: "popover-footer" };
 const _sfc_main$e = /* @__PURE__ */ defineComponent({
   __name: "BpaBookingFiltersDialog",
   props: {
@@ -8875,7 +9265,7 @@ const _sfc_main$e = /* @__PURE__ */ defineComponent({
             ], -1)
           ])], 8, _hoisted_3$a)
         ]),
-        createElementVNode("div", _hoisted_4$7, [
+        createElementVNode("div", _hoisted_4$8, [
           (openBlock(true), createElementBlock(Fragment, null, renderList(fields.value, (field) => {
             return openBlock(), createElementBlock("div", {
               key: field.id,
@@ -8925,7 +9315,7 @@ const _sfc_main$e = /* @__PURE__ */ defineComponent({
             ]);
           }), 128))
         ]),
-        createElementVNode("div", _hoisted_10$5, [
+        createElementVNode("div", _hoisted_10$6, [
           createVNode(_component_BpUiButton, {
             class: "apply-btn",
             type: "primary",
@@ -8945,7 +9335,7 @@ const BpaBookingFiltersDialog = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["__sc
 const _hoisted_1$b = { class: "filter-popover" };
 const _hoisted_2$9 = { class: "popover-header" };
 const _hoisted_3$9 = ["aria-label"];
-const _hoisted_4$6 = { class: "popover-body" };
+const _hoisted_4$7 = { class: "popover-body" };
 const _hoisted_5$6 = ["onDragover", "onDrop"];
 const _hoisted_6$6 = { class: "field-label" };
 const _hoisted_7$5 = ["aria-label", "onDragstart"];
@@ -8954,7 +9344,7 @@ const _hoisted_8$5 = {
   class: "section-separator"
 };
 const _hoisted_9$5 = ["onDragover", "onDrop"];
-const _hoisted_10$4 = { class: "field-label" };
+const _hoisted_10$5 = { class: "field-label" };
 const _hoisted_11$4 = ["aria-label", "onDragstart"];
 const _hoisted_12$4 = { class: "popover-footer" };
 const _sfc_main$d = /* @__PURE__ */ defineComponent({
@@ -9118,7 +9508,7 @@ const _sfc_main$d = /* @__PURE__ */ defineComponent({
           "max-height": 320
         }, {
           default: withCtx(() => [
-            createElementVNode("div", _hoisted_4$6, [
+            createElementVNode("div", _hoisted_4$7, [
               createVNode(TransitionGroup, {
                 name: "filter-sort",
                 tag: "div",
@@ -9219,7 +9609,7 @@ const _sfc_main$d = /* @__PURE__ */ defineComponent({
                         "onUpdate:modelValue": ($event) => toggleVisibility(entry.index, Boolean($event))
                       }, {
                         default: withCtx(() => [
-                          createElementVNode("span", _hoisted_10$4, toDisplayString$1(getFieldLabel(entry.item)), 1)
+                          createElementVNode("span", _hoisted_10$5, toDisplayString$1(getFieldLabel(entry.item)), 1)
                         ]),
                         _: 2
                       }, 1032, ["model-value", "onUpdate:modelValue"]),
@@ -9300,11 +9690,11 @@ const _sfc_main$d = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const BpaFilterPopover = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["__scopeId", "data-v-14005f7d"]]);
+const BpaFilterPopover = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["__scopeId", "data-v-30c5cc89"]]);
 const _hoisted_1$a = { class: "header-left" };
 const _hoisted_2$8 = { class: "logo" };
 const _hoisted_3$8 = { class: "logo-text" };
-const _hoisted_4$5 = {
+const _hoisted_4$6 = {
   key: 0,
   class: "mobile-top-actions"
 };
@@ -9316,7 +9706,7 @@ const _hoisted_6$5 = {
 const _hoisted_7$4 = { class: "header-center" };
 const _hoisted_8$4 = { class: "title" };
 const _hoisted_9$4 = { class: "header-right" };
-const _hoisted_10$3 = {
+const _hoisted_10$4 = {
   key: 0,
   class: "bpa-calenar-filter-btn-text"
 };
@@ -9410,7 +9800,7 @@ const _sfc_main$c = /* @__PURE__ */ defineComponent({
             createElementVNode("span", _hoisted_3$8, toDisplayString$1(unref(uiText).header.logo), 1)
           ])
         ]),
-        props.isMobile ? (openBlock(), createElementBlock("div", _hoisted_4$5, [
+        props.isMobile ? (openBlock(), createElementBlock("div", _hoisted_4$6, [
           props.showAddAppointmentButton ? (openBlock(), createBlock(_component_BpUiButton, {
             key: 0,
             class: "add-btn add-btn-mobile",
@@ -9683,7 +10073,7 @@ const _sfc_main$c = /* @__PURE__ */ defineComponent({
                       "stroke-width": "1.3"
                     })
                   ], -1)),
-                  !props.isMobile ? (openBlock(), createElementBlock("span", _hoisted_10$3, toDisplayString$1(unref(uiText).header.filter), 1)) : createCommentVNode("", true)
+                  !props.isMobile ? (openBlock(), createElementBlock("span", _hoisted_10$4, toDisplayString$1(unref(uiText).header.filter), 1)) : createCommentVNode("", true)
                 ]),
                 _: 1
               }, 8, ["class", "icon-only", "aria-label"])
@@ -9861,7 +10251,6 @@ const _sfc_main$b = /* @__PURE__ */ defineComponent({
 const BpaDayHeader = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["__scopeId", "data-v-b7208575"]]);
 const timeIconUrl = "data:image/svg+xml,%3csvg%20width='16'%20height='16'%20viewBox='0%200%2016%2016'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cg%20clip-path='url(%23clip0_1319_33595)'%3e%3cpath%20d='M8.00016%2014.6673C11.6821%2014.6673%2014.6668%2011.6825%2014.6668%208.00065C14.6668%204.31875%2011.6821%201.33398%208.00016%201.33398C4.31826%201.33398%201.3335%204.31875%201.3335%208.00065C1.3335%2011.6825%204.31826%2014.6673%208.00016%2014.6673Z'%20stroke='white'%20stroke-opacity='0.85'/%3e%3cpath%20d='M8%205.33398V8.00065L9.66667%209.66732'%20stroke='white'%20stroke-opacity='0.85'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/g%3e%3cdefs%3e%3cclipPath%20id='clip0_1319_33595'%3e%3crect%20width='16'%20height='16'%20fill='white'/%3e%3c/clipPath%3e%3c/defs%3e%3c/svg%3e";
 const serviceIconUrl = "data:image/svg+xml,%3csvg%20width='16'%20height='16'%20viewBox='0%200%2016%2016'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M2.52933%208.0194C2.88744%206.22886%203.0665%205.33357%203.65814%204.75695C3.7675%204.65038%203.8858%204.5534%204.01174%204.46707C4.6932%204%205.60621%204%207.43224%204H8.5675C10.3936%204%2011.3066%204%2011.988%204.46707C12.114%204.5534%2012.2322%204.65038%2012.3416%204.75695C12.9332%205.33357%2013.1123%206.22886%2013.4704%208.0194C13.9846%2010.5901%2014.2416%2011.8754%2013.6498%2012.7862C13.5427%2012.9511%2013.4176%2013.1037%2013.277%2013.2411C12.4999%2014%2011.1891%2014%208.5675%2014H7.43224C4.81065%2014%203.49986%2014%202.72282%2013.2411C2.58212%2013.1037%202.45705%2012.9511%202.3499%2012.7862C1.75813%2011.8754%202.0152%2010.5901%202.52933%208.0194Z'%20stroke='white'%20stroke-opacity='0.85'/%3e%3cpath%20d='M9.99967%206.66732C10.3679%206.66732%2010.6663%206.36884%2010.6663%206.00065C10.6663%205.63246%2010.3679%205.33398%209.99967%205.33398C9.63148%205.33398%209.33301%205.63246%209.33301%206.00065C9.33301%206.36884%209.63148%206.66732%209.99967%206.66732Z'%20fill='white'%20fill-opacity='0.85'/%3e%3cpath%20d='M5.99967%206.66732C6.36786%206.66732%206.66634%206.36884%206.66634%206.00065C6.66634%205.63246%206.36786%205.33398%205.99967%205.33398C5.63148%205.33398%205.33301%205.63246%205.33301%206.00065C5.33301%206.36884%205.63148%206.66732%205.99967%206.66732Z'%20fill='white'%20fill-opacity='0.85'/%3e%3cpath%20d='M6%204.00065V3.33398C6%202.22942%206.8954%201.33398%208%201.33398C9.1046%201.33398%2010%202.22942%2010%203.33398V4.00065'%20stroke='white'%20stroke-opacity='0.85'%20stroke-linecap='round'/%3e%3c/svg%3e";
-const staffIconUrl = "data:image/svg+xml,%3csvg%20width='16'%20height='16'%20viewBox='0%200%2016%2016'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cg%20clip-path='url(%23clip0_1319_33609)'%3e%3cpath%20d='M12.5329%2014.8574H3.46752C2.18375%2014.8574%201.14307%2013.5782%201.14307%2012.0003V4.00028C1.14307%202.42231%202.18375%201.14314%203.46752%201.14314H12.5329C13.8167%201.14314%2014.8574%202.42231%2014.8574%204.00028V12.0003C14.8574%2013.5782%2013.8167%2014.8574%2012.5329%2014.8574Z'%20stroke='white'%20stroke-opacity='0.85'%20stroke-miterlimit='10'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3cpath%20d='M6.875%206.83789C6.875%207.52823%206.31534%208.08789%205.625%208.08789C4.93466%208.08789%204.375%207.52823%204.375%206.83789C4.375%206.14755%204.93466%205.58789%205.625%205.58789C6.31534%205.58789%206.875%206.14755%206.875%206.83789Z'%20stroke='white'%20stroke-opacity='0.85'%20stroke-miterlimit='10'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3cpath%20d='M3.45996%2010.5879C3.89224%209.84064%204.70015%209.33789%205.62549%209.33789C6.55087%209.33789%207.35877%209.84064%207.79105%2010.5879'%20stroke='white'%20stroke-opacity='0.85'%20stroke-miterlimit='10'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3cpath%20d='M9.07812%207H11.2656'%20stroke='white'%20stroke-opacity='0.85'%20stroke-miterlimit='10'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3cpath%20d='M9.07812%2010H11.2656'%20stroke='white'%20stroke-opacity='0.85'%20stroke-miterlimit='10'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/g%3e%3cdefs%3e%3cclipPath%20id='clip0_1319_33609'%3e%3crect%20width='16'%20height='16'%20fill='white'/%3e%3c/clipPath%3e%3c/defs%3e%3c/svg%3e";
 const locationIconUrl = "data:image/svg+xml,%3csvg%20width='16'%20height='16'%20viewBox='0%200%2016%2016'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M2.6665%206.76285C2.6665%203.76457%205.05432%201.33398%207.99984%201.33398C10.9454%201.33398%2013.3332%203.76457%2013.3332%206.76285C13.3332%209.73765%2011.631%2013.2089%208.9751%2014.4503C8.35604%2014.7397%207.64364%2014.7397%207.02457%2014.4503C4.36872%2013.2089%202.6665%209.73765%202.6665%206.76285Z'%20stroke='white'%20stroke-opacity='0.85'/%3e%3cpath%20d='M8%208.66797C9.10457%208.66797%2010%207.77254%2010%206.66797C10%205.5634%209.10457%204.66797%208%204.66797C6.89543%204.66797%206%205.5634%206%206.66797C6%207.77254%206.89543%208.66797%208%208.66797Z'%20stroke='white'%20stroke-opacity='0.85'/%3e%3c/svg%3e";
 const emailIconUrl = "data:image/svg+xml,%3csvg%20width='16'%20height='16'%20viewBox='0%200%2016%2016'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M14.6668%204.66602L8.67283%208.48402C8.46942%208.60216%208.23839%208.66439%208.00316%208.66439C7.76794%208.66439%207.5369%208.60216%207.3335%208.48402L1.3335%204.66602'%20stroke='white'%20stroke-opacity='0.85'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3cpath%20d='M13.3335%202.66602H2.66683C1.93045%202.66602%201.3335%203.26297%201.3335%203.99935V11.9993C1.3335%2012.7357%201.93045%2013.3327%202.66683%2013.3327H13.3335C14.0699%2013.3327%2014.6668%2012.7357%2014.6668%2011.9993V3.99935C14.6668%203.26297%2014.0699%202.66602%2013.3335%202.66602Z'%20stroke='white'%20stroke-opacity='0.85'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/svg%3e";
 const phoneIconUrl = "data:image/svg+xml,%3csvg%20width='15'%20height='15'%20viewBox='0%200%2015%2015'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M8.388%2010.212C8.52568%2010.2752%208.6808%2010.2897%208.82779%2010.253C8.97479%2010.2162%209.10489%2010.1305%209.19667%2010.01L9.43333%209.7C9.55753%209.5344%209.71857%209.4%209.90372%209.30743C10.0889%209.21486%2010.293%209.16667%2010.5%209.16667H12.5C12.8536%209.16667%2013.1928%209.30714%2013.4428%209.55719C13.6929%209.80724%2013.8333%2010.1464%2013.8333%2010.5V12.5C13.8333%2012.8536%2013.6929%2013.1928%2013.4428%2013.4428C13.1928%2013.6929%2012.8536%2013.8333%2012.5%2013.8333C9.3174%2013.8333%206.26515%2012.5691%204.01472%2010.3186C1.76428%208.06818%200.5%205.01593%200.5%201.83333C0.5%201.47971%200.640476%201.14057%200.890524%200.890524C1.14057%200.640476%201.47971%200.5%201.83333%200.5H3.83333C4.18696%200.5%204.52609%200.640476%204.77614%200.890524C5.02619%201.14057%205.16667%201.47971%205.16667%201.83333V3.83333C5.16667%204.04033%205.11847%204.24448%205.0259%204.42962C4.93333%204.61476%204.79893%204.7758%204.63333%204.9L4.32133%205.134C4.19894%205.22745%204.11268%205.36039%204.07719%205.51023C4.04171%205.66008%204.05919%205.81758%204.12667%205.956C5.03779%207.80658%206.53628%209.3032%208.388%2010.212Z'%20stroke='white'%20stroke-opacity='0.85'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/svg%3e";
@@ -9872,7 +10261,7 @@ const _hoisted_1$8 = {
 };
 const _hoisted_2$6 = ["aria-label"];
 const _hoisted_3$6 = { class: "popover-body" };
-const _hoisted_4$4 = {
+const _hoisted_4$5 = {
   key: 0,
   class: "popover-customer"
 };
@@ -9901,7 +10290,7 @@ const _hoisted_9$3 = {
   fill: "none",
   xmlns: "http://www.w3.org/2000/svg"
 };
-const _hoisted_10$2 = {
+const _hoisted_10$3 = {
   key: 3,
   width: "14",
   height: "14",
@@ -9920,7 +10309,7 @@ const _hoisted_14$2 = {
   "aria-hidden": "true"
 };
 const _hoisted_15$2 = ["src"];
-const _hoisted_16$2 = {
+const _hoisted_16$1 = {
   key: 1,
   width: "10",
   height: "10",
@@ -10089,7 +10478,7 @@ const _sfc_main$a = /* @__PURE__ */ defineComponent({
     });
     const isDayServiceAppointment = computed(() => {
       var _a;
-      return "startDate" in props.booking || normalizeBooleanLike$1((_a = metadata.value) == null ? void 0 : _a.isDayService) === true;
+      return "startDate" in props.booking || normalizeBooleanLike$2((_a = metadata.value) == null ? void 0 : _a.isDayService) === true;
     });
     const bookingDateText = computed(() => {
       if ("startDate" in props.booking) {
@@ -10531,7 +10920,7 @@ const _sfc_main$a = /* @__PURE__ */ defineComponent({
               ])], 8, _hoisted_2$6)
             ])) : createCommentVNode("", true),
             createElementVNode("div", _hoisted_3$6, [
-              __props.config.customerName ? (openBlock(), createElementBlock("div", _hoisted_4$4, toDisplayString$1(customerLabel.value), 1)) : createCommentVNode("", true),
+              __props.config.customerName ? (openBlock(), createElementBlock("div", _hoisted_4$5, toDisplayString$1(customerLabel.value), 1)) : createCommentVNode("", true),
               detailRows.value.length ? (openBlock(), createElementBlock("div", _hoisted_5$4, [
                 (openBlock(true), createElementBlock(Fragment, null, renderList(detailRows.value, (row) => {
                   return openBlock(), createElementBlock("div", {
@@ -10541,10 +10930,10 @@ const _sfc_main$a = /* @__PURE__ */ defineComponent({
                     createElementVNode("span", _hoisted_6$4, [
                       getDetailIconSrc(row.icon) ? (openBlock(), createElementBlock("img", {
                         key: 0,
-                        class: "popover-row-icon-image",
+                        class: normalizeClass(["popover-row-icon-image", { "is-staff-icon": row.icon === "staff" }]),
                         src: getDetailIconSrc(row.icon),
                         alt: ""
-                      }, null, 8, _hoisted_7$3)) : row.icon === "calendar" ? (openBlock(), createElementBlock("svg", _hoisted_8$3, [..._cache[2] || (_cache[2] = [
+                      }, null, 10, _hoisted_7$3)) : row.icon === "calendar" ? (openBlock(), createElementBlock("svg", _hoisted_8$3, [..._cache[2] || (_cache[2] = [
                         createElementVNode("rect", {
                           x: "2.25",
                           y: "2.75",
@@ -10577,7 +10966,7 @@ const _sfc_main$a = /* @__PURE__ */ defineComponent({
                           "stroke-opacity": "0.85",
                           "stroke-linecap": "round"
                         }, null, -1)
-                      ])])) : (openBlock(), createElementBlock("svg", _hoisted_10$2, [..._cache[4] || (_cache[4] = [
+                      ])])) : (openBlock(), createElementBlock("svg", _hoisted_10$3, [..._cache[4] || (_cache[4] = [
                         createElementVNode("path", {
                           d: "M6.99996 9.9165C7.96648 9.9165 8.74996 9.26358 8.74996 8.45817C8.74996 7.65276 7.96648 6.99984 6.99996 6.99984C6.03343 6.99984 5.24996 6.34691 5.24996 5.5415C5.24996 4.73609 6.03343 4.08317 6.99996 4.08317M6.99996 9.9165C6.03343 9.9165 5.24996 9.26358 5.24996 8.45817M6.99996 9.9165V10.4998M6.99996 3.49984V4.08317M6.99996 4.08317C7.96648 4.08317 8.74996 4.73609 8.74996 5.5415M12.8333 6.99984C12.8333 10.2215 10.2216 12.8332 6.99996 12.8332C3.7783 12.8332 1.16663 10.2215 1.16663 6.99984C1.16663 3.77818 3.7783 1.1665 6.99996 1.1665C10.2216 1.1665 12.8333 3.77818 12.8333 6.99984Z",
                           stroke: "white",
@@ -10649,7 +11038,7 @@ const _sfc_main$a = /* @__PURE__ */ defineComponent({
                         class: "status-pill-icon-image",
                         src: currentStatusIconSrc.value,
                         alt: ""
-                      }, null, 8, _hoisted_15$2)) : (openBlock(), createElementBlock("svg", _hoisted_16$2, [..._cache[6] || (_cache[6] = [
+                      }, null, 8, _hoisted_15$2)) : (openBlock(), createElementBlock("svg", _hoisted_16$1, [..._cache[6] || (_cache[6] = [
                         createElementVNode("circle", {
                           cx: "5",
                           cy: "5",
@@ -10777,7 +11166,7 @@ const _sfc_main$a = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const BpaEventPopover = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["__scopeId", "data-v-ab86605e"]]);
+const BpaEventPopover = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["__scopeId", "data-v-4eef5e88"]]);
 const dayServiceIconUrl = "data:image/svg+xml,%3csvg%20width='12'%20height='12'%20viewBox='0%200%2012%2012'%20fill='none'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='M7.49805%201.49963H10.4972V4.49882'%20stroke='black'%20stroke-opacity='0.75'%20stroke-width='0.999729'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3cpath%20d='M4.49919%2010.4971H1.5V7.49792'%20stroke='black'%20stroke-opacity='0.75'%20stroke-width='0.999729'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3cpath%20d='M10.4971%201.49963L6.99805%204.99869'%20stroke='black'%20stroke-opacity='0.75'%20stroke-width='0.999729'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3cpath%20d='M1.5%2010.4971L4.99905%206.99805'%20stroke='black'%20stroke-opacity='0.75'%20stroke-width='0.999729'%20stroke-linecap='round'%20stroke-linejoin='round'/%3e%3c/svg%3e";
 function computeMonthLayout(timeBookings, allDayBookings, monthDays, maxRowsPerWeek = 3) {
   const weeks = [];
@@ -10882,18 +11271,23 @@ function getAllDayColor(index) {
 const _hoisted_1$7 = { class: "month-day-cells" };
 const _hoisted_2$5 = ["onClick", "onDblclick"];
 const _hoisted_3$5 = ["onClick"];
-const _hoisted_4$3 = { class: "month-events-layer" };
+const _hoisted_4$4 = { class: "month-events-layer" };
 const _hoisted_5$3 = ["onPointerdown", "onClick"];
-const _hoisted_6$3 = ["src"];
-const _hoisted_7$2 = {
+const _hoisted_6$3 = {
+  key: 0,
+  class: "month-event-pending-indicator",
+  "aria-hidden": "true"
+};
+const _hoisted_7$2 = ["src"];
+const _hoisted_8$2 = {
   key: 1,
   class: "event-icon"
 };
-const _hoisted_8$2 = ["title"];
 const _hoisted_9$2 = ["title"];
+const _hoisted_10$2 = ["title"];
 const DEFAULT_VISIBLE_ROWS = 3;
 const EXPANDED_VISIBLE_ROWS = 4;
-const EVENT_ROW_HEIGHT = 30;
+const EVENT_ROW_HEIGHT = 32;
 const EVENT_ROW_GAP = 4;
 const EVENTS_TOP_OFFSET = 40;
 const OVERFLOW_LABEL_RESERVED_SPACE = 20;
@@ -11300,6 +11694,11 @@ const _sfc_main$9 = /* @__PURE__ */ defineComponent({
     function getMonthEventInlineText(booking) {
       return getMonthEventInlineParts(booking).map((part) => part.text).join(" | ");
     }
+    function isPendingStatusBooking(booking) {
+      var _a, _b;
+      const statusDefinition = getStatusDefinition(booking.status) ?? getStatusDefinition((_a = booking.metadata) == null ? void 0 : _a.status) ?? getStatusDefinition((_b = booking.metadata) == null ? void 0 : _b.statusLabel);
+      return (statusDefinition == null ? void 0 : statusDefinition.key) === "pending";
+    }
     function isDayServiceBooking(booking) {
       var _a;
       const value = (_a = booking.metadata) == null ? void 0 : _a.isDayService;
@@ -11392,7 +11791,7 @@ const _sfc_main$9 = /* @__PURE__ */ defineComponent({
                   ], 42, _hoisted_2$5);
                 }), 128))
               ]),
-              createElementVNode("div", _hoisted_4$3, [
+              createElementVNode("div", _hoisted_4$4, [
                 (openBlock(true), createElementBlock(Fragment, null, renderList(week.positions, (pos) => {
                   var _a;
                   return openBlock(), createElementBlock("div", {
@@ -11406,23 +11805,29 @@ const _sfc_main$9 = /* @__PURE__ */ defineComponent({
                     onPointerdown: ($event) => onEventPointerDown(pos.booking, $event, getMonthSegmentKey(week.weekIndex, pos)),
                     onClick: ($event) => onEventClick(pos.booking, $event)
                   }, [
-                    pos.isAllDay || pos.booking._end.getTime() - pos.booking._start.getTime() >= 864e5 ? (openBlock(), createElementBlock(Fragment, { key: 0 }, [
+                    isPendingStatusBooking(pos.booking) ? (openBlock(), createElementBlock("span", _hoisted_6$3)) : createCommentVNode("", true),
+                    pos.isAllDay || pos.booking._end.getTime() - pos.booking._start.getTime() >= 864e5 ? (openBlock(), createElementBlock(Fragment, { key: 1 }, [
                       isDayServiceBooking(pos.booking) ? (openBlock(), createElementBlock("img", {
                         key: 0,
                         class: "event-icon-image",
                         src: unref(dayServiceIconUrl),
                         alt: "",
                         "aria-hidden": "true"
-                      }, null, 8, _hoisted_6$3)) : (openBlock(), createElementBlock("span", _hoisted_7$2, "↗")),
+                      }, null, 8, _hoisted_7$2)) : (openBlock(), createElementBlock("span", _hoisted_8$2, "↗")),
                       createElementVNode("span", {
                         class: "month-event-content",
                         title: getMonthEventInlineText(pos.booking)
-                      }, toDisplayString$1(getMonthEventInlineText(pos.booking)), 9, _hoisted_8$2)
+                      }, toDisplayString$1(getMonthEventInlineText(pos.booking)), 9, _hoisted_9$2)
                     ], 64)) : (openBlock(), createElementBlock("span", {
-                      key: 1,
+                      key: 2,
                       class: "month-event-content",
                       title: getMonthEventInlineText(pos.booking)
-                    }, toDisplayString$1(getMonthEventInlineText(pos.booking)), 9, _hoisted_9$2))
+                    }, toDisplayString$1(getMonthEventInlineText(pos.booking)), 9, _hoisted_10$2)),
+                    createVNode(BpaBookingIndicators, {
+                      booking: pos.booking,
+                      size: "compact",
+                      style: normalizeStyle({ "--booking-indicator-text-color": getEventTheme(pos).text })
+                    }, null, 8, ["booking", "style"])
                   ], 46, _hoisted_5$3);
                 }), 128))
               ])
@@ -11433,7 +11838,7 @@ const _sfc_main$9 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const BpaMonthView = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["__scopeId", "data-v-a33a0472"]]);
+const BpaMonthView = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["__scopeId", "data-v-9979b650"]]);
 const _hoisted_1$6 = { class: "column-wrapper" };
 const _sfc_main$8 = /* @__PURE__ */ defineComponent({
   __name: "BpaTimeColumn",
@@ -11666,7 +12071,7 @@ const BpaTimeGutter = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["__scopeId", "d
 const _hoisted_1$5 = { class: "timeline-header" };
 const _hoisted_2$4 = { class: "hour-marker-label" };
 const _hoisted_3$4 = { class: "timeline-body" };
-const _hoisted_4$2 = { class: "dl-header" };
+const _hoisted_4$3 = { class: "dl-header" };
 const _hoisted_5$2 = { class: "dl-content" };
 const _hoisted_6$2 = { class: "dl-day" };
 const _hoisted_7$1 = { class: "dl-full" };
@@ -11701,7 +12106,7 @@ const _hoisted_15$1 = {
   class: "tl-name",
   style: { color: "var(--title-color)" }
 };
-const _hoisted_16$1 = { class: "tl-fields-container" };
+const _hoisted_16 = { class: "tl-fields-container" };
 const _hoisted_17 = {
   key: 0,
   width: "12",
@@ -12435,7 +12840,7 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
                 class: normalizeClass(["date-label", { "is-today": day.isToday }]),
                 style: normalizeStyle({ height: `${day.innerHeight}px` })
               }, [
-                createElementVNode("div", _hoisted_4$2, [
+                createElementVNode("div", _hoisted_4$3, [
                   createElementVNode("div", _hoisted_5$2, [
                     createElementVNode("span", _hoisted_6$2, toDisplayString$1(day.date.getDate()), 1),
                     createElementVNode("span", _hoisted_7$1, toDisplayString$1(unref(formatDayFull)(day.date).toUpperCase()), 1)
@@ -12513,9 +12918,12 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
                             alt: "",
                             "aria-hidden": "true"
                           }, null, 8, _hoisted_14$1)) : createCommentVNode("", true),
-                          createElementVNode("span", _hoisted_15$1, toDisplayString$1(getTitleText(pos.booking)), 1)
+                          createElementVNode("span", _hoisted_15$1, toDisplayString$1(getTitleText(pos.booking)), 1),
+                          createVNode(BpaBookingIndicators, {
+                            booking: pos.booking
+                          }, null, 8, ["booking"])
                         ]),
-                        createElementVNode("div", _hoisted_16$1, [
+                        createElementVNode("div", _hoisted_16, [
                           (openBlock(true), createElementBlock(Fragment, null, renderList(getDetailFieldRows(pos.booking), (row, rowIndex) => {
                             return openBlock(), createElementBlock("div", {
                               key: `${pos.booking.sliceKey ?? pos.booking.id}-row-${rowIndex}`,
@@ -12614,7 +13022,10 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
                 alt: "",
                 "aria-hidden": "true"
               }, null, 8, _hoisted_27)) : createCommentVNode("", true),
-              createElementVNode("span", _hoisted_28, toDisplayString$1(getTitleText(activeDrag.value.previewBooking)), 1)
+              createElementVNode("span", _hoisted_28, toDisplayString$1(getTitleText(activeDrag.value.previewBooking)), 1),
+              createVNode(BpaBookingIndicators, {
+                booking: activeDrag.value.previewBooking
+              }, null, 8, ["booking"])
             ]),
             createElementVNode("div", _hoisted_29, [
               (openBlock(true), createElementBlock(Fragment, null, renderList(getDetailFieldRows(activeDrag.value.previewBooking), (row, rowIndex) => {
@@ -12695,25 +13106,24 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const BpaTimelineView = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["__scopeId", "data-v-581f0676"]]);
+const BpaTimelineView = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["__scopeId", "data-v-c32945a8"]]);
 const _hoisted_1$4 = { class: "timeline-belt-title" };
 const _hoisted_2$3 = ["aria-expanded", "aria-label", "disabled"];
 const _hoisted_3$3 = ["onClick"];
-const _hoisted_4$1 = { class: "timeline-all-day-card-head" };
+const _hoisted_4$2 = { class: "timeline-all-day-card-head" };
 const _hoisted_5$1 = { class: "timeline-all-day-card-title-group" };
-const _hoisted_6$1 = { class: "timeline-all-day-card-title" };
-const _hoisted_7 = { class: "timeline-all-day-card-badge" };
-const _hoisted_8 = {
+const _hoisted_6$1 = { class: "timeline-all-day-card-badge" };
+const _hoisted_7 = {
   class: "timeline-all-day-card-marker",
   "aria-hidden": "true"
 };
-const _hoisted_9 = ["src"];
-const _hoisted_10 = { class: "timeline-all-day-card-meta" };
-const _hoisted_11 = {
+const _hoisted_8 = ["src"];
+const _hoisted_9 = { class: "timeline-all-day-card-meta" };
+const _hoisted_10 = {
   class: "timeline-all-day-card-meta-icon",
   "aria-hidden": "true"
 };
-const _hoisted_12 = {
+const _hoisted_11 = {
   key: 0,
   width: "12",
   height: "12",
@@ -12724,7 +13134,7 @@ const _hoisted_12 = {
   "stroke-linecap": "round",
   "stroke-linejoin": "round"
 };
-const _hoisted_13 = {
+const _hoisted_12 = {
   key: 1,
   width: "12",
   height: "12",
@@ -12735,7 +13145,7 @@ const _hoisted_13 = {
   "stroke-linecap": "round",
   "stroke-linejoin": "round"
 };
-const _hoisted_14 = {
+const _hoisted_13 = {
   key: 2,
   width: "12",
   height: "12",
@@ -12746,7 +13156,7 @@ const _hoisted_14 = {
   "stroke-linecap": "round",
   "stroke-linejoin": "round"
 };
-const _hoisted_15 = {
+const _hoisted_14 = {
   key: 3,
   width: "12",
   height: "12",
@@ -12757,7 +13167,7 @@ const _hoisted_15 = {
   "stroke-linecap": "round",
   "stroke-linejoin": "round"
 };
-const _hoisted_16 = { class: "timeline-all-day-card-meta-text" };
+const _hoisted_15 = { class: "timeline-all-day-card-meta-text" };
 const BODY_VERTICAL_PADDING$1 = 16;
 const _sfc_main$5 = /* @__PURE__ */ defineComponent({
   __name: "BpaTimelineAllDayBelt",
@@ -12847,7 +13257,7 @@ const _sfc_main$5 = /* @__PURE__ */ defineComponent({
     }
     function isDayServiceBooking(booking) {
       var _a;
-      return normalizeBooleanLike$1((_a = booking.metadata) == null ? void 0 : _a.isDayService) === true;
+      return normalizeBooleanLike$2((_a = booking.metadata) == null ? void 0 : _a.isDayService) === true;
     }
     function getCardMarkerIconSrc(booking) {
       var _a;
@@ -13001,36 +13411,40 @@ const _sfc_main$5 = /* @__PURE__ */ defineComponent({
                 style: normalizeStyle({
                   backgroundColor: getCardTheme(booking).bg,
                   borderColor: getCardTheme(booking).border,
-                  color: getCardTheme(booking).text
+                  color: "#3D3F3F"
                 }),
                 onClick: ($event) => onCardClick(booking, $event)
               }, [
-                createElementVNode("div", _hoisted_4$1, [
+                createElementVNode("div", _hoisted_4$2, [
                   createElementVNode("div", _hoisted_5$1, [
-                    createElementVNode("span", _hoisted_6$1, toDisplayString$1(getPrimaryTitle(booking)), 1),
-                    createElementVNode("span", _hoisted_7, toDisplayString$1(getBadgeText(booking)), 1)
+                    createElementVNode("span", {
+                      class: "timeline-all-day-card-title",
+                      style: normalizeStyle({ color: getCardTheme(booking).text })
+                    }, toDisplayString$1(getPrimaryTitle(booking)), 5),
+                    createElementVNode("span", _hoisted_6$1, toDisplayString$1(getBadgeText(booking)), 1)
                   ]),
-                  createElementVNode("span", _hoisted_8, [
+                  createVNode(BpaBookingIndicators, { booking }, null, 8, ["booking"]),
+                  createElementVNode("span", _hoisted_7, [
                     getCardMarkerIconSrc(booking) ? (openBlock(), createElementBlock("img", {
                       key: 0,
                       class: "timeline-all-day-card-marker-image",
                       src: getCardMarkerIconSrc(booking),
                       alt: ""
-                    }, null, 8, _hoisted_9)) : (openBlock(), createElementBlock("span", {
+                    }, null, 8, _hoisted_8)) : (openBlock(), createElementBlock("span", {
                       key: 1,
                       class: "timeline-all-day-card-dot",
                       style: normalizeStyle({ backgroundColor: getCardTheme(booking).border })
                     }, null, 4))
                   ])
                 ]),
-                createElementVNode("div", _hoisted_10, [
+                createElementVNode("div", _hoisted_9, [
                   (openBlock(true), createElementBlock(Fragment, null, renderList(getMetaItems(booking), (item) => {
                     return openBlock(), createElementBlock("div", {
                       key: `${booking.id}-${item.key}`,
                       class: "timeline-all-day-card-meta-item"
                     }, [
-                      createElementVNode("span", _hoisted_11, [
-                        item.icon === "calendar" ? (openBlock(), createElementBlock("svg", _hoisted_12, [..._cache[1] || (_cache[1] = [
+                      createElementVNode("span", _hoisted_10, [
+                        item.icon === "calendar" ? (openBlock(), createElementBlock("svg", _hoisted_11, [..._cache[1] || (_cache[1] = [
                           createElementVNode("rect", {
                             x: "3",
                             y: "4",
@@ -13039,7 +13453,7 @@ const _sfc_main$5 = /* @__PURE__ */ defineComponent({
                             rx: "2"
                           }, null, -1),
                           createElementVNode("path", { d: "M16 2v4M8 2v4M3 10h18" }, null, -1)
-                        ])])) : item.icon === "service" ? (openBlock(), createElementBlock("svg", _hoisted_13, [..._cache[2] || (_cache[2] = [
+                        ])])) : item.icon === "service" ? (openBlock(), createElementBlock("svg", _hoisted_12, [..._cache[2] || (_cache[2] = [
                           createElementVNode("rect", {
                             x: "3",
                             y: "8",
@@ -13049,14 +13463,14 @@ const _sfc_main$5 = /* @__PURE__ */ defineComponent({
                             ry: "2"
                           }, null, -1),
                           createElementVNode("path", { d: "M16 8V6a4 4 0 0 0-8 0v2" }, null, -1)
-                        ])])) : item.icon === "staff" ? (openBlock(), createElementBlock("svg", _hoisted_14, [..._cache[3] || (_cache[3] = [
+                        ])])) : item.icon === "staff" ? (openBlock(), createElementBlock("svg", _hoisted_13, [..._cache[3] || (_cache[3] = [
                           createElementVNode("path", { d: "M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" }, null, -1),
                           createElementVNode("circle", {
                             cx: "12",
                             cy: "7",
                             r: "4"
                           }, null, -1)
-                        ])])) : (openBlock(), createElementBlock("svg", _hoisted_15, [..._cache[4] || (_cache[4] = [
+                        ])])) : (openBlock(), createElementBlock("svg", _hoisted_14, [..._cache[4] || (_cache[4] = [
                           createElementVNode("path", { d: "M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" }, null, -1),
                           createElementVNode("circle", {
                             cx: "12",
@@ -13065,7 +13479,7 @@ const _sfc_main$5 = /* @__PURE__ */ defineComponent({
                           }, null, -1)
                         ])]))
                       ]),
-                      createElementVNode("span", _hoisted_16, toDisplayString$1(item.text), 1)
+                      createElementVNode("span", _hoisted_15, toDisplayString$1(item.text), 1)
                     ]);
                   }), 128))
                 ])
@@ -13077,13 +13491,14 @@ const _sfc_main$5 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const BpaTimelineAllDayBelt = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["__scopeId", "data-v-8edad57c"]]);
+const BpaTimelineAllDayBelt = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["__scopeId", "data-v-396edabc"]]);
 const _hoisted_1$3 = ["onClick"];
 const _hoisted_2$2 = ["src"];
 const _hoisted_3$2 = {
   key: 1,
   class: "all-day-icon"
 };
+const _hoisted_4$1 = ["title"];
 const GAP = 12;
 const _sfc_main$4 = /* @__PURE__ */ defineComponent({
   __name: "BpaAllDaySection",
@@ -13092,7 +13507,9 @@ const _sfc_main$4 = /* @__PURE__ */ defineComponent({
     columnCount: {},
     columnWidths: {},
     variant: { default: "default" },
-    surface: { default: "soft" }
+    surface: { default: "soft" },
+    leadingOverflowWidth: { default: 0 },
+    displaySettings: {}
   },
   emits: ["card-click"],
   setup(__props, { emit: __emit }) {
@@ -13113,13 +13530,15 @@ const _sfc_main$4 = /* @__PURE__ */ defineComponent({
     }
     function getRowStyle(row, index) {
       const color = getRowColor(row, index);
+      const leadingOverflow = row.continuesBefore ? props.leadingOverflowWidth : 0;
       const baseStyle = {
         top: `${row.row * (rowHeight.value + GAP) + 4}px`,
         height: `${rowHeight.value}px`,
         backgroundColor: color.bg,
         border: `1px solid ${color.border}`,
         color: color.text,
-        boxSizing: "border-box"
+        boxSizing: "border-box",
+        ...row.continuesBefore ? { borderRadius: props.variant === "belt" ? "0 8px 8px 0" : "0 4px 4px 0" } : {}
       };
       if (hasColumnWidths.value) {
         const widths = props.columnWidths;
@@ -13127,14 +13546,14 @@ const _sfc_main$4 = /* @__PURE__ */ defineComponent({
         const width = widths.slice(row.startCol, row.startCol + row.spanCols).reduce((sum, itemWidth) => sum + itemWidth, 0);
         return {
           ...baseStyle,
-          left: `${left}px`,
-          width: `${width}px`
+          left: `${left - leadingOverflow}px`,
+          width: `${width + leadingOverflow}px`
         };
       }
       return {
         ...baseStyle,
-        left: `calc(${row.startCol / props.columnCount * 100}% + 2px)`,
-        width: `calc(${row.spanCols / props.columnCount * 100}% - 4px)`
+        left: `calc(${row.startCol / props.columnCount * 100}% + 2px - ${leadingOverflow}px)`,
+        width: `calc(${row.spanCols / props.columnCount * 100}% - 4px + ${leadingOverflow}px)`
       };
     }
     function isDayServiceBooking(row) {
@@ -13143,10 +13562,120 @@ const _sfc_main$4 = /* @__PURE__ */ defineComponent({
       return value === true || value === 1 || value === "1" || value === "true";
     }
     const surfaceClass = computed(() => props.surface === "transparent" ? "is-transparent" : "is-soft");
+    const visibleSettings = computed(() => {
+      var _a;
+      return ((_a = props.displaySettings) == null ? void 0 : _a.filter((setting) => setting.visible)) ?? [];
+    });
+    function normalizeFieldId2(fieldId) {
+      return fieldId.trim().toLowerCase().replace(/[^a-z0-9]+/g, "");
+    }
+    function normalizeFieldValue(value) {
+      if (typeof value === "string") {
+        return value.trim();
+      }
+      if (typeof value === "number" || typeof value === "boolean") {
+        return String(value);
+      }
+      if (Array.isArray(value)) {
+        return value.map((entry) => normalizeFieldValue(entry)).filter(Boolean).join(", ");
+      }
+      return "";
+    }
+    function isPlainObject2(value) {
+      return typeof value === "object" && value !== null && !Array.isArray(value);
+    }
+    function formatAllDayDate(date) {
+      return new Intl.DateTimeFormat(void 0, {
+        day: "numeric",
+        month: "short"
+      }).format(date);
+    }
+    function getDateRangeLabel(booking) {
+      if (booking.startDate.getTime() === booking.endDate.getTime()) {
+        return formatAllDayDate(booking.startDate);
+      }
+      return `${formatAllDayDate(booking.startDate)} - ${formatAllDayDate(booking.endDate)}`;
+    }
+    function resolveFormFieldValue(metadata, fieldId) {
+      const formFieldEntries = metadata == null ? void 0 : metadata.form_fields;
+      if (!Array.isArray(formFieldEntries)) {
+        return "";
+      }
+      return formFieldEntries.filter((entry) => isPlainObject2(entry)).filter((entry) => {
+        const entryId = entry.id;
+        return typeof entryId === "string" || typeof entryId === "number" ? String(entryId).trim() === fieldId : false;
+      }).map((entry) => normalizeFieldValue(entry.value)).filter(Boolean).join(", ");
+    }
+    function resolveAllDayFieldValue(booking, fieldId) {
+      var _a;
+      const normalizedFieldId = normalizeFieldId2(fieldId);
+      const metadata = booking.metadata ?? {};
+      switch (normalizedFieldId) {
+        case "customername":
+          return normalizeFieldValue(booking.customerName) || normalizeFieldValue(metadata.customerName);
+        case "datetime":
+          return getDateRangeLabel(booking);
+        case "servicename":
+        case "serviceid":
+        case "serviceids":
+        case "servicelabel":
+        case "servicesdata":
+          return resolveBookingServiceSummary({
+            serviceName: booking.serviceName,
+            serviceId: booking.serviceId,
+            servicesData: metadata.servicesData ?? metadata.services_data,
+            isMultiService: booking.isMultiService ?? metadata.isMultiService,
+            metadata
+          }).serviceLabel;
+        case "staffmembername":
+          return resolveBookingStaffLabel({
+            staffMemberName: booking.staffMemberName,
+            staffMemberId: booking.staffMemberId,
+            StaffData: booking.StaffData,
+            isMultiStaff: booking.isMultiStaff,
+            metadata
+          });
+        case "location":
+          return normalizeFieldValue(metadata.location);
+        case "price":
+          return normalizeFieldValue(metadata.price);
+        case "status":
+        case "statuslabel":
+          return ((_a = getStatusDefinition(booking.status ?? metadata.status ?? metadata.statusLabel)) == null ? void 0 : _a.label) || normalizeFieldValue(metadata.statusLabel) || normalizeFieldValue(booking.status);
+        case "category":
+        case "categoryname":
+        case "categoryid":
+        case "categoryids":
+        case "categorylabel":
+          return resolveBookingServiceSummary({
+            serviceName: booking.serviceName,
+            serviceId: booking.serviceId,
+            servicesData: metadata.servicesData ?? metadata.services_data,
+            isMultiService: booking.isMultiService ?? metadata.isMultiService,
+            metadata
+          }).categoryLabel;
+      }
+      const directValue = normalizeFieldValue(booking[fieldId]);
+      if (directValue) {
+        return directValue;
+      }
+      const formFieldValue = resolveFormFieldValue(metadata, fieldId);
+      if (formFieldValue) {
+        return formFieldValue;
+      }
+      return normalizeFieldValue(metadata[fieldId]);
+    }
+    function getRowText(row) {
+      const values = visibleSettings.value.map((setting) => resolveAllDayFieldValue(row.booking, setting.id)).filter(Boolean);
+      return values.length > 0 ? values.join(" | ") : row.booking.title;
+    }
     function getTitleStyle(row, index) {
       return {
-        color: props.variant === "belt" ? getRowColor(row, index).text : getRowColor(row, index).border
+        color: props.variant === "belt" ? "#3D3F3F" : getRowColor(row, index).border
       };
+    }
+    function getIndicatorTextColor(row, index) {
+      return props.variant === "belt" ? "#3D3F3F" : getRowColor(row, index).text;
     }
     function onRowClick(row, event) {
       emit("card-click", row.booking, event.currentTarget);
@@ -13176,8 +13705,14 @@ const _sfc_main$4 = /* @__PURE__ */ defineComponent({
               }, null, 8, _hoisted_2$2)) : (openBlock(), createElementBlock("span", _hoisted_3$2, "✨")),
               createElementVNode("span", {
                 class: "all-day-title",
-                style: normalizeStyle(getTitleStyle(row, i))
-              }, toDisplayString$1(row.booking.title), 5)
+                style: normalizeStyle(getTitleStyle(row, i)),
+                title: getRowText(row)
+              }, toDisplayString$1(getRowText(row)), 13, _hoisted_4$1),
+              createVNode(BpaBookingIndicators, {
+                booking: row.booking,
+                size: "compact",
+                style: normalizeStyle({ "--booking-indicator-text-color": getIndicatorTextColor(row, i) })
+              }, null, 8, ["booking", "style"])
             ], 14, _hoisted_1$3);
           }), 128))
         ], 4)
@@ -13185,7 +13720,7 @@ const _sfc_main$4 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const BpaAllDaySection = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-1d45ac99"]]);
+const BpaAllDaySection = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-350d5b20"]]);
 const _hoisted_1$2 = { class: "belt-title" };
 const _hoisted_2$1 = ["aria-expanded", "aria-label", "disabled"];
 const _hoisted_3$1 = {
@@ -13202,7 +13737,8 @@ const _sfc_main$3 = /* @__PURE__ */ defineComponent({
     columnWidths: {},
     gutterWidth: {},
     collapsedHeight: {},
-    expandedHeight: {}
+    expandedHeight: {},
+    displaySettings: {}
   },
   emits: ["card-click"],
   setup(__props, { emit: __emit }) {
@@ -13343,17 +13879,19 @@ const _sfc_main$3 = /* @__PURE__ */ defineComponent({
               rows: __props.rows,
               "column-count": __props.columnCount,
               "column-widths": __props.columnWidths,
+              "leading-overflow-width": gutterWidth.value,
+              "display-settings": __props.displaySettings,
               variant: "belt",
               surface: "transparent",
               onCardClick
-            }, null, 8, ["rows", "column-count", "column-widths"])) : (openBlock(), createElementBlock("div", _hoisted_3$1, toDisplayString$1(unref(uiText).allDay.empty), 1))
+            }, null, 8, ["rows", "column-count", "column-widths", "leading-overflow-width", "display-settings"])) : (openBlock(), createElementBlock("div", _hoisted_3$1, toDisplayString$1(unref(uiText).allDay.empty), 1))
           ], 4)
         ], 2)
       ], 6);
     };
   }
 });
-const BpaWeekAllDayBelt = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-9906135d"]]);
+const BpaWeekAllDayBelt = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-e4f7c006"]]);
 const _hoisted_1$1 = {
   key: 0,
   class: "bpa-day-all-day-belt"
@@ -13421,6 +13959,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
     const weekStickyHeaderHeight = ref(72);
     const allDayGutterWidth = ref(92);
     const allDayColumnWidths = ref([]);
+    const weekViewportWidth = ref(0);
     const expandedDays = reactive({});
     const activePopoverBookingId = ref(null);
     const isMobileViewport = ref(false);
@@ -13675,8 +14214,9 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
       Object.keys(expandedDays).forEach((key) => delete expandedDays[Number(key)]);
     }
     function getWeekColumnsAvailableWidth() {
-      const sidebarAndGutter = 136;
-      return Math.max(0, (typeof window !== "undefined" ? window.innerWidth : 1200) - sidebarAndGutter);
+      var _a, _b;
+      const viewportWidth = weekViewportWidth.value || ((_a = scrollContainer.value) == null ? void 0 : _a.clientWidth) || ((_b = calendarRootRef.value) == null ? void 0 : _b.clientWidth) || (typeof window !== "undefined" ? window.innerWidth : 1200);
+      return Math.max(0, viewportWidth - allDayGutterWidth.value);
     }
     function getWeekCollapsedColumnWidth(dayCount = calendar2.dayColumns.value.length) {
       const minWidth = activeGridConfig.value.columnMinWidth;
@@ -14239,11 +14779,12 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
       weekStickyHeaderHeight.value = ((_a = weekStickyHeadersRef.value) == null ? void 0 : _a.offsetHeight) ?? 72;
     }
     function updateAllDayLayoutMetrics() {
-      var _a, _b;
-      const headerGutter = (_a = scrollContainer.value) == null ? void 0 : _a.querySelector(".bpa-gutter-spacer");
+      var _a, _b, _c, _d;
+      weekViewportWidth.value = ((_a = scrollContainer.value) == null ? void 0 : _a.clientWidth) ?? ((_b = calendarRootRef.value) == null ? void 0 : _b.clientWidth) ?? (typeof window !== "undefined" ? window.innerWidth : 0);
+      const headerGutter = (_c = scrollContainer.value) == null ? void 0 : _c.querySelector(".bpa-gutter-spacer");
       allDayGutterWidth.value = (headerGutter == null ? void 0 : headerGutter.getBoundingClientRect().width) ?? 92;
       const columnElements = Array.from(
-        ((_b = gridArea.value) == null ? void 0 : _b.querySelectorAll(".time-column-container")) ?? []
+        ((_d = gridArea.value) == null ? void 0 : _d.querySelectorAll(".time-column-container")) ?? []
       );
       if (columnElements.length > 0) {
         allDayColumnWidths.value = columnElements.map((element) => element.getBoundingClientRect().width);
@@ -14260,7 +14801,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
     }
     function normalizeAllDayBooking(booking) {
       const metadata = isPlainObject2(booking.metadata) ? booking.metadata : null;
-      const isPast = normalizeBooleanLike$1(booking.isPast) ?? normalizeBooleanLike$1(metadata == null ? void 0 : metadata.isPast);
+      const isPast = normalizeBooleanLike$2(booking.isPast) ?? normalizeBooleanLike$2(metadata == null ? void 0 : metadata.isPast);
       return {
         ...booking,
         ...isPast !== void 0 ? { isPast } : {},
@@ -14459,8 +15000,8 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
     }
     function buildRawTimeBookingEntry(existing) {
       const metadata = isPlainObject2(existing.metadata) ? existing.metadata : {};
-      const allowResize = normalizeBooleanLike$1(existing.allowResize) ?? normalizeBooleanLike$1(metadata.allowResize);
-      const preventResize = normalizeBooleanLike$1(existing.preventResize) ?? normalizeBooleanLike$1(metadata.preventResize);
+      const allowResize = normalizeBooleanLike$2(existing.allowResize) ?? normalizeBooleanLike$2(metadata.allowResize);
+      const preventResize = normalizeBooleanLike$2(existing.preventResize) ?? normalizeBooleanLike$2(metadata.preventResize);
       const staffSummary = resolveBookingStaffSummary(existing);
       const staffData = cloneStaffAssignments2(staffSummary.items);
       return {
@@ -14641,7 +15182,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
       const customerName = typeof patch.customerName === "string" ? patch.customerName : typeof metadataPatch.customerName === "string" ? metadataPatch.customerName : existing.customerName;
       const statusSource = "status" in patch ? patch.status : metadataPatch.status;
       const nextStatus = statusSource === void 0 ? existing.status : normalizeFilterValue2(statusSource) ?? void 0;
-      const nextIsPast = hasExplicitIsPast ? normalizeBooleanLike$1("isPast" in patch ? patch.isPast : metadataPatch.isPast) : typeof existing.isPast === "boolean" ? existing.isPast : normalizeBooleanLike$1(existingMetadata.isPast);
+      const nextIsPast = hasExplicitIsPast ? normalizeBooleanLike$2("isPast" in patch ? patch.isPast : metadataPatch.isPast) : typeof existing.isPast === "boolean" ? existing.isPast : normalizeBooleanLike$2(existingMetadata.isPast);
       const nextMetadata = {
         ...existingMetadata,
         ...metadataPatch,
@@ -14728,7 +15269,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
       }
       const patch = isPlainObject2(updates) ? updates : {};
       const metadataPatch = isPlainObject2(patch.metadata) ? patch.metadata : {};
-      const mergedIsDayService = "isDayService" in patch ? normalizeBooleanLike$1(patch.isDayService) : "isDayService" in metadataPatch ? normalizeBooleanLike$1(metadataPatch.isDayService) : ((_a = existing.metadata) == null ? void 0 : _a.isDayService) ?? false;
+      const mergedIsDayService = "isDayService" in patch ? normalizeBooleanLike$2(patch.isDayService) : "isDayService" in metadataPatch ? normalizeBooleanLike$2(metadataPatch.isDayService) : ((_a = existing.metadata) == null ? void 0 : _a.isDayService) ?? false;
       const shouldBeAllDay = !!mergedIsDayService;
       if (shouldBeAllDay) {
         const updated = allDayBooking ? buildUpdatedAllDayBooking(allDayBooking, updates) : buildUpdatedAllDayBooking(toAllDayBooking(buildRawTimeBookingEntry(timeBooking)), updates);
@@ -15233,20 +15774,11 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
         }, null, 8, ["title", "current-view", "is-mobile", "display-settings", "booking-filters", "booking-filter-config", "show-add-appointment-button"]),
         unref(calendar2).currentView.value === "day" ? (openBlock(), createElementBlock(Fragment, { key: 0 }, [
           activeGridConfig.value.showAllDaySection !== false ? (openBlock(), createElementBlock("div", _hoisted_1$1, [
-            isMobileViewport.value ? (openBlock(), createBlock(BpaTimelineAllDayBelt, {
-              key: 0,
+            createVNode(BpaTimelineAllDayBelt, {
               bookings: timelineVisibleAllDayBookings.value,
               title: weekAllDaySectionTitle.value,
               onCardClick
-            }, null, 8, ["bookings", "title"])) : (openBlock(), createBlock(BpaWeekAllDayBelt, {
-              key: 1,
-              rows: allDayLayout.value,
-              "column-count": 1,
-              "column-widths": allDayColumnWidths.value,
-              "gutter-width": allDayGutterWidth.value,
-              title: weekAllDaySectionTitle.value,
-              onCardClick
-            }, null, 8, ["rows", "column-widths", "gutter-width", "title"]))
+            }, null, 8, ["bookings", "title"])
           ])) : createCommentVNode("", true),
           createElementVNode("div", {
             ref_key: "scrollContainer",
@@ -15379,8 +15911,9 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
               "column-widths": allDayColumnWidths.value,
               "gutter-width": allDayGutterWidth.value,
               title: weekAllDaySectionTitle.value,
+              "display-settings": displaySettings.value,
               onCardClick
-            }, null, 8, ["rows", "column-widths", "gutter-width", "title"])
+            }, null, 8, ["rows", "column-widths", "gutter-width", "title", "display-settings"])
           ], 4)) : createCommentVNode("", true),
           createElementVNode("div", {
             class: "bpa-grid-body",
@@ -15470,7 +16003,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const BpaCalendarView = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-02daf9af"]]);
+const BpaCalendarView = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-8543eeb6"]]);
 const _sfc_main$1 = /* @__PURE__ */ defineComponent({
   __name: "BpaCalendarApp",
   props: {

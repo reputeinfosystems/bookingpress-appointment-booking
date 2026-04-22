@@ -210,7 +210,7 @@ if(!empty($request_module) && $request_module != 'lite_wizard'){
 <el-dialog custom-class="bpa-dialog bpa-dialog--upgrade-to-premium bpa-dialog--black-friday-sale" modal-append-to-body=false :visible.sync="premium_modal" :close-on-press-escape="close_modal_on_esc" v-cloak>
 <div class="bpa-dialog-heading" @click="premium_modal = false;"></div>
     <div class="bpa-dialog-body" @click="bookingpress_redirect_sale_premium_page">
-        <el-button class="bpa-btn bpa-btn--black-friday-sale-body">Grab Deal Now</el-button>
+        
     </div>
 </el-dialog>
 

@@ -67,7 +67,12 @@ if (! class_exists('BookingPress_Global_Options') ) {
                 // Get all the general settings
                 $bpa_cached_general_settings = wp_cache_get( 'bookingpress_all_general_settings' );
                 if( false === $bpa_cached_general_settings ){
-                    $bookingpress_all_general_settings = $wpdb->get_results( "SELECT setting_name,setting_value,setting_type FROM {$tbl_bookingpress_settings} ORDER BY setting_type ASC" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_settings is table name defined globally.
+                    $where_clause = $wpdb->prepare(
+						'WHERE setting_type NOT IN ( %s, %s )',
+						'bpa_gc_cron',
+						'bpa_outlookc_cron'
+					);
+                    $bookingpress_all_general_settings = $wpdb->get_results( "SELECT setting_name,setting_value,setting_type FROM {$tbl_bookingpress_settings} {$where_clause} ORDER BY setting_type ASC" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_settings is table name defined globally.
                     wp_cache_set( 'bookingpress_all_general_settings', $bookingpress_all_general_settings ); 
                 } else {
                     $bookingpress_all_general_settings = $bpa_cached_general_settings;
@@ -103,6 +108,8 @@ if (! class_exists('BookingPress_Global_Options') ) {
                     $bpa_converted_time_format = 'HH:mm';
                 } elseif ($default_time_format == 'bookingpress-wp-inherit-time-format'){
                     $default_time_format = get_option('time_format'); 
+
+                    $bpa_converted_time_format = 'inherite_from_wordpress';
                 }
 
             $global_data = array(
@@ -554,6 +561,8 @@ if (! class_exists('BookingPress_Global_Options') ) {
             $global_data['customize_settings'] = $bpa_customize_settings_data;
 
             $global_data['general_settings'] = $bpa_general_settings_data;
+
+            
             
             $global_data = apply_filters('bookingpress_add_global_option_data', $global_data);
 
