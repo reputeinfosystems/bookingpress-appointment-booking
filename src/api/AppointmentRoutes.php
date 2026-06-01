@@ -16,30 +16,22 @@ class AppointmentRoutes extends Base {
         register_rest_route( 'bookingpress-app/v1', '/appointment/create', [
             'methods'  => 'POST',
             'callback' => [ $this, 'create_appointment' ],
-            'permission_callback' => function( $request ) {
-                return $this->permission_callback_for('add_calendar_appointments');
-            }
+            'permission_callback' => $this->permission_callback_for('add_calendar_appointments')
         ] );
         register_rest_route( 'bookingpress-app/v1', '/appointment/update-status', [
             'methods'  => 'POST',
             'callback' => [ $this, 'update_appointment_status' ],
-            'permission_callback' => function( $request ) {
-                return $this->permission_callback_for( 'update_upcoming_appointments' );
-            }
+            'permission_callback' => $this->permission_callback_for('update_upcoming_appointments')
         ] );
         register_rest_route( 'bookingpress-app/v1', '/appointment/fetch', [
             'methods'  => 'POST',
             'callback' => [ $this, 'fetch_appointment_data' ],
-            'permission_callback' => function( $request ) {
-                return $this->permission_callback_for( 'retrieve_calendar_appointments' );
-            }
+            'permission_callback' => $this->permission_callback_for('retrieve_calendar_appointments')
         ] );
         register_rest_route( 'bookingpress-app/v1', '/appointment/reschedule', [
             'methods'  => 'POST',
             'callback' => [ $this, 'reschedule_appointment' ],
-            'permission_callback' => function( $request ) {
-                return $this->permission_callback_for( 'update_upcoming_appointments' );
-            }
+            'permission_callback' => $this->permission_callback_for('update_upcoming_appointments')
         ] );
     }
 

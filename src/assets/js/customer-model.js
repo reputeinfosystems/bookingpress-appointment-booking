@@ -147,7 +147,7 @@ const initNewCustomerDialog = () => {
                 this.resetForm()
             },
             resetForm() {                        
-                const vm2 = this                
+                const vm2 = this;
                 vm2.customer.update_id = 0;
                 vm2.customer.username = '';
                 vm2.customer.wp_user = '';
@@ -160,7 +160,7 @@ const initNewCustomerDialog = () => {
                 vm2.customer.avatar_list = [];
                 vm2.customer.avatar_url = '';
                 vm2.customer.avatar_name = '';
-                vm2.customer.customer_phone_country = vm2.bookingpress_tel_input_props.defaultCountry;
+                vm2.customer.customer_phone_country = window.BookingPressCustomerDialog.$data.bookingpress_tel_input_props.defaultCountry;
                 vm2.wordpress_user_id = '';
                 vm2._wpnonce = BookingPressConfig._wpnonce                
                 wp.hooks.doAction( 'bookingpress_reset_customer_fields_data' );

@@ -14,58 +14,44 @@ class CustomerPageRoutes extends Base {
         register_rest_route( 'bookingpress-app/v1', '/customer/fetch', [
             'methods'  => 'POST',
             'callback' => [ $this, 'get_customer_page_details' ],
-            'permission_callback' => function( $request ) {
-                return $this->permission_callback_for( 'retrieve_customers' );
-            }
+            'permission_callback' => $this->permission_callback_for( 'retrieve_customers' )
         ] );
 
         register_rest_route( 'bookingpress-app/v1', '/customer/bulk-delete', [
             'methods'  => 'POST',
             'callback' => [ $this, 'bpa_customer_bulk_delete' ],
-            'permission_callback' => function( $request ) {
-                return $this->permission_callback_for( 'delete_customer' );
-            }
+            'permission_callback' => $this->permission_callback_for( 'delete_customer' )
         ] );
             
         register_rest_route( 'bookingpress-app/v1', '/customer/delete', [
             'methods'  => 'POST',
             'callback' => [ $this, 'bpa_customer_delete' ],
-            'permission_callback' => function( $request ) {
-                return $this->permission_callback_for( 'delete_customer' );
-            }
+            'permission_callback' => $this->permission_callback_for( 'delete_customer' )
         ] );
 
         register_rest_route( 'bookingpress-app/v1', '/customer/edit', [
             'methods'  => 'POST',
             'callback' => [ $this, 'bpa_customer_edit' ],
-            'permission_callback' => function( $request ) {
-                return $this->permission_callback_for( 'delete_customer' );
-            }
+            'permission_callback' => $this->permission_callback_for( 'delete_customer' )
         ] );        
 
 
         register_rest_route( 'bookingpress-app/v1', '/customer/export_customer_fetch', [
             'methods'  => 'POST',
             'callback' => [ $this, 'bpa_export_customer_fetch' ],
-            'permission_callback' => function( $request ) {
-                return $this->permission_callback_for( 'customer_export' );
-            }
+            'permission_callback' => $this->permission_callback_for( 'customer_export' )
         ] ); 
 
         register_rest_route( 'bookingpress-app/v1', '/customer/import-file', [
             'methods'  => 'POST',
             'callback' => [ $this, 'bpa_import_customer_process_upload' ],
-            'permission_callback' => function( $request ) {
-                return $this->permission_callback_for( 'customer_import' );
-            }
+            'permission_callback' => $this->permission_callback_for( 'customer_import' )
         ] ); 
 
         register_rest_route( 'bookingpress-app/v1', '/customer/import', [
             'methods'  => 'POST',
             'callback' => [ $this, 'bpa_import_customers_details' ],
-            'permission_callback' => function( $request ) {
-                return $this->permission_callback_for( 'customer_import' );
-            }
+            'permission_callback' => $this->permission_callback_for( 'customer_import' )
         ] );         
 
     }
@@ -113,18 +99,44 @@ class CustomerPageRoutes extends Base {
         if( 'error' === $response['variant'] ) {
             return new \WP_Error( 'rest_error', $response['msg'], [ 'status' => 400 ] );
         }
-        return new \WP_REST_Response( $json_data, 200 );
+        return new \WP_REST_Response( $response, 200 );
     }
 
     function bpa_customer_delete($request){
         global $bookingpress_customers;
-        $_POST['customer_id'] = $_REQUEST['customer_id'] = $customer_id = $request->get_param( 'customer_id' ); 
-        $response = $bookingpress_customers->bookingpress_delete_customer( $customer_id );
+        $_POST['delete_id'] = $delete_id = $request->get_param( 'delete_id' ); 
+        $response['variant'] = 'error';
+        $response['title']   = esc_html__('Error', 'bookingpress-appointment-booking');
+        $response['msg']     = esc_html__('Something went wrong..', 'bookingpress-appointment-booking');        
+        if (! empty($_POST['delete_id']) || intval($delete_id) ) { // phpcs:ignore WordPress.Security.NonceVerification
+            $delete_customer_id = ! empty($_POST['delete_id']) ? intval($_POST['delete_id']) : intval($delete_id); // phpcs:ignore WordPress.Security.NonceVerification
+            do_action('bookingpress_before_delete_customer', $delete_customer_id);
+            if (! empty($delete_customer_id) ) {
+                global $wpdb, $tbl_bookingpress_customers,$tbl_bookingpress_appointment_bookings,$tbl_bookingpress_payment_logs;
+                $is_deleted = $wpdb->delete( $tbl_bookingpress_customers, array( 'bookingpress_customer_id' => $delete_customer_id ) );
 
+                if ($is_deleted) {
+                    $wpdb->delete($tbl_bookingpress_appointment_bookings, array( 'bookingpress_customer_id' => $delete_customer_id ));
+                    $wpdb->delete($tbl_bookingpress_payment_logs, array( 'bookingpress_customer_id' => $delete_customer_id ));
+
+                    $response['variant'] = 'success';
+                    $response['title']   = esc_html__('Success', 'bookingpress-appointment-booking');
+                    $response['msg']     = esc_html__('Customer has been deleted successfully.', 'bookingpress-appointment-booking');
+
+                    $return = true;
+                }else{
+                    $response['variant'] = 'error';
+                    $response['title']   = esc_html__('Error', 'bookingpress-appointment-booking');
+                    $response['msg']     = esc_html__('Customer has been deleted successfully.', 'bookingpress-appointment-booking');
+
+                    $return = false;
+                }                
+            }
+        }        
         if( 'error' === $response['variant'] ) {
             return new \WP_Error( 'rest_error', $response['msg'], [ 'status' => 400 ] );
         }
-        return new \WP_REST_Response( $json_data, 200 );
+        return new \WP_REST_Response( $response, 200 );
     }
 
     function bpa_customer_edit($request){
@@ -135,7 +147,7 @@ class CustomerPageRoutes extends Base {
         if( 'error' === $response['variant'] ) {
             return new \WP_Error( 'rest_error', $response['msg'], [ 'status' => 400 ] );
         }
-        return new \WP_REST_Response( $json_data, 200 );
+        return new \WP_REST_Response( $response, 200 );
     }
 
     function bpa_export_customer_fetch($request){
@@ -154,7 +166,7 @@ class CustomerPageRoutes extends Base {
         if( 'error' === $response['variant'] ) {
             return new \WP_Error( 'rest_error', $response['msg'], [ 'status' => 400 ] );
         }
-        return new \WP_REST_Response( $json_data, 200 );
+        return new \WP_REST_Response( $response, 200 );
     }
 
     function bpa_import_customer_process_upload($request){
@@ -201,7 +213,7 @@ class CustomerPageRoutes extends Base {
         if( 'error' === $response['variant'] ) {
             return new \WP_Error( 'rest_error', $response['msg'], [ 'status' => 400 ] );
         }
-        return new \WP_REST_Response( $json_data, 200 );
+        return new \WP_REST_Response( $response, 200 );
     }
 
 

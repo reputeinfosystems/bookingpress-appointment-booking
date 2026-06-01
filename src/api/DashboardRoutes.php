@@ -17,9 +17,7 @@ class DashboardRoutes extends Base {
             [
                 'methods' => 'POST',
                 'callback' => [ $this, 'get_summary' ],
-                'permission_callback' => function () {
-                    return $this->permission_callback_for('retrieve_dashboard_summary');
-                }
+                'permission_callback' => $this->permission_callback_for('retrieve_dashboard_summary')
             ]
         ] );
 
@@ -27,9 +25,7 @@ class DashboardRoutes extends Base {
             [
                 'methods' => 'POST',
                 'callback' => [ $this, 'set_filter_session' ],
-                'permission_callback' => function () {
-                    return $this->permission_callback_for('set_dashboard_redirection');
-                }
+                'permission_callback' => $this->permission_callback_for('set_dashboard_redirection')
             ]
         ] );
 
@@ -37,9 +33,7 @@ class DashboardRoutes extends Base {
             [
                 'methods' => 'POST',
                 'callback' => [ $this, 'get_charts_data' ],
-                'permission_callback' => function () {
-                    return $this->permission_callback_for('retrieve_dashboard_chart');
-                }
+                'permission_callback' => $this->permission_callback_for('retrieve_dashboard_chart')
             ]
         ]);
 
@@ -47,9 +41,7 @@ class DashboardRoutes extends Base {
             [
                 'methods' => 'POST',
                 'callback' => [ $this, 'get_upcoming_appointments' ],
-                'permission_callback' => function () {
-                    return $this->permission_callback_for('retrieve_upcoming_appointments');
-                }
+                'permission_callback' => $this->permission_callback_for('retrieve_upcoming_appointments')
             ]
         ]);
 

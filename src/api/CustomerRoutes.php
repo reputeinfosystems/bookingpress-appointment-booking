@@ -14,30 +14,22 @@ class CustomerRoutes extends Base {
         register_rest_route( 'bookingpress-app/v1', '/customer', [
             'methods'  => 'POST',
             'callback' => [ $this, 'get_customer' ],
-            'permission_callback' => function( $request ) {
-                return $this->permission_callback_for( 'bookingpress_calendar' );
-            }
+            'permission_callback' => $this->permission_callback_for( 'bookingpress_calendar' )
         ] );
         register_rest_route( 'bookingpress-app/v1', '/customer/create', [
             'methods'  => 'POST',
             'callback' => [ $this, 'create_customer' ],
-            'permission_callback' => function( $request ) {
-                return $this->permission_callback_for( 'add_customer' );
-            }
+            'permission_callback' => $this->permission_callback_for( 'add_customer' )
         ] );
         register_rest_route( 'bookingpress-app/v1', '/customer/fetch_wp_users', [
             'methods'  => 'POST',
             'callback' => [ $this, 'fetch_wp_users' ],
-            'permission_callback' => function( $request ) {
-                return $this->permission_callback_for( 'search_user' );
-            }
+            'permission_callback' => $this->permission_callback_for( 'search_user' )
         ] );
         register_rest_route( 'bookingpress-app/v1', '/customer/get_existing_user_details', [
             'methods'  => 'POST',
             'callback' => [ $this, 'get_existing_user_details' ],
-            'permission_callback' => function( $request ) {
-                return $this->permission_callback_for( 'search_user' );
-            }
+            'permission_callback' => $this->permission_callback_for( 'search_user' )
         ] );
     }
 
@@ -125,6 +117,7 @@ class CustomerRoutes extends Base {
 
         $_REQUEST['avatar_name'] = isset($customer_data['avatar_name'])? $customer_data['avatar_name']: "";
         $_REQUEST['avatar_url'] = isset($customer_data['avatar_url'])? $customer_data['avatar_url']: "";
+        $_REQUEST['update_id'] = isset($customer_data['update_id'])? $customer_data['update_id']: 0;
 
         global $bookingpress_customers;
 

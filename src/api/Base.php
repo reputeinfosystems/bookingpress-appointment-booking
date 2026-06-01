@@ -44,7 +44,7 @@ abstract class Base {
     }
 
     protected function permission_callback_for( $action_name = '', $skip_validation = false ) {
-        return function( $request ) use ( $action_name ) {
+        return function( \WP_REST_Request $request ) use ( $action_name, $skip_validation ) {
             return $this->validate_action_permission( $action_name, $skip_validation );
         };
     }

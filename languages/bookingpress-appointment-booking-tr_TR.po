@@ -1,9 +1,10 @@
+#@ bookingpress-appointment-booking
 msgid ""
 msgstr ""
 "Project-Id-Version: BookingPress Appointment Booking v1.5.3\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-05-07 05:09:38+0000\n"
+"PO-Revision-Date: 2026-05-26 08:46:11+0000\n"
 "Last-Translator: admin <testrepute@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"

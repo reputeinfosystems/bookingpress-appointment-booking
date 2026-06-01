@@ -5,7 +5,7 @@ Donate link: https://bookingpressplugin.com/
 Requires at least: 6.5
 Tested up to: 7.0
 Requires PHP: 5.6
-Stable tag: 1.5.3
+Stable tag: 1.5.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -219,6 +219,10 @@ Please follow the steps for installation:
 13. BookingPress - General Settings
 
 == Changelog ==
+
+= 1.5.4 =
+* Added support for the XCG ( Caribbean Guilder ) currency
+* Minor bug fixes and improvements
 
 = 1.5.3 =
 * Improved front-end booking form performance and optimization

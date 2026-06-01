@@ -13,17 +13,13 @@ class TimeRoutes extends Base {
         register_rest_route( 'bookingpress-app/v1', '/time', [
             'methods'  => 'POST',
             'callback' => [ $this, 'get_time' ],
-            'permission_callback' => function( $request ) {
-                return $this->permission_callback_for();
-            }
+            'permission_callback' => $this->permission_callback_for()
         ] );
 
         register_rest_route( 'bookingpress-app/v1', '/dates', [
             'methods' => 'POST',
             'callback' => [ $this, 'get_dates' ],
-            'permission_callback' => function( $request ){
-                return $this->permission_callback_for();
-            }
+            'permission_callback' => $this->permission_callback_for()
         ] );
     }
 

@@ -14,9 +14,7 @@ class CalendarRoutes extends Base {
         register_rest_route( 'bookingpress-app/v1', '/calendar', [
             'methods'  => 'POST',
             'callback' => [ $this, 'get_calendar' ],
-            'permission_callback' => function( $request ) {
-                return $this->permission_callback_for( 'retrieve_calendar_appointments' );
-            }
+            'permission_callback' => $this->permission_callback_for( 'retrieve_calendar_appointments' )
         ] );
     }
 
