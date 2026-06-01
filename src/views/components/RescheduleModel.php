@@ -48,7 +48,7 @@
                                             <template #label>
                                                 <span class="bpa-form-label"><?php esc_html_e('Appointment Date', 'bookingpress-appointment-booking'); ?></span>
                                             </template>
-                                            <bp-ui-date-picker class="bpa-form-control bpa-form-control--date-picker" type="date" format="DD MMMM, YYYY" v-model="reschedule_formdata.reschedule_date" :clearable="false" popper-class="bpa-el-select--is-with-modal bpa-el-datepicker-widget-wrapper" :first-day-of-week="firstDayOfWeek" @change="select_appointment_booking_date($event)" :disabled-date="bookingpressDisabledDate" value-format="YYYY-MM-DD"></bp-ui-date-picker>
+                                            <bp-ui-date-picker class="bpa-form-control bpa-form-control--date-picker" type="date" format="DD MMMM, YYYY" v-model="reschedule_formdata.reschedule_date" :clearable="false" popper-class="bpa-el-select--is-with-modal bpa-el-datepicker-widget-wrapper" :first-day-of-week="firstDayOfWeek" @change="select_appointment_booking_date($event)" :disabled-date="bookingpressDisabledDate" locale="<?php echo get_locale(); ?>" value-format="YYYY-MM-DD"></bp-ui-date-picker>
                                         </bp-ui-form-item>
                                     </div>
                                     <div class="bpa-reschedule-to-field bpa-reschedule-to-field--time">

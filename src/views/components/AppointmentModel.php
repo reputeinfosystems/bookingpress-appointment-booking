@@ -1,5 +1,5 @@
 <div v-cloak id="bookingpress-appointment-dialog" class="bookingpress-appointment-dialog-container">
-    <bp-ui-dialog v-model="openAddNewAppointmentModel" fullscreen=true :close-on-press-escape="closeModelOnEscape" class="bpa-dialog bpa-dialog--fullscreen bpa-dialog--customer-modal bpa--is-page-non-scrollable-mob" :append-to-body="false" :class="openAddNewAppointmentModel ? '--bpa-active' : ''" :show-close="false">
+    <bp-ui-dialog v-model="openAddNewAppointmentModel" fullscreen=true :close-on-press-escape="closeModelOnEscape" class="bpa-dialog bpa-dialog--fullscreen bpa-dialog--customer-modal bpa--is-page-non-scrollable-mob" :append-to-body="true" :class="openAddNewAppointmentModel ? '--bpa-active' : ''" :show-close="false" @open="OpenAppointmentModel" @close="ResetAppointmentModel">
         <div class="bpa-dialog-heading">
             <bp-ui-row class="row-bg" justify="space-between" type="flex">
                 <bp-ui-col :xs="12" :sm="12" :md="16" :lg="16" :xl="16">
@@ -71,7 +71,7 @@
                                                 <template #label>
                                                     <span class="bpa-form-label"><?php esc_html_e('Appointment Date', 'bookingpress-appointment-booking'); ?></span>
                                                 </template>
-                                                <bp-ui-date-picker class="bpa-form-control bpa-form-control--date-picker" type="date" :format="bookingpress_date_common_date_format" v-model="appointment_formdata.appointment_booked_date" name="appointment_booked_date" :clearable="false" :first-day-of-week="firstDayOfWeek" :disabled-date="bookingpressDisabledDate" popper-class="bpa-el-select--is-with-modal bpa-el-datepicker-widget-wrapper" @change="select_appointment_booking_date($event)" value-format="YYYY-MM-DD"></bp-ui-date-picker>
+                                                <bp-ui-date-picker class="bpa-form-control bpa-form-control--date-picker" type="date" :format="bookingpress_date_common_date_format" v-model="appointment_formdata.appointment_booked_date" name="appointment_booked_date" :clearable="false" :first-day-of-week="firstDayOfWeek" :disabled-date="bookingpressDisabledDate" popper-class="bpa-el-select--is-with-modal bpa-el-datepicker-widget-wrapper" locale="<?php echo get_locale(); ?>" @change="select_appointment_booking_date($event)" value-format="YYYY-MM-DD"></bp-ui-date-picker>
                                             </bp-ui-form-item>
                                         </bp-ui-col>
                                         <bp-ui-col :xs="24" :sm="24" :md="8" :lg="12" :xl="12">

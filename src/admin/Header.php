@@ -2,25 +2,51 @@
 
 namespace BookingPress\admin;
 
-class Header{
+class Header extends Base{
 
     public static function init(){
+        parent::init();
         add_action( 'admin_enqueue_scripts', [ __CLASS__, 'bookingpress_print_script_data' ] );
     }
 
     public static function bookingpress_scoped_pages(){
 
         $scoped_hooks = [
-            'bookingpress-calendar'
+            'bookingpress',
+            'bookingpress-calendar',
+            'bookingpress_addons',
+            'bookingpress_customers',
         ];
 
         return apply_filters( 'bookingpress_scoped_pages', $scoped_hooks );
 
     }
 
+    public static function enqueue_assets( $hook ){
+
+        $scoped_pages = self::bookingpress_scoped_pages();
+
+        if( !empty( $_REQUEST['page'] ) && !in_array( $_REQUEST['page'], $scoped_pages ) ){
+            return;
+        }
+
+        wp_register_script_module(
+            'bookingpress-sidemenu-drawer',
+            BOOKINGPRESS_URL . '/src/assets/js/drawer-loader.js',
+            [ 'bookingpress-ui' ],
+            BOOKINGPRESS_VERSION
+        );
+
+        wp_enqueue_script_module( 'bookingpress-sidemenu-drawer' );
+
+    }
+
     public static function bookingpress_scoped_nonces(){
         $scoped_nonces = [
-            'bookingpress_page_bookingpress-calendar'   => 'bpa_calendar_wp_nonce'
+            'bookingpress_page_bookingpress'            => 'bpa_dashboard_wp_nonce',
+            'bookingpress_page_bookingpress-calendar'   => 'bpa_calendar_wp_nonce',
+            'bookingpress_page_bookingpress_addons'     => 'bpa_addons_wp_nonce',
+            'bookingpress_page_bookingpress_customers'  => 'bpa_customers_wp_nonce',
         ];
 
         return apply_filters( 'bookingpress_scoped_nonces', $scoped_nonces );
@@ -29,12 +55,8 @@ class Header{
     public static function bookingpress_print_script_data( $hook ){
         
         $scoped_pages = self::bookingpress_scoped_pages();
-
-        $is_scoped_page = array_map( function( $page ) use ( $hook ) {
-            return strpos( $hook, $page ) === 0;
-        }, $scoped_pages );
-
-        if( !$is_scoped_page ){
+        
+        if( !empty( $_REQUEST['page'] ) && !in_array( $_REQUEST['page'], $scoped_pages ) ){
             return;
         }
 
@@ -53,5 +75,21 @@ class Header{
         wp_print_inline_script_tag(
             'window.BookingPressConfig = ' . wp_json_encode( $config ) . ';',
         );
+    }
+
+    public static function bookingpress_verify_capabilities( $cap ){
+
+        $is_verified = true;
+
+        if( class_exists( '\BookingPressPro\admin\Header') && method_exists( '\BookingPressPro\admin\Header', 'verify_capability' ) ){
+            $is_verified = \BookingPressPro\admin\Header::verify_capability( $cap );
+        }
+
+        if( current_user_can( $cap ) && $is_verified ){
+            return true;
+        } else {
+            return false;
+        }
+
     }
 }

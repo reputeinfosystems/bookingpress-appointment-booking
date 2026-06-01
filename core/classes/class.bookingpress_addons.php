@@ -11,7 +11,7 @@ if( !class_exists( 'bookingpress_addons') ){
             if( !$BookingPress->bpa_is_pro_active() ){
                 add_action( 'bookingpress_addons_dynamic_view_load', array( $this, 'bookingpress_load_addons_view_func'), 9 );
                 add_action( 'bookingpress_addons_dynamic_data_fields', array( $this, 'bookingpress_addons_dynamic_data_fields_func'), 9 );
-                add_action( 'bookingpress_addons_dynamic_on_load_methods', array( $this, 'bookingpress_addons_dynamic_onload_methods_func'), 9 );
+                //add_action( 'bookingpress_addons_dynamic_on_load_methods', array( $this, 'bookingpress_addons_dynamic_onload_methods_func'), 9 );
                 add_action( 'bookingpress_addons_dynamic_vue_methods', array( $this, 'bookingpress_addons_dynamic_vue_methods_func') );
                 
                 add_action( 'wp_ajax_bookingpress_get_remote_addons_lite_list', array( $this, 'bookingpress_get_remote_addons_lite_list_func') );
@@ -173,7 +173,11 @@ if( !class_exists( 'bookingpress_addons') ){
                     $response['title']           = esc_html__( 'Success', 'bookingpress-appointment-booking' );
                     $response['msg']             = esc_html__( 'Addons list fetched successfully', 'bookingpress-appointment-booking' );
                     $response['addons_response'] = $bookingpress_body_res;
-                    $response['css']             = $bookingpress_addon_list_css; 
+                    $response['css']             = $bookingpress_addon_list_css;
+
+                    if( class_exists( '\BookingPressPro\admin\Addons' ) && method_exists( '\BookingPressPro\admin\Addons', 'modify_addon_lists' ) ){
+                        $response = \BookingPressPro\admin\Addons::modify_addon_lists( $response );
+                    }
                 }
             } else {
                 $response['msg'] = $bookingpress_addons_res->get_error_message();

@@ -60,11 +60,11 @@ const initNewAppointmentDialog = () => {
             return parents;
         },
         bpa_adjust_popup_position( currentElement, selector, sourceCls = '', position, view = '' ){
+            
 
             let paths = currentElement.path;
             let buttonElm = null;
-
-          
+            
             if( typeof paths != 'undefined' ){
                 for( let x in paths ){
                     let currentPath = paths[x];
@@ -281,7 +281,51 @@ const initNewAppointmentDialog = () => {
         openAppointmentDialog() {
             this.openAddNewAppointmentModel = true;
         },
+        fetchAppointmentDataForEditing(appointment_id) {
+            fetch(rest_url + '/appointment/fetch', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-WP-Nonce': BookingPressConfig.rest_nonce,
+                },
+                body: JSON.stringify({ appointment_id: appointment_id })
+            })
+            .then(response => response.json())
+            .then(rest_response => {
+                if (rest_response.success) {
+                    const vm = window.BookingPressAppointmentDialog;
+                    vm.appointment_customers_list = rest_response.data.appointment_customer_list;
+                    vm.appointment_formdata.appointment_selected_customer = rest_response.data.bookingpress_customer_id;
+
+                    vm.customer_id = vm.appointment_formdata.appointment_selected_customer;
+                    vm.bookingpress_get_customer_list({ customer_id: vm.customer_id });
+
+                    vm.appointment_formdata.appointment_selected_service = rest_response.data.bookingpress_service_id;
+                    vm.appointment_formdata.appointment_booked_date = rest_response.data.bookingpress_appointment_date;
+                    vm.appointment_formdata.appointment_booked_time = rest_response.data.bookingpress_appointment_time;
+                    vm.appointment_formdata.appointment_booked_end_time = rest_response.data.bookingpress_appointment_end_time;
+                    vm.appointment_formdata.appointment_internal_note = rest_response.data.bookingpress_appointment_internal_note;
+                    vm.appointment_time_slot = rest_response.data.appointment_time_slot;
+                    vm.appointment_formdata.appointment_status = rest_response.data.bookingpress_appointment_status;
+
+                    let selected_date = vm.appointment_formdata.appointment_booked_date;
+
+                    wp.hooks.doAction('bookingpress_edit_appointment_details', vm, rest_response);
+
+                    vm.bookingpress_get_disable_dates();
+
+                }
+            })
+            .catch(error => {
+                console.error('Something went wrong while fetching appointment data:', error);
+            });
+        },
+        OpenAppointmentModel(){
+            document.body.classList.add('el-popup-parent--hidden');
+        },
         ResetAppointmentModel() {
+            document.body.classList.remove('el-popup-parent--hidden');
             Object.assign(this.appointment_formdata, this.default_appointment_formdata);
         },
         closeAppointmentDialog() {
@@ -320,12 +364,13 @@ const initNewAppointmentDialog = () => {
 
                                 this.closeAppointmentBookingModal();
 
-                                let new_appointment_details = {
-                                    timeBookings: rest_response.data.appointment_details
-                                };
+                                if( document.body.classList.contains('bookingpress_page_bookingpress-calendar') ){
+                                    let new_appointment_details = {
+                                        timeBookings: rest_response.data.appointment_details
+                                    };
 
-                                BookingPressCalendarApp.appendData(new_appointment_details);
-
+                                    BookingPressCalendarApp.appendData(new_appointment_details);
+                                }
 
                                 this.$notify({
                                     title: rest_response.data.title,
@@ -630,7 +675,7 @@ const initNewAppointmentDialog = () => {
             }
 
             postData = wp.hooks.applyFilters('bookingpress_get_front_timing_set_additional_appointment_xhr_data', postData, vm);
-
+            
             fetch(rest_url + '/time', {
                 method: 'POST',
                 credentials: 'same-origin',
@@ -742,64 +787,7 @@ const initNewAppointmentDialog = () => {
         data() {
             const vm = this;
 
-            let ModelConfigData = moduleData;/* {
-                openAddNewAppointmentModel: false,
-                closeModelOnEscape: true,
-                appointment_formdata: {
-                    appointment_update_id: 0,
-                    appointment_selected_customer: '',
-                    appointment_booked_date: new Date().toISOString().split('T')[0],
-                    appointment_booked_time: '',
-                    appointment_booked_end_time: '',
-                    appointment_internal_note: '',
-                    appointment_send_notification: false,
-                    appointment_status: '1',
-                    appointment_selected_service: ''
-                },
-                is_display_save_loader: 0,
-                is_disabled: false,
-                appointment_customers_list: [],
-                appointment_services_list: moduleData.BookingPressServiceProviders,
-                appointment_time_slot: [],
-                appointment_status: moduleData.BookingPressAppointmentStatus,
-                bookingpress_edit_customers: moduleData.bookingpress_edit_customers,
-                bookingpress_payments: moduleData.bookingpress_payments,
-                bookingpress_loading: 'Loading...',
-                loading_from_server: false,
-                bookingpress_date_common_date_format: moduleData.bookingpress_date_common_date_format,
-                disabledDates: moduleData.disabledDates,
-                rules: {
-                    appointment_selected_customer: [
-                        {
-                            required: true,
-                            message: 'Please select customer',
-                            trigger: 'change'
-                        }
-                    ],
-                    appointment_selected_service: [
-                        {
-                            required: true,
-                            message: 'Please select service',
-                            trigger: 'change'
-                        }
-                    ],
-                    appointment_booked_date: [
-                        {
-                            required: true,
-                            message: 'Please select booking date',
-                            trigger: 'change'
-                        }
-                    ],
-                    appointment_booked_time: [
-                        {
-                            required: true,
-                            message: 'Please select booking time',
-                            trigger: 'change'
-                        }
-                    ],
-                    no_timeslots_available_text: 'No time slots available'
-                }
-            } */;
+            let ModelConfigData = moduleData;
             ModelConfigData = wp.hooks.applyFilters('bookingpress_modify_appointment_model_data', ModelConfigData, vm);
 
             return ModelConfigData;
@@ -837,42 +825,6 @@ window.addEventListener('bookingpress:appointment-popover-edit', (event) => {
     window.BookingPressAppointmentDialog.appointment_formdata.appointment_update_id = booking.id;
     window.BookingPressAppointmentDialog.openAppointmentDialog();
 
-    fetch(rest_url + '/appointment/fetch', {
-        method: 'POST',
-        credentials: 'same-origin',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-WP-Nonce': BookingPressConfig.rest_nonce,
-        },
-        body: JSON.stringify({ appointment_id: booking.id })
-    })
-        .then(response => response.json())
-        .then(rest_response => {
-            if (rest_response.success) {
-                const vm = window.BookingPressAppointmentDialog;
-                vm.appointment_customers_list = rest_response.data.appointment_customer_list;
-                vm.appointment_formdata.appointment_selected_customer = rest_response.data.bookingpress_customer_id;
-
-                vm.customer_id = vm.appointment_formdata.appointment_selected_customer;
-                vm.bookingpress_get_customer_list({ customer_id: vm.customer_id });
-
-                vm.appointment_formdata.appointment_selected_service = rest_response.data.bookingpress_service_id;
-                vm.appointment_formdata.appointment_booked_date = rest_response.data.bookingpress_appointment_date;
-                vm.appointment_formdata.appointment_booked_time = rest_response.data.bookingpress_appointment_time;
-                vm.appointment_formdata.appointment_booked_end_time = rest_response.data.bookingpress_appointment_end_time;
-                vm.appointment_formdata.appointment_internal_note = rest_response.data.bookingpress_appointment_internal_note;
-                vm.appointment_time_slot = rest_response.data.appointment_time_slot;
-                vm.appointment_formdata.appointment_status = rest_response.data.bookingpress_appointment_status;
-
-                let selected_date = vm.appointment_formdata.appointment_booked_date;
-
-                wp.hooks.doAction('bookingpress_edit_appointment_details', vm, rest_response);
-
-                vm.bookingpress_get_disable_dates();
-
-            }
-        })
-        .catch(error => {
-            console.error('Something went wrong while fetching appointment data:', error);
-        });
+    window.BookingPressAppointmentDialog.fetchAppointmentDataForEditing(booking.id);
 });
+    

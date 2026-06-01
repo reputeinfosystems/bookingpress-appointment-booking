@@ -26,7 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 const initNewCustomerDialog = () => {
-    const moduleData = getModuleData('bookingpress-appointment-model');
+    const moduleData = getModuleData('bookingpress-appointment-model');    
+
+    const customerExternalAddonData = window.BookingPressCustomerExternalData || {};
 
     const BookingPressCustomerDialogConfig = {
         data() {
@@ -43,6 +45,7 @@ const initNewCustomerDialog = () => {
                     phone: '',
                     username: '',
                     wordpress_user_id: 0,
+                    bpa_customer_field: moduleData?.customer?.bpa_customer_field || {},
                 },
                 wpUsersList: [],
                 vue_tel_mode: 'international',
@@ -70,11 +73,19 @@ const initNewCustomerDialog = () => {
                 is_disabled: false,
                 is_display_save_loader: '0',
                 cusShowFileList: false,
-                customer_avatar_list: []
+                customer_avatar_list: [],
+                bookingpress_customer_fields: typeof moduleData.bookingpress_customer_fields !== 'undefined' ? moduleData.bookingpress_customer_fields : [],
+                ...customerExternalAddonData
             };
             return ModelConfigData;
         },
         methods: {
+            open_customer_model(){
+                document.body.classList.add('el-popup-parent--hidden');
+            },
+            close_customer_model(){
+                document.body.classList.remove('el-popup-parent--hidden');
+            },
             bookingpress_get_existing_user_details(event) {
                 
                 if ('add_new' != event) {
@@ -133,6 +144,26 @@ const initNewCustomerDialog = () => {
                 const form = this.$refs.customer;
                 form.resetFields();
                 this.openCustomerModal = false;
+                this.resetForm()
+            },
+            resetForm() {                        
+                const vm2 = this                
+                vm2.customer.update_id = 0;
+                vm2.customer.username = '';
+                vm2.customer.wp_user = '';
+                vm2.customer.firstname = '';
+                vm2.customer.lastname = '';
+                vm2.customer.email = '';
+                vm2.customer.phone = '';
+                vm2.customer.note = '';
+                vm2.customer.password = '';
+                vm2.customer.avatar_list = [];
+                vm2.customer.avatar_url = '';
+                vm2.customer.avatar_name = '';
+                vm2.customer.customer_phone_country = vm2.bookingpress_tel_input_props.defaultCountry;
+                vm2.wordpress_user_id = '';
+                vm2._wpnonce = BookingPressConfig._wpnonce                
+                wp.hooks.doAction( 'bookingpress_reset_customer_fields_data' );
             },
             saveCustomerDetails() {
                 const form = this.$refs.customer;
@@ -164,6 +195,11 @@ const initNewCustomerDialog = () => {
                                 
                                 if (rest_response.data.variant == 'success') {
                                     this.closeCustomerDialog();
+                                    
+                                    if ('undefined' != typeof window.CustomerLoader) {
+                                        window.CustomerLoader.loadCustomers();
+                                    }
+
                                     this.customer.update_id = rest_response.data.customer_id;
                                     if ('undefined' != typeof window.BookingPressAppointmentDialog) {
                                         window.BookingPressAppointmentDialog.bookingpress_get_customer_list({ customer_id: rest_response.data.customer_id });

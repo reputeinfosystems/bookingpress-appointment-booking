@@ -105,10 +105,10 @@
                                                     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                         <path d="M14.6667 0.666992C15.1267 0.666992 15.5 1.04033 15.5 1.50033V4.63116L8.00083 12.1312L7.99583 15.6628L11.5342 15.6678L15.5 11.702V16.5003C15.5 16.9603 15.1267 17.3337 14.6667 17.3337H1.33333C0.873333 17.3337 0.5 16.9603 0.5 16.5003V1.50033C0.5 1.04033 0.873333 0.666992 1.33333 0.666992H14.6667ZM16.1483 6.34033L17.3267 7.51866L10.845 14.0003L9.665 13.9987L9.66667 12.822L16.1483 6.34033ZM8 9.00033H3.83333V10.667H8V9.00033ZM10.5 5.66699H3.83333V7.33366H10.5V5.66699Z" />
                                                     </svg>
-                                                </span>    
+                                                </span>
                                                 <?php esc_html_e( 'Forms', 'bookingpress-appointment-booking' ); ?>
                                             </a>
-                                        </bp-ui-dropdown-item>                           
+                                        </bp-ui-dropdown-item>
                                         <bp-ui-dropdown-item class="bpa-ni-dropdown-menu--item  <?php echo ( 'form_fields' == $request_action ) ? '__active' : ''; ?>">
                                             <a href="<?php echo add_query_arg( array( 'page'=> $bookingpress_slugs->bookingpress_customize,'action' => 'form_fields'), esc_url( admin_url() . 'admin.php?page=bookingpress' ) );  // phpcs:ignore ?>" class="bpa-dm--item-link">
                                                 <span>
@@ -118,10 +118,10 @@
                                                 </span>
                                                 <?php esc_html_e( 'Field Settings', 'bookingpress-appointment-booking' ); ?>
                                             </a>
-                                        </bp-ui-dropdown-item>                            
+                                        </bp-ui-dropdown-item>
                                     </bp-ui-dropdown-menu>
                                 </template>
-                            </bp-ui-dropdown>    
+                            </bp-ui-dropdown>
                         </li>
                         <?php
                     }

@@ -310,6 +310,11 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
 			$response['msg']     = esc_html__( 'Sorry, payment is not successed with the paypal.', 'bookingpress-appointment-booking' );
 
 			$bookingpress_payment_res = (isset($_POST['bookingpress_payment_res'])) ? $_POST['bookingpress_payment_res'] : ''; // phpcs:ignore
+
+            if( !empty( $bookingpress_payment_res) && !is_array( $bookingpress_payment_res ) ){
+                $bookingpress_payment_res = json_decode( stripslashes_deep( $bookingpress_payment_res ), true ); //phpcs:ignore
+            }
+
 			do_action( 'bookingpress_payment_log_entry', 'paypal', 'payment popup response data', 'bookingpress pro', $_POST, $bookingpress_debug_payment_log_id );
             if ( ! $bpa_verify_nonce_flag ) {
 				$response['variant'] = 'error';
@@ -3254,13 +3259,14 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                         $requested_module                = 'front_appointments';
                         ?>
                         <script data-cfasync="false">
+                            var app;
                             window.addEventListener('DOMContentLoaded', function() {
                                 var bookingpress_start_of_week = '<?php echo esc_html($bookingpress_global_details['start_of_week']); ?>';
                                 var bpa_customer_username = '<?php echo esc_html($this->bookingpress_mybooking_customer_email); ?>';
                                 var bpa_customer_email = '<?php echo esc_html($this->bookingpress_mybooking_customer_email); ?>';
                                 var bpa_customer_id = '<?php echo esc_html($this->bookingpress_mybooking_wpuser_id); ?>';
                                 <?php do_action('bookingpress_' . $requested_module . '_dynamic_helper_vars'); ?>
-                            var app = new Vue({
+                                app = new Vue({
                                     el: '#bookingpress_booking_form_<?php echo esc_html($bookingpress_uniq_id); ?>',
                                     directives: { <?php do_action('bookingpress_' . $requested_module . '_dynamic_directives'); ?> },
                                     components: { <?php do_action('bookingpress_' . $requested_module . '_dynamic_components'); ?> },
@@ -5050,6 +5056,7 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                         $service_time_arr = apply_filters('bookingpress_modify_single_time_slot_data',$service_time_arr, $selected_service_id, $selected_date);
 
                         $bookigpress_time_format_for_booking_form = $BookingPress->bookingpress_get_customize_settings('bookigpress_time_format_for_booking_form','booking_form');
+
 			            $bookigpress_time_format_for_booking_form = !empty($bookigpress_time_format_for_booking_form) ? $bookigpress_time_format_for_booking_form : '2';
                         if( !$BookingPress->bpa_is_pro_active() ){
                             $bookigpress_time_format_for_booking_form = '';
@@ -5066,8 +5073,9 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                         }
                         if($bookigpress_time_format_for_booking_form == 'bookingpress-wp-inherit-time-format' || $bookigpress_time_format_for_booking_form == ''){
                             $service_formatted_start_end_time = sprintf( esc_html__( '%1$s - %2$s', 'bookingpress-appointment-booking' ),$service_formatted_start_time, $service_formatted_end_time); // phpcs:ignore
-                        }                       
-
+                        }           
+                        
+                
                         
                         $bpa_afternoon_start_time = $BookingPress->bookingpress_get_settings('bpa_afternoon_start_time','general_setting');
                         $bpa_evening_start_time = $BookingPress->bookingpress_get_settings('bpa_evening_start_time','general_setting');
@@ -8730,7 +8738,9 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
 				vm.appointment_step_form_data.selected_start_time = selected_start_time;
 				vm.appointment_step_form_data.selected_end_time = selected_end_time;           
 
-                if( "" != formated_end_time && "" != formated_start_time ) {                    
+                if( "" != formated_end_time && "" != formated_start_time ) {
+
+                     
                     vm.appointment_step_form_data.selected_formatted_start_time = formated_start_time;
                     vm.appointment_step_form_data.selected_formatted_end_time = formated_end_time;
                 }
@@ -10284,11 +10294,15 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                         vm.appointment_step_form_data.selected_date = newDate;
                     }
                 }
-
-                if( ("basic_details" == current_tab && "service" == vm.bookingpress_current_tab) || ("summary" == current_tab && "service" == vm.bookingpress_current_tab) ){                  
-                    if(vm.appointment_step_form_data.selected_service_duration_unit != "d"){                                                
-                        if(vm.appointment_step_form_data.selected_start_time == ""){
-                            bookingpress_is_validate = 1;                            
+                
+                if( ("basic_details" == current_tab && "service" == vm.bookingpress_current_tab) && (vm.bookingpress_current_tab == "service"  && next_tab != "basic_details" && vm.bookingpress_current_tab == "service" && next_tab != "summary" ) || ("summary" == current_tab && "service" == vm.bookingpress_current_tab && vm.bookingpress_sidebar_step_data.service.next_tab_name != "summary") ){
+                
+                    if(vm.appointment_step_form_data.selected_service_duration_unit != "d"){
+                        
+                        if( "undefined" != typeof vm.bookingpress_sidebar_step_data.basic_details.is_first_step && (vm.bookingpress_sidebar_step_data.basic_details.is_first_step != 1 && vm.bookingpress_sidebar_step_data.basic_details.next_tab_name != "service")){
+                            if(vm.appointment_step_form_data.selected_start_time == ""){
+                                bookingpress_is_validate = 1;                            
+                            }
                         }
                     }
                 }

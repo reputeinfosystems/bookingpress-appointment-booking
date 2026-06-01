@@ -12,6 +12,15 @@ use BookingPress\api\CalendarRoutes;
 use BookingPress\api\CustomerRoutes;
 use BookingPress\api\TimeRoutes;
 use BookingPress\api\AppointmentRoutes;
+use BookingPress\api\DashboardRoutes;
+use BookingPress\api\AddonsRoutes;
+use BookingPress\api\CustomerPageRoutes;
+
+use BookingPress\admin\Dashboard;
+use BookingPress\admin\AddonsList;
+use BookingPress\admin\Customer;
+
+use BookingPress\frontend\BookingForm;
 
 class BookingPressLoader{
 
@@ -39,10 +48,18 @@ class BookingPressLoader{
 
         Header::init();
         Calendar::init();
+        Dashboard::init();
+        AddonsList::init();
+        Customer::init();
         new CalendarRoutes();
         new CustomerRoutes();
         new TimeRoutes();
         new AppointmentRoutes();
+        new DashboardRoutes();
+        new AddonsRoutes();
+        new CustomerPageRoutes();
+	
+	BookingForm::init();
         
     }
 }

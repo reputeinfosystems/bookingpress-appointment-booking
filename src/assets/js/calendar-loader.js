@@ -95,20 +95,20 @@ window.addEventListener('bookingpress:appointment-popover-status-change', (event
         },
         body: JSON.stringify(postData)
     })
-        .then(response => response.json())
-        .then(rest_response => {
-            if( rest_response.success ) {
-                let newStatus = postData.new_status;
-                let booking_id = postData.appointment_id;
+    .then(response => response.json())
+    .then(rest_response => {
+        if( rest_response.success ) {
+            let newStatus = postData.new_status;
+            let booking_id = postData.appointment_id;
 
-                window.BookingPressCalendarApp.updateBooking(booking_id, {
-                    status: newStatus
-                });
-                
-            } else {
-                
-            }
-        });
+            window.BookingPressCalendarApp.updateBooking(booking_id, {
+                status: newStatus
+            });
+            
+        } else {
+            
+        }
+    });
 });
 
 document.addEventListener('DOMContentLoaded', () => {

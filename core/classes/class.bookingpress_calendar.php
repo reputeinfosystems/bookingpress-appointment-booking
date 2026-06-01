@@ -692,6 +692,21 @@ if (! class_exists('bookingpress_calendar') ) {
                     }
                     
                     $is_appointment_already_booked = 0;
+
+                    $bookingpress_save_error = apply_filters('bookingpress_validate_appointment_booking_before_save', array(), $bookingpress_appointment_selected_services,$bookingpress_appointment_booked_date,$bookingpress_appointment_selected_customer,$bookingpress_appointment_data,$bookingpress_update_id);
+
+                    if ( ! empty( $bookingpress_save_error ) ) {
+                        $response['variant'] = 'error';
+                        $response['title']   = esc_html__( 'Error', 'bookingpress-appointment-booking' );
+                        $response['msg']     = $bookingpress_save_error['msg'];
+                        if ( $return ) {
+                            return $response;
+                        } else {
+                            echo wp_json_encode( $response );
+                            exit();
+                        }
+                    }
+
                     if (! empty($bookingpress_update_id) ) {                        
                         $appointment_details = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$tbl_bookingpress_appointment_bookings} WHERE bookingpress_appointment_booking_id = %d", $bookingpress_update_id), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_customers is table name defined globally. False Positive alarm
 

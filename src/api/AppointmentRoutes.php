@@ -248,14 +248,14 @@ class AppointmentRoutes extends Base {
             if( !empty( $bookingpress_cust_email ) ){
                 $booking_metadata['form_fields'][] = [
                     'id'        => $email_field_id,
-                    'label'     => $email_field_label,
+                    'label'     => 'email',
                     'value'     => $bookingpress_cust_email
                 ];
             }
             if( !empty( $bookingpress_cust_phone )){
                 $booking_metadata['form_fields'][] = [
                     'id'        => $phone_field_id,
-                    'label'     => $phone_field_label,
+                    'label'     => 'phone',
                     'value'     => $bookingpress_cust_phone
                 ];
             }

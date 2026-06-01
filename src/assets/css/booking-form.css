@@ -1,0 +1,1330 @@
+/*
+ * BookingPress — Vue 3 frontend booking form styles.
+ *
+ * Step 2 only provides the minimum needed to support mounting.
+ * Legacy parity styles migrate in a later step.
+ */
+
+.bpa-frontend-main-container.bpa-frontend-vue3 {
+    position: relative;
+
+    /* ------------------------------------------------------------
+     * Legacy CSS variables (copied from css/bookingpress_variables.css).
+     *
+     * The Vue 3 shortcode does NOT enqueue bookingpress_variables.css,
+     * so every `var(--bpa-*)` reference in booking-form.css would
+     * otherwise fall back to a hard-coded default (and diverge from
+     * legacy tints). Declare the full legacy token set here, scoped
+     * to our container so it does not bleed onto other plugins.
+     * Values are byte-for-byte from the legacy :root block.
+     * ------------------------------------------------------------ */
+    --bpa-pt-main-green:                 #12D488;
+    --bpa-pt-main-green-darker:          #0DC37C;
+    --bpa-pt-navy-blue:                  #2C33AE;
+    --bpa-pt-fuchsia-purple:             #D436C4;
+    --bpa-pt-royal-blue:                 #2167F1;
+    --bpa-pt-blue:                       #1F63E7;
+    --bpa-pt-brown:                      #834E1E;
+    --bpa-pt-secondary-orange:           #F5AE41;
+    --bpa-pt-secondary-orange-darker:    #ECA335;
+    --bpa-sc-success:                    #01CB62;
+    --bpa-sc-success-darker:             #0BAC58;
+    --bpa-sc-warning:                    #F4B125;
+    --bpa-sc-danger:                     #EE2445;
+    --bpa-sc-danger-darker:              #CB1936;
+    --bpa-dt-black-400:                  #202C45;
+    --bpa-dt-black-400-darker:           #121B2C;
+    --bpa-dt-black-300:                  #535D71;
+    --bpa-dt-black-200:                  #727E95;
+    --bpa-dt-black-100:                  #B8C1D3;
+    --bpa-gt-gray-400:                   #CFD6E5;
+    --bpa-gt-gray-300:                   #DCE4F5;
+    --bpa-gt-gray-200:                   #E9EDF5;
+    --bpa-gt-gray-100:                   #F4F7FB;
+    --bpa-gt-gray-50:                    #FAFCFF;
+    --bpa-cl-white:                      #ffffff;
+    --bpa-primary-font:                  'Poppins', sans-serif;
+    --bpa-secondary-font:                'Inter', sans-serif;
+    --bpa-radius-12px:                   12px;
+    --bpa-radius-16px:                   16px;
+    --bpa-radius-8px:                    8px;
+    --bpa-radius-6px:                    6px;
+    --bpa-radius-4px:                    4px;
+    --bpa-radius-2px:                    2px;
+    --bpa-radius-circle:                 50%;
+}
+
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-frontend-vue3-root {
+    position: relative;
+    width: 100%;
+}
+
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-frontend-vue3-loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 120px;
+}
+
+/* ---------- Tab panel body — neutralise default focus outline ----------
+ *
+ * The Vue 3 step panels carry `tabindex="1"` (mirrored from the legacy
+ * Vue 2 template). Browsers paint a default ~3px black `outline` on
+ * focusable elements, which renders as a heavy black border around the
+ * entire `.bpa-front-tabs--panel-body` whenever any inner field gets
+ * focus — most visible on Chromium-based browsers. Legacy Vue 2 didn't
+ * show this because its custom CSS removed the outline globally.
+ *
+ * We mirror that by suppressing the outline only when the panel itself
+ * is focused (default state OR keyboard focus), without touching focus
+ * styling on inner controls. */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-tabs--panel-body:focus,
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-tabs--panel-body:focus-visible {
+    outline: none !important;
+}
+
+/* ---------- Step 3C: service tab parity anchors ---------- */
+
+/*
+ * Scope the anchors under our root so they do not bleed onto legacy
+ * `[bookingpress_form]` markup rendered on the same page.
+ * Visual styling (colors, spacing, borders) is inherited from the
+ * legacy `bookingpress_front.css` because the class names match.
+ */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-tabs--panel-body__service .bpa-front-cat-items-wrapper {
+    width: 100%;
+}
+
+/* Service grid: defer to legacy `.bpa-front-module--service-items-row`
+ * grid rules in bookingpress_front.css — do NOT override with flex here.
+ * Legacy applies display:grid + auto-fit minmax(380px,1fr) and collapses
+ * to 1-col at ≤991px via its own media queries. */
+
+/* Category pills: legacy rules are keyed on `.bpa-front-ci-pill.el-tag`,
+ * which never matches BpUi's `.bp-tag`. Replicate the outlined look here,
+ * scoped to the service panel so we don't bleed onto other BpUi tags.
+ *
+ * Specificity note: BpUi ships `.bpa-tag.bp-tag { padding:4px 10px;
+ * border-radius:6px; font-size:12px; font-weight:600 }` and an
+ * `.bpa-tag.bp-tag.is-clickable:hover { border-color: black-100 }` rule
+ * at (0,2,0) / (0,3,1). Our selector chain below sits at (0,4,0) / (0,5,0),
+ * so every override here wins without `!important`. */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-tabs--panel-body__service .bpa-front-ci-pill {
+    display: inline-flex;
+    align-items: center;
+    height: auto;
+    min-height: 0;
+    padding: 6px 12px;
+    line-height: 20px;
+    margin: 0 12px 12px 0;
+    font-weight: 500;
+    font-size: 16px;
+    color: var(--bpa-dt-black-300);
+    background-color: transparent;
+    border: 1px solid var(--bpa-gt-gray-400);
+    border-radius: var(--bpa-radius-4px);
+    cursor: pointer;
+    font-family: var(--bpa-primary-font);
+    min-width: 0;
+    max-width: fit-content;
+    vertical-align: middle;
+    transition: border-color .2s ease, color .2s ease;
+    box-sizing: border-box;
+}
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-tabs--panel-body__service .bpa-front-ci-pill:hover {
+    background-color: transparent;
+    border-color: var(--bpa-pt-main-green);
+    color: var(--bpa-dt-black-400);
+}
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-tabs--panel-body__service .bpa-front-ci-pill.__bpa-is-active {
+    background-color: transparent;
+    color: var(--bpa-dt-black-400);
+    border-color: var(--bpa-pt-main-green);
+}
+
+/* BpUi wraps every slotted child in `<span class="bp-tag__content">`
+ * with no explicit `display`, so a block-level `<div>` child (our
+ * `.bpa-front-ci-item-title`) forces its own line and the active-state
+ * <svg> ends up stacked below the label. Forcing the wrapper to
+ * inline-flex puts label + icon on the same row, matching legacy.
+ *
+ * Legacy puts the svg as a direct child of the pill with
+ * `margin-left: 6px`. BpUi's extra `.bp-tag__content` wrapper means we
+ * cannot use that directly — the svg's margin-left is applied inside
+ * the wrapper instead, keeping the same visual offset from the title. */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-tabs--panel-body__service .bpa-front-ci-pill .bp-tag__content {
+    display: inline-flex;
+    align-items: center;
+    white-space: pre-wrap;
+    overflow: visible;
+    text-overflow: clip;
+    line-height: inherit;
+}
+
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-tabs--panel-body__service .bpa-front-ci-pill .bpa-front-ci-item-title {
+    display: inline;
+    max-width: 200px;
+    white-space: pre-wrap;
+    line-height: inherit;
+}
+
+/* Active-state checkmark: only rendered when active. Size + spacing are
+ * byte-for-byte matches of legacy `.bpa-front-ci-pill.el-tag svg`
+ * (width:20px; margin-left:6px; green fill on active). */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-tabs--panel-body__service .bpa-front-ci-pill svg {
+    width: 20px;
+    height: 20px;
+    margin: 0 0 0 6px;
+    flex: 0 0 auto;
+    fill: var(--bpa-pt-main-green);
+}
+
+/* Responsive parity with legacy @media breakpoints. Values mirror
+ * `bookingpress_front.css` — pill metrics change at 1367/1024/576 and
+ * svg shrinks at 1024/576 (legacy does NOT shrink svg at 1367). */
+@media (min-width: 1200px) and (max-width: 1367px) {
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-tabs--panel-body__service .bpa-front-ci-pill {
+        padding: 8px 12px;
+        line-height: 18px;
+        margin: 0 20px 20px 0;
+        font-size: 15px;
+    }
+}
+@media (max-width: 1024px) {
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-tabs--panel-body__service .bpa-front-ci-pill {
+        padding: 8px 12px;
+        line-height: 18px;
+        margin: 0 16px 16px 0;
+        font-size: 14px;
+    }
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-tabs--panel-body__service .bpa-front-ci-pill svg {
+        width: 16px;
+        height: 16px;
+        margin-left: 4px;
+    }
+}
+@media (max-width: 576px) {
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-tabs--panel-body__service .bpa-front-ci-pill {
+        padding: 6px;
+        line-height: 18px;
+        margin: 0 12px 12px 0;
+        font-size: 14px;
+    }
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-tabs--panel-body__service .bpa-front-ci-pill svg {
+        width: 14px;
+        height: 14px;
+        margin-left: 4px;
+    }
+}
+
+/* ---------- Next button: trailing arrow icon (legacy parity) ----------
+ *
+ * Legacy renders `<svg>` directly after the `<strong>` next-step label
+ * and relies on `.bpa-front-btn svg { width:20px }` +
+ * `.bpa-front-btn.bpa-front-btn--primary > span svg { margin-left:4px }`.
+ * BpUi wraps the button slot in its own element and the BpUi base
+ * stylesheet also resets svg sizing, so those legacy rules do not
+ * always reach the DOM. Re-declare the arrow sizing scoped to our root
+ * and to `.bpa-front-btn--primary` only so we don't bleed onto the
+ * Go Back secondary button (which has no inline svg today anyway). */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-tabs--foot .bpa-front-btn--primary svg {
+    width: 20px;
+    height: 20px;
+    margin-left: 6px;
+    fill: var(--bpa-cl-white);
+    vertical-align: middle;
+    flex: 0 0 auto;
+}
+
+/* Correction #5: no-services placeholder + preselected-service block */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-tabs--panel-body__service .bpa-front-no-service-placeholder,
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-tabs--panel-body__service .bpa-front-module--preselected {
+    width: 100%;
+    padding: 16px 0;
+    text-align: center;
+}
+
+/* ---------- Step 3E: basic-details 1-column layout ----------
+ *
+ * Every field in the Basic Details form renders in its own full-width
+ * row on every breakpoint. The template already sets xs..xl = 24 on
+ * each <bp-ui-col>, so per-field width is handled by BpUi's own
+ * `.bp-col-xs-24` rule. These styles only cover (a) vertical rhythm
+ * between fields, (b) the legacy entrance animation, and (c) ensuring
+ * no stale grid rule from elsewhere can pull the column off 100%.
+ *
+ * Scope is confined to .bpa-front-module--bd-form to avoid bleed
+ * onto other BpUi grids on the page.
+ */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bpa-bd-fields-row [class*="bp-col-"] {
+    flex: 0 0 100%;
+    max-width: 100%;
+    margin-bottom: 20px;
+    -webkit-animation-name: bpaFadeInUp;
+            animation-name: bpaFadeInUp;
+    animation-timing-function: cubic-bezier(.51, .92, .24, 1.15);
+    -webkit-animation-duration: .3s;
+            animation-duration: .3s;
+    -webkit-animation-fill-mode: both;
+            animation-fill-mode: both;
+}
+
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bpa-bd-fields-row [class*="bp-col-"].bpa-active-col {
+    z-index: 99;
+    position: relative;
+}
+
+/* Form-item children fill the column; inputs/textarea stretch to the full
+ * available width so the 1-column layout reads consistently. */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bpa-bd-fields-row .bp-form-item,
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bpa-bd-fields-row .bpa-front-form-control,
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bpa-bd-fields-row .bp-input,
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bpa-bd-fields-row .bp-textarea {
+    width: 100%;
+}
+
+/* ============================================================
+ * Basic Details — form-item label + input parity with legacy
+ *
+ * Legacy (Vue 2 / Element UI) renders labels ABOVE inputs via
+ * CSS (`float:none; display:inline-block`) layered on its
+ * float-based form layout. Element Plus (Vue 3) uses flex layout
+ * and defaults to `label-position="right"` (labels on the LEFT
+ * of the input). We set `label-position="top"` +
+ * `require-asterisk-position="right"` on <bp-ui-form> (see
+ * booking-form.js) and mirror the legacy label typography,
+ * required-asterisk positioning, and input chrome here.
+ *
+ * Reference legacy rules (css/bookingpress_front.css):
+ *   .el-form-item { margin-bottom: 22px; }
+ *   .el-form-item__label { font-size:14px; line-height:18px;
+ *                          font-weight:500; color:var(--bpa-dt-black-300);
+ *                          display:inline-block; margin-bottom:6px;
+ *                          float:none; padding:0; position:relative; }
+ *   .bpa-front-form-control input { padding:10px 16px; height:auto;
+ *                          border:1px solid var(--bpa-gt-gray-400);
+ *                          border-radius:var(--bpa-radius-4px); }
+ *   .bpa-front-form-control input:focus { box-shadow:0 0 0 3px
+ *                          rgba(207,214,229,.24); }
+ *
+ * In Vue 3 the legacy input rules leak onto `.bp-input__inner`
+ * AND Element Plus ships its own `.bp-input__wrapper` border
+ * (inset box-shadow), which together renders a double border.
+ * We neutralize the wrapper's shadow so only the legacy
+ * single-border input chrome remains visible.
+ * ============================================================ */
+
+/* Form-item margin + block layout.
+ *
+ * Legacy sets `.el-form-item { margin-bottom: 0 }` (zero) and puts the
+ * inter-field spacing on the COLUMN (`.el-col { margin-bottom: 20px }`
+ * in the narrow/stacked layout). We must do the same — otherwise the
+ * column margin (20px) and the form-item margin (default 18-22px)
+ * stack, doubling the gap between fields. */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-form-item {
+    display: block;
+    margin-bottom: 0 !important;
+}
+
+/* Label: block, no Element Plus 32px height, legacy typography.
+ * Legacy label has `margin-bottom: 6px` from the label text to the
+ * input, no additional padding. We mirror that — a single 6px gap. */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-form-item__label-wrap,
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-form-item__label {
+    display: inline-block;
+    float: none;
+    width: auto !important;
+    max-width: 100%;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 0 6px 0 !important;
+    line-height: 18px !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    color: var(--bpa-dt-black-300, #1f2937) !important;
+    font-family: var(--bpa-primary-font, inherit) !important;
+    text-align: left !important;
+    position: relative;
+}
+
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-form-item__content {
+    display: block;
+    margin-left: 0 !important;
+    line-height: normal !important;
+}
+
+/* Required asterisk: tint + spacing. Position (right:-14px; top:0) is
+ * already handled by bookingpress-ui.min.css for .asterisk-right. */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-form-item.is-required:not(.is-no-asterisk)
+    > .bp-form-item__label-wrap > .bp-form-item__label:after,
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-form-item.is-required:not(.is-no-asterisk)
+    > .bp-form-item__label:after {
+    color: var(--bpa-sc-danger, #ef4444);
+    margin-left: 4px;
+}
+
+/* ---- Input chrome ------------------------------------------------
+ *
+ * The Vue 3 shortcode does NOT enqueue `bookingpress_front.css`, so
+ * the legacy rule `.bpa-front-form-control input { border:1px solid
+ * var(--bpa-gt-gray-400); ... }` is not available. We re-create
+ * the legacy input look directly on the Vue 3 `.bp-input__wrapper`,
+ * which is the DOM element that owns the visual border. The inner
+ * `.bp-input__inner` is kept fully chrome-less (no border, no
+ * outline, no box-shadow) so there is exactly one visible frame.
+ *
+ * Legacy values (bookingpress_front.css):
+ *   padding:10px 16px; font-size:14px; line-height:18px;
+ *   font-weight:400; color:var(--bpa-dt-black-400);
+ *   background:transparent; border:1px solid var(--bpa-gt-gray-400);
+ *   border-radius:var(--bpa-radius-4px);
+ *   focus: border-color unchanged, box-shadow:0 0 0 3px rgba(207,214,229,.24).
+ * ---------------------------------------------------------------- */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-input,
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-textarea {
+    --bp-input-bg-color: transparent;
+    line-height: normal;
+    width: 100%;
+}
+
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-input__wrapper {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px !important;
+    background-color: transparent !important;
+    border: 1px solid var(--bpa-gt-gray-400, #cfd6e5) !important;
+    border-radius: var(--bpa-radius-4px, 4px) !important;
+    box-shadow: none !important;
+    transition: box-shadow .2s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-input__wrapper:hover {
+    box-shadow: none !important;
+    border-color: var(--bpa-gt-gray-400, #cfd6e5) !important;
+}
+
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-input.is-focus .bp-input__wrapper,
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-input__wrapper.is-focus,
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-input__wrapper:focus-within {
+    border-color: var(--bpa-gt-gray-400, #cfd6e5) !important;
+    box-shadow: 0 0 0 3px rgba(207, 214, 229, .24) !important;
+    outline: 0 !important;
+}
+
+/* Chrome-less inner input — text + caret only. */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-input__inner {
+    width: 100%;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    outline: 0 !important;
+    font-size: 14px !important;
+    line-height: 18px !important;
+    font-weight: 400 !important;
+    color: var(--bpa-dt-black-400, #374151) !important;
+    font-family: var(--bpa-primary-font, inherit) !important;
+    box-sizing: border-box;
+}
+
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-input__inner::placeholder {
+    color: rgba(114, 126, 149, .75) !important;
+    font-weight: 400;
+    font-size: 14px;
+}
+
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-input.is-disabled .bp-input__wrapper {
+    background-color: var(--bpa-gt-gray-100, #f3f4f6) !important;
+    border-color: var(--bpa-gt-gray-400, #cfd6e5) !important;
+    box-shadow: none !important;
+}
+
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-input.is-disabled .bp-input__inner {
+    color: var(--bpa-dt-black-200, #6b7280) !important;
+    -webkit-text-fill-color: var(--bpa-dt-black-200, #6b7280) !important;
+}
+
+/* Textarea: legacy resizes off, fixed 92px min height. `.bp-textarea__inner`
+ * in the Vue 3 bundle sits where legacy `.el-textarea__inner` did. */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-textarea__inner {
+    padding: 10px 16px !important;
+    font-size: 14px !important;
+    line-height: 18px !important;
+    font-weight: 400 !important;
+    color: var(--bpa-dt-black-400, #374151) !important;
+    background-color: transparent !important;
+    border: 1px solid var(--bpa-gt-gray-400, #cfd6e5) !important;
+    border-radius: var(--bpa-radius-4px, 4px) !important;
+    width: 100%;
+    max-width: 100% !important;
+    height: 92px !important;
+    resize: none !important;
+    box-shadow: none !important;
+    font-family: var(--bpa-primary-font, inherit) !important;
+}
+
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-textarea__inner:focus {
+    border-color: var(--bpa-gt-gray-400, #cfd6e5) !important;
+    background-color: transparent !important;
+    box-shadow: 0 0 0 3px rgba(207, 214, 229, .24) !important;
+    outline: 0;
+}
+
+/* ============================================================
+ * Phone field — merge dropdown + input into a single bordered row
+ *
+ * Legacy `.bpa-front-form-control.--bpa-country-dropdown` (now
+ * also applied to the Vue 3 <bp-ui-tel-input>) scopes the border
+ * to the OUTER container and flattens inner borders so the flag
+ * dropdown and phone input read as one field.
+ *
+ * The Vue 3 tel wrapper adds its own `.bp-ui-tel-input` root
+ * (plus `.vue-tel-input` inside). The border should live on
+ * `.vue-tel-input`, not on the outer `.bp-ui-tel-input` — otherwise
+ * we get another double border.
+ * ============================================================ */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-ui-tel-input {
+    border: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    width: 100%;
+}
+
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-ui-tel-input .vue-tel-input {
+    display: flex;
+    align-items: stretch;
+    border: 1px solid var(--bpa-gt-gray-400, #cfd6e5) !important;
+    border-radius: var(--bpa-radius-4px, 4px);
+    background: transparent;
+    width: 100%;
+    box-shadow: none;
+    /* Issue 2 — strip the upstream `bp-ui-tel-input__surface` padding
+     * (`0 16px`) on every viewport so the country dropdown sits flush
+     * against the left wrapper edge. With the padding present, the
+     * BpUi error-state inset/outset red box-shadow paints a ring 16px
+     * away from the actual dropdown, and the dropdown's own
+     * `border-right` separator visually breaks the field into two
+     * boxes (https://prnt.sc/IXhkw1z7ytVb). Removing the padding
+     * collapses everything into a single bordered row that matches
+     * the legacy Vue 2 visual. */
+    padding: 0 !important;
+}
+
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-ui-tel-input .vue-tel-input:focus-within {
+    box-shadow: 0 0 0 3px rgba(207, 214, 229, .24);
+    outline: 0;
+}
+
+/* Country dropdown pill on the left — no outer border, only a
+ * right-hand divider separating it from the number input.
+ *
+ * Width-sizing: with `showDialCodeInSelection: false` (passed from
+ * booking-form.js) the pill shows only flag + caret, so it can be
+ * narrower than the stock vue-tel-input default. `width: auto;
+ * flex: 0 0 auto; min-width: 0` collapses the pill to its content
+ * width plus padding (≈ 60px), matching the legacy shortcode. */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-ui-tel-input .vti__dropdown {
+    padding: 10px 12px;
+    background-color: transparent;
+    border: 0 !important;
+    border-right: 1px solid var(--bpa-gt-gray-400) !important;
+    border-radius: var(--bpa-radius-4px) 0 0 var(--bpa-radius-4px);
+    box-shadow: none !important;
+    width: auto !important;
+    min-width: 0 !important;
+    flex: 0 0 auto;
+    margin:0 !important;
+}
+
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-ui-tel-input .vti__selection {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    line-height: 1;
+}
+
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-ui-tel-input .vti__country-code {
+    display: none !important;
+}
+
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-ui-tel-input .vti__dropdown-arrow {
+    margin-left: 2px;
+    font-size: 10px;
+}
+
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-ui-tel-input .vti__dropdown:focus,
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-ui-tel-input .vti__dropdown.open {
+    background-color: var(--bpa-gt-gray-100, #f3f4f6);
+}
+
+/* Hover state — keep the country pill background flush with the
+ * surrounding field on hover. Vue 3 ships an upstream
+ * `.vti__dropdown:hover { background-color: #f3f3f3 }` rule from
+ * `bookingpress-ui.min.css` (the bundled vue-tel-input library
+ * default) which legacy Vue 2 did not have visible because legacy
+ * custom CSS overrode it. We mirror that override here. */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-ui-tel-input .vti__dropdown:hover {
+    background-color: transparent !important;
+}
+
+/* The phone number <input> on the right side — no border, flush
+ * with the dropdown, rounded only on the right corners. */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-ui-tel-input .vti__input,
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-ui-tel-input input.vti__phone {
+    border: 0 !important;
+    border-radius: 0 var(--bpa-radius-4px, 4px) var(--bpa-radius-4px, 4px) 0 !important;
+    box-shadow: none !important;
+    padding: 10px 16px !important;
+    height: auto !important;
+    font-size: 14px !important;
+    line-height: 18px !important;
+    color: var(--bpa-dt-black-400, #374151) !important;
+    background: transparent !important;
+    width: 100%;
+}
+
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-ui-tel-input .vti__input:focus {
+    box-shadow: none !important;
+    outline: 0;
+}
+
+/* Dropdown menu typography parity.
+ *
+ * The list is `position: absolute` inside the 63px-wide `.vti__dropdown`
+ * trigger, so by default it shares the trigger's stacking context with
+ * only `z-index: 2`. With the 1-column basic-details layout, sibling
+ * form-rows below the phone field would render in document order ON TOP
+ * of the dropdown popup. We lift the list out of the local stack with a
+ * high z-index and add an opaque background + a stronger drop shadow so
+ * it visually elevates above the form. The col-level lift is handled
+ * separately below via `:has()`. */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-ui-tel-input .vti__dropdown-list {
+    background-color: var(--bpa-cl-white, #fff);
+    border: 1px solid var(--bpa-gt-gray-400, #cfd6e5);
+    padding: 0 !important;
+    margin: 0 !important;
+    list-style: none !important;
+    line-height: normal !important;
+    z-index: 9999 !important;
+    box-shadow: 0 8px 24px rgba(32, 44, 69, .18) !important;
+}
+
+/* Lift the column owning the open phone dropdown above its siblings so
+ * the popup is not painted under the next form row. Mirrors the legacy
+ * `.bpa-active-col { z-index: 99; position: relative }` behaviour
+ * (which legacy toggled imperatively from the @open / @close handlers
+ * on `<vue-tel-input>`). The Vue 3 template doesn't currently emit
+ * those handlers, so we use `:has()` to detect the open state from CSS
+ * — supported in all evergreen browsers since 2023. */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form
+    .bpa-bd-fields-row
+    [class*="bp-col-"]:has(.vti__dropdown-list) {
+    z-index: 99;
+    position: relative;
+}
+
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-ui-tel-input .vti__dropdown-item {
+    padding: 6px 16px;
+    line-height: 24px;
+    margin: 0 !important;
+}
+
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-ui-tel-input .vti__dropdown-item.highlighted {
+    background-color: var(--bpa-gt-gray-100, #f3f4f6);
+}
+
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-ui-tel-input .vti__dropdown-item span,
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-ui-tel-input .vti__dropdown-item strong {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--bpa-dt-black-300, #1f2937);
+}
+
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-ui-tel-input .vti__flag-wrapper span {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-ui-tel-input .vti__dropdown .vti__selection svg {
+    width: 16px;
+    fill: var(--bpa-dt-black-200, #6b7280);
+}
+
+/* Stagger field entrance exactly like legacy (0.1s → 1.1s). */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bpa-bd-fields-row > [class*="bp-col-"]:nth-child(1)  { animation-delay: .1s; }
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bpa-bd-fields-row > [class*="bp-col-"]:nth-child(2)  { animation-delay: .2s; }
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bpa-bd-fields-row > [class*="bp-col-"]:nth-child(3)  { animation-delay: .3s; }
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bpa-bd-fields-row > [class*="bp-col-"]:nth-child(4)  { animation-delay: .4s; }
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bpa-bd-fields-row > [class*="bp-col-"]:nth-child(5)  { animation-delay: .5s; }
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bpa-bd-fields-row > [class*="bp-col-"]:nth-child(6)  { animation-delay: .6s; }
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bpa-bd-fields-row > [class*="bp-col-"]:nth-child(7)  { animation-delay: .7s; }
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bpa-bd-fields-row > [class*="bp-col-"]:nth-child(8)  { animation-delay: .8s; }
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bpa-bd-fields-row > [class*="bp-col-"]:nth-child(9)  { animation-delay: .8s; }
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bpa-bd-fields-row > [class*="bp-col-"]:nth-child(10) { animation-delay: .9s; }
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bpa-bd-fields-row > [class*="bp-col-"]:nth-child(11) { animation-delay: 1s;  }
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bpa-bd-fields-row > [class*="bp-col-"]:nth-child(12) { animation-delay: 1.1s; }
+
+/* ============================================================
+ * Empty view (Service Step) — legacy parity port of
+ * bookingpress_front.css rules for `.bpa-front-data-empty-view`.
+ *
+ * The Vue 3 shortcode does NOT enqueue the legacy
+ * `bookingpress_front.css`; the legacy file also has a default
+ * rule `#bpa-front-data-empty-view { display: none }` so we
+ * mirror only the visible-state rules scoped under the Vue 3
+ * container. Values are byte-for-byte identical to the legacy
+ * rules so the illustrated empty state looks the same as in
+ * the legacy shortcode.
+ * ============================================================ */
+/* Specificity note: legacy `bookingpress_front.css` ships
+ * `#bpa-front-data-empty-view { display: none }` at ID specificity
+ * (0,1,0,0), which beats a pure-class selector. We bump our rules
+ * by including the ID so they reliably override the legacy hide. */
+.bpa-frontend-main-container.bpa-frontend-vue3 #bpa-front-data-empty-view.bpa-front-data-empty-view {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.bpa-frontend-main-container.bpa-frontend-vue3 #bpa-front-data-empty-view.bpa-front-data-empty-view.__bpa-is-guest-view {
+    background: var(--bpa-cl-white);
+    border-radius: var(--bpa-radius-6px);
+    padding: 24px 0;
+}
+.bpa-frontend-main-container.bpa-frontend-vue3 #bpa-front-data-empty-view.bpa-front-data-empty-view svg {
+    width: 120px;
+    height: 120px;
+}
+.bpa-frontend-main-container.bpa-frontend-vue3 #bpa-front-data-empty-view.bpa-front-data-empty-view .bpa-front-dev__form-bg {
+    fill: var(--bpa-cl-white);
+}
+.bpa-frontend-main-container.bpa-frontend-vue3 #bpa-front-data-empty-view.bpa-front-data-empty-view .bpa-front-dev__primary-bg {
+    fill: var(--bpa-pt-main-green);
+    stroke: var(--bpa-pt-main-green);
+}
+.bpa-frontend-main-container.bpa-frontend-vue3 #bpa-front-data-empty-view.bpa-front-data-empty-view .bpa-front-dev__panel-bg {
+    fill: var(--bpa-gt-gray-100);
+}
+.bpa-frontend-main-container.bpa-frontend-vue3 #bpa-front-data-empty-view.bpa-front-data-empty-view .bpa-front-dev__title {
+    font-size: 16px;
+    font-weight: 600;
+    font-family: var(--bpa-primary-font);
+    color: var(--bpa-dt-black-200);
+    margin-top: 12px;
+    text-transform: none;
+    text-align: center;
+    padding: 0 8px;
+}
+
+/* ============================================================
+ * Date & Time calendar — legacy parity overrides on VCalendar v3.
+ *
+ * Issue 3: legacy (VCalendar v2) renders a large centered month
+ * title and 3-letter weekday row, which matches the height of the
+ * time-slot column on the right. VCalendar v3 ships a smaller
+ * header and narrow weekday row by default, compressing the
+ * calendar column. We bump the header and weekday typography to
+ * match legacy proportions and keep the two columns even.
+ *
+ * Issue 4: legacy renders disabled / out-of-range dates with a
+ * muted grey numeral, no hover affordance, default cursor.
+ * VCalendar v3 keeps the default numeral color and exposes
+ * `.vc-disabled` / `.vc-day-content` with its own styling. We
+ * port the legacy muted style here.
+ * ============================================================ */
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front--dt__calendar-host .vc-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--bpa-dt-black-200);
+    font-family: var(--bpa-primary-font);
+    text-transform: none;
+    background: transparent;
+}
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front--dt__calendar-host .vc-header {
+    padding: 8px 8px 4px;
+    margin-bottom: 0;
+}
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front--dt__calendar-host .vc-weekday {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--bpa-dt-black-300, #6b7280);
+    font-family: var(--bpa-primary-font);
+    text-transform: none;
+    padding: 6px 0;
+}
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front--dt__calendar-host .vc-weeks {
+    padding: 0;
+}
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front--dt__calendar-host .vc-day-content {
+    font-size: 14px;
+    font-weight: 500;
+    font-family: var(--bpa-primary-font);
+}
+/* Disabled date parity — match legacy bookingpress_front.css darker
+ * shade. Legacy paints `.vc-day .vc-day-content.is-disabled` with
+ * `background-color: rgba(207,214,229,.1)` plus a `::after` overlay
+ * with `background:gray; opacity:.1` that together create the muted
+ * blue-grey "unavailable" cell visual. The Vue3 port via
+ * `normalizeDisabledDayMarkers()` stamps `.is-disabled` on each
+ * disabled `.vc-day-content`, so we re-use the exact legacy rule
+ * here scoped to the Vue3 calendar host so blocked / unavailable /
+ * out-of-range dates read darker than VCalendar v3's default. */
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front--dt__calendar-host .vc-day .vc-day-content.is-disabled {
+    /* background-color: rgba(207, 214, 229, 0.45) !important;
+    color: var(--bpa-dt-black-200, #4f5d75) !important; */
+    cursor: not-allowed !important;
+    opacity: 1 !important;
+    position: relative;
+    border-radius: 6px;
+    opacity:0.5 !important;
+}
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front--dt__calendar-host .vc-day.is-today .vc-day-content.is-disabled {
+    background-color: rgba(207, 214, 229, 0.45) !important;
+    color: var(--bpa-dt-black-200, #4f5d75) !important;
+}
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front--dt__calendar-host .vc-day-content.is-disabled::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: gray;
+    opacity: 0.1;
+    pointer-events: none;
+    border-radius: inherit;
+}
+/* .bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front--dt__calendar-host .vc-day .vc-day-content.is-disabled:hover {
+    background-color: rgba(207, 214, 229, 0.45) !important;
+    color: var(--bpa-dt-black-200, #4f5d75) !important;
+} */
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front--dt__calendar-host .vc-day.is-not-in-month .vc-day-content.is-disabled {
+    opacity: 0.5 !important;
+}
+
+/* ==========================================================================
+ * Date & Time step — layout + mobile fix (legacy parity, single-module)
+ *
+ * Problem: the globally-enqueued legacy `bookingpress_front.css` has these
+ * rules inside `@media (max-width: 576px)` and `@media (768–991px)`:
+ *
+ *   .bpa-front-module--date-and-time        { display: none }
+ *   .bpa-front-module--date-and-time.__sm   { display: block }
+ *
+ * The legacy template ships TWO markup variants (desktop + `.__sm`) and
+ * relies on the breakpoint to swap between them. The Vue 3 shortcode only
+ * renders the desktop variant, so on tablet (768–991) and phone (≤576) the
+ * legacy rule hides the only module we have — leaving a blank panel.
+ *
+ * Additionally, `.bpa-front--dt__wrapper` / `.bpa-front--dt__col` never had
+ * any base layout rules shipped in the Vue 3 stylesheet, so even on larger
+ * viewports the 2-column flex/grid relied on the legacy file alone.
+ *
+ * Fix: re-declare the legacy desktop grid values here, then override the
+ * mobile `display:none` so the single Vue 3 module stays visible and its
+ * wrapper stacks to a single column. All rules are scoped to
+ * `.bpa-frontend-main-container.bpa-frontend-vue3` so the legacy shortcode
+ * on the same page (if any) is unaffected.
+ *
+ * Values mirror `css/bookingpress_front.css` verbatim so desktop visuals
+ * remain byte-identical to legacy.
+ * ========================================================================== */
+
+/* Base (all viewports): 2-column responsive grid. Same values as legacy. */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--date-and-time .bpa-front--dt__wrapper {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    margin: 0 -12px;
+}
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--date-and-time .bpa-front--dt__wrapper .bpa-front--dt__col {
+    padding: 0 12px;
+}
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--date-and-time .bpa-front--dt__wrapper
+    .bpa-front--dt__col.bpa-front-dt-col__is-visible {
+    -webkit-animation-name: bpaFadeInUp;
+            animation-name: bpaFadeInUp;
+    animation-timing-function: cubic-bezier(.51, .92, .24, 1.15);
+    -webkit-animation-duration: .3s;
+            animation-duration: .3s;
+    -webkit-animation-fill-mode: both;
+            animation-fill-mode: both;
+}
+
+/* ---------------------------------------------------------------------
+ * Responsive `.__sm` Date & Time flow — legacy parity.
+ * ---------------------------------------------------------------------
+ * Legacy ships TWO templates for Date & Time:
+ *   (1) `.bpa-front-module--date-and-time`        — desktop (2-column)
+ *   (2) `.bpa-front-module--date-and-time.__sm`   — mobile/tablet variant
+ *       which uses a date-trigger button atop a single column and toggles
+ *       between calendar + slots via `displayResponsiveCalendar`.
+ *
+ * Legacy visibility rules (from `bookingpress_front.css`):
+ *   default                                          desktop: shown, __sm: none
+ *   @media (min-width:768px) and (max-width:991px)   desktop: none, __sm: block
+ *   @media (max-width:576px)                         desktop: none, __sm: block
+ *   gap 577–767                                      desktop: shown, __sm: none
+ *
+ * Vue 3 renders only ONE module. We replicate the `.__sm` flow purely via
+ * CSS on the same DOM: the wrapper toggles `.bpa-sm-show-slots` /
+ * `.bpa-sm-show-calendar` (driven by `state.displayResponsiveCalendar`)
+ * and `.bpa-front--dt__ts-sm-back-btn` is hidden everywhere EXCEPT the
+ * two legacy `.__sm` breakpoints.
+ *
+ * Flow (mobile/tablet only):
+ *   default       → `.bpa-sm-show-slots`   → calendar col hidden,
+ *                                            slots col visible with the
+ *                                            date-trigger button on top
+ *   trigger click → `.bpa-sm-show-calendar`→ calendar col visible,
+ *                                            slots col hidden
+ *   day click     → back to `.bpa-sm-show-slots` (dayClicked resets state)
+ *
+ * The VCalendar mini-app host stays in the DOM in both states; only CSS
+ * visibility toggles, so no remount cost and no scroll reset.
+ */
+
+/* Default (desktop + 577–767 gap): date-trigger is a `.__sm` artifact,
+ * never visible at these sizes. */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--date-and-time .bpa-front--dt__ts-sm-back-btn {
+    display: none;
+}
+
+/* Tablet (768–991px) — legacy `.__sm` flow, `.bpa-front-btn` padding
+ * 8px 12px, container margin-bottom 12px, NO horizontal container
+ * padding. (legacy @media (min-width:768px) and (max-width:991px)) */
+@media (min-width: 768px) and (max-width: 991px) {
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--date-and-time {
+        display: block;
+    }
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--date-and-time .bpa-front--dt__wrapper {
+        display: block;
+        grid-template-columns: 1fr;
+        margin: 0;
+    }
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--date-and-time .bpa-front--dt__wrapper
+        .bpa-front--dt__col {
+        padding: 0;
+    }
+    /* View toggle: default (slots view). */
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--date-and-time .bpa-front--dt__wrapper.bpa-sm-show-slots
+        .bpa-front--dt__col--calendar {
+        display: none;
+    }
+    /* View toggle: calendar open — hide slots column. */
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--date-and-time .bpa-front--dt__wrapper.bpa-sm-show-calendar
+        .bpa-front--dt__col--slots {
+        display: none;
+    }
+
+    /* Date-trigger button (tablet sizing). */
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--date-and-time .bpa-front--dt__ts-sm-back-btn {
+        display: block;
+        width: 100%;
+        margin-bottom: 12px;
+    }
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--date-and-time .bpa-front--dt__ts-sm-back-btn
+        .bpa-front-btn {
+        display: block;
+        width: 100%;
+        padding: 8px 12px;
+        background-color: var(--bpa-cl-white, #fff);
+        border: 1px solid var(--bpa-gt-gray-400, #cfd6e5);
+        border-radius: var(--bpa-radius-4px, 4px);
+        cursor: pointer;
+        font: inherit;
+        text-align: left;
+    }
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--date-and-time .bpa-front--dt__ts-sm-back-btn
+        .bpa-front-btn > span {
+        display: flex;
+        align-items: center;
+    }
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--date-and-time .bpa-front--dt__ts-sm-back-btn
+        .bpa-front-btn span svg {
+        width: 18px;
+        height: 18px;
+        margin-right: 4px;
+        fill: var(--bpa-dt-black-300, #535D71);
+        flex: 0 0 auto;
+    }
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--date-and-time .bpa-front--dt__ts-sm-back-btn
+        .bpa-front-btn label {
+        font-size: 14px;
+        line-height: 18px;
+        color: var(--bpa-dt-black-300, #535D71);
+        display: initial;
+        font-weight: 400;
+        cursor: pointer;
+    }
+}
+
+/* Phone (≤576px) — legacy `.__sm` flow, `.bpa-front-btn` padding 8px 12px,
+ * container margin-bottom 20px + horizontal padding 0 20px, explicit
+ * `border-color` on the button. (legacy @media (max-width:576px)) */
+@media (max-width: 576px) {
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--date-and-time {
+        display: block;
+    }
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--date-and-time .bpa-front--dt__wrapper {
+        display: block;
+        grid-template-columns: 1fr;
+        margin: 0;
+    }
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--date-and-time .bpa-front--dt__wrapper
+        .bpa-front--dt__col {
+        padding: 0;
+    }
+    /* View toggle: default (slots view). */
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--date-and-time .bpa-front--dt__wrapper.bpa-sm-show-slots
+        .bpa-front--dt__col--calendar {
+        display: none;
+    }
+    /* View toggle: calendar open — hide slots column. */
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--date-and-time .bpa-front--dt__wrapper.bpa-sm-show-calendar
+        .bpa-front--dt__col--slots {
+        display: none;
+    }
+
+    /* Legacy parity: calendar spacing + time-slots padding reset on phone
+     * (values copied from `bookingpress_front.css` @media max-width:576px). */
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--date-and-time .bpa-front--dt__calendar {
+        margin-bottom: 24px;
+    }
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--date-and-time .bpa-front--dt__time-slots {
+        padding: 0;
+        border: none;
+        height: auto;
+        min-height: 400px;
+    }
+    /* Legacy parity: module heading + note indent on phone. */
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--date-and-time .bpa-front-module-heading,
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--date-and-time .bpa-front-module--note-desc {
+        padding-left: 20px;
+    }
+
+    /* Date-trigger button (phone sizing). */
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--date-and-time .bpa-front--dt__ts-sm-back-btn {
+        display: block;
+        width: 100%;
+        margin-top: 10px;
+        margin-bottom: 20px;
+        box-sizing: border-box;
+        padding: 0 20px;
+    }
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--date-and-time .bpa-front--dt__ts-sm-back-btn
+        .bpa-front-btn {
+        display: block;
+        width: 100%;
+        padding: 8px 12px;
+        background-color: var(--bpa-cl-white, #fff);
+        border: 1px solid var(--bpa-gt-gray-400, #cfd6e5);
+        border-radius: var(--bpa-radius-4px, 4px);
+        cursor: pointer;
+        font: inherit;
+        text-align: left;
+    }
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--date-and-time .bpa-front--dt__ts-sm-back-btn
+        .bpa-front-btn > span {
+        display: flex;
+        align-items: center;
+    }
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--date-and-time .bpa-front--dt__ts-sm-back-btn
+        .bpa-front-btn span svg {
+        width: 18px;
+        height: 18px;
+        margin-right: 4px;
+        fill: var(--bpa-dt-black-300, #535D71);
+        flex: 0 0 auto;
+    }
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--date-and-time .bpa-front--dt__ts-sm-back-btn
+        .bpa-front-btn label {
+        font-size: 14px;
+        line-height: 18px;
+        color: var(--bpa-dt-black-300, #535D71);
+        display: initial;
+        font-weight: 400;
+        cursor: pointer;
+    }
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--date-and-time .bpa-front--dt__ts-sm-back-btn
+        .bpa-front-btn:hover,
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--date-and-time .bpa-front--dt__ts-sm-back-btn
+        .bpa-front-btn:focus {
+        border-color: var(--bpa-pt-main-green, #19b681);
+        outline: none;
+    }
+}
+
+/* -----------------------------------------------------------------------
+ * Accessibility: keyboard focus-visible styling
+ * Adds a clearly visible focus ring for keyboard users on the Date & Time
+ * step. Uses :focus-visible so mouse-clicks do not produce the ring.
+ * Color uses the theme primary-green token (--bpa-pt-main-green) with a
+ * solid fallback for environments without CSS variables.
+ * -------------------------------------------------------------------- */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front--dt__ts-body--item.bpa_focusable:focus-visible,
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front--dt__ts-sm-back-btn .bpa-front-btn:focus-visible,
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front--dt__calendar:focus-visible {
+    outline: 2px solid var(--bpa-pt-main-green, #19b681);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px rgba(25, 182, 129, 0.2);
+}
+
+/* Disabled time-slot semantics: keep the visual cue and ensure the
+ * (forced) cursor reflects the aria-disabled state. */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front--dt__ts-body--item[aria-disabled="true"] {
+    cursor: not-allowed;
+}
+
+/* Issue 1 — per-field validation error message styling. Mirrors the
+ * legacy `.el-form-item__error` typography & spacing AND its leading
+ * info-circle icon, painted via a `::before` mask so the icon picks
+ * up the danger color via CSS without an inline <svg>. Legacy
+ * source: `.el-form-item__error::before` rule in
+ * `bookingpress_front.css`. */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bpa-front-form-control--error,
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-form-item__error {
+    position: relative;
+    color: var(--bpa-sc-danger, #ef4444);
+    font-size: 12px;
+    line-height: 16px;
+    margin-top: 4px;
+    padding-left: 20px;
+    font-weight: 400;
+    min-height: 16px;
+}
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bpa-front-form-control--error::before,
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-form-item__error::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 16px;
+    height: 16px;
+    background-color: var(--bpa-sc-danger, #ef4444);
+    -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 7c.55 0 1 .45 1 1v4c0 .55-.45 1-1 1s-1-.45-1-1V8c0-.55.45-1 1-1zm-.01-5C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm1-3h-2v-2h2v2z'/%3E%3C/svg%3E");
+    mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 7c.55 0 1 .45 1 1v4c0 .55-.45 1-1 1s-1-.45-1-1V8c0-.55.45-1 1-1zm-.01-5C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm1-3h-2v-2h2v2z'/%3E%3C/svg%3E");
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-size: 16px 16px;
+    mask-size: 16px 16px;
+}
+
+/* Issue 2 — phone field error state parity. When the bp-form-item is
+ * `.is-error`, the upstream BpUi rule paints a red inset box-shadow on
+ * `.bp-ui-tel-input__surface` (the `.vue-tel-input` wrapper). Because
+ * the country `.vti__dropdown` carries its own static grey
+ * `border-right` separator, the field reads as TWO bordered boxes
+ * with a grey divider — the dropdown visually overlaps / breaks the
+ * red box-shadow. We retint the separator to the danger colour and
+ * also strip the dropdown's outer outline so it merges into the
+ * single red error frame painted on the wrapper. */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-form-item.is-error .bp-ui-tel-input .vti__dropdown {
+    border-right-color: var(--bpa-sc-danger, #ef4444) !important;
+    box-shadow: none !important;
+    outline: 0 !important;
+}
+
+/* Also reset the open/focus/hover background overrides we set above
+ * to a transparent value when in error state, so the dropdown pill
+ * does not paint a grey fill on top of the red error box-shadow. */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-form-item.is-error .bp-ui-tel-input .vti__dropdown,
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-form-item.is-error .bp-ui-tel-input .vti__dropdown:hover,
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-form-item.is-error .bp-ui-tel-input .vti__dropdown:focus,
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-form-item.is-error .bp-ui-tel-input .vti__dropdown.open {
+    background-color: transparent !important;
+}
+
+/* ============================================================
+ * Mobile (≤576px) Basic Details parity
+ *
+ * Legacy mobile rules at @media (max-width:576px) gave the basic
+ * details module 0 20px side padding and let each field span the
+ * row's full width. The Vue 3 grid still applies the desktop
+ * `:gutter="24"` (12px L/R col padding) on mobile, which leaves
+ * each field 24px narrower than the visible card width. Zero out
+ * the gutter on small screens so fields go edge-to-edge with the
+ * 20px module gutter, matching the legacy visual.
+ *
+ * Phone field on mobile: in flex layout, Element Plus' input only
+ * has `width:100%` which doesn't grow inside the row. Add
+ * `flex: 1 1 0` and `min-width: 0` so the <input> consumes all
+ * remaining space next to the country dropdown pill instead of
+ * leaving the placeholder truncated ("Enter your phone n…").
+ *
+ * Country dropdown LIST: the upstream vue-tel-input ships a
+ * default 390px width which overflows narrow viewports and visually
+ * overlaps adjacent form fields when opened. Legacy capped it at
+ * 280px; on viewports narrower than that, lock to 100% of the
+ * field row so it stays inside the form bounds.
+ * ============================================================ */
+@media (max-width: 576px) {
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--basic-details {
+        padding: 0 20px;
+        box-sizing: border-box;
+    }
+
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--bd-form .bpa-bd-fields-row {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--bd-form .bpa-bd-fields-row > [class*="bp-col-"] {
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--bd-form .bp-ui-tel-input .vti__input,
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--bd-form .bp-ui-tel-input input.vti__phone {
+        flex: 1 1 0 !important;
+        min-width: 0 !important;
+        width: auto !important;
+    }
+
+    /* The Vue 3 bp-ui-tel-input__surface ships with `padding: 0 16px`
+     * which the legacy vue-tel-input did not have. On mobile the
+     * resulting 32px lost width pushes the placeholder text out of
+     * view. Zero the surface padding so the dropdown pill sits flush
+     * against the left border (legacy parity). */
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--bd-form .bp-ui-tel-input .vue-tel-input,
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--bd-form .bp-ui-tel-input.bp-ui-tel-input__surface,
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--bd-form .bp-ui-tel-input .bp-ui-tel-input__surface {
+        padding: 0 !important;
+    }
+
+    /* Dropdown LIST is `position: absolute` inside the 63px-wide
+     * `.vti__dropdown` trigger, so `width: 100%` would collapse it.
+     * Lock to the legacy 280px width and cap at the viewport so it
+     * never spills off-screen on narrow devices. */
+    .bpa-frontend-main-container.bpa-frontend-vue3
+        .bpa-front-module--bd-form .bp-ui-tel-input .vti__dropdown-list {
+        width: 280px !important;
+        max-width: calc(100vw - 40px) !important;
+        box-sizing: border-box;
+    }
+}

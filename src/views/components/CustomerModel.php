@@ -1,5 +1,5 @@
 <div id="customer_add_modal" v-cloak class="bookingpress-customer-dialog-container">
-    <bp-ui-dialog v-model="openCustomerModal" fullscreen=true :close-on-press-escape="closeCustomerModalOnEscape" class="bpa-dialog bpa-dialog--fullscreen bpa-dialog--customer-modal bpa--is-page-non-scrollable-mob" :append-to-body="false" :class="openCustomerModal ? '--bpa-active' : ''" :show-close="false">
+    <bp-ui-dialog v-model="openCustomerModal" fullscreen=true :close-on-press-escape="closeCustomerModalOnEscape" class="bpa-dialog bpa-dialog--fullscreen bpa-dialog--customer-modal bpa--is-page-non-scrollable-mob" @open="open_customer_model" @close="close_customer_model" :append-to-body="false" :class="openCustomerModal ? '--bpa-active' : ''" :show-close="false">
         <div class="bpa-dialog-heading">
             <bp-ui-row type="flex">
                 <bp-ui-col :xs="12" :sm="12" :md="16" :lg="16" :xl="16">
@@ -41,7 +41,7 @@
                                     <bp-ui-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" class="bpa-form-group">
                                         <bp-ui-upload class="bpa-upload-component" ref="avatarRef" action="<?php echo wp_nonce_url(admin_url('admin-ajax.php') . '?action=bookingpress_upload_customer_avatar', 'bookingpress_upload_customer_avatar'); //phpcs:ignore ?>" :auto-upload="true" :on-success="bookingpress_upload_customer_avatar_func" :file-list="customer.avatar_list" :multiple="false" :show-file-list="cusShowFileList" limit="1" :on-exceed="bookingpress_image_upload_limit" :on-error="bookingpress_image_upload_err" :on-remove="bookingpress_remove_customer_avatar" :before-upload="checkUploadedFile" drag>
                                             <span class="material-icons-round bpa-upload-component__icon">cloud_upload</span>
-                                            <div class="bpa-upload-component__text" v-if="customer.avatar_url == ''"><?php esc_html_e('Please upload jpg/png/webp file', 'bookingpress-appointment-booking'); ?></div>
+                                            <div class="bpa-upload-component__text" v-if="customer.avatar_url == ''"><?php esc_html_e('Please upload jpg/png/webp file with a maximum size of 1 MB', 'bookingpress-appointment-booking'); ?></div>
                                         </bp-ui-upload>
                                         <div class="bpa-uploaded-avatar__preview"  v-if="customer.avatar_url != ''">
                                             <button class="bpa-avatar-close-icon" @click="bookingpress_remove_customer_avatar">

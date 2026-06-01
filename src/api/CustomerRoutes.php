@@ -123,6 +123,9 @@ class CustomerRoutes extends Base {
         $_REQUEST['customer_phone_dial_code'] = $customer_data['customer_phone_dial_code'];
         $_REQUEST['_wpnonce'] = wp_create_nonce( 'bpa_wp_nonce' );
 
+        $_REQUEST['avatar_name'] = isset($customer_data['avatar_name'])? $customer_data['avatar_name']: "";
+        $_REQUEST['avatar_url'] = isset($customer_data['avatar_url'])? $customer_data['avatar_url']: "";
+
         global $bookingpress_customers;
 
         $response = $bookingpress_customers->bookingpress_add_customer( false, true );

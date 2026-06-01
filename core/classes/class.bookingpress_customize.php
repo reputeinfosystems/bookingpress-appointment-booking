@@ -988,6 +988,8 @@ if (! class_exists('bookingpress_customize') ) {
                     vm.is_display_save_loader = '1'
                     vm.is_disabled = 1
                     let bpa_validation_flag = false
+                    let bpa_datetime_validation_flag = false
+                    let bpa_cart_validation = false
 
                     if(action == 'form_fields') {
                         vm.bpa_save_field_settings_data()
@@ -1019,15 +1021,41 @@ if (! class_exists('bookingpress_customize') ) {
 
                     } else {
 
-                        vm.is_display_save_loader = '0'
-                        vm.is_disabled = 0
-                        vm.$notify({
-                            title: '<?php esc_html_e('Error', 'bookingpress-appointment-booking'); ?>',
-                            message: '<?php esc_html_e('You can not set the "Date & Time" step as the first step in the process.', 'bookingpress-appointment-booking'); ?>',
-                            type: 'error',
-                            customClass: 'error_notification',
-                            duration:<?php echo intval($bookingpress_notification_duration); ?>,
-                        });
+                        if( bpa_datetime_validation_flag ){
+
+                            vm.is_display_save_loader = '0'
+                            vm.is_disabled = 0
+                            vm.$notify({
+                                title: '<?php esc_html_e('Error', 'bookingpress-appointment-booking'); ?>',
+                                message: '<?php esc_html_e('Date & Time cannot come immediately after Basic Details when it is the first step.', 'bookingpress-appointment-booking'); ?>',
+                                type: 'error',
+                                customClass: 'error_notification',
+                                duration:<?php echo intval($bookingpress_notification_duration); ?>,
+                            });
+
+                        } else if( bpa_cart_validation ){
+
+                            vm.is_display_save_loader = '0'
+                            vm.is_disabled = 0
+                            vm.$notify({
+                                title: '<?php esc_html_e('Error', 'bookingpress-appointment-booking'); ?>',
+                                message: '<?php esc_html_e('Cart must be the last step, or placed just before Basic Details when Basic Details is the last step.', 'bookingpress-appointment-booking'); ?>',
+                                type: 'error',
+                                customClass: 'error_notification',
+                                duration:<?php echo intval($bookingpress_notification_duration); ?>,
+                            });
+
+                        } else {
+                            vm.is_display_save_loader = '0'
+                            vm.is_disabled = 0
+                            vm.$notify({
+                                title: '<?php esc_html_e('Error', 'bookingpress-appointment-booking'); ?>',
+                                message: '<?php esc_html_e('You can not set the "Date & Time" step as the first step in the process.', 'bookingpress-appointment-booking'); ?>',
+                                type: 'error',
+                                customClass: 'error_notification',
+                                duration:<?php echo intval($bookingpress_notification_duration); ?>,
+                            });
+                        }
                     }
                 },
                 bookingpress_load_booking_form_data(){

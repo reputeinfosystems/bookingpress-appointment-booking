@@ -1766,7 +1766,6 @@ if( version_compare( $bookingpress_old_version, '1.5', '<') ){
             $position++;
         }   
     }
-
 }
 
 if( version_compare( $bookingpress_old_version, '1.5.2', '<') ){
@@ -1777,7 +1776,7 @@ if( version_compare( $bookingpress_old_version, '1.5.2', '<') ){
 }
 
 $BookingPress->bookingpress_cleanup_transient_data_hook_callback();
-$bookingpress_new_version = '1.5.2';
+$bookingpress_new_version = '1.5.3';
 update_option('bookingpress_new_version_installed', 1);
 update_option('bookingpress_version', $bookingpress_new_version);
 update_option('bookingpress_updated_date_' . $bookingpress_new_version, current_time('mysql'));

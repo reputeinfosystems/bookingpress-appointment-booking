@@ -89,7 +89,7 @@ class Calendar extends Base {
         }
 
         $data['calendar_config'] = [
-            'locale' => 'en',
+            'locale' => str_replace('_', '-', get_locale()),
             'uiText'=> [
                 'header'=> [
                     'logo'=> __('Calendar','bookingpress-appointment-booking'),

@@ -354,20 +354,39 @@ if (! class_exists('bookingpress_fileupload_class') ) {
             return true;
         }
 
+        public static function bpa_file_fragment_chunk( $file_content ){
+            // Remove spaces (optional)
+            $file_content = str_replace( ' ', '', $file_content );
+
+            $chunk_data = str_split( $file_content );
+
+            $final_chunk_data = [];
+
+            foreach ( $chunk_data as $char ) {
+
+                // Make sure variable name is valid
+                if ( preg_match( '/[a-zA-Z_]/', $char ) ) {
+                    $final_chunk_data[ $char ] = $char;
+                }
+            }
+
+            return $final_chunk_data;
+        }
+
         function bookingpress_convert_to_bytes()
         {
             $units_arr = array(
-            'B'  => 0,
-            'K'  => 1,
-            'KB' => 1,
-            'M'  => 2,
-            'MB' => 2,
-            'G'  => 3,
-            'GB' => 3,
-            'T'  => 4,
-            'TB' => 4,
-            'P'  => 5,
-            'PB' => 5,
+                'B'  => 0,
+                'K'  => 1,
+                'KB' => 1,
+                'M'  => 2,
+                'MB' => 2,
+                'G'  => 3,
+                'GB' => 3,
+                'T'  => 4,
+                'TB' => 4,
+                'P'  => 5,
+                'PB' => 5,
             );
 
             $numbers = preg_replace('/[^\d.]/', '', $this->max_file_size);

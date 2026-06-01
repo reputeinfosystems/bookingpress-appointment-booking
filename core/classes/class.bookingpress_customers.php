@@ -1419,7 +1419,7 @@ if (! class_exists('bookingpress_customers') ) {
         function bookingpress_customer_dynamic_on_load_methods_func()
         {
             ?>
-            this.loadCustomers();
+            //this.loadCustomers();
             <?php
             do_action('bookingpress_customer_add_dynamic_on_load_method');
         }
@@ -1665,7 +1665,7 @@ if (! class_exists('bookingpress_customers') ) {
             },
             async loadCustomers( rest_pagination = false ) {
                 this.toggleBusy(); 
-                const vm = this;              
+                const vm = this;   
                 var bookingpress_module_type = bookingpress_dashboard_filter_start_date = bookingpress_dashboard_filter_end_date = selected_date_range = ''; 
                 bookingpress_module_type = sessionStorage.getItem("bookingpress_module_type");                
                 bookingpress_dashboard_filter_start_date = sessionStorage.getItem("bookingpress_dashboard_filter_start_date");
@@ -2106,6 +2106,7 @@ if (! class_exists('bookingpress_customers') ) {
             $currentpage = isset($_POST['currentpage']) ? intval($_POST['currentpage']) : 1; // phpcs:ignore WordPress.Security.NonceVerification
             $offset      = ( ! empty($currentpage) && $currentpage > 1 ) ? ( ( $currentpage - 1 ) * $perpage ) : 0;
          // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $_REQUEST['search_data'] contains mixed array and it's been sanitized properly using 'appointment_sanatize_field' function
+         
             $bookingpress_search_data  = ! empty($_REQUEST['search_data']) ? array_map(array( $BookingPress, 'appointment_sanatize_field' ), $_REQUEST['search_data']) : array(); // phpcs:ignore
             $bookingpress_search_query = $bookingpress_search_query_join = '';
 

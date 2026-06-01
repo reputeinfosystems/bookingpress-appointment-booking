@@ -1505,7 +1505,7 @@ if (! class_exists('bookingpress_dashboard') ) {
             bookingpress_dashboard_redirect_filter(dashboard_filter,module,status=''){                                                                
                 const vm = this;
                 var bookingpress_redirect_url;                
-                if(module == 'appointment' ){                                        
+                if(module == 'appointment' ){
                     sessionStorage.setItem("bookingpress_dashboard_filter_appointment_status",status);                
                     bookingpress_redirect_url = "<?php echo  add_query_arg('page', esc_html($bookingpress_slugs->bookingpress_appointments), esc_url(admin_url() . 'admin.php?page=bookingpress')) // phpcs:ignore ?>" 
                 } else if(module == 'customer'){
