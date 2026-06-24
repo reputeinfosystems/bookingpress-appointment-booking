@@ -144,7 +144,10 @@ const initNewCustomerDialog = () => {
                 const form = this.$refs.customer;
                 form.resetFields();
                 this.openCustomerModal = false;
-                this.resetForm()
+                this.resetForm();
+                if( 'undefined' != typeof window.BookingPressAppointmentDialog ){
+                    window.BookingPressAppointmentDialog.appointment_formdata.appointment_selected_customer = '';
+                }
             },
             resetForm() {                        
                 const vm2 = this;

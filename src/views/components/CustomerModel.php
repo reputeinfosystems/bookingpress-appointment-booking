@@ -60,7 +60,7 @@
                                                 </template>
                                                 <bp-ui-select class="bpa-form-control" v-model="customer.wp_user" filterable placeholder="<?php esc_html_e( 'Start typing to fetch user.', 'bookingpress-appointment-booking' ); ?>" @change="bookingpress_get_existing_user_details($event)" reserve-keyword remote :remote-method="get_wordpress_users" popper-class="bpa-el-select--is-with-modal" v-cancel-read-only>
                                                     <bp-ui-option value="add_new" label="<?php esc_html_e( 'Create New', 'bookingpress-appointment-booking' ); ?>">
-                                                        <i class="el-icon-plus"></i><span> <?php esc_html_e( 'Create New', 'bookingpress-appointment-booking' ); ?> </span>
+                                                        <bp-ui-icon class="bp-icon-plus"></bp-ui-icon><span> <?php esc_html_e( 'Create New', 'bookingpress-appointment-booking' ); ?> </span>
                                                     </bp-ui-option>
                                                     <bp-ui-option v-if="loading_from_server" value="__loading__" :label="bookingpress_loading" disabled>
                                                         <span>{{ bookingpress_loading }}</span>

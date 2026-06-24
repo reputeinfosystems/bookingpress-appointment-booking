@@ -29,9 +29,6 @@ const initAddonsWrapper = () => {
     const moduleData = getModuleData('bookingpress-addons-loader');
 
     let addonMountedMethods = wp.hooks.applyFilters('bookingpress_addon_mounted_methods', {
-        open_premium_modal: function(){
-            window.open('https://www.bookingpressplugin.com/pricing/?utm_source=liteversion&utm_medium=plugin&utm_campaign=Upgrade+to+Premium&utm_id=bookingpress_2', '_blank');
-        },
         bookingpress_get_remote_addons_lite_list: function(){
 
             const vm = this;

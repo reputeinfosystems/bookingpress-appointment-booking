@@ -420,21 +420,21 @@ const initNewAppointmentDialog = () => {
         },
         bookingpress_retrieve_custom_field_values(selected_customer_id) {
             const vm = this;
-            let postData = { action: "bookingpress_get_customer_form_field_values", customer_id: selected_customer_id, _wpnonce: BookingPressConfig._wpnonce };
+            /* let postData = { action: "bookingpress_get_customer_form_field_values", customer_id: selected_customer_id, _wpnonce: BookingPressConfig._wpnonce };
             axios.post(appoint_ajax_obj.ajax_url, Qs.stringify(postData))
-                .then(function (response) {
-                    if (response.data.variant == 'success') {
-                        let customer_form_fields = response.data.customer_form_fields;
-                        for (let field_key in customer_form_fields) {
-                            let field_value = customer_form_fields[field_key];
-                            if ('undefined' != typeof vm.appointment_formdata.bookingpress_appointment_meta_fields_value[field_key]) {
-                                vm.appointment_formdata.bookingpress_appointment_meta_fields_value[field_key] = field_value;
-                            }
+            .then(function (response) {
+                if (response.data.variant == 'success') {
+                    let customer_form_fields = response.data.customer_form_fields;
+                    for (let field_key in customer_form_fields) {
+                        let field_value = customer_form_fields[field_key];
+                        if ('undefined' != typeof vm.appointment_formdata.bookingpress_appointment_meta_fields_value[field_key]) {
+                            vm.appointment_formdata.bookingpress_appointment_meta_fields_value[field_key] = field_value;
                         }
                     }
-                }).catch(function (error) {
-                    console.log(error);
-                })
+                }
+            }).catch(function (error) {
+                console.log(error);
+            }) */
         },
         bookingpress_get_customer_list(query) {
 

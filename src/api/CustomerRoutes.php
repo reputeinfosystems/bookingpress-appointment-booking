@@ -14,7 +14,7 @@ class CustomerRoutes extends Base {
         register_rest_route( 'bookingpress-app/v1', '/customer', [
             'methods'  => 'POST',
             'callback' => [ $this, 'get_customer' ],
-            'permission_callback' => $this->permission_callback_for( 'bookingpress_calendar' )
+            'permission_callback' => $this->permission_callback_for( 'retrieve_customers' )
         ] );
         register_rest_route( 'bookingpress-app/v1', '/customer/create', [
             'methods'  => 'POST',

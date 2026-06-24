@@ -34,7 +34,7 @@
                                                 </template>
                                                 <bp-ui-select class="bpa-form-control" name="appointment_selected_customer" v-model="appointment_formdata.appointment_selected_customer" filterable placeholder="<?php esc_html_e( 'Start typing to fetch customer', 'bookingpress-appointment-booking' ); ?>" remote reserve-keyword :remote-method="bookingpress_get_customer_list" @change="bpa_select_customer($event)" popper-class="bpa-el-select--is-with-modal" v-cancel-read-only>
                                                     <bp-ui-option v-if="bookingpress_edit_customers == 1" value="add_new" label="Add New">
-                                                        <i class="el-icon-plus"></i> <span><?php esc_html_e( 'Add New', 'bookingpress-appointment-booking' ); ?></span>
+                                                        <bp-ui-icon class="bp-icon-plus"></bp-ui-icon> <span><?php esc_html_e( 'Add New', 'bookingpress-appointment-booking' ); ?></span>
                                                     </bp-ui-option>
                                                     <bp-ui-option v-if="loading_from_server" value="__loading__" :label="bookingpress_loading" disabled>
                                                         <span>{{ bookingpress_loading }}</span>
@@ -89,7 +89,7 @@
                                             </bp-ui-form-item>
                                         </bp-ui-col>
                                         <bp-ui-col :xs="24" :sm="24" :md="8" :lg="12" :xl="12">
-                                            <bp-ui-form-item>
+                                            <bp-ui-form-item prop="appointment_status">
                                                 <template #label>
                                                     <span class="bpa-form-label"><?php esc_html_e('Select Status', 'bookingpress-appointment-booking'); ?></span>
                                                 </template>
@@ -101,7 +101,7 @@
                                 <div class="bpa-form-body-row">
                                     <bp-ui-row :gutter="24" type="flex">
                                         <bp-ui-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-                                            <bp-ui-form-item>
+                                            <bp-ui-form-item prop="appointment_internal_note">
                                                 <template #label>
                                                     <span class="bpa-form-label"><?php esc_html_e('Internal note', 'bookingpress-appointment-booking'); ?></span>
                                                 </template>
@@ -113,7 +113,7 @@
                                 <div class="bpa-form-body-row">
                                     <bp-ui-row :gutter="24" type="flex">
                                         <bp-ui-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">
-                                            <bp-ui-form-item>
+                                            <bp-ui-form-item prop="appointment_send_notification">
                                                 <label class="bpa-form-label bpa-custom-checkbox--is-label"> <bp-ui-checkbox label="" v-model="appointment_formdata.appointment_send_notification"></bp-ui-checkbox><?php esc_html_e('Do Not Send Notification', 'bookingpress-appointment-booking'); ?></label>
                                             </bp-ui-form-item>
                                         </bp-ui-col>

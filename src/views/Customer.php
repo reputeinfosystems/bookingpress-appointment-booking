@@ -2,8 +2,33 @@
     <?php
         if( class_exists( '\BookingPressPro\admin\Customer') && method_exists( '\BookingPressPro\admin\Customer', 'render_customer_header' ) ){
             \BookingPressPro\admin\Customer::render_customer_header();
+
+            global $BookingPressPro;
+            $bookingpress_disable_bulk_action = 0;
+            $bookingpress_edit_customers = 0;
+            $bookingpress_export_customers = 0;
+            $bookingpress_delete_customers = 0;
+            $bookingpress_import_customers = 0;
+            if ($BookingPressPro->bookingpress_check_capability( 'bookingpress_delete_customers' ) ) {
+                $bookingpress_disable_bulk_action = 1;
+                $bookingpress_delete_customers = 1;
+            }
+            if ( $BookingPressPro->bookingpress_check_capability( 'bookingpress_edit_customers' ) ) {
+                $bookingpress_edit_customers = 1;
+            }
+            if ( $BookingPressPro->bookingpress_check_capability( 'bookingpress_export_customers' ) ) {
+                $bookingpress_export_customers = 1;
+            }
+            if ( $BookingPressPro->bookingpress_check_capability( 'bookingpress_import_customers' ) ) {
+                $bookingpress_import_customers = 1;
+            }            
         } else {
             require_once __DIR__ . '/components/Header.php';
+            $bookingpress_disable_bulk_action = 1;
+            $bookingpress_edit_customers = 1;
+            $bookingpress_export_customers = 1;
+            $bookingpress_delete_customers = 1;
+            $bookingpress_import_customers = 1;
         }
     ?>
     <div class="customer-app-root bookingpress_page_inner_wrapper" v-cloak id="customer-app-root">
@@ -14,10 +39,12 @@
                 </bp-ui-col>
                 <bp-ui-col :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
                     <div class="bpa-hw-right-btn-group">
+                        <?php if($bookingpress_edit_customers == 1) { ?>
                         <bp-ui-button class="bpa-btn bpa-btn--primary" @click="open_add_customer_modal()"> 
                             <span class="material-icons-round">add</span> 
                             <?php esc_html_e('Add New', 'bookingpress-appointment-booking'); ?>
                         </bp-ui-button>
+                        <?php } ?>
                     </div>
                 </bp-ui-col>
             </bp-ui-row>
@@ -38,12 +65,16 @@
                                 <bp-ui-button class="bpa-btn bpa-btn__medium bpa-btn--primary bpa-btn--full-width" @click="loadCustomers(true)">
                                     <?php esc_html_e('Apply', 'bookingpress-appointment-booking'); ?>
                                 </bp-ui-button>
+                                <?php if($bookingpress_export_customers == 1) { ?>
                                 <bp-ui-button class="bpa-btn bpa-btn--secondary bpa-btn__medium bpa-btn--full-width" @click="bookingpress_export_customer_data_lite">
                                     <span class="material-icons-round">open_in_new</span><?php esc_html_e( 'Export', 'bookingpress-appointment-booking' ); ?>
                                 </bp-ui-button>						
+                                <?php } ?>
+                                <?php if($bookingpress_import_customers == 1) { ?>
                                 <bp-ui-button class="bpa-btn bpa-btn--secondary bpa-btn__medium bpa-btn--full-width" @click="bookingpress_import_customer_data_open">
                                     <span class="material-icons-round">open_in_new</span><?php esc_html_e( 'Import', 'bookingpress-appointment-booking' ); ?>
                                 </bp-ui-button>
+                                <?php } ?>
                             </div>
                         </bp-ui-col>
                     </bp-ui-row>
@@ -58,11 +89,13 @@
                                 </picture>
                             </div>
                             <div class="bpa-ev-right-content">
-                                <h4><?php esc_html_e('No Record Found!', 'bookingpress-appointment-booking'); ?></h4>                                
+                                <h4><?php esc_html_e('No Record Found!', 'bookingpress-appointment-booking'); ?></h4>   
+                                <?php if($bookingpress_edit_customers == 1) { ?>
                                 <bp-ui-button class="bpa-btn bpa-btn--primary bpa-btn__medium" @click="open_add_customer_modal()"> 
                                     <span class="material-icons-round">add</span> 
                                     <?php esc_html_e('Add New', 'bookingpress-appointment-booking'); ?>
                                 </bp-ui-button>
+                                <?php } ?>
                             </div>
                         </div>
                     </bp-ui-col>
@@ -93,33 +126,41 @@
                                         <template #default="scope">
                                             <label>{{ scope.row.customer_total_appointment }}</label>
                                             <div class="bpa-table-actions-wrap">
-                                                <div class="bpa-table-actions">                                    
-                                                    <bp-ui-tooltip effect="dark" content="" placement="top" open-delay="300">
-                                                        <template #content>
-                                                            <span><?php esc_html_e('Edit', 'bookingpress-appointment-booking'); ?></span>
-                                                        </template>
-                                                        <bp-ui-button class="bpa-btn bpa-btn--icon-without-box" @click.native.prevent="editCustomerDetails(scope.row.customer_id)">
-                                                            <span class="material-icons-round">mode_edit</span>
-                                                        </bp-ui-button>
-                                                    </bp-ui-tooltip>
-                                                    <bp-ui-tooltip effect="dark" content="" placement="top" open-delay="300">
-                                                        <template #content>
-                                                            <span><?php esc_html_e('Delete', 'bookingpress-appointment-booking'); ?></span>
-                                                        </template>
-                                                        <bp-ui-popconfirm 
-                                                            cancbp-ui-button-text='<?php esc_html_e('Cancel', 'bookingpress-appointment-booking'); ?>' 
-                                                            confirm-button-text='<?php esc_html_e('Delete', 'bookingpress-appointment-booking'); ?>' 
-                                                            icon="false" 
-                                                            title="<?php esc_html_e('Are you sure you want to delete this customer?', 'bookingpress-appointment-booking'); ?>" 
-                                                            @confirm="deleteCustomer(scope.row.customer_id)" 
-                                                            confirm-button-type="bpa-btn bpa-btn__small bpa-btn--danger" 
-                                                            cancbp-ui-button-type="bpa-btn bpa-btn__small">
-                                                            <bp-ui-button type="text" slot="reference" class="bpa-btn bpa-btn--icon-without-box __danger">
-                                                                <span class="material-icons-round">delete</span>
+                                                <?php
+										            if ( ($bookingpress_edit_customers == 1 ) || ($bookingpress_delete_customers == 1) ) {
+											        ?>
+                                                    <div class="bpa-table-actions">  
+                                                        <?php if ( $bookingpress_edit_customers == 1 ) { ?>
+                                                        <bp-ui-tooltip effect="dark" content="" placement="top" open-delay="300">
+                                                            <template #content>
+                                                                <span><?php esc_html_e('Edit', 'bookingpress-appointment-booking'); ?></span>
+                                                            </template>
+                                                            <bp-ui-button class="bpa-btn bpa-btn--icon-without-box" @click.native.prevent="editCustomerDetails(scope.row.customer_id)">
+                                                                <span class="material-icons-round">mode_edit</span>
                                                             </bp-ui-button>
-                                                        </bp-ui-popconfirm>
-                                                    </bp-ui-tooltip>
-                                                </div>
+                                                        </bp-ui-tooltip>
+                                                        <?php } ?>
+                                                        <?php if ( $bookingpress_delete_customers == 1 ) { ?>
+                                                        <bp-ui-tooltip effect="dark" content="" placement="top" open-delay="300">
+                                                            <template #content>
+                                                                <span><?php esc_html_e('Delete', 'bookingpress-appointment-booking'); ?></span>
+                                                            </template>
+                                                            <bp-ui-popconfirm 
+                                                                cancel-button-text='<?php esc_html_e('Cancel', 'bookingpress-appointment-booking'); ?>' 
+                                                                confirm-button-text='<?php esc_html_e('Delete', 'bookingpress-appointment-booking'); ?>' 
+                                                                icon="false" 
+                                                                title="<?php esc_html_e('Are you sure you want to delete this customer?', 'bookingpress-appointment-booking'); ?>" 
+                                                                @confirm="deleteCustomer(scope.row.customer_id)" 
+                                                                confirm-button-type="bpa-btn bpa-btn__small bpa-btn--danger" 
+                                                                cancel-button-type="bpa-btn bpa-btn__small">
+                                                                <bp-ui-button type="text" slot="reference" class="bpa-btn bpa-btn--icon-without-box __danger">
+                                                                    <span class="material-icons-round">delete</span>
+                                                                </bp-ui-button>
+                                                            </bp-ui-popconfirm>
+                                                        </bp-ui-tooltip>
+                                                        <?php } ?>
+                                                    </div>
+                                                <?php } ?>
                                             </div>
                                         </template>                  
                                     </bp-ui-table-column>
@@ -140,7 +181,9 @@
                                         <template #default="scope">
                                             <label>{{ scope.row.customer_phone }}</label>
                                             <div class="bpa-table-actions-wrap">
-                                                <div class="bpa-table-actions">                                    
+                                                <?php if ( ($bookingpress_edit_customers == 1 ) || ($bookingpress_delete_customers == 1) ) { ?>
+                                                <div class="bpa-table-actions">    
+                                                    <?php if ( $bookingpress_edit_customers == 1 ) { ?>
                                                     <bp-ui-tooltip effect="dark" content="" placement="top" open-delay="300">
                                                         <template #content>
                                                             <span><?php esc_html_e('Edit', 'bookingpress-appointment-booking'); ?></span>
@@ -149,24 +192,28 @@
                                                             <span class="material-icons-round">mode_edit</span>
                                                         </bp-ui-button>
                                                     </bp-ui-tooltip>
+                                                    <?php } ?>
+                                                    <?php if ( $bookingpress_delete_customers == 1 ) { ?>
                                                     <bp-ui-tooltip effect="dark" content="" placement="top" open-delay="300">
                                                         <template #content>
                                                             <span><?php esc_html_e('Delete', 'bookingpress-appointment-booking'); ?></span>
                                                         </template>
                                                         <bp-ui-popconfirm 
-                                                            cancbp-ui-button-text='<?php esc_html_e('Cancel', 'bookingpress-appointment-booking'); ?>' 
+                                                            cancel-button-text='<?php esc_html_e('Cancel', 'bookingpress-appointment-booking'); ?>' 
                                                             confirm-button-text='<?php esc_html_e('Delete', 'bookingpress-appointment-booking'); ?>' 
                                                             icon="false" 
                                                             title="<?php esc_html_e('Are you sure you want to delete this customer?', 'bookingpress-appointment-booking'); ?>" 
                                                             @confirm="deleteCustomer(scope.row.customer_id)" 
                                                             confirm-button-type="bpa-btn bpa-btn__small bpa-btn--danger" 
-                                                            cancbp-ui-button-type="bpa-btn bpa-btn__small">
+                                                            cancel-button-type="bpa-btn bpa-btn__small">
                                                             <bp-ui-button type="text" slot="reference" class="bpa-btn bpa-btn--icon-without-box __danger">
                                                                 <span class="material-icons-round">delete</span>
                                                             </bp-ui-button>
                                                         </bp-ui-popconfirm>
                                                     </bp-ui-tooltip>
+                                                    <?php } ?>
                                                 </div>
+                                                <?php } ?>
                                             </div>
                                         </template>
                                     </bp-ui-table-column> 
@@ -195,23 +242,29 @@
                                                 {{ scope.row.customer_total_appointment }}
                                             </p>
                                             <div class="bpa-mcc__item-btns-sm">
-                                                <bp-ui-button class="bpa-btn bpa-btn__small bpa-btn__filled-light" @click.prevent="editCustomerDetails(scope.row.customer_id)">
-                                                    <span class="material-icons-round">mode_edit</span>
-                                                    <?php esc_html_e('Edit', 'bookingpress-appointment-booking'); ?>
-                                                </bp-ui-button>
-                                                <bp-ui-popconfirm 
-                                                    cancbp-ui-button-text='<?php esc_html_e('Cancel', 'bookingpress-appointment-booking'); ?>' 
-                                                    confirm-button-text='<?php esc_html_e('Delete', 'bookingpress-appointment-booking'); ?>' 
-                                                    icon="false" 
-                                                    title="<?php esc_html_e('Are you sure you want to delete this customer?', 'bookingpress-appointment-booking'); ?>" 
-                                                    @confirm="deleteCustomer(scope.row.customer_id)" 
-                                                    confirm-button-type="bpa-btn bpa-btn__small bpa-btn--danger" 
-                                                    cancbp-ui-button-type="bpa-btn bpa-btn__small">
-                                                    <bp-ui-button type="text" slot="reference" class="bpa-btn bpa-btn__small bpa-btn__filled-light __danger">
-                                                        <span class="material-icons-round">delete</span>
-                                                        <?php esc_html_e('Delete', 'bookingpress-appointment-booking'); ?>
+                                                <?php if ( ($bookingpress_edit_customers == 1 ) || ($bookingpress_delete_customers == 1) ) { ?>
+                                                    <?php if ( $bookingpress_edit_customers == 1 ) { ?>
+                                                    <bp-ui-button class="bpa-btn bpa-btn__small bpa-btn__filled-light" @click.prevent="editCustomerDetails(scope.row.customer_id)">
+                                                        <span class="material-icons-round">mode_edit</span>
+                                                        <?php esc_html_e('Edit', 'bookingpress-appointment-booking'); ?>
                                                     </bp-ui-button>
-                                                </bp-ui-popconfirm>                                                                                
+                                                    <?php } ?>
+                                                    <?php if ( $bookingpress_delete_customers == 1 ) { ?>
+                                                    <bp-ui-popconfirm 
+                                                        cancel-button-text='<?php esc_html_e('Cancel', 'bookingpress-appointment-booking'); ?>' 
+                                                        confirm-button-text='<?php esc_html_e('Delete', 'bookingpress-appointment-booking'); ?>' 
+                                                        icon="false" 
+                                                        title="<?php esc_html_e('Are you sure you want to delete this customer?', 'bookingpress-appointment-booking'); ?>" 
+                                                        @confirm="deleteCustomer(scope.row.customer_id)" 
+                                                        confirm-button-type="bpa-btn bpa-btn__small bpa-btn--danger" 
+                                                        cancel-button-type="bpa-btn bpa-btn__small">
+                                                        <bp-ui-button type="text" slot="reference" class="bpa-btn bpa-btn__small bpa-btn__filled-light __danger">
+                                                            <span class="material-icons-round">delete</span>
+                                                            <?php esc_html_e('Delete', 'bookingpress-appointment-booking'); ?>
+                                                        </bp-ui-button>
+                                                    </bp-ui-popconfirm> 
+                                                    <?php } ?> 
+                                                <?php } ?> 
                                             </div>
                                         </template>
                                     </bp-ui-table-column>
@@ -235,26 +288,28 @@
                     <bp-ui-col :xs="24" :sm="24" :md="24" :lg="12" :xl="12" class="bpa-pagination-nav">
                         <bp-ui-pagination  :key="perPage" @size-change="handleSizeChange" @current-change="handleCurrentChange" v-model:current-page="currentPage" layout="prev, pager, next" :total="totalItems" :page-sizes="pagination_length" :page-size="perPage"></bp-ui-pagination>
                     </bp-ui-col>
-                    <bp-ui-container v-if="multipleSelection.length > 0" class="bpa-default-card bpa-bulk-actions-card">
-                        <bp-ui-button class="bpa-btn bpa-btn--icon-without-box bpa-bac__close-icon" @click="closeBulkAction">
-                            <span class="material-icons-round">close</span>
-                        </bp-ui-button>
-                        <bp-ui-row type="flex" class="bpa-bac__wrapper">
-                            <bp-ui-col class="bpa-bac__left-area" :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
-                                <span class="material-icons-round">check_circle</span>
-                                <p>{{ multipleSelection.length }}<?php esc_html_e(' Items Selected', 'bookingpress-appointment-booking'); ?></p>
-                            </bp-ui-col>
-                            <bp-ui-col class="bpa-bac__right-area" :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
-                                <bp-ui-select class="bpa-form-control" v-model="bulk_action" placeholder="<?php esc_html_e('Select', 'bookingpress-appointment-booking'); ?>"
-                                popper-class="bpa-dropdown--bulk-actions">
-                                    <bp-ui-option v-for="item in bulk_options" :key="item.value" :label="item.label" :value="item.value"></bp-ui-option>
-                                </bp-ui-select>
-                                <bp-ui-button @click="bulk_actions" class="bpa-btn bpa-btn--primary bpa-btn__medium">
-                                    <?php esc_html_e('Go', 'bookingpress-appointment-booking'); ?>
-                                </bp-ui-button>
-                            </bp-ui-col>
-                        </bp-ui-row>
-                    </bp-ui-container>        
+                    <?php if($bookingpress_disable_bulk_action){ ?>
+                        <bp-ui-container v-if="multipleSelection.length > 0" class="bpa-default-card bpa-bulk-actions-card">
+                            <bp-ui-button class="bpa-btn bpa-btn--icon-without-box bpa-bac__close-icon" @click="closeBulkAction">
+                                <span class="material-icons-round">close</span>
+                            </bp-ui-button>
+                            <bp-ui-row type="flex" class="bpa-bac__wrapper">
+                                <bp-ui-col class="bpa-bac__left-area" :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
+                                    <span class="material-icons-round">check_circle</span>
+                                    <p>{{ multipleSelection.length }}<?php esc_html_e(' Items Selected', 'bookingpress-appointment-booking'); ?></p>
+                                </bp-ui-col>
+                                <bp-ui-col class="bpa-bac__right-area" :xs="24" :sm="12" :md="12" :lg="12" :xl="12">
+                                    <bp-ui-select class="bpa-form-control" v-model="bulk_action" placeholder="<?php esc_html_e('Select', 'bookingpress-appointment-booking'); ?>"
+                                    popper-class="bpa-dropdown--bulk-actions">
+                                        <bp-ui-option v-for="item in bulk_options" :key="item.value" :label="item.label" :value="item.value"></bp-ui-option>
+                                    </bp-ui-select>
+                                    <bp-ui-button @click="bulk_actions" class="bpa-btn bpa-btn--primary bpa-btn__medium">
+                                        <?php esc_html_e('Go', 'bookingpress-appointment-booking'); ?>
+                                    </bp-ui-button>
+                                </bp-ui-col>
+                            </bp-ui-row>
+                        </bp-ui-container>   
+                    <?php } ?>     
                 </bp-ui-row>    
             </div>   
         </bp-ui-main>

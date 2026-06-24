@@ -849,7 +849,13 @@ if (! class_exists('bookingpress_customers') ) {
 
                                 }
                                 $bpa_do_autologin = true;
-                                $bookingpress_wpuser_id = wp_create_user($bookingpress_user_name, $bookingpress_user_pass, $bookingpress_customer_email);
+                                try{
+                                    $bookingpress_wpuser_id = wp_create_user($bookingpress_user_name, $bookingpress_user_pass, $bookingpress_customer_email);
+                                } catch( Exception $e ) {
+                                    $bookingpress_wpuser_id = 0;
+                                    //do_action( 'bookingpress_other_debug_log_entry', 'appointment_debug_logs', 'Booking form confirm booking data', 'bookingpress_complete_appointment', $bookingpress_confirm_booking_received_data, $bookingpress_other_debug_log_id );
+                                    error_log( 'Error while creating user: ' . $e->getMessage() );
+                                }
    
                             }
                             if(!empty($bookingpress_customer_email) && $bpa_send_new_user_notication == 1 ) {

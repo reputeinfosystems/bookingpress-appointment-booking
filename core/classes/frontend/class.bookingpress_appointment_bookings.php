@@ -5984,6 +5984,11 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
 				created(){
 					this.bookingpress_load_booking_form();
 				},
+                watch:{
+                    "appointment_step_form_data.total_payable_amount": function(newVal){
+                        wp.hooks.doAction( "bookingpress_total_payable_amount_updated", newVal, this );
+                    }
+                },
 				mounted(){
                     const vm_onload = this;
 

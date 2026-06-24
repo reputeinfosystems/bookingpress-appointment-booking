@@ -188,6 +188,8 @@ if(!empty($request_module) && $request_module != 'lite_wizard'){
                                         esc_html_e('Black Friday Sale', 'bookingpress-appointment-booking');
                                     } else if ( 'spring_sale' == $type ){
                                         esc_html_e( 'Spring Sale', 'bookingpress-appointment-booking' );
+                                    } else if ( 'summer_sale' == $type ){
+                                        esc_html_e( 'Summer Sale', 'bookingpress-appointment-booking' );
                                     } else {
                                         esc_html_e('Go Premium', 'bookingpress-appointment-booking');
                                     }

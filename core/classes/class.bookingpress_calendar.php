@@ -809,20 +809,21 @@ if (! class_exists('bookingpress_calendar') ) {
                             }
                             
                             do_action('bookingpress_after_update_appointment', $bookingpress_update_id);
-
-                            if ($bookingpress_appointment_is_send_notification ) {
-                                if ($bookingpress_appointment_status == '4' ) {
-                                    $bookingpress_email_notifications->bookingpress_send_after_payment_log_entry_email_notification('Appointment Rejected', $bookingpress_update_id, $customer_email);
-                                } elseif ($bookingpress_appointment_status == '1' ) {
-                                    $bookingpress_email_notifications->bookingpress_send_after_payment_log_entry_email_notification('Appointment Approved', $bookingpress_update_id, $customer_email);
-                                } elseif ($bookingpress_appointment_status == '2' ) {
-                                    $bookingpress_email_notifications->bookingpress_send_after_payment_log_entry_email_notification('Appointment Pending', $bookingpress_update_id, $customer_email);
-                                } elseif ($bookingpress_appointment_status == '3' ) {
-                                    $bookingpress_email_notifications->bookingpress_send_after_payment_log_entry_email_notification('Appointment Canceled', $bookingpress_update_id, $customer_email);
-                                }
-                            }       
-
+                            
                             if((($bookingpress_appointment_old_status != $bookingpress_appointment_status)) && (!empty($bookingpress_appointment_status) && !empty($bookingpress_update_id))) {
+
+                                if ($bookingpress_appointment_is_send_notification ) {
+                                    if ($bookingpress_appointment_status == '4' ) {
+                                        $bookingpress_email_notifications->bookingpress_send_after_payment_log_entry_email_notification('Appointment Rejected', $bookingpress_update_id, $customer_email);
+                                    } elseif ($bookingpress_appointment_status == '1' ) {
+                                        $bookingpress_email_notifications->bookingpress_send_after_payment_log_entry_email_notification('Appointment Approved', $bookingpress_update_id, $customer_email);
+                                    } elseif ($bookingpress_appointment_status == '2' ) {
+                                        $bookingpress_email_notifications->bookingpress_send_after_payment_log_entry_email_notification('Appointment Pending', $bookingpress_update_id, $customer_email);
+                                    } elseif ($bookingpress_appointment_status == '3' ) {
+                                        $bookingpress_email_notifications->bookingpress_send_after_payment_log_entry_email_notification('Appointment Canceled', $bookingpress_update_id, $customer_email);
+                                    }
+                                }       
+                                
                                 $wpdb->update($tbl_bookingpress_appointment_bookings, array('bookingpress_appointment_status' => $bookingpress_appointment_status), array('bookingpress_appointment_booking_id' => $bookingpress_update_id) );	
                                 do_action('bookingpress_after_change_appointment_status', $bookingpress_update_id, $bookingpress_appointment_status);
                             }

@@ -2241,7 +2241,7 @@ if (! class_exists('BookingPress') ) {
         {
             global $bookingpress_version;
             $bookingpress_old_version = get_option('bookingpress_version', true);
-            if (version_compare($bookingpress_old_version, '1.5.4', '<') ) {
+            if (version_compare($bookingpress_old_version, '1.5.5', '<') ) {
                 $bookingpress_load_upgrade_file = BOOKINGPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $bookingpress_load_upgrade_file;
                 $this->bookingpress_send_anonymous_data_cron();
@@ -2771,7 +2771,7 @@ if (! class_exists('BookingPress') ) {
                                 window.open('https://www.bookingpressplugin.com/pricing/?utm_source=liteversion&utm_medium=plugin&utm_campaign=Upgrade+to+Premium&utm_id=bookingpress_2', '_blank');
                             },
                             bookingpress_redirect_sale_premium_page(){
-                                window.open('https://www.bookingpressplugin.com/pricing/?utm_source=liteversion&utm_medium=popup&utm_campaign=springsale', '_blank');
+                                window.open('https://www.bookingpressplugin.com/pricing/?utm_source=LiteVersion&utm_medium=Popup&utm_campaign=SummerSale', '_blank');
                             },
                             bookingpress_redirect_lite_vs_preminum_page(){
                                 window.open('https://www.bookingpressplugin.com/bookingpress-lite-vs-premium', '_blank');
@@ -4931,6 +4931,8 @@ if (! class_exists('BookingPress') ) {
                         $upgrade_menu_text = esc_html__( 'Black Friday Sale 🔥', 'bookingpress-appointment-booking' );
                     } else if ( 'spring_sale' == $type ){
                         $upgrade_menu_text = esc_html__( 'Spring Sale 💐', 'bookingpress-appointment-booking' );
+                    } else if( 'summer_sale' == $type ){
+                        $upgrade_menu_text = esc_html__( 'Summer Sale 💐', 'bookingpress-appointment-booking' );
                     }
                 }
             }
@@ -5097,7 +5099,7 @@ if (! class_exists('BookingPress') ) {
                 
                 if( $bpa_current_date_for_bf_popup >= $bpa_bf_popup_start_time && $bpa_current_date_for_bf_popup <= $bpa_bf_popup_end_time ){
 
-                    if( 'spring_sale' == $sale_type || 'birthday_sale' == $sale_type ){
+                    if( 'spring_sale' == $sale_type || 'birthday_sale' == $sale_type || 'summer_sale' == $sale_type ){
                         wp_add_inline_style( 'bookingpress_admin_custom_css', 'li#toplevel_page_bookingpress ul li:last-child{ background: #FC1E47 !important; } #toplevel_page_bookingpress ul li:last-child a{ color: white !important; position:relative; }' );
                     }
                 }

@@ -6,22 +6,25 @@ if(!defined('ABSPATH')) exit;
 
 class ServicesProviders {
 
-    public static function get_services_group_with_category(){
+    public static function get_services_group_with_category( $remove_empty_category = false ){
         global $BookingPress;
 
         $services = $BookingPress->get_bookingpress_service_data_group_with_category();
 
         $no_services_data = [];
-        $no_services_data[] =[
-            'category_name'     => '',
-            'category_services' => [
-                '0' => [
-                    'service_id'    => 0,
-                    'service_name'  => esc_html__('Select Services', 'bookingpress-appointment-booking'),
-                    'service_price' => '',
+        if( false == $remove_empty_category ){
+            $no_services_data[] =[
+                'category_name'     => '',
+                'category_services' => [
+                    '0' => [
+                        'service_id'    => 0,
+                        'service_name'  => esc_html__('Select Services', 'bookingpress-appointment-booking'),
+                        'service_price' => '',
+                    ],
                 ],
-            ],
-        ];
+            ];
+        }
+        
 
         $services = array_merge( $no_services_data, $services);
 
