@@ -360,7 +360,7 @@
                                             <template #label>
                                                 <span class="bpa-form-label"><?php esc_html_e('Category Name', 'bookingpress-appointment-booking'); ?></span>
                                             </template>
-                                            <el-input class="bpa-form-control" v-model="service_category.service_category_name" id="service_category_name" name="service_category_name" placeholder="<?php esc_html_e('Enter category name', 'bookingpress-appointment-booking'); ?>" ref="serviceCatName"></el-input>
+                                            <el-input class="bpa-form-control" v-model="service_category.service_category_name" id="service_category_name" name="service_category_name" maxlength="255" placeholder="<?php esc_html_e('Enter category name', 'bookingpress-appointment-booking'); ?>" ref="serviceCatName"></el-input>
                                         </el-form-item>
                                     </el-col>
                                 </el-row>
@@ -463,7 +463,7 @@
                                                 <template #label>
                                                     <span class="bpa-form-label"><?php esc_html_e('Service Name:', 'bookingpress-appointment-booking'); ?></span>
                                                 </template>
-                                                <el-input class="bpa-form-control" v-model="service.service_name" id="service_name" name="service_name"
+                                                <el-input class="bpa-form-control" v-model="service.service_name" id="service_name" name="service_name" maxlength="255"
                                                     placeholder="<?php esc_html_e('Enter service name', 'bookingpress-appointment-booking'); ?>">
                                                 </el-input>
                                             </el-form-item>

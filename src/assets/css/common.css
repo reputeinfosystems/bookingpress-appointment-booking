@@ -125,7 +125,7 @@ body.folded .bpa-dialog--fullscreen.is-fullscreen {
     top: 0;
     left: 0;
     width: 100%;
-    z-index: 9999;
+    z-index: 9998;
 }
 
 .bp-select__wrapper.is-filterable {
@@ -197,9 +197,9 @@ body.folded .bpa-dialog--fullscreen.is-fullscreen {
     font-size: 16px;
     border: none;
     color: var(--bpa-cl-white);
-    left: 2px;
+    left: 3px;
     top: 0px;
-    line-height: 18px;
+    line-height: 22px;
 }
 
 .bp-checkbox__inner::after {
@@ -815,4 +815,139 @@ body:not(.__bpa-is-staff-customize-view-active).bookingpress_page_bookingpress-c
 .bpa-dialog-rprt-model-content-btns p a::after,
 .bpa-dialog-rprt-model-footer p a::after{
 	display:none !important;
+}
+
+.bp-tag{
+    background-color: #ecf5ff;
+    border-color: #d9ecff;
+    display: inline-block;
+    height: 32px;
+    padding: 0 10px;
+    line-height: 30px;
+    font-size: 12px;
+    color: #409EFF;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 4px;
+    box-sizing: border-box;
+    white-space: nowrap;
+}
+
+.bp-select .bp-tag {
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    border-color: transparent;
+    margin: 2px 0 2px 6px;
+    background-color: #f0f2f5;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    max-width: 100%;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
+
+.bp-tag.bp-tag--info{
+    height: auto;
+    background-color: var(--bpa-gt-gray-100);
+    border-color: var(--bpa-gt-gray-200);
+    color: var(--bpa-dt-black-300);
+}
+.bp-select .bp-tag{
+    margin: 0 0 0 8px;
+}
+.bp-select .bp-tag__close.bp-icon-close{
+    background-color: transparent;
+}
+.bp-tag .bp-icon-close::before{
+    content: 'close';
+    font-family: 'Material Icons Round';
+    -webkit-font-feature-settings: 'liga';
+    font-feature-settings: 'liga';
+}
+
+.bp-ui-drawer__close-btn .bp-icon.bp-icon-close{
+    font-family: element-icons !important;
+    speak: none;
+    font-style: normal;
+    font-weight: 400;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 20px;
+    vertical-align: baseline;
+    display: inline-block;
+    -webkit-font-smoothing: antialiased;
+}
+
+.bp-ui-drawer__close-btn .bp-icon-close::before{
+    content: 'close';
+    position: absolute;
+    left: calc(50% - 10px);
+    color: var(--bpa-cl-white);
+    top: calc(50% - 10px);
+    font-size: 20px;
+    font-family: 'Material Icons Round';
+    -webkit-font-feature-settings: 'liga';
+    font-feature-settings: 'liga';
+}
+
+.bp-select .bp-tag .bp-tag__close{
+    background-color: transparent;
+    border: none;
+    color: #909399;
+    transform: scale(.8);
+    top: 0;
+    flex-shrink: 0;
+    text-align: center;
+    position: relative;
+    font-size: 12px;
+    height: 16px;
+    width: 16px;
+    right: -5px;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.bp-select .bp-tag .bp-tag__close:hover{
+    color: #fff;
+    background: #909399;
+}
+
+.bp-select .bp-tag .bp-tag__close:hover .bp-icon{
+    color: #fff;
+}
+
+.bp-select .bp-tag {
+  margin: 0 0 0 8px;
+}
+
+.bpa-table-filter .bp-select .bp-select__tags .bp-tag {
+  max-width: 180px;
+}
+
+.bp-tag--small{
+    height: 24px;
+    padding: 0 8px;
+    font-size: 12px;
+}
+
+.bpa-add-dayoff-dialog{
+    padding: 0;
+}
+.bpa-add-dayoff-dialog.bp-dialog .bpa-form-control.bp-input .bp-input__wrapper, 
+.bpa-add-dayoff-dialog.bp-dialog .bpa-form-control.bp-input-number .bp-input__wrapper,
+.bpa-add-dayoff-dialog.bp-dialog .bpa-form-control.bp-select .bp-select__wrapper{
+    min-height: 40px;
+}
+
+.bp-modal-dialog input[type="number"],
+.bookingpress_page_wrapper input[type="number"]{
+    appearance: textfield;
+    -webkit-appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+.bpa-add-dayoff-dialog .bpa-form-body-row .bpa-fbr__sub-row .bp-col:first-child{
+    padding-right: 8px;
 }

@@ -1,0 +1,496 @@
+/* ---------------------------------------------------------------------------
+ * booking-form-vue3.css — thin override layer for the Vue 3 booking form.
+ *
+ * Visual styling lives in the released stylesheets:
+ *   - `booking-form.css`           (per-instance scope under .bpa-frontend-main-container.bpa-frontend-vue3)
+ *   - `bookingpress_bp_theme.css`  (theme/colors)
+ *   - `bookingpress_front.css`     (layout modifiers, e.g. --vertical-left)
+ *   - `bookingpress_element_theme.css` (Element-Plus overrides)
+ *
+ * This file MUST NOT add any visual chrome (border, box-shadow, background,
+ * etc.) that the released form doesn't already render. The only rules here
+ * are ones that aren't covered elsewhere:
+ *   - Pre-mount BookingPress loader visual (`.bpa-back-loader`) — the SVG
+ *     image used by the released branded loader.
+ *   - Required-field red asterisk (added in a later chunk).
+ * --------------------------------------------------------------------------- */
+
+/* Extension anchors must not affect the Lite-only layout while empty.
+ * Some anchors intentionally also carry a legacy layout class (for example,
+ * the Summary after-date/time slot is a summary-content item). Without this
+ * reset the legacy stylesheet gives the empty node padding, borders and an
+ * entrance animation, producing a phantom flex item. Once an add-on mounts
+ * content the node no longer matches :empty and its intended layout resumes. */
+.bpa-frontend-main-container.bpa-frontend-vue3 .bp-v3-slot:empty {
+    display: none;
+}
+
+/* BookingPress pre-mount loader (shown before Vue mounts) and the
+ * in-step loader (shown while the date/time step's initial fetch is
+ * running). Both reuse the same animated SVG mark at
+ * `images/bpa-loader.svg`.
+ *
+ * The SVG paint colour matches the customize layer's primary colour by
+ * using the file as a CSS `mask-image` over a `background-color` that
+ * resolves the `--bpa-pt-main-green` variable. This keeps the loader
+ * silhouette + animation intact while letting the colour follow admin
+ * theme changes (the released form uses inline SVG with a CSS class on
+ * each path — `bpa-front-loader-cl-primary` — for the same effect; the
+ * mask approach is the CSS equivalent without inlining ~25K of SVG). */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-frontend-vue3-loader .bpa-back-loader {
+    width: 72px;
+    height: 72px;
+    background-color: var(--bpa-pt-main-green, #12d488);
+    -webkit-mask: url('../../../images/bpa-loader.svg') center/72px auto no-repeat;
+            mask: url('../../../images/bpa-loader.svg') center/72px auto no-repeat;
+}
+
+/* In-step loader — covers the date/time step area while the first
+ * month payload is being fetched (released-form parity). */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-full-container-loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 360px;
+    width: 100%;
+}
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-full-container-loader .bpa-front-loader-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+/* Loader logo sized to match the legacy form's compact in-step loader.
+ * Released CSS uses 64x64 for this slot — keeping that exact size so
+ * the visual weight matches. */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-full-container-loader .bpa-front-loader.bpa-back-loader {
+    width: 64px;
+    height: 64px;
+    background-color: var(--bpa-pt-main-green, #12d488);
+    -webkit-mask: url('../../../images/bpa-loader.svg') center/64px auto no-repeat;
+            mask: url('../../../images/bpa-loader.svg') center/64px auto no-repeat;
+}
+
+/* Cross-month nav loader — overlaid on the date/time wrapper so the
+ * calendar isn't unmounted (preserves V-Calendar's "current page"
+ * state). Wrapper sets `position: relative` so the overlay anchors. */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front--dt__wrapper.bpa-front--dt__wrapper--positioned {
+    position: relative;
+}
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-full-container-loader.bpa-full-container-loader--overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(255, 255, 255, 0.92);
+    z-index: 10;
+    min-height: 0;
+}
+
+/* ----------------------------------------------------------------------------
+ * Basic Details step — form-field layout, label + asterisk, controls.
+ *
+ * The released form uses Element-Plus's `<el-form>` / `<el-form-item>` /
+ * `<el-input>` components which carry their own (heavy) styling. The
+ * dev path renders plain HTML inputs with the released class names, so
+ * this stylesheet supplies the visual contract directly.
+ * --------------------------------------------------------------------------- */
+
+/* Single-column form layout (lite). Pro adds more fields and the
+ * `bpa-bd-fields-row` grid can stretch wider, but the lite default is
+ * one field per row, full width — matches the released lite form. */
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-bd-fields-row {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-bd-field-col {
+    width: 100%;
+}
+
+/* Per-field wrapper — vertical stack of label / control / error.
+ *
+ * `bookingpress_bp_theme.css` ships with heavy Element-Plus defaults for
+ * `.bp-form-item`: 22px margin-bottom, clearfix pseudo-elements, label
+ * `float: left; text-align: right; line-height: 40px; padding: 0 12px 0 0`,
+ * content `line-height: 40px`, and error `position: absolute; top: 100%`.
+ * All of those assumptions break our flex column layout (the asterisk
+ * wraps because the floated label runs out of inline space; the error
+ * doesn't take part in the flex flow). The block below overrides each
+ * one explicitly. */
+.bpa-frontend-main-container.bpa-frontend-vue3 .bp-form-item {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0;        /* kill bp-theme's 22px margin-bottom */
+    line-height: normal;
+}
+/* Bump the gap between the input and the inline error message so they
+ * aren't visually touching. `.bp-form-item__content` is the wrapper
+ * around the input itself; adding margin-bottom on it (rather than
+ * raising the flex gap on the whole column) keeps the label→input
+ * spacing tight while pushing only the error away from the input. */
+.bpa-frontend-main-container.bpa-frontend-vue3 .bp-form-item .bp-form-item__content {
+    margin-bottom: 4px;
+}
+.bpa-frontend-main-container.bpa-frontend-vue3 .bp-form-item::before,
+.bpa-frontend-main-container.bpa-frontend-vue3 .bp-form-item::after {
+    display: none;    /* kill the clearfix pseudo-elements */
+}
+
+/* Label row — single inline line with the asterisk hugging the label. */
+.bpa-frontend-main-container.bpa-frontend-vue3 .bp-form-item__label {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 4px;
+    float: none !important;
+    text-align: left !important;
+    padding: 0 !important;
+    margin: 0;
+    line-height: 18px;
+    width: auto;
+    max-width: 100%;
+}
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front-form-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--bp-v3-sub-title, #535D71);
+    line-height: 18px;
+}
+
+/* Required-field red asterisk — rendered as inline text inside the
+ * `.bpa-front-form-label` span so it shares the label's exact text
+ * flow / baseline / font metrics. Just a colour swap. */
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front-required-asterisk {
+    color: var(--bpa-sc-danger, #EE2445);
+    font-weight: 600;
+}
+
+/* Content row — kill bp-theme's `line-height: 40px` and clearfix. */
+.bpa-frontend-main-container.bpa-frontend-vue3 .bp-form-item__content {
+    line-height: normal;
+    position: static;
+}
+.bpa-frontend-main-container.bpa-frontend-vue3 .bp-form-item__content::before,
+.bpa-frontend-main-container.bpa-frontend-vue3 .bp-form-item__content::after {
+    display: none;
+}
+
+/* Error message — bp-theme makes it `position: absolute` which floats it
+ * outside the flex flow. Put it back into the flow so the column-gap
+ * gives it correct vertical spacing under the input. Also paint the
+ * warning circle icon as a `::before` mask so it sits inline with the
+ * text (mirrors `bookingpress_front.css` line 793 — released form does
+ * the same trick for `.el-form-item__error`). */
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front-form-error,
+.bpa-frontend-main-container.bpa-frontend-vue3 .bp-form-item__error {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    margin: 0;
+    padding: 0 0 0 20px;
+    line-height: 16px;
+    color: var(--bpa-sc-danger, #EE2445);
+    font-size: 12px;
+    min-height: 16px;
+}
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front-form-error::before,
+.bpa-frontend-main-container.bpa-frontend-vue3 .bp-form-item__error::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 16px;
+    height: 16px;
+    background-color: var(--bpa-sc-danger, #EE2445);
+    -webkit-mask-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 7c.55 0 1 .45 1 1v4c0 .55-.45 1-1 1s-1-.45-1-1V8c0-.55.45-1 1-1zm-.01-5C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm1-3h-2v-2h2v2z'/%3E%3C/svg%3E");
+            mask-image: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 7c.55 0 1 .45 1 1v4c0 .55-.45 1-1 1s-1-.45-1-1V8c0-.55.45-1 1-1zm-.01-5C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm1-3h-2v-2h2v2z'/%3E%3C/svg%3E");
+    -webkit-mask-size: 16px 16px;
+            mask-size: 16px 16px;
+    -webkit-mask-repeat: no-repeat;
+            mask-repeat: no-repeat;
+}
+
+/* Plain input / textarea styled to mirror the released's
+ * `.el-input__inner` look (1px border, rounded, focus ring).
+ * border/color/bg use the CSS-generator variables so customize settings apply. */
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front-form-control {
+    width: 100%;
+    box-sizing: border-box;
+    /* padding: 12px 16px; */
+    border: 1px solid var(--bp-v3-border, #CFD6E5);
+    border-radius: var(--bpa-radius-4px, 4px);
+    background-color: transparent;
+    color: var(--bp-v3-label, #202C45);
+    font-family: var(--bpa-primary-font, 'Poppins', sans-serif) !important;
+    font-size: 14px;
+    line-height: 20px;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.bpa-frontend-main-container.bpa-frontend-vue3 textarea.bpa-front-form-control {
+    min-height: 96px;
+    resize: vertical;
+}
+
+/* Phone field border parity. The two phone-container layers
+ *   - `.bpa-front-form-control.--bpa-country-dropdown` (`css/bookingpress_front.css:2613`)
+ *   - `.bp-ui-tel-input .vue-tel-input`               (`src/assets/css/booking-form.css:554`)
+ * both pin `var(--bpa-gt-gray-400) !important`, which is not wired to
+ * customize. Override here — this sheet is enqueued AFTER both — so the
+ * phone field tracks `var(--bp-v3-border)` in lock-step with text / email
+ * (`.bp-input__wrapper`, set in `booking-form.css:437`) and textarea
+ * (`.bpa-front-form-control`, set above on line 215). */
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front-form-control.--bpa-country-dropdown,
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front-module--bd-form .bp-ui-tel-input .vue-tel-input {
+    border-color: var(--bp-v3-border, #CFD6E5) !important;
+}
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front-module--bd-form .bp-input__wrapper .bp-input__prefix + .bp-input__inner {
+    padding-left: 24px !important;
+}
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front-form-control::placeholder {
+    color: var(--bpa-dt-black-100, #B8C1D3);
+}
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front-form-control:focus,
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front-form-control:focus-visible {
+    outline: none;
+    /* Border color + focus ring are emitted by the customize CSS generator
+     * (`CustomizeCssGenerator::compile_legacy_booking_form_parity()` —
+     * Issue 86d31wem6 block) so both track the primary_color setting.
+     * Keep this rule for outline reset only — declaring a hardcoded
+     * green box-shadow here would win over the generator's rule on
+     * specificity and leak the default green ring when the admin
+     * changes primary_color. */
+}
+
+/* Inline error state — legacy form does NOT redraw the input border in
+ * red when a field is missing/invalid (it only renders the inline error
+ * message with its leading info-circle icon). Matching that contract
+ * here keeps the field chrome neutral; the inline `.bpa-front-form-error`
+ * row below the input is the sole error affordance. (Issue 86d31wem6.) */
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front-form-error,
+.bpa-frontend-main-container.bpa-frontend-vue3 .bp-form-item__error {
+    margin: 0;
+    color: var(--bpa-sc-danger, #EE2445);
+    font-size: 12px;
+    line-height: 16px;
+}
+
+/* Terms-and-conditions checkbox — defer to the legacy
+ * `bookingpress_front.css` rules (`.bpa-front-form-control--checkbox.el-checkbox …`,
+ * lines ~395–467) for the 20×20 box, 4px radius, SVG-mask tick, green-on-checked
+ * label colour, and underlined anchor inside the label. The Element-Plus base
+ * sheet (`bookingpress_element_theme.css`) supplies `.el-checkbox`,
+ * `.el-checkbox__input`, `.el-checkbox__inner` initial styles (incl. the
+ * `transform: rotate(45deg) scaleY(0)` resting state for the ::after tick).
+ * Adding any rule here at our `.bpa-frontend-main-container.bpa-frontend-vue3`
+ * specificity would overpower both sheets and re-introduce the parity gap. */
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front-form-control--checkbox {
+    /* Layout-only adjustment: the column carries `bpa_terms_conditions`
+     * and uses our flex form-item; ensure the checkbox row aligns flush-left
+     * within that column without inheriting bp-form-item__content's
+     * margin-bottom (the inline error has its own gap below). */
+    margin-bottom: 0;
+}
+
+/* Keyboard-focus ring for the Terms & Conditions checkbox.
+ * Mirrors the legacy `bookingpress_front.css:4727` rule, but scoped under
+ * `.bpa-frontend-vue3` so it can't be undercut by the V3-form's wrappers
+ * (the dev template wraps the checkbox label in `.bp-form-item__content`
+ * which raises specificity of competing rules). Colour tracks the
+ * customize primary via the existing CSS variable. */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-form-control--checkbox.el-checkbox
+    .el-checkbox__input.is-focus
+    .el-checkbox__inner {
+    box-shadow: 0 0 2px 1px var(--bpa-pt-main-green, rgba(18, 212, 136, 0.60));
+}
+
+/* Footer Next / Go Back buttons — default to pointer so the cursor
+ * matches the interactive affordance. `.bpa-front-btn` in the released
+ * CSS doesn't declare a cursor, so browser defaults give a non-pointer
+ * arrow on a `<button>`. */
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front-tabs--foot .bpa-front-btn,
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front-dc--footer .bpa-front-btn {
+    cursor: pointer;
+}
+
+/* Disabled day cells — kill every hover / focus / click affordance so
+ * the cell reads as truly unavailable. Released form does the same.
+ *
+ * NOTE: do NOT reset `background-color` here. The customize generator
+ * (form-v3-custom.css) emits the correct disabled-day tint (10% alpha
+ * of the customize `border_color`) on `.vc-day-content.is-disabled`;
+ * forcing transparent here wins over that rule and breaks parity with
+ * the released form. */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front--dt__calendar-host .vc-day .vc-day-content.is-disabled,
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front--dt__calendar-host .vc-day .vc-day-content.is-disabled:hover,
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front--dt__calendar-host .vc-day .vc-day-content.is-disabled:focus,
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front--dt__calendar-host .vc-day .vc-day-content.is-disabled:active {
+    cursor: not-allowed !important;
+    border: 1px solid transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
+    pointer-events: none;
+}
+
+/* Authoritative selected-day pill — stamped by our own sweep so we don't
+ * depend on V-Calendar v3's internal `.vc-highlight` markup (which v3
+ * has shuffled across releases). Text colour tracks the customize
+ * `price_button_text_color` key (emitted by CustomizeCssGenerator as
+ * the `--bp-v3-button-text` variable on the form root), so the selected
+ * pill's text matches the primary button's text (same legacy behaviour
+ * as `manage_form_customize.php:257`). */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front--dt__calendar-host
+    .vc-day .vc-day-content.__bp-v3-selected {
+    background-color: var(--bpa-pt-main-green, #12d488) !important;
+    color: var(--bp-v3-button-text, #ffffff) !important;
+    border-radius: 6px;
+}
+
+/* Today + selected tiebreaker — the customize generator emits
+ * `color: <primary> !important` on `.bpa-front-tabs .bpa-front--dt__calendar
+ * .vc-day.is-today .vc-day-content` (specificity 0,5,0). Without this
+ * extra qualifier the selected pill's button-text colour loses to the
+ * today-text colour on the cell that's BOTH today and selected. Adding
+ * `.__bp-v3-selected` to the chain takes us to specificity (0,6,0) which
+ * wins regardless of source-file load order. */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front--dt__calendar-host
+    .vc-day.is-today .vc-day-content.__bp-v3-selected {
+    color: var(--bp-v3-button-text, #ffffff) !important;
+}
+
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front--dt__calendar-host
+    .vc-day.__bp-v3-has-capacity-label {
+    min-height: 44px;
+}
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front--dt__calendar-host
+    .vc-day > .bp-v3-day-capacity-label {
+    position: absolute;
+    left: 50%;
+    bottom: 1px;
+    transform: translateX(-50%);
+    max-width: 52px;
+    overflow: hidden;
+    color: var(--bpa-dt-black-200, #6b7280);
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 12px;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    pointer-events: none;
+}
+
+/* Selected slot / selected calendar day styling lives in the generated
+ * customize CSS (see `Vue3\Customize\CustomizeCssGenerator::compile()`):
+ *
+ *   - `.bpa-front--dt__ts-body--item.__bpa-is-selected` gets a 6% alpha
+ *     tint of the primary colour as background (matches the released
+ *     `primary_alpha_color` rule). Text colour is left as the global
+ *     grey from `bookingpress_front.css` so the slot stays readable on
+ *     the light tint — same as the released form.
+ *
+ *   - The calendar selected-day highlight is rendered by V-Calendar v3's
+ *     own `.vc-highlight` element, themed by the CSS variables the
+ *     generated customize layer publishes on `.bpa-frontend-main-container.bpa-frontend-vue3`.
+ *
+ * No additional overrides are needed in this file. */
+
+/* Payment method card — the checkmark icon overlay uses `background: var(--bpa-cl-white)`
+ * in the legacy `bookingpress_front.css`, which is always #fff. When the admin sets a
+ * non-white panel background via Customize, the white patch becomes visible. Override it
+ * to use the same panel background variable set by the CSS generator on `.bpa-front-tabs`. */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--pm-body .bpa-front-module--pm-body__item
+    .bpa-front-si-card--checkmark-icon {
+    background: var(--bpa-pt-background-color, #ffffff);
+}
+
+/* Overnight timeslot "+1 day" badge (Pro "Overnight Bookings"). The slot label's
+ * trailing ".bpa-front--dt__ts-overnight" span marks a slot whose start and/or end
+ * lands on the day after the selected date. It is coloured with the customize
+ * primary colour (legacy parity) so the next-day marker stands out from the slot
+ * time. Inert for a Lite-only install — Lite never sets `slot.is_overnight`, so the
+ * span is never rendered. */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front--dt__ts-body--item .bpa-front--dt__ts-overnight {
+    color: var(--bpa-pt-main-green, #12d488);
+    font-weight: 500;
+}
+
+/* -----------------------------------------------------------------------
+ * Keyboard navigation & screen-reader support (a11y rebuild)
+ *
+ * Ships with the roving-tabindex composable (`useA11yNav.js`) that restores
+ * full keyboard operability across steps. Focus indicators satisfy
+ * WCAG 2.4.7: they use `:focus-visible` (keyboard only, distinct from the
+ * mouse-hover styles) with a 2px primary-colour outline + soft halo, the
+ * same treatment the earlier Date & Time patch established in
+ * `booking-form.css:1226`.
+ * -------------------------------------------------------------------- */
+
+/* Visually-hidden live region for step-change announcements. */
+.bpa-frontend-main-container.bpa-frontend-vue3 .bp-v3-sr-only {
+    position: absolute !important;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Keyboard focus ring for every custom interactive control in the flow:
+ * step-nav items, category pills, service cards, time slots, payment
+ * method cards, and the footer buttons. */
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front-tab-menu--item:focus-visible,
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front-ci-pill:focus-visible,
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front-si-card:focus-visible,
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front--dt__ts-body--item:focus-visible,
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front-module--pm-body__item:focus-visible,
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front-btn:focus-visible {
+    outline: 2px solid var(--bpa-pt-main-green, #19b681);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px rgba(25, 182, 129, 0.2);
+}
+
+/* V-Calendar chrome (month arrows, title button, day cells) — same ring. */
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front--dt__calendar-host .vc-arrow:focus-visible,
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front--dt__calendar-host .vc-title:focus-visible,
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front--dt__calendar-host .vc-day-content:focus-visible {
+    outline: 2px solid var(--bpa-pt-main-green, #19b681);
+    outline-offset: 1px;
+}
+
+/* Unavailable day cells stay reachable by the calendar's arrow-key grid
+ * (announced as unavailable via aria-disabled), so — unlike the released
+ * form's blanket outline reset above — keyboard focus must remain VISIBLE
+ * on them. A dashed neutral ring says "you are here, but this date can't
+ * be picked" without implying availability. */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front--dt__calendar-host .vc-day .vc-day-content.is-disabled:focus-visible {
+    outline: 2px dashed #9aa3b5 !important;
+    outline-offset: 1px;
+}
+
+/* Programmatic focus target for step headings ([data-bp-step-heading],
+ * tabindex="-1"): a context move, not an interactive stop — no ring. */
+.bpa-frontend-main-container.bpa-frontend-vue3 [data-bp-step-heading]:focus {
+    outline: none;
+}
+

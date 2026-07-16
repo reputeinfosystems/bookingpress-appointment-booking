@@ -2241,7 +2241,7 @@ if (! class_exists('BookingPress') ) {
         {
             global $bookingpress_version;
             $bookingpress_old_version = get_option('bookingpress_version', true);
-            if (version_compare($bookingpress_old_version, '1.5.5', '<') ) {
+            if (version_compare($bookingpress_old_version, '1.5.6', '<') ) {
                 $bookingpress_load_upgrade_file = BOOKINGPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $bookingpress_load_upgrade_file;
                 $this->bookingpress_send_anonymous_data_cron();
@@ -2329,7 +2329,20 @@ if (! class_exists('BookingPress') ) {
                 $excluded_slugs = [
                     'dashboard',
                     'addons',
+                    'growth_tools',
+                    'settings',
                 ];
+
+                if (!function_exists('is_plugin_active')) {
+                    include_once ABSPATH . 'wp-admin/includes/plugin.php';
+                }
+
+                if( ! is_plugin_active( 'bookingpress-appointment-booking-pro/bookingpress-appointment-booking-pro.php' ) ){
+                    $excluded_slugs[] = 'appointments';
+                }
+
+                $excluded_slugs = apply_filters('bookingpress_additional_module_exculde', $excluded_slugs );
+ 
                 $requested_module = ( ! empty($_REQUEST['page']) && ( $_REQUEST['page'] != 'bookingpress' ) ) ? sanitize_text_field(str_replace('bookingpress_', '', sanitize_text_field($_REQUEST['page']))) : 'dashboard'; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 
                 if( in_array( $requested_module, $excluded_slugs ) ){
@@ -4887,7 +4900,9 @@ if (! class_exists('BookingPress') ) {
             
             add_submenu_page($bookingpress_slugs->bookingpress, esc_html__('Calendar', 'bookingpress-appointment-booking'), esc_html__('Calendar', 'bookingpress-appointment-booking'), 'bookingpress_calendar', $bookingpress_slugs->bookingpress_calendar, [ $class_instance, 'render_page' ] );
 
-            add_submenu_page($bookingpress_slugs->bookingpress, esc_html__('Appointments', 'bookingpress-appointment-booking'), esc_html__('Appointments', 'bookingpress-appointment-booking'), 'bookingpress_appointments', $bookingpress_slugs->bookingpress_appointments, array( $this, 'route' ));
+            if( !is_plugin_active( 'bookingpress-appointment-booking-pro/bookingpress-appointment-booking-pro.php') ){
+                add_submenu_page($bookingpress_slugs->bookingpress, esc_html__('Appointments', 'bookingpress-appointment-booking'), esc_html__('Appointments', 'bookingpress-appointment-booking'), 'bookingpress_appointments', $bookingpress_slugs->bookingpress_appointments, [ \BookingPress\admin\Appointments::class, 'render_page' ] );
+            }
 
             add_submenu_page($bookingpress_slugs->bookingpress, esc_html__('Payments', 'bookingpress-appointment-booking'), esc_html__('Payments', 'bookingpress-appointment-booking'), 'bookingpress_payments', $bookingpress_slugs->bookingpress_payments, array( $this, 'route' ));
 
@@ -4899,12 +4914,14 @@ if (! class_exists('BookingPress') ) {
 
             add_submenu_page($bookingpress_slugs->bookingpress, esc_html__('Customize', 'bookingpress-appointment-booking'), esc_html__('Customize', 'bookingpress-appointment-booking'), 'bookingpress_customize', $bookingpress_slugs->bookingpress_customize, array( $this, 'route' ));
 
-            add_submenu_page($bookingpress_slugs->bookingpress, esc_html__('Settings', 'bookingpress-appointment-booking'), esc_html__('Settings', 'bookingpress-appointment-booking'), 'bookingpress_settings', $bookingpress_slugs->bookingpress_settings, array( $this, 'route' ));
+            add_submenu_page($bookingpress_slugs->bookingpress, esc_html__('Settings', 'bookingpress-appointment-booking'), esc_html__('Settings', 'bookingpress-appointment-booking'), 'bookingpress_settings', $bookingpress_slugs->bookingpress_settings, [ \BookingPress\admin\Settings::class, 'render_page'] );
             
             if( !$this->bpa_is_pro_active() ){
                 add_submenu_page( $bookingpress_slugs->bookingpress, esc_html__( 'Add-ons', 'bookingpress-appointment-booking' ), esc_html__( 'Add-ons', 'bookingpress-appointment-booking' ), 'bookingpress_addons', $bookingpress_slugs->bookingpress_addons, [ \BookingPress\admin\AddonsList::class, 'render_page' ] );
 
-                add_submenu_page( $bookingpress_slugs->bookingpress, esc_html__( 'Growth Plugins', 'bookingpress-appointment-booking' ), esc_html__( 'Growth Plugins', 'bookingpress-appointment-booking' ), 'bookingpress_growth_tools', $bookingpress_slugs->bookingpress_growth_tools, array( $this, 'route' ) );
+                //add_submenu_page( $bookingpress_slugs->bookingpress, esc_html__( 'Growth Plugins', 'bookingpress-appointment-booking' ), esc_html__( 'Growth Plugins', 'bookingpress-appointment-booking' ), 'bookingpress_growth_tools', $bookingpress_slugs->bookingpress_growth_tools, array( $this, 'route' ) );
+
+                add_submenu_page($bookingpress_slugs->bookingpress, esc_html__('Growth Plugins', 'bookingpress-appointment-booking'), esc_html__('Growth Plugins', 'bookingpress-appointment-booking'), 'bookingpress_growth_tools', $bookingpress_slugs->bookingpress_growth_tools, [ \BookingPress\admin\GrowthTools::class, 'render_page' ] );
             }
 
             $upgrade_menu_text = esc_html__( 'Upgrade to Pro', 'bookingpress-appointment-booking' );
@@ -5048,12 +5065,19 @@ if (! class_exists('BookingPress') ) {
             $excluded_slugs = [
                 'bookingpress',
                 'bookingpress-calendar',
-                'bookingpress_addons'
+                'bookingpress_addons',
+                'bookingpress_growth_tools',
+                'bookingpress_settings',
             ];
-            
-            
-            
 
+            if (!function_exists('is_plugin_active')) {
+                include_once ABSPATH . 'wp-admin/includes/plugin.php';
+            }
+
+            if( !is_plugin_active( 'bookingpress-appointment-booking-pro/bookingpress-appointment-booking-pro.php' ) ){
+                $excluded_slugs[] = 'bookingpress_appointments';
+            }
+            
             /* Add CSS file only for plugin pages. */
             if (isset($_REQUEST['page']) && !in_array( $_REQUEST['page'], $excluded_slugs ) && in_array(sanitize_text_field($_REQUEST['page']), (array) $bookingpress_slugs) ) {
                 wp_enqueue_style('bookingpress_element_css');
@@ -5385,12 +5409,34 @@ if (! class_exists('BookingPress') ) {
             wp_register_script('bookingpress_tel_input_js', BOOKINGPRESS_URL . '/js/bookingpress_tel_input.js', array(), BOOKINGPRESS_VERSION);
             wp_register_script('bookingpress_tel_utils_js', BOOKINGPRESS_URL . '/js/bookingpress_tel_utils.js', array(), BOOKINGPRESS_VERSION);
             
-            /* Add JS file only for plugin pages. */
-            if (isset($_REQUEST['page']) && ( sanitize_text_field($_REQUEST['page']) == 'bookingpress_services' || sanitize_text_field($_REQUEST['page']) == 'bookingpress_customize' ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
-                wp_enqueue_script('bookingpress_sortable_js');
-                wp_enqueue_script('bookingpress_draggable_js');
+            
+
+            $excluded_slugs = [
+                'bookingpress',
+                'bookingpress-calendar',
+                'bookingpress_addons',
+                'bookingpress_growth_tools',
+                'bookingpress_settings'
+            ];
+
+            $excluded_slugs = apply_filters('exclude_additional_slug_css_js_outside_module', $excluded_slugs);
+	    
+	    if (!function_exists('is_plugin_active')) {
+                include_once ABSPATH . 'wp-admin/includes/plugin.php';
             }
 
+            if( !is_plugin_active( 'bookingpress-appointment-booking-pro/bookingpress-appointment-booking-pro.php' ) ){
+                $excluded_slugs[] = 'bookingpress_appointments';
+            }
+
+            if (isset($_REQUEST['page']) && !in_array( $_REQUEST['page'], $excluded_slugs ) && in_array(sanitize_text_field($_REQUEST['page']), (array) $bookingpress_slugs) ) {
+
+                /* Add JS file only for plugin pages. */
+                if (isset($_REQUEST['page']) && ( sanitize_text_field($_REQUEST['page']) == 'bookingpress_services' || sanitize_text_field($_REQUEST['page']) == 'bookingpress_customize' ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+                    wp_enqueue_script('bookingpress_sortable_js');
+                    wp_enqueue_script('bookingpress_draggable_js');
+                }
+	    }
             if( isset($_REQUEST['page']) && 'bookingpress_notifications' == $_REQUEST['page'] ){
                 wp_enqueue_script( 'wp-tinymce' );
             }
@@ -5398,7 +5444,9 @@ if (! class_exists('BookingPress') ) {
             $excluded_slugs = [
                 'bookingpress',
                 'bookingpress-calendar',
-                'bookingpress_addons'
+                'bookingpress_addons',
+                'bookingpress_growth_tools',
+                'bookingpress_settings',
             ];
 
             if (isset($_REQUEST['page']) && !in_array( $_REQUEST['page'], $excluded_slugs ) && in_array(sanitize_text_field($_REQUEST['page']), (array) $bookingpress_slugs) ) {
@@ -5433,7 +5481,7 @@ if (! class_exists('BookingPress') ) {
                 }
             }
 
-            if (isset($_REQUEST['page']) && (sanitize_text_field($_REQUEST['page']) == 'bookingpress_settings' || sanitize_text_field($_REQUEST['page']) == 'bookingpress_customize')  ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+            if (isset($_REQUEST['page']) && (/* sanitize_text_field($_REQUEST['page']) == 'bookingpress_settings' || */ sanitize_text_field($_REQUEST['page']) == 'bookingpress_customize')  ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
                 wp_enqueue_script('bookingpress_v-calendar_js');
             }
 
@@ -6017,28 +6065,44 @@ if (! class_exists('BookingPress') ) {
          * @return $price
          */
         public function bookingpress_convert_amount_to_default_format($price){
-            global $bookingpress_global_options;
-            $bookingpress_options          = $bookingpress_global_options->bookingpress_global_options();
-
-            $bookingpress_decimal_points = $this->bookingpress_get_settings('price_number_of_decimals', 'payment_setting');
-            $bookingpress_decimal_points = intval($bookingpress_decimal_points);
-            if (gettype($price) == 'string' ) {
-                $price = floatval($price);
+            // Numeric types carry no locale separators, so there is nothing to
+            // strip — return as-is and let the caller apply number_format(). Only
+            // strings coming from the display locale need to be un-formatted.
+            // (The previous version floatval()'d the string BEFORE stripping the
+            // separators, which turned "10.000,59" into 10.0 and defeated the
+            // whole purpose of this helper.)
+            if ( is_int( $price ) || is_float( $price ) ) {
+                return $price;
             }
-            
+            if ( null === $price ) {
+                return 0;
+            }
+            $price = trim( (string) $price );
 
             $bookingpress_price_separator_pos = $this->bookingpress_get_settings('price_separator', 'payment_setting');
-            if ($bookingpress_price_separator_pos == 'dot-comma' && gettype($price) != 'NULL') {
-                $step1 = str_replace('.', '[DOT]', $price);
-                $step2 = str_replace(',', '.', $step1);
-                $price = str_replace('[DOT]', '', $step2);
-            } elseif ($bookingpress_price_separator_pos == 'space-dot' && gettype($price) != 'NULL') {
-                $price = str_replace(' ', '', $price);
-            } elseif ($bookingpress_price_separator_pos == 'space-comma' && gettype($price) != 'NULL') {
+            if ($bookingpress_price_separator_pos == 'comma-dot') {
+                // thousands ',', decimal '.' → drop the thousands separator.
+                $price = str_replace(',', '', $price);
+            } elseif ($bookingpress_price_separator_pos == 'dot-comma') {
+                // thousands '.', decimal ',' → drop thousands, then ',' becomes '.'.
+                $price = str_replace('.', '', $price);
                 $price = str_replace(',', '.', $price);
-            } elseif ($bookingpress_price_separator_pos == 'Custom' && gettype($price) != 'NULL') {
-                 $price = str_replace($bookingpress_dot_separator, '.', $price);
-                $price = str_replace($bookingpress_comma_separator, '', $price);
+            } elseif ($bookingpress_price_separator_pos == 'space-dot') {
+                // thousands ' ', decimal '.' → drop the thousands separator.
+                $price = str_replace(' ', '', $price);
+            } elseif ($bookingpress_price_separator_pos == 'space-comma') {
+                // thousands ' ', decimal ',' → drop thousands, then ',' becomes '.'.
+                $price = str_replace(' ', '', $price);
+                $price = str_replace(',', '.', $price);
+            } elseif ($bookingpress_price_separator_pos == 'Custom') {
+                $bookingpress_comma_separator = $this->bookingpress_get_settings('custom_comma_separator', 'payment_setting'); // thousands separator
+                $bookingpress_dot_separator   = $this->bookingpress_get_settings('custom_dot_separator', 'payment_setting');   // decimal separator
+                if ( '' !== (string) $bookingpress_comma_separator ) {
+                    $price = str_replace($bookingpress_comma_separator, '', $price);
+                }
+                if ( '' !== (string) $bookingpress_dot_separator ) {
+                    $price = str_replace($bookingpress_dot_separator, '.', $price);
+                }
             }
 
             return $price;
@@ -7861,7 +7925,7 @@ if (! class_exists('BookingPress') ) {
             
             $return_array = json_decode( $values, $as_array );
             if( json_last_error() != JSON_ERROR_NONE ){
-                $return_array = maybe_unserialize( $values );
+                $return_array = BookingPress\BookingPressLoader::bpa_safe_maybe_unserialize( $values );
                 if( !$as_array ){
                     $return_array = (object)$return_array;
                 }
@@ -9418,7 +9482,7 @@ if (! class_exists('BookingPress') ) {
                 global $wp_filesystem;
 
                 $bookingpresss_debug_log_file_name = 'bookingpress_debug_logs_' . $bookingpress_view_log_selector . '_' . $bookingpress_selected_download_duration;
-                $result                            = $wp_filesystem->put_contents(BOOKINGPRESS_UPLOAD_DIR . '/' . $bookingpresss_debug_log_file_name . '.txt', $bookingpress_download_data, 0777);
+                $result                            = $wp_filesystem->put_contents(BOOKINGPRESS_UPLOAD_DIR . '/' . $bookingpresss_debug_log_file_name . '.txt', $bookingpress_download_data, 0644);
 
                 $debug_log_file_name = '';
 
@@ -9844,7 +9908,7 @@ if (! class_exists('BookingPress') ) {
                         
 
                         $bookingpress_customize_css_content .= '
-                        .bpa-front-cp-top-navbar,.bpa-front-cp-card,
+                        .bpa-front-cp-left-sidebar, .bpa-front-cp-body,
                         .bpa-front-data-empty-view--my-bookings.__bpa-is-guest-view,
                         .bpa-front-ma-table-actions-wrap .bpa-front-ma-taw__card,
                         .el-popover,
@@ -9852,7 +9916,8 @@ if (! class_exists('BookingPress') ) {
                         .bpa-tn__dropdown-menu,
                         .bpa-front-ma-view-appointment-card,
                         .bpa-vac-pd__item.__bpa-pd-is-total-item,
-                        .bpa-front-cp-cancel-mob-drawer {
+                        .bpa-front-cp-cancel-mob-drawer,
+                        .bpa-frontend-my-bookings-vue3 .bp-table {
                             background-color:'.$shortcode_background_color.' !important;
                         }
                         .bpa-front-data-empty-view--my-bookings .bpa-front-dev__form-bg{
@@ -9860,11 +9925,13 @@ if (! class_exists('BookingPress') ) {
                         }';
                         $bookingpress_customize_css_content .= '
                         .bpa-cp-ma-table.el-table--striped .el-table__body tr.el-table__row--striped td.el-table__cell,
+                        .bpa-cp-ma-table.bp-table--striped .bp-table__body tr.bp-table__row--striped td.bp-table__cell,
                         .bpa-front-toast-notification.--bpa-error,
                         .bpa-front-toast-notification.--bpa-success,
                         .bpa-front-ma--pagination-wrapper.__bpa-is-sticky,
                         .el-year-table td.disabled .cell,
-                        .el-month-table td.disabled .cell{
+                        .el-month-table td.disabled .cell
+                        {
                             background-color: '.$shortcode_footer_background_color.' !important;
                         }
                         .bpa-front-data-empty-view--my-bookings .bpa-front-dev__panel-bg{
@@ -9874,9 +9941,11 @@ if (! class_exists('BookingPress') ) {
                         $bookingpress_customize_css_content .= '
                         .bpa-front-cp-top-navbar,
                         .bpa-front-cp-card,
+                        .bpa-frontend-my-bookings-vue3 .bpa-front-cp-card,
                         .bpa-front-form-control input,
                         .el-date-picker__time-header .el-input .el-input__inner,
                         .bpa-cp-ma-table.el-table .el-table__header-wrapper tr th.el-table__cell,
+                        .bpa-cp-ma-table.bp-table .bp-table__header-wrapper tr th.bp-table__cell,
                         .bpa-front-ma-view-appointment-card,
                         .bpa-ma-vac-sec-title,
                         .bpa-ma-vac--head__right .bpa-front-pill,
@@ -9891,6 +9960,7 @@ if (! class_exists('BookingPress') ) {
                         .bpa-front-form-control .el-textarea__inner:focus, 
                         .el-date-picker__time-header .el-input .el-input__inner:focus,
                         .bpa-cp-ma-table.el-table td.el-table__cell,
+                        .bpa-cp-ma-table.bp-table td.bp-table__cell,
                         .bpa-front-ma--pagination-wrapper .el-pager li,
                         .bpa-front-cp-custom-popover .el-date-picker__header--bordered,
                         .bpa-custom-datepicker .el-date-picker__header--bordered,
@@ -9956,6 +10026,7 @@ if (! class_exists('BookingPress') ) {
                             stroke:'. $primary_color. ' !important;
                         }
                         .bpa-cp-ma-table.el-table td.el-table__cell .bpa-ma-date-time-details .bpa-ma-dt__time-val svg,
+                        .bpa-cp-ma-table.bp-table td.bp-table__cell .bpa-ma-date-time-details .bpa-ma-dt__time-val svg,
                         .bpa-tn__dropdown-menu .bpa-tn__dropdown-item svg,
                         .bpa-front-ma-table-actions-wrap .bpa-front-ma-taw__card .bpa-front-btn--icon-without-box span svg,
                         .bpa-tn__dropdown-head .bpa-cp-avatar__default-img svg {
@@ -9994,8 +10065,11 @@ if (! class_exists('BookingPress') ) {
                         .bpa-front-module-heading,
                         .bpa-cp-pd__title,
                         .bpa-cp-ma-table.el-table .bpa-cp-ma-cell-val,
+                        .bpa-cp-ma-table.bp-table .bpa-cp-ma-cell-val,
                         .bpa-cp-ma-table.el-table td.el-table__cell .cell,
+                        .bpa-cp-ma-table.bp-table td.bp-table__cell .cell,
                         .bpa-cp-ma-table.el-table .el-table__header-wrapper tr th.el-table__cell,
+                        .bpa-cp-ma-table.bp-table .bp-table__header-wrapper tr th.bp-table__cell,
                         .bpa-left__service-detail .bpa-sd__appointment-title,
                         .bpa-bd__item .bpa-item--val,
                         .bpa-ma-vac-sec-title,
@@ -10005,6 +10079,8 @@ if (! class_exists('BookingPress') ) {
                         .bpa-tn__dropdown-menu .bpa-tn__dropdown-item,
                         .bpa-cp-ma-table.el-table td.el-table__cell,
                         .bpa-cp-ma-table.el-table td.el-table__cell .bpa-ma-date-time-details .bpa-ma-dt__time-val,
+                        .bpa-cp-ma-table.bp-table td.bp-table__cell,
+                        .bpa-cp-ma-table.bp-table td.bp-table__cell .bpa-ma-date-time-details .bpa-ma-dt__time-val,
                         .bpa-bd__item .bpa-item--label,
                         .bpa-vac-pd__item .bpa-vac-pd__label,
                         .bpa-vac-pd__item .bpa-vac-pd__val,
@@ -10020,16 +10096,26 @@ if (! class_exists('BookingPress') ) {
                         .el-date-picker__header-label,
                         .el-picker-panel__content .el-date-table th,
                         .el-picker-panel__content .el-date-table td span,
+                        .bp-date-picker__header-label,
+                        .bp-picker-panel__content .bp-date-table th,
+                        .bp-picker-panel__content .bp-date-table td span,
                         .bpa-front-data-empty-view--my-bookings .bpa-front-dev__title,
                         .el-form-item__error,
                         .bpa-front-form-control input::placeholder,
                         .bpa-front-form-control .el-textarea__inner::placeholder,
+                        .bpa-front-form-control .bp-textarea__inner::placeholder,
                         .bpa-front-cp-custom-popover .el-year-table td .cell,
                         .bpa-front-cp-custom-popover .el-month-table td .cell,
                         .bpa-custom-datepicker .el-year-table td .cell,
                         .bpa-custom-datepicker .el-month-table td .cell,
                         .el-year-table td .cell,
-                        .el-month-table td .cell,
+                        .el-month-table td .cell,                        
+                        .bpa-front-cp-custom-popover .bp-year-table td .cell,
+                        .bpa-front-cp-custom-popover .bp-month-table td .cell,
+                        .bpa-custom-datepicker .bp-year-table td .cell,
+                        .bpa-custom-datepicker .bp-month-table td .cell,
+                        .bp-year-table td .cell,
+                        .bp-month-table td .cell,
                         .bpa-front-ma--pagination-wrapper .btn-prev span,
                         .bpa-front-ma--pagination-wrapper .btn-next span{ 
                         font-family: ' . $title_font_family . ' !important;   
@@ -10076,23 +10162,31 @@ if (! class_exists('BookingPress') ) {
                         .el-picker-panel .el-icon-d-arrow-right::before,
                         .bpa-cp-ma-table.el-table .el-table__expand-icon .el-icon-arrow-right::before,
                         .bpa-front-form-control--date-picker .el-input__prefix .el-input__icon::before,
-                        .bpa-front-cp--fw__col.__bpa-is-search-icon .bpa-front-form-control .el-input__prefix .el-icon-search:before,
+                        .bpa-front-cp--fw__col.__bpa-is-search-icon .bpa-front-form-control .el-input__prefix .el-icon-search:before,                        
                         .bpa-front-ma--pagination-wrapper .btn-prev::before, 
-                        .bpa-front-ma--pagination-wrapper .btn-next::after {
+                        .bpa-front-ma--pagination-wrapper .btn-next::after,
+                        .bpa-frontend-my-bookings-vue3 .bpa-front-cp--fw__col.__bpa-is-search-icon::before {
                             background-color: ' . $content_color . ' !important;
                         }';
 
+                        $bookingpress_customize_css_content .= '
+                        .bpa-front-form-control--date-picker .bp-input__prefix .bp-icon.bp-input__icon svg path{
+                            fill: ' . $content_color . ' !important;
+                        }';
 
                         $bookingpress_customize_css_content .= '
                         .bpa-tn__dropdown-menu .bpa-tn__dropdown-item a.bpa-tm__item,
                         .bpa-cp-ma-table.el-table td.el-table__cell .cell,
+                        .bpa-cp-ma-table.bp-table td.bp-table__cell .cell,
                         .bpa-cp-ma-table.el-table td.el-table__cell .bpa-ma-date-time-details .bpa-ma-dt__time-val,
+                        .bpa-cp-ma-table.bp-table td.bp-table__cell .bpa-ma-date-time-details .bpa-ma-dt__time-val,
                         .bpa-bd__item .bpa-item--label,
                         .bpa-vac-pd__item .bpa-vac-pd__label,
                         .bpa-vac-pd__item .bpa-vac-pd__val:not(.bpa-front-text-primary-color):not(.bpa-front-text--danger-color):not(.bpa-front-text--danger-color):not(.bpa-front-text-blue-color):not(.bpa-front-text--secondary-orange-color),
                         .bpa-ma-vac--action-btn-group .bpa-front-btn__small,
                         .bpa-ma-vac--action-btn-group .bpa-front-btn span svg,
                         .bpa-cp-ma-table.el-table .bpa-cp-ma-cell-val,
+                        .bpa-cp-ma-table.bp-table .bpa-cp-ma-cell-val,
                         .bpa-front-ma--pagination-wrapper .el-pager li,
                         .bpa-front-dcw__body-sub-title,
                         .bpa-front-delete-account-txt,
@@ -10129,7 +10223,9 @@ if (! class_exists('BookingPress') ) {
                             .bpa-front-form-control input,
                             .bpa-front-btn--primary span,
                             .bpa-cp-ma-table.el-table .bpa-cp-ma-cell-val,
+                            .bpa-cp-ma-table.bp-table .bpa-cp-ma-cell-val,
                             .bpa-cp-ma-table.el-table td.el-table__cell .cell,    
+                            .bpa-cp-ma-table.bp-table td.bp-table__cell .cell,    
                             .bpa-front-ma--pagination-wrapper .el-pager li,
                             .bpa-left__service-detail .bpa-sd__appointment-id,
                             .bpa-bd__item .bpa-item--val,
@@ -10149,8 +10245,11 @@ if (! class_exists('BookingPress') ) {
                             .bpa-front-btn__small,
                             .bpa-bd__item .bpa-item--label,
                             .bpa-cp-ma-table.el-table td.el-table__cell .bpa-ma-date-time-details .bpa-ma-dt__time-val,
+                            .bpa-cp-ma-table.bp-table td.bp-table__cell .bpa-ma-date-time-details .bpa-ma-dt__time-val,
                             .el-picker-panel__content .el-date-table th,
-                            .el-picker-panel__content .el-date-table td span {
+                            .el-picker-panel__content .el-date-table td span,
+                            .bp-picker-panel__content .bp-date-table th,
+                            .bp-picker-panel__content .bp-date-table td span {
                                 font-size: 13px !important;               
                             }  
                         }
@@ -10175,7 +10274,8 @@ if (! class_exists('BookingPress') ) {
                             .bpa-vac-pd__item .bpa-vac-pd__label,
                             .bpa-vac-pd__item .bpa-vac-pd__val,
                             .bpa-front-btn__small,
-                            .bpa-cp-ma-table.el-table td.el-table__cell .bpa-ma-date-time-details .bpa-ma-dt__time-val {
+                            .bpa-cp-ma-table.el-table td.el-table__cell .bpa-ma-date-time-details .bpa-ma-dt__time-val,
+                            .bpa-cp-ma-table.bp-table td.bp-table__cell .bpa-ma-date-time-details .bpa-ma-dt__time-val {
                                 font-size: 13px !important;    
                             }          
                         }
@@ -10435,6 +10535,7 @@ if (! class_exists('BookingPress') ) {
                             .bpa-front-ci-pill.__bpa-is-active .bpa-front-ci-item-title,
                             .bpa-front-tabs .bpa-front-form-control input,
                             .bpa-front-tabs .bpa-front-module--booking-summary .bpa-front-module--bs-summary-content .bpa-front-module--bs-summary-content-item .bpa-front-bs-sm__item-val,
+                            .bpa-front-tabs .bpa-front-module--booking-summary .bpa-front-module--bs-summary-content .bpa-front-module--bs-summary-content-item .bpa-front-bs-sm__item-val .bpa-front-bs-sm__svc-name,
                             .bpa-front-tabs .bpa-front-form-control .el-textarea__inner,                        
                             .bpa-front-tabs .bpa-front-module-heading,
                             .bpa-front-module--bs-amount-details .bpa-fm--bs-amount-item .bpa-front-total-payment-amount-label,
@@ -10538,6 +10639,7 @@ if (! class_exists('BookingPress') ) {
                             .bpa-custom-datepicker .el-year-table td.today .cell,
                             .bpa-custom-datepicker .el-month-table td.today .cell,
                             .bpa-front--dt__calendar .vc-day.is-today .vc-day-content,
+                            .bpa-front-form-control--checkbox .bp-checkbox__input.is-checked + .bp-checkbox__label,
                             .bpa-front-form-control--checkbox .el-checkbox__input.is-checked + .el-checkbox__label {
                                 color: ' . $primary_color . ' !important;
                             }';
@@ -10584,7 +10686,8 @@ if (! class_exists('BookingPress') ) {
                                 .bpa-front-module--service-item .bpa-front-si-card .bpa-front-si__card-body .bpa-front-si-cb__specs .bpa-front-si-cb__specs-item p,
                                 .bpa-front-module--category .bpa-front-cat-items .bpa-front-ci-pill.el-tag,
                                 .bpa-front-tabs .bpa-front-module--booking-summary .bpa-front-module--bs-head p,
-                                .bpa-front-tabs .bpa-front-module--booking-summary .bpa-front-module--bs-summary-content .bpa-front-module--bs-summary-content-item .bpa-front-bs-sm__item-val,    
+                                .bpa-front-tabs .bpa-front-module--booking-summary .bpa-front-module--bs-summary-content .bpa-front-module--bs-summary-content-item .bpa-front-bs-sm__item-val,
+                                .bpa-front-tabs .bpa-front-module--booking-summary .bpa-front-module--bs-summary-content .bpa-front-module--bs-summary-content-item .bpa-front-bs-sm__item-val .bpa-front-bs-sm__svc-name,
                                 .bpa-front-tabs .bpa-front-module--service-item .bpa-front-si-card .bpa-front-si__card-body .bpa-front-si-cb__specs .bpa-front-si-cb__specs-item p strong,
                                 .bpa-front-tabs .bpa-front--dt__time-slots .bpa-front--dt__ts-body .bpa-front--dt__ts-body--row .bpa-front--dt-ts__sub-heading,
                                 .bpa-front-module--bs-amount-details .bpa-fm--bs-amount-item .bpa-front-total-payment-amount-label,
@@ -10642,6 +10745,7 @@ if (! class_exists('BookingPress') ) {
                                 .bpa-front-tabs .el-form-item__label span,
                                 .bpa-front-tabs .bpa-front-form-control input, 
                                 .bpa-front-tabs .bpa-front-module--booking-summary .bpa-front-module--bs-summary-content .bpa-front-module--bs-summary-content-item .bpa-front-bs-sm__item-val,
+                                .bpa-front-tabs .bpa-front-module--booking-summary .bpa-front-module--bs-summary-content .bpa-front-module--bs-summary-content-item .bpa-front-bs-sm__item-val .bpa-front-bs-sm__svc-name,
                                 .bpa-front-tabs--foot .bpa-front-btn   
                                 {
                                     font-size: ' . $content_font_size . ' !important;
@@ -10671,6 +10775,7 @@ if (! class_exists('BookingPress') ) {
                                 .bpa-front-tabs .bpa-front-form-control input,
                                 .bpa-front-tabs .bpa-front-module--booking-summary .bpa-front-module--bs-head p,
                                 .bpa-front-tabs .bpa-front-module--booking-summary .bpa-front-module--bs-summary-content .bpa-front-module--bs-summary-content-item .bpa-front-bs-sm__item-val,
+                                .bpa-front-tabs .bpa-front-module--booking-summary .bpa-front-module--bs-summary-content .bpa-front-module--bs-summary-content-item .bpa-front-bs-sm__item-val .bpa-front-bs-sm__svc-name,
                                 .bpa-front-tabs .bpa-front-module--booking-summary .bpa-front-module--bs-summary-content .bpa-front-module--bs-summary-content-item span,
                                 .bpa-front-module--bs-amount-details .bpa-fm--bs-amount-item .bpa-front-total-payment-amount-label,
                                 .bpa-front-tabs .bpa-front-module--booking-summary .bpa-front-module--bs-amount-details .bpa-front-module--bs-ad--price

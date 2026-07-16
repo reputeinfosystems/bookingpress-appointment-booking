@@ -775,7 +775,6 @@ if (! class_exists('bookingpress_payment') ) {
            
             $get_payment_logs   = $wpdb->get_results("SELECT * FROM {$tbl_bookingpress_payment_logs} {$bookingpress_search_query} ORDER BY {$order_by_column} {$sort_order} LIMIT {$offset} , {$perpage}", ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $tbl_bookingpress_payment_logs is a table name. false alarm
 
-            
             $payment_logs_data = array();
             if (! empty($get_payment_logs) ) {
                 $bookingpress_date_format = get_option('date_format');
@@ -816,7 +815,7 @@ if (! class_exists('bookingpress_payment') ) {
                     }
 
                     $bookingpress_get_existing_avatar_url = $BookingPress->get_bookingpress_customersmeta($payment_log_val['bookingpress_customer_id'], 'customer_avatar_details');
-                    $bookingpress_get_existing_avatar_url = ! empty($bookingpress_get_existing_avatar_url) ? maybe_unserialize($bookingpress_get_existing_avatar_url) : array();
+                    $bookingpress_get_existing_avatar_url = ! empty($bookingpress_get_existing_avatar_url) ? BookingPress\BookingPressLoader::bpa_safe_maybe_unserialize($bookingpress_get_existing_avatar_url) : array();
                     if (! empty($bookingpress_get_existing_avatar_url[0]['url']) ) {
                         $bookingpress_avatar_url = $bookingpress_get_existing_avatar_url[0]['url'];
                     } else {

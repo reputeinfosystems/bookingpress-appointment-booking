@@ -1180,7 +1180,7 @@ if (! class_exists('bookingpress_services') ) {
 
                     // Get service image
                     $service_img_details            = $wpdb->get_row( $wpdb->prepare( "SELECT bookingpress_servicemeta_value FROM {$tbl_bookingpress_servicesmeta} WHERE bookingpress_service_id = %d AND bookingpress_servicemeta_name = 'service_image_details'", $bookingpress_service_id ), ARRAY_A);// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_servicesmeta is table name defined globally. False Positive alarm
-                    $service_img_details            = ! empty($service_img_details['bookingpress_servicemeta_value']) ? maybe_unserialize($service_img_details['bookingpress_servicemeta_value']) : array();
+                    $service_img_details            = ! empty($service_img_details['bookingpress_servicemeta_value']) ? BookingPress\BookingPressLoader::bpa_safe_maybe_unserialize($service_img_details['bookingpress_servicemeta_value']) : array();
                     $service_img_url                = ! empty($service_img_details[0]['url']) ? $service_img_details[0]['url'] : '';
                     $service['service_img_details'] = $service_img_url;
 
@@ -1562,7 +1562,7 @@ if (! class_exists('bookingpress_services') ) {
 
                     if (! empty($servicemetas) ) {
                         foreach ( $servicemetas as $key => $servicemeta ) {
-                            $response[ $servicemeta['bookingpress_servicemeta_name'] ] = maybe_unserialize($servicemeta['bookingpress_servicemeta_value']);
+                            $response[ $servicemeta['bookingpress_servicemeta_name'] ] = BookingPress\BookingPressLoader::bpa_safe_maybe_unserialize($servicemeta['bookingpress_servicemeta_value']);
                         }
                     }
                     
@@ -1867,7 +1867,7 @@ if (! class_exists('bookingpress_services') ) {
 
                             if ($bookingpress_duplicate_service_meta_val['bookingpress_servicemeta_name'] == 'service_image_details' ) {
                                 // If image exists then copy image
-                                $bookingpress_service_image_details = maybe_unserialize($bookingpress_duplicate_service_meta_val['bookingpress_servicemeta_value']);
+                                $bookingpress_service_image_details = BookingPress\BookingPressLoader::bpa_safe_maybe_unserialize($bookingpress_duplicate_service_meta_val['bookingpress_servicemeta_value']);
 
                                 $bookingpress_service_image_url  = ! empty($bookingpress_service_image_details[0]['url']) ? $bookingpress_service_image_details[0]['url'] : '';
                                 $bookingpress_service_image_name = ! empty($bookingpress_service_image_details[0]['name']) ? $bookingpress_service_image_details[0]['name'] : '';

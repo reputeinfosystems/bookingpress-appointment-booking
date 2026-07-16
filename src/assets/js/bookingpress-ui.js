@@ -1,6 +1,6 @@
-import { inject, ref, computed, isRef, unref, getCurrentInstance, shallowRef, watchEffect, readonly, getCurrentScope, onScopeDispose, watch, onMounted, nextTick, warn as warn$2, provide, defineComponent, renderSlot, openBlock, createElementBlock, createElementVNode, mergeProps, normalizeStyle, normalizeClass, createBlock, withCtx, resolveDynamicComponent, isVNode as isVNode$1, onBeforeMount, onBeforeUnmount, withDirectives, cloneVNode, Comment, Fragment, Text, createVNode, createCommentVNode, toRef, Teleport, Transition, vShow, onDeactivated, toDisplayString as toDisplayString$1, reactive, createTextVNode, useSlots, camelize as camelize$1, useAttrs as useAttrs$1, createSlots, renderList, normalizeProps, guardReactiveProps, onUnmounted, toRaw, withModifiers, vModelCheckbox, toRefs, markRaw, toValue as toValue$1, onActivated, onUpdated, withKeys, TransitionGroup, resolveComponent, resolveDirective, toHandlerKey, vModelRadio, h as h$2, effectScope, render, useModel, vModelText, vModelDynamic, mergeModels } from "vue";
+import { inject, ref, computed, isRef, unref, getCurrentInstance, shallowRef, watchEffect, readonly, getCurrentScope, onScopeDispose, watch, onMounted, nextTick, warn as warn$2, provide, defineComponent, renderSlot, openBlock, createElementBlock, createElementVNode, mergeProps, normalizeStyle, normalizeClass, createBlock, withCtx, resolveDynamicComponent, isVNode as isVNode$1, Comment, onBeforeMount, onBeforeUnmount, withDirectives, cloneVNode, Fragment, Text, createVNode, createCommentVNode, toRef, Teleport, Transition, vShow, onDeactivated, toDisplayString as toDisplayString$1, reactive, createTextVNode, useSlots, camelize as camelize$1, useAttrs as useAttrs$1, createSlots, renderList, normalizeProps, guardReactiveProps, onUnmounted, toRaw, withModifiers, vModelCheckbox, toRefs, markRaw, toValue as toValue$1, onActivated, onUpdated, withKeys, h as h$2, triggerRef, TransitionGroup, resolveComponent, resolveDirective, toHandlerKey, vModelRadio, effectScope, render, onBeforeUpdate, shallowReactive, mergeDefaults, useModel, vModelText, vModelDynamic, mergeModels } from "vue";
 /**
-* @vue/shared v3.5.33
+* @vue/shared v3.5.38
 * (c) 2018-present Yuxi (Evan) You and Vue contributors
 * @license MIT
 **/
@@ -32,6 +32,9 @@ const camelize = cacheStringFunction(
     return str.replace(camelizeRE, (c3) => c3.slice(1).toUpperCase());
   }
 );
+const capitalize$2 = cacheStringFunction((str) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+});
 var freeGlobal = typeof global == "object" && global && global.Object === Object && global;
 var freeSelf = typeof self == "object" && self && self.Object === Object && self;
 var root = freeGlobal || freeSelf || Function("return this")();
@@ -198,14 +201,14 @@ var objectCreate = Object.create;
 var baseCreate = /* @__PURE__ */ (function() {
   function object4() {
   }
-  return function(proto) {
-    if (!isObject$4(proto)) {
+  return function(proto2) {
+    if (!isObject$4(proto2)) {
       return {};
     }
     if (objectCreate) {
-      return objectCreate(proto);
+      return objectCreate(proto2);
     }
-    object4.prototype = proto;
+    object4.prototype = proto2;
     var result2 = new object4();
     object4.prototype = void 0;
     return result2;
@@ -395,8 +398,8 @@ function createAssigner(assigner) {
 }
 var objectProto$c = Object.prototype;
 function isPrototype(value) {
-  var Ctor = value && value.constructor, proto = typeof Ctor == "function" && Ctor.prototype || objectProto$c;
-  return value === proto;
+  var Ctor = value && value.constructor, proto2 = typeof Ctor == "function" && Ctor.prototype || objectProto$c;
+  return value === proto2;
 }
 function baseTimes(n, iteratee) {
   var index = -1, result2 = Array(n);
@@ -796,11 +799,11 @@ function isPlainObject$2(value) {
   if (!isObjectLike(value) || baseGetTag(value) != objectTag$3) {
     return false;
   }
-  var proto = getPrototype(value);
-  if (proto === null) {
+  var proto2 = getPrototype(value);
+  if (proto2 === null) {
     return true;
   }
-  var Ctor = hasOwnProperty$6.call(proto, "constructor") && proto.constructor;
+  var Ctor = hasOwnProperty$6.call(proto2, "constructor") && proto2.constructor;
   return typeof Ctor == "function" && Ctor instanceof Ctor && funcToString.call(Ctor) == objectCtorString;
 }
 function baseSlice(array4, start, end) {
@@ -1729,7 +1732,7 @@ function isNil(value) {
 function isNull(value) {
   return value === null;
 }
-function isUndefined$1(value) {
+function isUndefined$2(value) {
   return value === void 0;
 }
 var merge$1 = createAssigner(function(object4, source, srcIndex) {
@@ -1909,7 +1912,7 @@ const getProp = (obj, path, defaultValue) => {
     }
   };
 };
-const isUndefined = (val) => val === void 0;
+const isUndefined$1 = (val) => val === void 0;
 const isBoolean$2 = (val) => typeof val === "boolean";
 const isNumber$2 = (val) => typeof val === "number";
 const isEmpty = (val) => !val && val !== 0 || isArray$3(val) && val.length === 0 || isObject$5(val) && !Object.keys(val).length;
@@ -1932,9 +1935,9 @@ var ElementPlusError = class extends Error {
 function throwError(scope, m3) {
   throw new ElementPlusError(`[${scope}] ${m3}`);
 }
-function debugWarn(scope, message) {
+function debugWarn(scope, message2) {
   {
-    const error = isString$2(scope) ? new ElementPlusError(`[${scope}] ${message}`) : scope;
+    const error = isString$2(scope) ? new ElementPlusError(`[${scope}] ${message2}`) : scope;
     console.warn(error);
   }
 }
@@ -2221,12 +2224,12 @@ function getIsIOS() {
   return isClient && ((_a = window == null ? void 0 : window.navigator) == null ? void 0 : _a.userAgent) && (/iP(?:ad|hone|od)/.test(window.navigator.userAgent) || ((_b = window == null ? void 0 : window.navigator) == null ? void 0 : _b.maxTouchPoints) > 2 && /iPad|Macintosh/.test(window == null ? void 0 : window.navigator.userAgent));
 }
 function createFilterWrapper(filter, fn2) {
-  function wrapper(...args) {
+  function wrapper3(...args) {
     return new Promise((resolve, reject) => {
       Promise.resolve(filter(() => fn2.apply(this, args), { fn: fn2, thisArg: this, args })).then(resolve).catch(reject);
     });
   }
-  return wrapper;
+  return wrapper3;
 }
 function debounceFilter(ms, options = {}) {
   let timer;
@@ -2393,6 +2396,7 @@ function useTimeoutFn(cb, interval, options = {}) {
   };
 }
 const defaultWindow = isClient ? window : void 0;
+const defaultDocument = isClient ? window.document : void 0;
 function unrefElement(elRef) {
   var _a;
   const plain = toValue(elRef);
@@ -2616,6 +2620,16 @@ function useMediaQuery(query, options = {}) {
 function cloneFnJSON(source) {
   return JSON.parse(JSON.stringify(source));
 }
+function useDocumentVisibility(options = {}) {
+  const { document: document2 = defaultDocument } = options;
+  if (!document2)
+    return ref("visible");
+  const visibility = ref(document2.visibilityState);
+  useEventListener(document2, "visibilitychange", () => {
+    visibility.value = document2.visibilityState;
+  });
+  return visibility;
+}
 function useResizeObserver(target, callback, options = {}) {
   const { window: window2 = defaultWindow, ...observerOptions } = options;
   let observer;
@@ -2651,6 +2665,62 @@ function useResizeObserver(target, callback, options = {}) {
   tryOnScopeDispose(stop);
   return {
     isSupported,
+    stop
+  };
+}
+function useElementSize(target, initialSize = { width: 0, height: 0 }, options = {}) {
+  const { window: window2 = defaultWindow, box = "content-box" } = options;
+  const isSVG = computed(() => {
+    var _a, _b;
+    return (_b = (_a = unrefElement(target)) == null ? void 0 : _a.namespaceURI) == null ? void 0 : _b.includes("svg");
+  });
+  const width = ref(initialSize.width);
+  const height = ref(initialSize.height);
+  const { stop: stop1 } = useResizeObserver(
+    target,
+    ([entry]) => {
+      const boxSize = box === "border-box" ? entry.borderBoxSize : box === "content-box" ? entry.contentBoxSize : entry.devicePixelContentBoxSize;
+      if (window2 && isSVG.value) {
+        const $elem = unrefElement(target);
+        if ($elem) {
+          const rect = $elem.getBoundingClientRect();
+          width.value = rect.width;
+          height.value = rect.height;
+        }
+      } else {
+        if (boxSize) {
+          const formatBoxSize = Array.isArray(boxSize) ? boxSize : [boxSize];
+          width.value = formatBoxSize.reduce((acc, { inlineSize }) => acc + inlineSize, 0);
+          height.value = formatBoxSize.reduce((acc, { blockSize }) => acc + blockSize, 0);
+        } else {
+          width.value = entry.contentRect.width;
+          height.value = entry.contentRect.height;
+        }
+      }
+    },
+    options
+  );
+  tryOnMounted(() => {
+    const ele = unrefElement(target);
+    if (ele) {
+      width.value = "offsetWidth" in ele ? ele.offsetWidth : initialSize.width;
+      height.value = "offsetHeight" in ele ? ele.offsetHeight : initialSize.height;
+    }
+  });
+  const stop2 = watch(
+    () => unrefElement(target),
+    (ele) => {
+      width.value = ele ? initialSize.width : 0;
+      height.value = ele ? initialSize.height : 0;
+    }
+  );
+  function stop() {
+    stop1();
+    stop2();
+  }
+  return {
+    width,
+    height,
     stop
   };
 }
@@ -2769,6 +2839,19 @@ function useVModel(props, key, emit, options = {}) {
       }
     });
   }
+}
+function useWindowFocus(options = {}) {
+  const { window: window2 = defaultWindow } = options;
+  if (!window2)
+    return ref(false);
+  const focused = ref(window2.document.hasFocus());
+  useEventListener(window2, "blur", () => {
+    focused.value = false;
+  });
+  useEventListener(window2, "focus", () => {
+    focused.value = true;
+  });
+  return focused;
 }
 function useWindowSize(options = {}) {
   const {
@@ -3039,7 +3122,7 @@ const ConfigProvider = defineComponent({
 });
 const ElConfigProvider = withInstall(ConfigProvider);
 /*! Element Plus Icons Vue v2.3.2 */
-var _sfc_main$G = /* @__PURE__ */ defineComponent({
+var _sfc_main$S = /* @__PURE__ */ defineComponent({
   name: "AddLocation",
   __name: "add-location",
   setup(__props) {
@@ -3061,7 +3144,7 @@ var _sfc_main$G = /* @__PURE__ */ defineComponent({
       })
     ]));
   }
-}), add_location_default = _sfc_main$G;
+}), add_location_default = _sfc_main$S;
 var _sfc_main2 = /* @__PURE__ */ defineComponent({
   name: "Aim",
   __name: "aim",
@@ -5773,7 +5856,7 @@ var _sfc_main165 = /* @__PURE__ */ defineComponent({
       })
     ]));
   }
-}), message_default = _sfc_main165;
+}), message_default$1 = _sfc_main165;
 var _sfc_main166 = /* @__PURE__ */ defineComponent({
   name: "Mic",
   __name: "mic",
@@ -8073,7 +8156,7 @@ const ElementPlusIcons = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.de
   Medal: medal_default,
   Memo: memo_default,
   Menu: menu_default,
-  Message: message_default,
+  Message: message_default$1,
   MessageBox: message_box_default,
   Mic: mic_default,
   Microphone: microphone_default,
@@ -8295,6 +8378,7 @@ const focusElement = (el, options) => {
   if (isHTMLElement(el) && cleanup) el.removeAttribute("tabindex");
 };
 const escapeStringRegexp = (string3 = "") => string3.replace(/[|\\{}()[\]^$+*?.]/g, "\\$&").replace(/-/g, "\\x2d");
+const capitalize$1 = (str) => capitalize$2(str);
 const SCOPE$5 = "utils/dom/style";
 const classNameToArray = (cls = "") => cls.split(" ").filter((item) => !!item.trim());
 const hasClass = (el, cls) => {
@@ -8361,7 +8445,7 @@ var icon_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineCom
 });
 var icon_default = icon_vue_vue_type_script_setup_true_lang_default;
 const ElIcon = withInstall(icon_default);
-const _hoisted_1$O = [
+const _hoisted_1$T = [
   "src",
   "alt",
   "srcset"
@@ -8407,7 +8491,7 @@ var avatar_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineC
         srcset: __props.srcSet,
         style: normalizeStyle(fitStyle.value),
         onError: handleError
-      }, null, 44, _hoisted_1$O)) : __props.icon ? (openBlock(), createBlock(unref(ElIcon), { key: 1 }, {
+      }, null, 44, _hoisted_1$T)) : __props.icon ? (openBlock(), createBlock(unref(ElIcon), { key: 1 }, {
         default: withCtx(() => [(openBlock(), createBlock(resolveDynamicComponent(__props.icon)))]),
         _: 1
       })) : renderSlot(_ctx.$slots, "default", { key: 2 })], 6);
@@ -8491,10 +8575,10 @@ const popperArrowProps = buildProps({ arrowOffset: {
   type: Number,
   default: 5
 } });
-var L$1 = "top", W = "bottom", T$2 = "right", P$2 = "left", me$1 = "auto", Q$1 = [L$1, W, T$2, P$2], Y$2 = "start", Z$2 = "end", Ye$1 = "clippingParents", je$1 = "viewport", ee$1 = "popper", Ge$1 = "reference", De$1 = Q$1.reduce(function(e, t) {
-  return e.concat([t + "-" + Y$2, t + "-" + Z$2]);
-}, []), Ee$2 = [].concat(Q$1, [me$1]).reduce(function(e, t) {
-  return e.concat([t, t + "-" + Y$2, t + "-" + Z$2]);
+var L$2 = "top", W$1 = "bottom", T$2 = "right", P$2 = "left", me$1 = "auto", Q$2 = [L$2, W$1, T$2, P$2], Y$3 = "start", Z$2 = "end", Ye$1 = "clippingParents", je$1 = "viewport", ee$1 = "popper", Ge$1 = "reference", De$1 = Q$2.reduce(function(e, t) {
+  return e.concat([t + "-" + Y$3, t + "-" + Z$2]);
+}, []), Ee$2 = [].concat(Q$2, [me$1]).reduce(function(e, t) {
+  return e.concat([t, t + "-" + Y$3, t + "-" + Z$2]);
 }, []), Je$1 = "beforeRead", Ke$1 = "read", Qe$1 = "afterRead", Ze$1 = "beforeMain", et$1 = "main", tt$1 = "afterMain", nt$1 = "beforeWrite", rt$1 = "write", ot$1 = "afterWrite", it$1 = [Je$1, Ke$1, Qe$1, Ze$1, et$1, tt$1, nt$1, rt$1, ot$1];
 function V$2(e) {
   return e ? (e.nodeName || "").toLowerCase() : null;
@@ -8635,12 +8719,12 @@ function pt(e, t) {
   }, {});
 }
 var Vt$1 = function(e, t) {
-  return e = typeof e == "function" ? e(Object.assign({}, t.rects, { placement: t.placement })) : e, ut$1(typeof e != "number" ? e : pt(e, Q$1));
+  return e = typeof e == "function" ? e(Object.assign({}, t.rects, { placement: t.placement })) : e, ut$1(typeof e != "number" ? e : pt(e, Q$2));
 };
 function Ct$1(e) {
   var t, n = e.state, r = e.name, o3 = e.options, a3 = n.elements.arrow, c3 = n.modifiersData.popperOffsets, s3 = C$2(n.placement), i = Me$1(s3), f3 = [P$2, T$2].indexOf(s3) >= 0, u3 = f3 ? "height" : "width";
   if (!(!a3 || !c3)) {
-    var m3 = Vt$1(o3.padding, n), h3 = Pe$2(a3), l3 = i === "y" ? L$1 : P$2, g = i === "y" ? W : T$2, p3 = n.rects.reference[u3] + n.rects.reference[i] - c3[i] - n.rects.popper[u3], y = c3[i] - n.rects.reference[i], b3 = se$1(a3), x3 = b3 ? i === "y" ? b3.clientHeight || 0 : b3.clientWidth || 0 : 0, O3 = p3 / 2 - y / 2, d3 = m3[l3], v3 = x3 - h3[u3] - m3[g], w3 = x3 / 2 - h3[u3] / 2 + O3, $ = fe$1(d3, w3, v3), j3 = i;
+    var m3 = Vt$1(o3.padding, n), h3 = Pe$2(a3), l3 = i === "y" ? L$2 : P$2, g = i === "y" ? W$1 : T$2, p3 = n.rects.reference[u3] + n.rects.reference[i] - c3[i] - n.rects.popper[u3], y = c3[i] - n.rects.reference[i], b3 = se$1(a3), x3 = b3 ? i === "y" ? b3.clientHeight || 0 : b3.clientWidth || 0 : 0, O3 = p3 / 2 - y / 2, d3 = m3[l3], v3 = x3 - h3[u3] - m3[g], w3 = x3 / 2 - h3[u3] / 2 + O3, $ = fe$1(d3, w3, v3), j3 = i;
     n.modifiersData[r] = (t = {}, t[j3] = $, t.centerOffset = $ - w3, t);
   }
 }
@@ -8660,15 +8744,15 @@ function Nt$1(e, t) {
 function dt$1(e) {
   var t, n = e.popper, r = e.popperRect, o3 = e.placement, a3 = e.variation, c3 = e.offsets, s3 = e.position, i = e.gpuAcceleration, f3 = e.adaptive, u3 = e.roundOffsets, m3 = e.isFixed, h3 = c3.x, l3 = h3 === void 0 ? 0 : h3, g = c3.y, p3 = g === void 0 ? 0 : g, y = typeof u3 == "function" ? u3({ x: l3, y: p3 }) : { x: l3, y: p3 };
   l3 = y.x, p3 = y.y;
-  var b3 = c3.hasOwnProperty("x"), x3 = c3.hasOwnProperty("y"), O3 = P$2, d3 = L$1, v3 = window;
+  var b3 = c3.hasOwnProperty("x"), x3 = c3.hasOwnProperty("y"), O3 = P$2, d3 = L$2, v3 = window;
   if (f3) {
     var w3 = se$1(n), $ = "clientHeight", j3 = "clientWidth";
-    if (w3 === B$2(n) && (w3 = N$2(n), I$2(w3).position !== "static" && s3 === "absolute" && ($ = "scrollHeight", j3 = "scrollWidth")), w3 = w3, o3 === L$1 || (o3 === P$2 || o3 === T$2) && a3 === Z$2) {
-      d3 = W;
+    if (w3 === B$2(n) && (w3 = N$2(n), I$2(w3).position !== "static" && s3 === "absolute" && ($ = "scrollHeight", j3 = "scrollWidth")), w3 = w3, o3 === L$2 || (o3 === P$2 || o3 === T$2) && a3 === Z$2) {
+      d3 = W$1;
       var D3 = m3 && w3 === v3 && v3.visualViewport ? v3.visualViewport.height : w3[$];
       p3 -= D3 - r.height, p3 *= i ? 1 : -1;
     }
-    if (o3 === P$2 || (o3 === L$1 || o3 === W) && a3 === Z$2) {
+    if (o3 === P$2 || (o3 === L$2 || o3 === W$1) && a3 === Z$2) {
       O3 = T$2;
       var E3 = m3 && w3 === v3 && v3.visualViewport ? v3.visualViewport.width : w3[j3];
       l3 -= E3 - r.width, l3 *= i ? 1 : -1;
@@ -8768,10 +8852,10 @@ function Kt$1(e, t, n, r) {
 function yt(e) {
   var t = e.reference, n = e.element, r = e.placement, o3 = r ? C$2(r) : null, a3 = r ? re$1(r) : null, c3 = t.x + t.width / 2 - n.width / 2, s3 = t.y + t.height / 2 - n.height / 2, i;
   switch (o3) {
-    case L$1:
+    case L$2:
       i = { x: c3, y: t.y - n.height };
       break;
-    case W:
+    case W$1:
       i = { x: c3, y: t.y + t.height };
       break;
     case T$2:
@@ -8787,7 +8871,7 @@ function yt(e) {
   if (f3 != null) {
     var u3 = f3 === "y" ? "height" : "width";
     switch (a3) {
-      case Y$2:
+      case Y$3:
         i[f3] = i[f3] - (t[u3] / 2 - n[u3] / 2);
         break;
       case Z$2:
@@ -8799,11 +8883,11 @@ function yt(e) {
 }
 function oe$1(e, t) {
   t === void 0 && (t = {});
-  var n = t, r = n.placement, o3 = r === void 0 ? e.placement : r, a3 = n.strategy, c3 = a3 === void 0 ? e.strategy : a3, s3 = n.boundary, i = s3 === void 0 ? Ye$1 : s3, f3 = n.rootBoundary, u3 = f3 === void 0 ? je$1 : f3, m3 = n.elementContext, h3 = m3 === void 0 ? ee$1 : m3, l3 = n.altBoundary, g = l3 === void 0 ? false : l3, p3 = n.padding, y = p3 === void 0 ? 0 : p3, b3 = ut$1(typeof y != "number" ? y : pt(y, Q$1)), x3 = h3 === ee$1 ? Ge$1 : ee$1, O3 = e.rects.popper, d3 = e.elements[g ? x3 : h3], v3 = Kt$1(G$1(d3) ? d3 : d3.contextElement || N$2(e.elements.popper), i, u3, c3), w3 = ne$1(e.elements.reference), $ = yt({ reference: w3, element: O3, placement: o3 }), j3 = Se$1(Object.assign({}, O3, $)), D3 = h3 === ee$1 ? j3 : w3, E3 = { top: v3.top - D3.top + b3.top, bottom: D3.bottom - v3.bottom + b3.bottom, left: v3.left - D3.left + b3.left, right: D3.right - v3.right + b3.right }, A3 = e.modifiersData.offset;
+  var n = t, r = n.placement, o3 = r === void 0 ? e.placement : r, a3 = n.strategy, c3 = a3 === void 0 ? e.strategy : a3, s3 = n.boundary, i = s3 === void 0 ? Ye$1 : s3, f3 = n.rootBoundary, u3 = f3 === void 0 ? je$1 : f3, m3 = n.elementContext, h3 = m3 === void 0 ? ee$1 : m3, l3 = n.altBoundary, g = l3 === void 0 ? false : l3, p3 = n.padding, y = p3 === void 0 ? 0 : p3, b3 = ut$1(typeof y != "number" ? y : pt(y, Q$2)), x3 = h3 === ee$1 ? Ge$1 : ee$1, O3 = e.rects.popper, d3 = e.elements[g ? x3 : h3], v3 = Kt$1(G$1(d3) ? d3 : d3.contextElement || N$2(e.elements.popper), i, u3, c3), w3 = ne$1(e.elements.reference), $ = yt({ reference: w3, element: O3, placement: o3 }), j3 = Se$1(Object.assign({}, O3, $)), D3 = h3 === ee$1 ? j3 : w3, E3 = { top: v3.top - D3.top + b3.top, bottom: D3.bottom - v3.bottom + b3.bottom, left: v3.left - D3.left + b3.left, right: D3.right - v3.right + b3.right }, A3 = e.modifiersData.offset;
   if (h3 === ee$1 && A3) {
     var H3 = A3[o3];
     Object.keys(E3).forEach(function(k) {
-      var F3 = [T$2, W].indexOf(k) >= 0 ? 1 : -1, U3 = [L$1, W].indexOf(k) >= 0 ? "y" : "x";
+      var F3 = [T$2, W$1].indexOf(k) >= 0 ? 1 : -1, U3 = [L$2, W$1].indexOf(k) >= 0 ? "y" : "x";
       E3[k] += H3[U3] * F3;
     });
   }
@@ -8813,7 +8897,7 @@ function Qt(e, t) {
   t === void 0 && (t = {});
   var n = t, r = n.placement, o3 = n.boundary, a3 = n.rootBoundary, c3 = n.padding, s3 = n.flipVariations, i = n.allowedAutoPlacements, f3 = i === void 0 ? Ee$2 : i, u3 = re$1(r), m3 = u3 ? s3 ? De$1 : De$1.filter(function(g) {
     return re$1(g) === u3;
-  }) : Q$1, h3 = m3.filter(function(g) {
+  }) : Q$2, h3 = m3.filter(function(g) {
     return f3.indexOf(g) >= 0;
   });
   h3.length === 0 && (h3 = m3);
@@ -8829,13 +8913,13 @@ function Zt$1(e) {
   var t = be$1(e);
   return [ht(e), t, ht(t)];
 }
-function en$2(e) {
+function en$3(e) {
   var t = e.state, n = e.options, r = e.name;
   if (!t.modifiersData[r]._skip) {
     for (var o3 = n.mainAxis, a3 = o3 === void 0 ? true : o3, c3 = n.altAxis, s3 = c3 === void 0 ? true : c3, i = n.fallbackPlacements, f3 = n.padding, u3 = n.boundary, m3 = n.rootBoundary, h3 = n.altBoundary, l3 = n.flipVariations, g = l3 === void 0 ? true : l3, p3 = n.allowedAutoPlacements, y = t.options.placement, b3 = C$2(y), x3 = b3 === y, O3 = i || (x3 || !g ? [be$1(y)] : Zt$1(y)), d3 = [y].concat(O3).reduce(function(z2, q2) {
       return z2.concat(C$2(q2) === me$1 ? Qt(t, { placement: q2, boundary: u3, rootBoundary: m3, padding: f3, flipVariations: g, allowedAutoPlacements: p3 }) : q2);
     }, []), v3 = t.rects.reference, w3 = t.rects.popper, $ = /* @__PURE__ */ new Map(), j3 = true, D3 = d3[0], E3 = 0; E3 < d3.length; E3++) {
-      var A3 = d3[E3], H3 = C$2(A3), k = re$1(A3) === Y$2, F3 = [L$1, W].indexOf(H3) >= 0, U3 = F3 ? "width" : "height", M3 = oe$1(t, { placement: A3, boundary: u3, rootBoundary: m3, altBoundary: h3, padding: f3 }), S3 = F3 ? k ? T$2 : P$2 : k ? W : L$1;
+      var A3 = d3[E3], H3 = C$2(A3), k = re$1(A3) === Y$3, F3 = [L$2, W$1].indexOf(H3) >= 0, U3 = F3 ? "width" : "height", M3 = oe$1(t, { placement: A3, boundary: u3, rootBoundary: m3, altBoundary: h3, padding: f3 }), S3 = F3 ? k ? T$2 : P$2 : k ? W$1 : L$2;
       v3[U3] > w3[U3] && (S3 = be$1(S3));
       var ue2 = be$1(S3), _3 = [];
       if (a3 && _3.push(M3[H3] <= 0), s3 && _3.push(M3[S3] <= 0, M3[ue2] <= 0), _3.every(function(z2) {
@@ -8861,12 +8945,12 @@ function en$2(e) {
     t.placement !== D3 && (t.modifiersData[r]._skip = true, t.placement = D3, t.reset = true);
   }
 }
-var gt = { name: "flip", enabled: true, phase: "main", fn: en$2, requiresIfExists: ["offset"], data: { _skip: false } };
+var gt = { name: "flip", enabled: true, phase: "main", fn: en$3, requiresIfExists: ["offset"], data: { _skip: false } };
 function bt$1(e, t, n) {
   return n === void 0 && (n = { x: 0, y: 0 }), { top: e.top - t.height - n.y, right: e.right - t.width + n.x, bottom: e.bottom - t.height + n.y, left: e.left - t.width - n.x };
 }
 function wt$1(e) {
-  return [L$1, T$2, W, P$2].some(function(t) {
+  return [L$2, T$2, W$1, P$2].some(function(t) {
     return e[t] >= 0;
   });
 }
@@ -8876,7 +8960,7 @@ function tn$1(e) {
 }
 var xt$1 = { name: "hide", enabled: true, phase: "main", requiresIfExists: ["preventOverflow"], fn: tn$1 };
 function nn$1(e, t, n) {
-  var r = C$2(e), o3 = [P$2, L$1].indexOf(r) >= 0 ? -1 : 1, a3 = typeof n == "function" ? n(Object.assign({}, t, { placement: e })) : n, c3 = a3[0], s3 = a3[1];
+  var r = C$2(e), o3 = [P$2, L$2].indexOf(r) >= 0 ? -1 : 1, a3 = typeof n == "function" ? n(Object.assign({}, t, { placement: e })) : n, c3 = a3[0], s3 = a3[1];
   return c3 = c3 || 0, s3 = (s3 || 0) * o3, [P$2, T$2].indexOf(r) >= 0 ? { x: s3, y: c3 } : { x: c3, y: s3 };
 }
 function rn$1(e) {
@@ -8898,11 +8982,11 @@ function sn$1(e) {
   var t = e.state, n = e.options, r = e.name, o3 = n.mainAxis, a3 = o3 === void 0 ? true : o3, c3 = n.altAxis, s3 = c3 === void 0 ? false : c3, i = n.boundary, f3 = n.rootBoundary, u3 = n.altBoundary, m3 = n.padding, h3 = n.tether, l3 = h3 === void 0 ? true : h3, g = n.tetherOffset, p3 = g === void 0 ? 0 : g, y = oe$1(t, { boundary: i, rootBoundary: f3, padding: m3, altBoundary: u3 }), b3 = C$2(t.placement), x3 = re$1(t.placement), O3 = !x3, d3 = Me$1(b3), v3 = an$1(d3), w3 = t.modifiersData.popperOffsets, $ = t.rects.reference, j3 = t.rects.popper, D3 = typeof p3 == "function" ? p3(Object.assign({}, t.rects, { placement: t.placement })) : p3, E3 = typeof D3 == "number" ? { mainAxis: D3, altAxis: D3 } : Object.assign({ mainAxis: 0, altAxis: 0 }, D3), A3 = t.modifiersData.offset ? t.modifiersData.offset[t.placement] : null, H3 = { x: 0, y: 0 };
   if (w3) {
     if (a3) {
-      var k, F3 = d3 === "y" ? L$1 : P$2, U3 = d3 === "y" ? W : T$2, M3 = d3 === "y" ? "height" : "width", S3 = w3[d3], ue2 = S3 + y[F3], _3 = S3 - y[U3], pe2 = l3 ? -j3[M3] / 2 : 0, xe2 = x3 === Y$2 ? $[M3] : j3[M3], ie2 = x3 === Y$2 ? -j3[M3] : -$[M3], le2 = t.elements.arrow, z2 = l3 && le2 ? Pe$2(le2) : { width: 0, height: 0 }, q2 = t.modifiersData["arrow#persistent"] ? t.modifiersData["arrow#persistent"].padding : ct$1(), de2 = q2[F3], ae2 = q2[U3], K = fe$1(0, $[M3], z2[M3]), Et2 = O3 ? $[M3] / 2 - pe2 - K - de2 - E3.mainAxis : xe2 - K - de2 - E3.mainAxis, At2 = O3 ? -$[M3] / 2 + pe2 + K + ae2 + E3.mainAxis : ie2 + K + ae2 + E3.mainAxis, Oe2 = t.elements.arrow && se$1(t.elements.arrow), kt2 = Oe2 ? d3 === "y" ? Oe2.clientTop || 0 : Oe2.clientLeft || 0 : 0, Ce2 = (k = A3 == null ? void 0 : A3[d3]) != null ? k : 0, Lt2 = S3 + Et2 - Ce2 - kt2, Pt2 = S3 + At2 - Ce2, qe2 = fe$1(l3 ? ve$1(ue2, Lt2) : ue2, S3, l3 ? J$2(_3, Pt2) : _3);
+      var k, F3 = d3 === "y" ? L$2 : P$2, U3 = d3 === "y" ? W$1 : T$2, M3 = d3 === "y" ? "height" : "width", S3 = w3[d3], ue2 = S3 + y[F3], _3 = S3 - y[U3], pe2 = l3 ? -j3[M3] / 2 : 0, xe2 = x3 === Y$3 ? $[M3] : j3[M3], ie2 = x3 === Y$3 ? -j3[M3] : -$[M3], le2 = t.elements.arrow, z2 = l3 && le2 ? Pe$2(le2) : { width: 0, height: 0 }, q2 = t.modifiersData["arrow#persistent"] ? t.modifiersData["arrow#persistent"].padding : ct$1(), de2 = q2[F3], ae2 = q2[U3], K = fe$1(0, $[M3], z2[M3]), Et2 = O3 ? $[M3] / 2 - pe2 - K - de2 - E3.mainAxis : xe2 - K - de2 - E3.mainAxis, At2 = O3 ? -$[M3] / 2 + pe2 + K + ae2 + E3.mainAxis : ie2 + K + ae2 + E3.mainAxis, Oe2 = t.elements.arrow && se$1(t.elements.arrow), kt2 = Oe2 ? d3 === "y" ? Oe2.clientTop || 0 : Oe2.clientLeft || 0 : 0, Ce2 = (k = A3 == null ? void 0 : A3[d3]) != null ? k : 0, Lt2 = S3 + Et2 - Ce2 - kt2, Pt2 = S3 + At2 - Ce2, qe2 = fe$1(l3 ? ve$1(ue2, Lt2) : ue2, S3, l3 ? J$2(_3, Pt2) : _3);
       w3[d3] = qe2, H3[d3] = qe2 - S3;
     }
     if (s3) {
-      var Ie2, Mt2 = d3 === "x" ? L$1 : P$2, Wt2 = d3 === "x" ? W : T$2, X2 = w3[v3], he2 = v3 === "y" ? "height" : "width", Ne2 = X2 + y[Mt2], Fe2 = X2 - y[Wt2], $e2 = [L$1, P$2].indexOf(b3) !== -1, Ue = (Ie2 = A3 == null ? void 0 : A3[v3]) != null ? Ie2 : 0, _e2 = $e2 ? Ne2 : X2 - $[he2] - j3[he2] - Ue + E3.altAxis, ze2 = $e2 ? X2 + $[he2] + j3[he2] - Ue - E3.altAxis : Fe2, Xe = l3 && $e2 ? St$1(_e2, X2, ze2) : fe$1(l3 ? _e2 : Ne2, X2, l3 ? ze2 : Fe2);
+      var Ie2, Mt2 = d3 === "x" ? L$2 : P$2, Wt2 = d3 === "x" ? W$1 : T$2, X2 = w3[v3], he2 = v3 === "y" ? "height" : "width", Ne2 = X2 + y[Mt2], Fe2 = X2 - y[Wt2], $e2 = [L$2, P$2].indexOf(b3) !== -1, Ue = (Ie2 = A3 == null ? void 0 : A3[v3]) != null ? Ie2 : 0, _e2 = $e2 ? Ne2 : X2 - $[he2] - j3[he2] - Ue + E3.altAxis, ze2 = $e2 ? X2 + $[he2] + j3[he2] - Ue - E3.altAxis : Fe2, Xe = l3 && $e2 ? St$1(_e2, X2, ze2) : fe$1(l3 ? _e2 : Ne2, X2, l3 ? ze2 : Fe2);
       w3[v3] = Xe, H3[v3] = Xe - X2;
     }
     t.modifiersData[r] = H3;
@@ -9198,6 +9282,9 @@ let PatchFlags = /* @__PURE__ */ (function(PatchFlags2) {
   PatchFlags2[PatchFlags2["BAIL"] = -2] = "BAIL";
   return PatchFlags2;
 })({});
+function isComment(node) {
+  return isVNode$1(node) && node.type === Comment;
+}
 const flattedChildren = (children) => {
   const vNodes = isArray$3(children) ? children : [children];
   const result2 = [];
@@ -9533,8 +9620,8 @@ var trigger_vue_vue_type_script_setup_true_lang_default$1 = /* @__PURE__ */ defi
   props: popperTriggerProps,
   setup(__props, { expose: __expose }) {
     const props = __props;
-    const { role, triggerRef } = inject(POPPER_INJECTION_KEY, void 0);
-    useForwardRef(triggerRef);
+    const { role, triggerRef: triggerRef2 } = inject(POPPER_INJECTION_KEY, void 0);
+    useForwardRef(triggerRef2);
     const ariaControls = computed(() => {
       return ariaHaspopup.value ? props.id : void 0;
     });
@@ -9559,9 +9646,9 @@ var trigger_vue_vue_type_script_setup_true_lang_default$1 = /* @__PURE__ */ defi
     ];
     onMounted(() => {
       watch(() => props.virtualRef, (virtualEl) => {
-        if (virtualEl) triggerRef.value = unrefElement(virtualEl);
+        if (virtualEl) triggerRef2.value = unrefElement(virtualEl);
       }, { immediate: true });
-      watch(triggerRef, (el, prevEl) => {
+      watch(triggerRef2, (el, prevEl) => {
         virtualTriggerAriaStopWatch == null ? void 0 : virtualTriggerAriaStopWatch();
         virtualTriggerAriaStopWatch = void 0;
         if (isElement(prevEl)) TRIGGER_ELE_EVENTS.forEach((eventName) => {
@@ -9600,16 +9687,16 @@ var trigger_vue_vue_type_script_setup_true_lang_default$1 = /* @__PURE__ */ defi
     onBeforeUnmount(() => {
       virtualTriggerAriaStopWatch == null ? void 0 : virtualTriggerAriaStopWatch();
       virtualTriggerAriaStopWatch = void 0;
-      if (triggerRef.value && isElement(triggerRef.value)) {
-        const el = triggerRef.value;
+      if (triggerRef2.value && isElement(triggerRef2.value)) {
+        const el = triggerRef2.value;
         TRIGGER_ELE_EVENTS.forEach((eventName) => {
           const handler = props[eventName];
           if (handler) el.removeEventListener(eventName.slice(2).toLowerCase(), handler, ["onFocus", "onBlur"].includes(eventName));
         });
-        triggerRef.value = void 0;
+        triggerRef2.value = void 0;
       }
     });
-    __expose({ triggerRef });
+    __expose({ triggerRef: triggerRef2 });
     return (_ctx, _cache) => {
       return !__props.virtualTriggering ? (openBlock(), createBlock(unref(OnlyChild), mergeProps({ key: 0 }, _ctx.$attrs, {
         "aria-controls": ariaControls.value,
@@ -10131,7 +10218,7 @@ function deriveExtraModifiers(options, modifiers) {
 }
 const DEFAULT_ARROW_OFFSET = 0;
 const usePopperContent = (props) => {
-  const { popperInstanceRef, contentRef, triggerRef, role } = inject(POPPER_INJECTION_KEY, void 0);
+  const { popperInstanceRef, contentRef, triggerRef: triggerRef2, role } = inject(POPPER_INJECTION_KEY, void 0);
   const arrowRef = ref();
   const arrowOffset = computed(() => props.arrowOffset);
   const eventListenerModifier = computed(() => {
@@ -10145,7 +10232,7 @@ const usePopperContent = (props) => {
     const offset = unref(arrowOffset) ?? DEFAULT_ARROW_OFFSET;
     return {
       name: "arrow",
-      enabled: !isUndefined$1(arrowEl),
+      enabled: !isUndefined$2(arrowEl),
       options: {
         element: arrowEl,
         padding: offset
@@ -10160,7 +10247,7 @@ const usePopperContent = (props) => {
       ...buildPopperOptions(props, [unref(arrowModifier), unref(eventListenerModifier)])
     };
   });
-  const computedReference = computed(() => unwrapMeasurableEl(props.referenceEl) || unref(triggerRef));
+  const computedReference = computed(() => unwrapMeasurableEl(props.referenceEl) || unref(triggerRef2));
   const { attributes, state, styles, update, forceUpdate, instanceRef } = usePopper(computedReference, contentRef, options);
   watch(instanceRef, (instance) => popperInstanceRef.value = instance, { flush: "sync" });
   onMounted(() => {
@@ -10396,7 +10483,7 @@ var trigger_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ define
     const props = __props;
     const ns = useNamespace("tooltip");
     const { controlled, id: id2, open, onOpen, onClose, onToggle } = inject(TOOLTIP_INJECTION_KEY, void 0);
-    const triggerRef = ref(null);
+    const triggerRef2 = ref(null);
     const stopWhenControlledOrDisabled = () => {
       if (unref(controlled) || props.disabled) return true;
     };
@@ -10424,7 +10511,7 @@ var trigger_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ define
         onToggle(e);
       }
     });
-    __expose({ triggerRef });
+    __expose({ triggerRef: triggerRef2 });
     return (_ctx, _cache) => {
       return openBlock(), createBlock(unref(trigger_default$1), {
         id: unref(id2),
@@ -10652,8 +10739,8 @@ var content_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ define
   }
 });
 var content_default = content_vue_vue_type_script_setup_true_lang_default;
-const _hoisted_1$N = ["innerHTML"];
-const _hoisted_2$w = { key: 1 };
+const _hoisted_1$S = ["innerHTML"];
+const _hoisted_2$A = { key: 1 };
 var tooltip_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
   name: "ElTooltip",
   __name: "tooltip",
@@ -10792,7 +10879,7 @@ var tooltip_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ define
           default: withCtx(() => [renderSlot(_ctx.$slots, "content", {}, () => [__props.rawContent ? (openBlock(), createElementBlock("span", {
             key: 0,
             innerHTML: __props.content
-          }, null, 8, _hoisted_1$N)) : (openBlock(), createElementBlock("span", _hoisted_2$w, toDisplayString$1(__props.content), 1))]), __props.showArrow ? (openBlock(), createBlock(unref(arrow_default), { key: 0 })) : createCommentVNode("v-if", true)]),
+          }, null, 8, _hoisted_1$S)) : (openBlock(), createElementBlock("span", _hoisted_2$A, toDisplayString$1(__props.content), 1))]), __props.showArrow ? (openBlock(), createBlock(unref(arrow_default), { key: 0 })) : createCommentVNode("v-if", true)]),
           _: 3
         }, 8, [
           "aria-label",
@@ -11023,7 +11110,7 @@ function useSlotText(slot) {
     return text || void 0;
   });
 }
-const _sfc_main$F = /* @__PURE__ */ defineComponent({
+const _sfc_main$R = /* @__PURE__ */ defineComponent({
   ...{
     inheritAttrs: false
   },
@@ -11172,7 +11259,7 @@ const ElAside = withNoopInstall(aside_default);
 const ElFooter = withNoopInstall(footer_default);
 const ElHeader = withNoopInstall(header_default);
 const ElMain = withNoopInstall(main_default);
-const _sfc_main$E = /* @__PURE__ */ defineComponent({
+const _sfc_main$Q = /* @__PURE__ */ defineComponent({
   ...{
     inheritAttrs: false
   },
@@ -11200,6 +11287,337 @@ const _sfc_main$E = /* @__PURE__ */ defineComponent({
           };
         })
       ]), 1040);
+    };
+  }
+});
+const alertEffects = ["light", "dark"];
+const alertProps = buildProps({
+  title: {
+    type: String,
+    default: ""
+  },
+  description: {
+    type: String,
+    default: ""
+  },
+  type: {
+    type: String,
+    values: keysOf(TypeComponentsMap),
+    default: "info"
+  },
+  closable: {
+    type: Boolean,
+    default: true
+  },
+  closeText: {
+    type: String,
+    default: ""
+  },
+  showIcon: Boolean,
+  center: Boolean,
+  effect: {
+    type: String,
+    values: alertEffects,
+    default: "light"
+  }
+});
+const alertEmits = { close: (evt) => evt instanceof MouseEvent };
+var alert_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
+  name: "ElAlert",
+  __name: "alert",
+  props: alertProps,
+  emits: alertEmits,
+  setup(__props, { emit: __emit }) {
+    const { Close } = TypeComponents;
+    const props = __props;
+    const emit = __emit;
+    const slots = useSlots();
+    const ns = useNamespace("alert");
+    const visible = ref(true);
+    const iconComponent = computed(() => TypeComponentsMap[props.type]);
+    const hasDesc = computed(() => {
+      var _a;
+      if (props.description) return true;
+      const slotContent = (_a = slots.default) == null ? void 0 : _a.call(slots);
+      if (!slotContent) return false;
+      return flattedChildren(slotContent).some((child) => !isComment(child));
+    });
+    const close2 = (evt) => {
+      visible.value = false;
+      emit("close", evt);
+    };
+    return (_ctx, _cache) => {
+      return openBlock(), createBlock(Transition, {
+        name: unref(ns).b("fade"),
+        persisted: ""
+      }, {
+        default: withCtx(() => [withDirectives(createElementVNode("div", {
+          class: normalizeClass([
+            unref(ns).b(),
+            unref(ns).m(__props.type),
+            unref(ns).is("center", __props.center),
+            unref(ns).is(__props.effect)
+          ]),
+          role: "alert"
+        }, [__props.showIcon && (_ctx.$slots.icon || iconComponent.value) ? (openBlock(), createBlock(unref(ElIcon), {
+          key: 0,
+          class: normalizeClass([unref(ns).e("icon"), unref(ns).is("big", hasDesc.value)])
+        }, {
+          default: withCtx(() => [renderSlot(_ctx.$slots, "icon", {}, () => [(openBlock(), createBlock(resolveDynamicComponent(iconComponent.value)))])]),
+          _: 3
+        }, 8, ["class"])) : createCommentVNode("v-if", true), createElementVNode("div", { class: normalizeClass(unref(ns).e("content")) }, [
+          __props.title || _ctx.$slots.title ? (openBlock(), createElementBlock("span", {
+            key: 0,
+            class: normalizeClass([unref(ns).e("title"), { "with-description": hasDesc.value }])
+          }, [renderSlot(_ctx.$slots, "title", {}, () => [createTextVNode(toDisplayString$1(__props.title), 1)])], 2)) : createCommentVNode("v-if", true),
+          hasDesc.value ? (openBlock(), createElementBlock("p", {
+            key: 1,
+            class: normalizeClass(unref(ns).e("description"))
+          }, [renderSlot(_ctx.$slots, "default", {}, () => [createTextVNode(toDisplayString$1(__props.description), 1)])], 2)) : createCommentVNode("v-if", true),
+          __props.closable ? (openBlock(), createElementBlock(Fragment, { key: 2 }, [__props.closeText ? (openBlock(), createElementBlock("div", {
+            key: 0,
+            class: normalizeClass([unref(ns).e("close-btn"), unref(ns).is("customed")]),
+            onClick: close2
+          }, toDisplayString$1(__props.closeText), 3)) : (openBlock(), createBlock(unref(ElIcon), {
+            key: 1,
+            class: normalizeClass(unref(ns).e("close-btn")),
+            onClick: close2
+          }, {
+            default: withCtx(() => [createVNode(unref(Close))]),
+            _: 1
+          }, 8, ["class"]))], 64)) : createCommentVNode("v-if", true)
+        ], 2)], 2), [[vShow, visible.value]])]),
+        _: 3
+      }, 8, ["name"]);
+    };
+  }
+});
+var alert_default = alert_vue_vue_type_script_setup_true_lang_default;
+const ElAlert = withInstall(alert_default);
+const _sfc_main$P = /* @__PURE__ */ defineComponent({
+  ...{
+    name: "BpUiAlert",
+    inheritAttrs: false
+  },
+  __name: "BpUiAlert",
+  props: {
+    ...alertProps,
+    modelValue: {
+      type: Boolean,
+      default: void 0
+    },
+    visible: {
+      type: Boolean,
+      default: void 0
+    },
+    bordered: Boolean,
+    compact: Boolean,
+    inline: Boolean
+  },
+  emits: ["update:modelValue", "update:visible", "close", "dismiss"],
+  setup(__props, { expose: __expose, emit: __emit }) {
+    const props = __props;
+    const emit = __emit;
+    const currentInstance = getCurrentInstance();
+    const elRef = ref();
+    const internalVisible = ref(true);
+    const forwardedSlotNames = useForwardSlotNames();
+    const bindings = useForwardBindings(
+      props,
+      ["bordered", "compact", "inline", "modelValue", "visible"]
+    );
+    const isControlled = computed(() => {
+      const rawProps = (currentInstance == null ? void 0 : currentInstance.vnode.props) ?? {};
+      return Object.prototype.hasOwnProperty.call(rawProps, "modelValue") || Object.prototype.hasOwnProperty.call(rawProps, "visible");
+    });
+    const isRendered = computed(() => {
+      if (props.visible !== void 0) {
+        return props.visible;
+      }
+      if (props.modelValue !== void 0) {
+        return props.modelValue;
+      }
+      return internalVisible.value;
+    });
+    const alertClass = computed(() => mergeClassNames(
+      "bp-ui-alert bp-alert bpa-alert",
+      `bp-ui-alert--${props.type}`,
+      `bp-ui-alert--${props.effect}`,
+      {
+        "bp-ui-alert--bordered": props.bordered,
+        "bp-ui-alert--compact": props.compact,
+        "bp-ui-alert--inline": props.inline,
+        "has-icon": props.showIcon,
+        "is-centered": props.center
+      }
+    ));
+    function setVisible(value) {
+      if (!isControlled.value) {
+        internalVisible.value = value;
+      }
+      emit("update:modelValue", value);
+      emit("update:visible", value);
+    }
+    function show() {
+      setVisible(true);
+    }
+    function hide() {
+      setVisible(false);
+    }
+    function toggle(force) {
+      setVisible(force ?? !isRendered.value);
+    }
+    function handleClose(event) {
+      setVisible(false);
+      emit("close", event);
+      emit("dismiss", event);
+    }
+    __expose(createForwardExpose(elRef, {
+      alertRef: elRef,
+      hide,
+      show,
+      toggle
+    }));
+    return (_ctx, _cache) => {
+      return isRendered.value ? (openBlock(), createBlock(unref(ElAlert), mergeProps({
+        key: 0,
+        ref_key: "elRef",
+        ref: elRef
+      }, unref(bindings), {
+        class: alertClass.value,
+        onClose: handleClose
+      }), createSlots({ _: 2 }, [
+        renderList(unref(forwardedSlotNames), (slotName) => {
+          return {
+            name: slotName,
+            fn: withCtx((slotProps) => [
+              renderSlot(_ctx.$slots, slotName, normalizeProps(guardReactiveProps(slotProps ?? {})))
+            ])
+          };
+        })
+      ]), 1040, ["class"])) : createCommentVNode("", true);
+    };
+  }
+});
+const badgeProps = buildProps({
+  value: {
+    type: [String, Number],
+    default: ""
+  },
+  max: {
+    type: Number,
+    default: 99
+  },
+  isDot: Boolean,
+  hidden: Boolean,
+  type: {
+    type: String,
+    values: [
+      "primary",
+      "success",
+      "warning",
+      "info",
+      "danger"
+    ],
+    default: "danger"
+  },
+  showZero: {
+    type: Boolean,
+    default: true
+  },
+  color: String,
+  badgeStyle: { type: definePropType([
+    String,
+    Object,
+    Array
+  ]) },
+  offset: {
+    type: definePropType(Array),
+    default: () => [0, 0]
+  },
+  badgeClass: { type: String }
+});
+var badge_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
+  name: "ElBadge",
+  __name: "badge",
+  props: badgeProps,
+  setup(__props, { expose: __expose }) {
+    const props = __props;
+    const ns = useNamespace("badge");
+    const content = computed(() => {
+      if (props.isDot) return "";
+      if (isNumber$2(props.value) && isNumber$2(props.max)) return props.max < props.value ? `${props.max}+` : `${props.value}`;
+      return `${props.value}`;
+    });
+    const style = computed(() => {
+      return [{
+        backgroundColor: props.color,
+        marginRight: addUnit(-props.offset[0]),
+        marginTop: addUnit(props.offset[1])
+      }, props.badgeStyle ?? {}];
+    });
+    __expose({ content });
+    return (_ctx, _cache) => {
+      return openBlock(), createElementBlock("div", { class: normalizeClass(unref(ns).b()) }, [renderSlot(_ctx.$slots, "default"), createVNode(Transition, { name: `${unref(ns).namespace.value}-zoom-in-center` }, {
+        default: withCtx(() => [!__props.hidden && (content.value || __props.isDot || _ctx.$slots.content) ? (openBlock(), createElementBlock("sup", {
+          key: 0,
+          class: normalizeClass([
+            unref(ns).e("content"),
+            unref(ns).em("content", __props.type),
+            unref(ns).is("fixed", !!_ctx.$slots.default),
+            unref(ns).is("dot", __props.isDot),
+            unref(ns).is("hide-zero", !__props.showZero && __props.value === 0),
+            __props.badgeClass
+          ]),
+          style: normalizeStyle(style.value)
+        }, [renderSlot(_ctx.$slots, "content", { value: content.value }, () => [createTextVNode(toDisplayString$1(content.value), 1)])], 6)) : createCommentVNode("v-if", true)]),
+        _: 3
+      }, 8, ["name"])], 2);
+    };
+  }
+});
+var badge_default = badge_vue_vue_type_script_setup_true_lang_default;
+const ElBadge = withInstall(badge_default);
+const _sfc_main$O = /* @__PURE__ */ defineComponent({
+  ...{
+    name: "BpUiBadge",
+    inheritAttrs: false
+  },
+  __name: "BpUiBadge",
+  props: {
+    ...badgeProps,
+    standalone: Boolean
+  },
+  setup(__props, { expose: __expose }) {
+    const props = __props;
+    const elRef = ref();
+    const forwardedSlotNames = useForwardSlotNames();
+    const bindings = useForwardBindings(props, ["standalone"]);
+    const badgeClass = computed(() => mergeClassNames(
+      "bp-ui-badge bp-badge bpa-badge",
+      `bp-ui-badge--${props.type}`,
+      {
+        "bp-ui-badge--standalone": props.standalone,
+        "is-dot": props.isDot
+      }
+    ));
+    __expose(createForwardExpose(elRef, {
+      badgeRef: elRef
+    }));
+    return (_ctx, _cache) => {
+      return openBlock(), createBlock(unref(ElBadge), mergeProps({
+        ref_key: "elRef",
+        ref: elRef
+      }, unref(bindings), { class: badgeClass.value }), createSlots({ _: 2 }, [
+        renderList(unref(forwardedSlotNames), (slotName) => {
+          return {
+            name: slotName,
+            fn: withCtx((slotProps) => [
+              renderSlot(_ctx.$slots, slotName, normalizeProps(guardReactiveProps(slotProps ?? {})))
+            ])
+          };
+        })
+      ]), 1040, ["class"]);
     };
   }
 });
@@ -22932,294 +23350,472 @@ const elementPlusLocales = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.
   zhMo: zh_mo_default,
   zhTw: zh_tw_default
 }, Symbol.toStringTag, { value: "Module" }));
-function getDefaultExportFromCjs(x3) {
-  return x3 && x3.__esModule && Object.prototype.hasOwnProperty.call(x3, "default") ? x3["default"] : x3;
-}
-var dayjs_min$3 = { exports: {} };
-var dayjs_min$2 = dayjs_min$3.exports;
-var hasRequiredDayjs_min$1;
-function requireDayjs_min$1() {
-  if (hasRequiredDayjs_min$1) return dayjs_min$3.exports;
-  hasRequiredDayjs_min$1 = 1;
-  (function(module2, exports$1) {
-    !(function(t, e) {
-      module2.exports = e();
-    })(dayjs_min$2, (function() {
-      var t = 1e3, e = 6e4, n = 36e5, r = "millisecond", i = "second", s3 = "minute", u3 = "hour", a3 = "day", o3 = "week", c3 = "month", f3 = "quarter", h3 = "year", d3 = "date", l3 = "Invalid Date", $ = /^(\d{4})[-/]?(\d{1,2})?[-/]?(\d{0,2})[Tt\s]*(\d{1,2})?:?(\d{1,2})?:?(\d{1,2})?[.:]?(\d+)?$/, y = /\[([^\]]+)]|Y{1,4}|M{1,4}|D{1,2}|d{1,4}|H{1,2}|h{1,2}|a|A|m{1,2}|s{1,2}|Z{1,2}|SSS/g, M3 = { name: "en", weekdays: "Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split("_"), months: "January_February_March_April_May_June_July_August_September_October_November_December".split("_"), ordinal: function(t3) {
-        var e3 = ["th", "st", "nd", "rd"], n3 = t3 % 100;
-        return "[" + t3 + (e3[(n3 - 20) % 10] || e3[n3] || e3[0]) + "]";
-      } }, m3 = function(t3, e3, n3) {
-        var r3 = String(t3);
-        return !r3 || r3.length >= e3 ? t3 : "" + Array(e3 + 1 - r3.length).join(n3) + t3;
-      }, v3 = { s: m3, z: function(t3) {
-        var e3 = -t3.utcOffset(), n3 = Math.abs(e3), r3 = Math.floor(n3 / 60), i3 = n3 % 60;
-        return (e3 <= 0 ? "+" : "-") + m3(r3, 2, "0") + ":" + m3(i3, 2, "0");
-      }, m: function t3(e3, n3) {
-        if (e3.date() < n3.date()) return -t3(n3, e3);
-        var r3 = 12 * (n3.year() - e3.year()) + (n3.month() - e3.month()), i3 = e3.clone().add(r3, c3), s4 = n3 - i3 < 0, u4 = e3.clone().add(r3 + (s4 ? -1 : 1), c3);
-        return +(-(r3 + (n3 - i3) / (s4 ? i3 - u4 : u4 - i3)) || 0);
-      }, a: function(t3) {
-        return t3 < 0 ? Math.ceil(t3) || 0 : Math.floor(t3);
-      }, p: function(t3) {
-        return { M: c3, y: h3, w: o3, d: a3, D: d3, h: u3, m: s3, s: i, ms: r, Q: f3 }[t3] || String(t3 || "").toLowerCase().replace(/s$/, "");
-      }, u: function(t3) {
-        return void 0 === t3;
-      } }, g = "en", D3 = {};
-      D3[g] = M3;
-      var p3 = "$isDayjsObject", S3 = function(t3) {
-        return t3 instanceof _3 || !(!t3 || !t3[p3]);
-      }, w3 = function t3(e3, n3, r3) {
-        var i3;
-        if (!e3) return g;
-        if ("string" == typeof e3) {
-          var s4 = e3.toLowerCase();
-          D3[s4] && (i3 = s4), n3 && (D3[s4] = n3, i3 = s4);
-          var u4 = e3.split("-");
-          if (!i3 && u4.length > 1) return t3(u4[0]);
-        } else {
-          var a4 = e3.name;
-          D3[a4] = e3, i3 = a4;
-        }
-        return !r3 && i3 && (g = i3), i3 || !r3 && g;
-      }, O3 = function(t3, e3) {
-        if (S3(t3)) return t3.clone();
-        var n3 = "object" == typeof e3 ? e3 : {};
-        return n3.date = t3, n3.args = arguments, new _3(n3);
-      }, b3 = v3;
-      b3.l = w3, b3.i = S3, b3.w = function(t3, e3) {
-        return O3(t3, { locale: e3.$L, utc: e3.$u, x: e3.$x, $offset: e3.$offset });
-      };
-      var _3 = (function() {
-        function M4(t3) {
-          this.$L = w3(t3.locale, null, true), this.parse(t3), this.$x = this.$x || t3.x || {}, this[p3] = true;
-        }
-        var m4 = M4.prototype;
-        return m4.parse = function(t3) {
-          this.$d = (function(t4) {
-            var e3 = t4.date, n3 = t4.utc;
-            if (null === e3) return /* @__PURE__ */ new Date(NaN);
-            if (b3.u(e3)) return /* @__PURE__ */ new Date();
-            if (e3 instanceof Date) return new Date(e3);
-            if ("string" == typeof e3 && !/Z$/i.test(e3)) {
-              var r3 = e3.match($);
-              if (r3) {
-                var i3 = r3[2] - 1 || 0, s4 = (r3[7] || "0").substring(0, 3);
-                return n3 ? new Date(Date.UTC(r3[1], i3, r3[3] || 1, r3[4] || 0, r3[5] || 0, r3[6] || 0, s4)) : new Date(r3[1], i3, r3[3] || 1, r3[4] || 0, r3[5] || 0, r3[6] || 0, s4);
-              }
-            }
-            return new Date(e3);
-          })(t3), this.init();
-        }, m4.init = function() {
-          var t3 = this.$d;
-          this.$y = t3.getFullYear(), this.$M = t3.getMonth(), this.$D = t3.getDate(), this.$W = t3.getDay(), this.$H = t3.getHours(), this.$m = t3.getMinutes(), this.$s = t3.getSeconds(), this.$ms = t3.getMilliseconds();
-        }, m4.$utils = function() {
-          return b3;
-        }, m4.isValid = function() {
-          return !(this.$d.toString() === l3);
-        }, m4.isSame = function(t3, e3) {
-          var n3 = O3(t3);
-          return this.startOf(e3) <= n3 && n3 <= this.endOf(e3);
-        }, m4.isAfter = function(t3, e3) {
-          return O3(t3) < this.startOf(e3);
-        }, m4.isBefore = function(t3, e3) {
-          return this.endOf(e3) < O3(t3);
-        }, m4.$g = function(t3, e3, n3) {
-          return b3.u(t3) ? this[e3] : this.set(n3, t3);
-        }, m4.unix = function() {
-          return Math.floor(this.valueOf() / 1e3);
-        }, m4.valueOf = function() {
-          return this.$d.getTime();
-        }, m4.startOf = function(t3, e3) {
-          var n3 = this, r3 = !!b3.u(e3) || e3, f4 = b3.p(t3), l4 = function(t4, e4) {
-            var i3 = b3.w(n3.$u ? Date.UTC(n3.$y, e4, t4) : new Date(n3.$y, e4, t4), n3);
-            return r3 ? i3 : i3.endOf(a3);
-          }, $3 = function(t4, e4) {
-            return b3.w(n3.toDate()[t4].apply(n3.toDate("s"), (r3 ? [0, 0, 0, 0] : [23, 59, 59, 999]).slice(e4)), n3);
-          }, y3 = this.$W, M5 = this.$M, m5 = this.$D, v4 = "set" + (this.$u ? "UTC" : "");
-          switch (f4) {
-            case h3:
-              return r3 ? l4(1, 0) : l4(31, 11);
-            case c3:
-              return r3 ? l4(1, M5) : l4(0, M5 + 1);
-            case o3:
-              var g3 = this.$locale().weekStart || 0, D4 = (y3 < g3 ? y3 + 7 : y3) - g3;
-              return l4(r3 ? m5 - D4 : m5 + (6 - D4), M5);
-            case a3:
-            case d3:
-              return $3(v4 + "Hours", 0);
-            case u3:
-              return $3(v4 + "Minutes", 1);
-            case s3:
-              return $3(v4 + "Seconds", 2);
-            case i:
-              return $3(v4 + "Milliseconds", 3);
-            default:
-              return this.clone();
-          }
-        }, m4.endOf = function(t3) {
-          return this.startOf(t3, false);
-        }, m4.$set = function(t3, e3) {
-          var n3, o4 = b3.p(t3), f4 = "set" + (this.$u ? "UTC" : ""), l4 = (n3 = {}, n3[a3] = f4 + "Date", n3[d3] = f4 + "Date", n3[c3] = f4 + "Month", n3[h3] = f4 + "FullYear", n3[u3] = f4 + "Hours", n3[s3] = f4 + "Minutes", n3[i] = f4 + "Seconds", n3[r] = f4 + "Milliseconds", n3)[o4], $3 = o4 === a3 ? this.$D + (e3 - this.$W) : e3;
-          if (o4 === c3 || o4 === h3) {
-            var y3 = this.clone().set(d3, 1);
-            y3.$d[l4]($3), y3.init(), this.$d = y3.set(d3, Math.min(this.$D, y3.daysInMonth())).$d;
-          } else l4 && this.$d[l4]($3);
-          return this.init(), this;
-        }, m4.set = function(t3, e3) {
-          return this.clone().$set(t3, e3);
-        }, m4.get = function(t3) {
-          return this[b3.p(t3)]();
-        }, m4.add = function(r3, f4) {
-          var d4, l4 = this;
-          r3 = Number(r3);
-          var $3 = b3.p(f4), y3 = function(t3) {
-            var e3 = O3(l4);
-            return b3.w(e3.date(e3.date() + Math.round(t3 * r3)), l4);
-          };
-          if ($3 === c3) return this.set(c3, this.$M + r3);
-          if ($3 === h3) return this.set(h3, this.$y + r3);
-          if ($3 === a3) return y3(1);
-          if ($3 === o3) return y3(7);
-          var M5 = (d4 = {}, d4[s3] = e, d4[u3] = n, d4[i] = t, d4)[$3] || 1, m5 = this.$d.getTime() + r3 * M5;
-          return b3.w(m5, this);
-        }, m4.subtract = function(t3, e3) {
-          return this.add(-1 * t3, e3);
-        }, m4.format = function(t3) {
-          var e3 = this, n3 = this.$locale();
-          if (!this.isValid()) return n3.invalidDate || l3;
-          var r3 = t3 || "YYYY-MM-DDTHH:mm:ssZ", i3 = b3.z(this), s4 = this.$H, u4 = this.$m, a4 = this.$M, o4 = n3.weekdays, c4 = n3.months, f4 = n3.meridiem, h4 = function(t4, n4, i4, s5) {
-            return t4 && (t4[n4] || t4(e3, r3)) || i4[n4].slice(0, s5);
-          }, d4 = function(t4) {
-            return b3.s(s4 % 12 || 12, t4, "0");
-          }, $3 = f4 || function(t4, e4, n4) {
-            var r4 = t4 < 12 ? "AM" : "PM";
-            return n4 ? r4.toLowerCase() : r4;
-          };
-          return r3.replace(y, (function(t4, r4) {
-            return r4 || (function(t5) {
-              switch (t5) {
-                case "YY":
-                  return String(e3.$y).slice(-2);
-                case "YYYY":
-                  return b3.s(e3.$y, 4, "0");
-                case "M":
-                  return a4 + 1;
-                case "MM":
-                  return b3.s(a4 + 1, 2, "0");
-                case "MMM":
-                  return h4(n3.monthsShort, a4, c4, 3);
-                case "MMMM":
-                  return h4(c4, a4);
-                case "D":
-                  return e3.$D;
-                case "DD":
-                  return b3.s(e3.$D, 2, "0");
-                case "d":
-                  return String(e3.$W);
-                case "dd":
-                  return h4(n3.weekdaysMin, e3.$W, o4, 2);
-                case "ddd":
-                  return h4(n3.weekdaysShort, e3.$W, o4, 3);
-                case "dddd":
-                  return o4[e3.$W];
-                case "H":
-                  return String(s4);
-                case "HH":
-                  return b3.s(s4, 2, "0");
-                case "h":
-                  return d4(1);
-                case "hh":
-                  return d4(2);
-                case "a":
-                  return $3(s4, u4, true);
-                case "A":
-                  return $3(s4, u4, false);
-                case "m":
-                  return String(u4);
-                case "mm":
-                  return b3.s(u4, 2, "0");
-                case "s":
-                  return String(e3.$s);
-                case "ss":
-                  return b3.s(e3.$s, 2, "0");
-                case "SSS":
-                  return b3.s(e3.$ms, 3, "0");
-                case "Z":
-                  return i3;
-              }
-              return null;
-            })(t4) || i3.replace(":", "");
-          }));
-        }, m4.utcOffset = function() {
-          return 15 * -Math.round(this.$d.getTimezoneOffset() / 15);
-        }, m4.diff = function(r3, d4, l4) {
-          var $3, y3 = this, M5 = b3.p(d4), m5 = O3(r3), v4 = (m5.utcOffset() - this.utcOffset()) * e, g3 = this - m5, D4 = function() {
-            return b3.m(y3, m5);
-          };
-          switch (M5) {
-            case h3:
-              $3 = D4() / 12;
-              break;
-            case c3:
-              $3 = D4();
-              break;
-            case f3:
-              $3 = D4() / 3;
-              break;
-            case o3:
-              $3 = (g3 - v4) / 6048e5;
-              break;
-            case a3:
-              $3 = (g3 - v4) / 864e5;
-              break;
-            case u3:
-              $3 = g3 / n;
-              break;
-            case s3:
-              $3 = g3 / e;
-              break;
-            case i:
-              $3 = g3 / t;
-              break;
-            default:
-              $3 = g3;
-          }
-          return l4 ? $3 : b3.a($3);
-        }, m4.daysInMonth = function() {
-          return this.endOf(c3).$D;
-        }, m4.$locale = function() {
-          return D3[this.$L];
-        }, m4.locale = function(t3, e3) {
-          if (!t3) return this.$L;
-          var n3 = this.clone(), r3 = w3(t3, e3, true);
-          return r3 && (n3.$L = r3), n3;
-        }, m4.clone = function() {
-          return b3.w(this.$d, this);
-        }, m4.toDate = function() {
-          return new Date(this.valueOf());
-        }, m4.toJSON = function() {
-          return this.isValid() ? this.toISOString() : null;
-        }, m4.toISOString = function() {
-          return this.$d.toISOString();
-        }, m4.toString = function() {
-          return this.$d.toUTCString();
-        }, M4;
-      })(), k = _3.prototype;
-      return O3.prototype = k, [["$ms", r], ["$s", i], ["$m", s3], ["$H", u3], ["$W", a3], ["$M", c3], ["$y", h3], ["$D", d3]].forEach((function(t3) {
-        k[t3[1]] = function(e3) {
-          return this.$g(e3, t3[0], t3[1]);
-        };
-      })), O3.extend = function(t3, e3) {
-        return t3.$i || (t3(e3, _3, O3), t3.$i = true), O3;
-      }, O3.locale = w3, O3.isDayjs = S3, O3.unix = function(t3) {
-        return O3(1e3 * t3);
-      }, O3.en = D3[g], O3.Ls = D3, O3.p = {}, O3;
-    }));
-  })(dayjs_min$3);
-  return dayjs_min$3.exports;
-}
-var dayjs_minExports$1 = requireDayjs_min$1();
-const dayjs$1 = /* @__PURE__ */ getDefaultExportFromCjs(dayjs_minExports$1);
+var SECONDS_A_MINUTE = 60;
+var SECONDS_A_HOUR = SECONDS_A_MINUTE * 60;
+var SECONDS_A_DAY = SECONDS_A_HOUR * 24;
+var SECONDS_A_WEEK = SECONDS_A_DAY * 7;
+var MILLISECONDS_A_SECOND = 1e3;
+var MILLISECONDS_A_MINUTE = SECONDS_A_MINUTE * MILLISECONDS_A_SECOND;
+var MILLISECONDS_A_HOUR = SECONDS_A_HOUR * MILLISECONDS_A_SECOND;
+var MILLISECONDS_A_DAY = SECONDS_A_DAY * MILLISECONDS_A_SECOND;
+var MILLISECONDS_A_WEEK = SECONDS_A_WEEK * MILLISECONDS_A_SECOND;
+var MS = "millisecond";
+var S$2 = "second";
+var MIN = "minute";
+var H$1 = "hour";
+var D$2 = "day";
+var W = "week";
+var M$2 = "month";
+var Q$1 = "quarter";
+var Y$2 = "year";
+var DATE = "date";
+var FORMAT_DEFAULT = "YYYY-MM-DDTHH:mm:ssZ";
+var INVALID_DATE_STRING = "Invalid Date";
+var REGEX_PARSE = /^(\d{4})[-/]?(\d{1,2})?[-/]?(\d{0,2})[Tt\s]*(\d{1,2})?:?(\d{1,2})?:?(\d{1,2})?[.:]?(\d+)?$/;
+var REGEX_FORMAT = /\[([^\]]+)]|Y{1,4}|M{1,4}|D{1,2}|d{1,4}|H{1,2}|h{1,2}|a|A|m{1,2}|s{1,2}|Z{1,2}|SSS/g;
+const en$2 = {
+  name: "en",
+  weekdays: "Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split("_"),
+  months: "January_February_March_April_May_June_July_August_September_October_November_December".split("_"),
+  ordinal: function ordinal(n) {
+    var s3 = ["th", "st", "nd", "rd"];
+    var v3 = n % 100;
+    return "[" + n + (s3[(v3 - 20) % 10] || s3[v3] || s3[0]) + "]";
+  }
+};
+var padStart = function padStart2(string3, length, pad) {
+  var s3 = String(string3);
+  if (!s3 || s3.length >= length) return string3;
+  return "" + Array(length + 1 - s3.length).join(pad) + string3;
+};
+var padZoneStr = function padZoneStr2(instance) {
+  var negMinutes = -instance.utcOffset();
+  var minutes = Math.abs(negMinutes);
+  var hourOffset = Math.floor(minutes / 60);
+  var minuteOffset = minutes % 60;
+  return (negMinutes <= 0 ? "+" : "-") + padStart(hourOffset, 2, "0") + ":" + padStart(minuteOffset, 2, "0");
+};
+var monthDiff = function monthDiff2(a3, b3) {
+  if (a3.date() < b3.date()) return -monthDiff2(b3, a3);
+  var wholeMonthDiff = (b3.year() - a3.year()) * 12 + (b3.month() - a3.month());
+  var anchor = a3.clone().add(wholeMonthDiff, M$2);
+  var c3 = b3 - anchor < 0;
+  var anchor2 = a3.clone().add(wholeMonthDiff + (c3 ? -1 : 1), M$2);
+  return +(-(wholeMonthDiff + (b3 - anchor) / (c3 ? anchor - anchor2 : anchor2 - anchor)) || 0);
+};
+var absFloor = function absFloor2(n) {
+  return n < 0 ? Math.ceil(n) || 0 : Math.floor(n);
+};
+var prettyUnit = function prettyUnit2(u3) {
+  var special = {
+    M: M$2,
+    y: Y$2,
+    w: W,
+    d: D$2,
+    D: DATE,
+    h: H$1,
+    m: MIN,
+    s: S$2,
+    ms: MS,
+    Q: Q$1
+  };
+  return special[u3] || String(u3 || "").toLowerCase().replace(/s$/, "");
+};
+var isUndefined = function isUndefined2(s3) {
+  return s3 === void 0;
+};
+const U$2 = {
+  s: padStart,
+  z: padZoneStr,
+  m: monthDiff,
+  a: absFloor,
+  p: prettyUnit,
+  u: isUndefined
+};
+var L$1 = "en";
+var Ls = {};
+Ls[L$1] = en$2;
+var IS_DAYJS = "$isDayjsObject";
+var isDayjs = function isDayjs2(d3) {
+  return d3 instanceof Dayjs || !!(d3 && d3[IS_DAYJS]);
+};
+var parseLocale = function parseLocale2(preset, object4, isLocal) {
+  var l3;
+  if (!preset) return L$1;
+  if (typeof preset === "string") {
+    var presetLower = preset.toLowerCase();
+    if (Ls[presetLower]) {
+      l3 = presetLower;
+    }
+    if (object4) {
+      Ls[presetLower] = object4;
+      l3 = presetLower;
+    }
+    var presetSplit = preset.split("-");
+    if (!l3 && presetSplit.length > 1) {
+      return parseLocale2(presetSplit[0]);
+    }
+  } else {
+    var name = preset.name;
+    Ls[name] = preset;
+    l3 = name;
+  }
+  if (!isLocal && l3) L$1 = l3;
+  return l3 || !isLocal && L$1;
+};
+var dayjs = function dayjs2(date4, c3) {
+  if (isDayjs(date4)) {
+    return date4.clone();
+  }
+  var cfg = typeof c3 === "object" ? c3 : {};
+  cfg.date = date4;
+  cfg.args = arguments;
+  return new Dayjs(cfg);
+};
+var wrapper = function wrapper2(date4, instance) {
+  return dayjs(date4, {
+    locale: instance.$L,
+    utc: instance.$u,
+    x: instance.$x,
+    $offset: instance.$offset
+    // todo: refactor; do not use this.$offset in you code
+  });
+};
+var Utils = U$2;
+Utils.l = parseLocale;
+Utils.i = isDayjs;
+Utils.w = wrapper;
+var parseDate$1 = function parseDate(cfg) {
+  var date4 = cfg.date, utc = cfg.utc;
+  if (date4 === null) return /* @__PURE__ */ new Date(NaN);
+  if (Utils.u(date4)) return /* @__PURE__ */ new Date();
+  if (date4 instanceof Date) return new Date(date4);
+  if (typeof date4 === "string" && !/Z$/i.test(date4)) {
+    var d3 = date4.match(REGEX_PARSE);
+    if (d3) {
+      var m3 = d3[2] - 1 || 0;
+      var ms = (d3[7] || "0").substring(0, 3);
+      if (utc) {
+        return new Date(Date.UTC(d3[1], m3, d3[3] || 1, d3[4] || 0, d3[5] || 0, d3[6] || 0, ms));
+      }
+      return new Date(d3[1], m3, d3[3] || 1, d3[4] || 0, d3[5] || 0, d3[6] || 0, ms);
+    }
+  }
+  return new Date(date4);
+};
+var Dayjs = /* @__PURE__ */ (function() {
+  function Dayjs2(cfg) {
+    this.$L = parseLocale(cfg.locale, null, true);
+    this.parse(cfg);
+    this.$x = this.$x || cfg.x || {};
+    this[IS_DAYJS] = true;
+  }
+  var _proto = Dayjs2.prototype;
+  _proto.parse = function parse2(cfg) {
+    this.$d = parseDate$1(cfg);
+    this.init();
+  };
+  _proto.init = function init() {
+    var $d2 = this.$d;
+    this.$y = $d2.getFullYear();
+    this.$M = $d2.getMonth();
+    this.$D = $d2.getDate();
+    this.$W = $d2.getDay();
+    this.$H = $d2.getHours();
+    this.$m = $d2.getMinutes();
+    this.$s = $d2.getSeconds();
+    this.$ms = $d2.getMilliseconds();
+  };
+  _proto.$utils = function $utils() {
+    return Utils;
+  };
+  _proto.isValid = function isValid() {
+    return !(this.$d.toString() === INVALID_DATE_STRING);
+  };
+  _proto.isSame = function isSame(that, units) {
+    var other = dayjs(that);
+    return this.startOf(units) <= other && other <= this.endOf(units);
+  };
+  _proto.isAfter = function isAfter(that, units) {
+    return dayjs(that) < this.startOf(units);
+  };
+  _proto.isBefore = function isBefore(that, units) {
+    return this.endOf(units) < dayjs(that);
+  };
+  _proto.$g = function $g(input, get2, set2) {
+    if (Utils.u(input)) return this[get2];
+    return this.set(set2, input);
+  };
+  _proto.unix = function unix() {
+    return Math.floor(this.valueOf() / 1e3);
+  };
+  _proto.valueOf = function valueOf() {
+    return this.$d.getTime();
+  };
+  _proto.startOf = function startOf(units, _startOf) {
+    var _this = this;
+    var isStartOf = !Utils.u(_startOf) ? _startOf : true;
+    var unit2 = Utils.p(units);
+    var instanceFactory = function instanceFactory2(d3, m3) {
+      var ins = Utils.w(_this.$u ? Date.UTC(_this.$y, m3, d3) : new Date(_this.$y, m3, d3), _this);
+      return isStartOf ? ins : ins.endOf(D$2);
+    };
+    var instanceFactorySet = function instanceFactorySet2(method4, slice) {
+      var argumentStart = [0, 0, 0, 0];
+      var argumentEnd = [23, 59, 59, 999];
+      return Utils.w(_this.toDate()[method4].apply(
+        // eslint-disable-line prefer-spread
+        _this.toDate("s"),
+        (isStartOf ? argumentStart : argumentEnd).slice(slice)
+      ), _this);
+    };
+    var $W = this.$W, $M = this.$M, $D = this.$D;
+    var utcPad = "set" + (this.$u ? "UTC" : "");
+    switch (unit2) {
+      case Y$2:
+        return isStartOf ? instanceFactory(1, 0) : instanceFactory(31, 11);
+      case M$2:
+        return isStartOf ? instanceFactory(1, $M) : instanceFactory(0, $M + 1);
+      case W: {
+        var weekStart = this.$locale().weekStart || 0;
+        var gap = ($W < weekStart ? $W + 7 : $W) - weekStart;
+        return instanceFactory(isStartOf ? $D - gap : $D + (6 - gap), $M);
+      }
+      case D$2:
+      case DATE:
+        return instanceFactorySet(utcPad + "Hours", 0);
+      case H$1:
+        return instanceFactorySet(utcPad + "Minutes", 1);
+      case MIN:
+        return instanceFactorySet(utcPad + "Seconds", 2);
+      case S$2:
+        return instanceFactorySet(utcPad + "Milliseconds", 3);
+      default:
+        return this.clone();
+    }
+  };
+  _proto.endOf = function endOf(arg) {
+    return this.startOf(arg, false);
+  };
+  _proto.$set = function $set(units, _int) {
+    var _C$D$C$DATE$C$M$C$Y$C;
+    var unit2 = Utils.p(units);
+    var utcPad = "set" + (this.$u ? "UTC" : "");
+    var name = (_C$D$C$DATE$C$M$C$Y$C = {}, _C$D$C$DATE$C$M$C$Y$C[D$2] = utcPad + "Date", _C$D$C$DATE$C$M$C$Y$C[DATE] = utcPad + "Date", _C$D$C$DATE$C$M$C$Y$C[M$2] = utcPad + "Month", _C$D$C$DATE$C$M$C$Y$C[Y$2] = utcPad + "FullYear", _C$D$C$DATE$C$M$C$Y$C[H$1] = utcPad + "Hours", _C$D$C$DATE$C$M$C$Y$C[MIN] = utcPad + "Minutes", _C$D$C$DATE$C$M$C$Y$C[S$2] = utcPad + "Seconds", _C$D$C$DATE$C$M$C$Y$C[MS] = utcPad + "Milliseconds", _C$D$C$DATE$C$M$C$Y$C)[unit2];
+    var arg = unit2 === D$2 ? this.$D + (_int - this.$W) : _int;
+    if (unit2 === M$2 || unit2 === Y$2) {
+      var date4 = this.clone().set(DATE, 1);
+      date4.$d[name](arg);
+      date4.init();
+      this.$d = date4.set(DATE, Math.min(this.$D, date4.daysInMonth())).$d;
+    } else if (name) this.$d[name](arg);
+    this.init();
+    return this;
+  };
+  _proto.set = function set2(string3, _int2) {
+    return this.clone().$set(string3, _int2);
+  };
+  _proto.get = function get2(unit2) {
+    return this[Utils.p(unit2)]();
+  };
+  _proto.add = function add(number5, units) {
+    var _this2 = this, _C$MIN$C$H$C$S$unit;
+    number5 = Number(number5);
+    var unit2 = Utils.p(units);
+    var instanceFactorySet = function instanceFactorySet2(n) {
+      var d3 = dayjs(_this2);
+      return Utils.w(d3.date(d3.date() + Math.round(n * number5)), _this2);
+    };
+    if (unit2 === M$2) {
+      return this.set(M$2, this.$M + number5);
+    }
+    if (unit2 === Y$2) {
+      return this.set(Y$2, this.$y + number5);
+    }
+    if (unit2 === D$2) {
+      return instanceFactorySet(1);
+    }
+    if (unit2 === W) {
+      return instanceFactorySet(7);
+    }
+    var step2 = (_C$MIN$C$H$C$S$unit = {}, _C$MIN$C$H$C$S$unit[MIN] = MILLISECONDS_A_MINUTE, _C$MIN$C$H$C$S$unit[H$1] = MILLISECONDS_A_HOUR, _C$MIN$C$H$C$S$unit[S$2] = MILLISECONDS_A_SECOND, _C$MIN$C$H$C$S$unit)[unit2] || 1;
+    var nextTimeStamp = this.$d.getTime() + number5 * step2;
+    return Utils.w(nextTimeStamp, this);
+  };
+  _proto.subtract = function subtract(number5, string3) {
+    return this.add(number5 * -1, string3);
+  };
+  _proto.format = function format2(formatStr) {
+    var _this3 = this;
+    var locale = this.$locale();
+    if (!this.isValid()) return locale.invalidDate || INVALID_DATE_STRING;
+    var str = formatStr || FORMAT_DEFAULT;
+    var zoneStr = Utils.z(this);
+    var $H = this.$H, $m = this.$m, $M = this.$M;
+    var weekdays = locale.weekdays, months = locale.months, meridiem = locale.meridiem;
+    var getShort = function getShort2(arr, index, full, length) {
+      return arr && (arr[index] || arr(_this3, str)) || full[index].slice(0, length);
+    };
+    var get$H = function get$H2(num) {
+      return Utils.s($H % 12 || 12, num, "0");
+    };
+    var meridiemFunc = meridiem || function(hour, minute, isLowercase) {
+      var m3 = hour < 12 ? "AM" : "PM";
+      return isLowercase ? m3.toLowerCase() : m3;
+    };
+    var matches = function matches2(match) {
+      switch (match) {
+        case "YY":
+          return String(_this3.$y).slice(-2);
+        case "YYYY":
+          return Utils.s(_this3.$y, 4, "0");
+        case "M":
+          return $M + 1;
+        case "MM":
+          return Utils.s($M + 1, 2, "0");
+        case "MMM":
+          return getShort(locale.monthsShort, $M, months, 3);
+        case "MMMM":
+          return getShort(months, $M);
+        case "D":
+          return _this3.$D;
+        case "DD":
+          return Utils.s(_this3.$D, 2, "0");
+        case "d":
+          return String(_this3.$W);
+        case "dd":
+          return getShort(locale.weekdaysMin, _this3.$W, weekdays, 2);
+        case "ddd":
+          return getShort(locale.weekdaysShort, _this3.$W, weekdays, 3);
+        case "dddd":
+          return weekdays[_this3.$W];
+        case "H":
+          return String($H);
+        case "HH":
+          return Utils.s($H, 2, "0");
+        case "h":
+          return get$H(1);
+        case "hh":
+          return get$H(2);
+        case "a":
+          return meridiemFunc($H, $m, true);
+        case "A":
+          return meridiemFunc($H, $m, false);
+        case "m":
+          return String($m);
+        case "mm":
+          return Utils.s($m, 2, "0");
+        case "s":
+          return String(_this3.$s);
+        case "ss":
+          return Utils.s(_this3.$s, 2, "0");
+        case "SSS":
+          return Utils.s(_this3.$ms, 3, "0");
+        case "Z":
+          return zoneStr;
+      }
+      return null;
+    };
+    return str.replace(REGEX_FORMAT, function(match, $12) {
+      return $12 || matches(match) || zoneStr.replace(":", "");
+    });
+  };
+  _proto.utcOffset = function utcOffset() {
+    return -Math.round(this.$d.getTimezoneOffset() / 15) * 15;
+  };
+  _proto.diff = function diff(input, units, _float) {
+    var _this4 = this;
+    var unit2 = Utils.p(units);
+    var that = dayjs(input);
+    var zoneDelta = (that.utcOffset() - this.utcOffset()) * MILLISECONDS_A_MINUTE;
+    var diff2 = this - that;
+    var getMonth = function getMonth2() {
+      return Utils.m(_this4, that);
+    };
+    var result2;
+    switch (unit2) {
+      case Y$2:
+        result2 = getMonth() / 12;
+        break;
+      case M$2:
+        result2 = getMonth();
+        break;
+      case Q$1:
+        result2 = getMonth() / 3;
+        break;
+      case W:
+        result2 = (diff2 - zoneDelta) / MILLISECONDS_A_WEEK;
+        break;
+      case D$2:
+        result2 = (diff2 - zoneDelta) / MILLISECONDS_A_DAY;
+        break;
+      case H$1:
+        result2 = diff2 / MILLISECONDS_A_HOUR;
+        break;
+      case MIN:
+        result2 = diff2 / MILLISECONDS_A_MINUTE;
+        break;
+      case S$2:
+        result2 = diff2 / MILLISECONDS_A_SECOND;
+        break;
+      default:
+        result2 = diff2;
+        break;
+    }
+    return _float ? result2 : Utils.a(result2);
+  };
+  _proto.daysInMonth = function daysInMonth() {
+    return this.endOf(M$2).$D;
+  };
+  _proto.$locale = function $locale() {
+    return Ls[this.$L];
+  };
+  _proto.locale = function locale(preset, object4) {
+    if (!preset) return this.$L;
+    var that = this.clone();
+    var nextLocaleName = parseLocale(preset, object4, true);
+    if (nextLocaleName) that.$L = nextLocaleName;
+    return that;
+  };
+  _proto.clone = function clone() {
+    return Utils.w(this.$d, this);
+  };
+  _proto.toDate = function toDate() {
+    return new Date(this.valueOf());
+  };
+  _proto.toJSON = function toJSON() {
+    return this.isValid() ? this.toISOString() : null;
+  };
+  _proto.toISOString = function toISOString() {
+    return this.$d.toISOString();
+  };
+  _proto.toString = function toString2() {
+    return this.$d.toUTCString();
+  };
+  return Dayjs2;
+})();
+var proto = Dayjs.prototype;
+dayjs.prototype = proto;
+[["$ms", MS], ["$s", S$2], ["$m", MIN], ["$H", H$1], ["$W", D$2], ["$M", M$2], ["$y", Y$2], ["$D", DATE]].forEach(function(g) {
+  proto[g[1]] = function(input) {
+    return this.$g(input, g[0], g[1]);
+  };
+});
+dayjs.extend = function(plugin, option) {
+  if (!plugin.$i) {
+    plugin(option, Dayjs, dayjs);
+    plugin.$i = true;
+  }
+  return dayjs;
+};
+dayjs.locale = parseLocale;
+dayjs.isDayjs = isDayjs;
+dayjs.unix = function(timestamp) {
+  return dayjs(timestamp * 1e3);
+};
+dayjs.en = Ls[L$1];
+dayjs.Ls = Ls;
+dayjs.p = {};
 const DEFAULT_LOCALE$1 = "en";
 const fallbackLocale = en_default;
 const builtInLocaleAliases = {
@@ -23334,7 +23930,7 @@ function getLocaleWeekStart(locale) {
 }
 function ensureDayjsLocale(locale, messages2, weekStart) {
   const normalizedLocale = normalizeLocaleCode(locale);
-  if (dayjs$1.Ls[normalizedLocale]) {
+  if (dayjs.Ls[normalizedLocale]) {
     return normalizedLocale;
   }
   const weeks = getNestedTranslatePair(messages2, "weeks");
@@ -23345,7 +23941,7 @@ function ensureDayjsLocale(locale, messages2, weekStart) {
   const longWeekdays = weekKeys.map((key) => getNestedString(weeksFull, key) || getNestedString(weeks, key));
   const shortWeekdays = weekKeys.map((key, index) => getNestedString(weeks, key) || longWeekdays[index]);
   if (longMonths.some(Boolean) && shortMonths.some(Boolean) && longWeekdays.some(Boolean) && shortWeekdays.some(Boolean)) {
-    dayjs$1.locale(
+    dayjs.locale(
       normalizedLocale,
       {
         months: longMonths,
@@ -23359,7 +23955,7 @@ function ensureDayjsLocale(locale, messages2, weekStart) {
       true
     );
   }
-  return dayjs$1.Ls[normalizedLocale] ? normalizedLocale : DEFAULT_LOCALE$1;
+  return dayjs.Ls[normalizedLocale] ? normalizedLocale : DEFAULT_LOCALE$1;
 }
 function loadBuiltInLocale(locale) {
   const locales = getBuiltInLocalesByCode();
@@ -23426,7 +24022,7 @@ function createIntlBackedLocale(locale) {
     weeks: Object.fromEntries(weekKeys.map((key, index) => [key, shortWeekdays[index]])),
     weeksFull: Object.fromEntries(weekKeys.map((key, index) => [key, longWeekdays[index]]))
   };
-  dayjs$1.locale(
+  dayjs.locale(
     dayjsLocaleName,
     {
       months: longMonths,
@@ -23527,7 +24123,7 @@ async function configureBookingPressUiLocale(options = {}) {
   }
   return currentElementLocale.value;
 }
-const _sfc_main$D = /* @__PURE__ */ defineComponent({
+const _sfc_main$N = /* @__PURE__ */ defineComponent({
   __name: "BpUiProvider",
   props: {
     locale: { default: "en" }
@@ -23578,8 +24174,8 @@ const _export_sfc = (sfc, props) => {
   }
   return target;
 };
-const BpUiProvider = /* @__PURE__ */ _export_sfc(_sfc_main$D, [["__scopeId", "data-v-480c5703"]]);
-const _sfc_main$C = /* @__PURE__ */ defineComponent({
+const BpUiProvider = /* @__PURE__ */ _export_sfc(_sfc_main$N, [["__scopeId", "data-v-480c5703"]]);
+const _sfc_main$M = /* @__PURE__ */ defineComponent({
   ...{
     inheritAttrs: false
   },
@@ -23610,7 +24206,7 @@ const _sfc_main$C = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_main$B = /* @__PURE__ */ defineComponent({
+const _sfc_main$L = /* @__PURE__ */ defineComponent({
   ...{
     inheritAttrs: false
   },
@@ -23638,26 +24234,26 @@ const _sfc_main$B = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _hoisted_1$M = ["aria-label"];
-const _hoisted_2$v = {
+const _hoisted_1$R = ["aria-label"];
+const _hoisted_2$z = {
   key: 0,
   class: "bp-ui-wrapper__mobile-header"
 };
-const _hoisted_3$h = { class: "bp-ui-wrapper__mobile-copy" };
-const _hoisted_4$d = {
+const _hoisted_3$j = { class: "bp-ui-wrapper__mobile-copy" };
+const _hoisted_4$e = {
   key: 0,
   id: "bp-ui-wrapper-mobile-sidebar-title",
   class: "bp-ui-wrapper__mobile-title"
 };
-const _hoisted_5$a = {
+const _hoisted_5$b = {
   key: 1,
   class: "bp-ui-wrapper__mobile-description"
 };
-const _hoisted_6$5 = ["aria-label"];
-const _hoisted_7$3 = { class: "bp-ui-wrapper__mobile-content" };
+const _hoisted_6$6 = ["aria-label"];
+const _hoisted_7$4 = { class: "bp-ui-wrapper__mobile-content" };
 const DEFAULT_SIDEBAR_OPEN_EVENT_NAME = "bookingpress:calendar-sidebar-open";
 const DEFAULT_SIDEBAR_STATE_EVENT_NAME = "bookingpress:calendar-sidebar-state-change";
-const _sfc_main$A = /* @__PURE__ */ defineComponent({
+const _sfc_main$K = /* @__PURE__ */ defineComponent({
   ...{
     inheritAttrs: false
   },
@@ -23810,9 +24406,9 @@ const _sfc_main$A = /* @__PURE__ */ defineComponent({
         locale: props.locale
       }, {
         default: withCtx(() => [
-          createVNode(_sfc_main$C, mergeProps(unref(attrs), { class: "bp-ui-wrapper bp-ui-wrapper__layout" }), {
+          createVNode(_sfc_main$M, mergeProps(unref(attrs), { class: "bp-ui-wrapper bp-ui-wrapper__layout" }), {
             default: withCtx(() => [
-              hasSidebar.value && !props.mobileOnlySidebar && !isMobileViewport.value && !isSidebarRight.value ? (openBlock(), createBlock(_sfc_main$E, {
+              hasSidebar.value && !props.mobileOnlySidebar && !isMobileViewport.value && !isSidebarRight.value ? (openBlock(), createBlock(_sfc_main$Q, {
                 key: 0,
                 class: "bp-ui-wrapper__sidebar",
                 width: props.sidebarWidth
@@ -23822,13 +24418,13 @@ const _sfc_main$A = /* @__PURE__ */ defineComponent({
                 ]),
                 _: 3
               }, 8, ["width"])) : createCommentVNode("", true),
-              createVNode(_sfc_main$B, { class: "bp-ui-wrapper__main" }, {
+              createVNode(_sfc_main$L, { class: "bp-ui-wrapper__main" }, {
                 default: withCtx(() => [
                   renderSlot(_ctx.$slots, "default", normalizeProps(guardReactiveProps(slotBindings.value)), void 0, true)
                 ]),
                 _: 3
               }),
-              hasSidebar.value && !props.mobileOnlySidebar && !isMobileViewport.value && isSidebarRight.value ? (openBlock(), createBlock(_sfc_main$E, {
+              hasSidebar.value && !props.mobileOnlySidebar && !isMobileViewport.value && isSidebarRight.value ? (openBlock(), createBlock(_sfc_main$Q, {
                 key: 1,
                 class: "bp-ui-wrapper__sidebar bp-ui-wrapper__sidebar--right",
                 width: props.sidebarWidth
@@ -23854,12 +24450,12 @@ const _sfc_main$A = /* @__PURE__ */ defineComponent({
               class: "bp-ui-wrapper__mobile-backdrop",
               "aria-label": props.sidebarCloseLabel,
               onClick: closeSidebar
-            }, null, 8, _hoisted_1$M),
+            }, null, 8, _hoisted_1$R),
             createElementVNode("aside", {
               class: "bp-ui-wrapper__mobile-sidebar",
               style: normalizeStyle(mobileSidebarStyle.value)
             }, [
-              showDrawerHeader.value ? (openBlock(), createElementBlock("div", _hoisted_2$v, [
+              showDrawerHeader.value ? (openBlock(), createElementBlock("div", _hoisted_2$z, [
                 _ctx.$slots["mobile-sidebar-header"] ? renderSlot(_ctx.$slots, "mobile-sidebar-header", {
                   key: 0,
                   close: closeSidebar,
@@ -23867,9 +24463,9 @@ const _sfc_main$A = /* @__PURE__ */ defineComponent({
                   titleId: "bp-ui-wrapper-mobile-sidebar-title",
                   titleClass: "bp-ui-wrapper__mobile-title"
                 }, void 0, true) : (openBlock(), createElementBlock(Fragment, { key: 1 }, [
-                  createElementVNode("div", _hoisted_3$h, [
-                    props.sidebarTitle ? (openBlock(), createElementBlock("div", _hoisted_4$d, toDisplayString$1(props.sidebarTitle), 1)) : createCommentVNode("", true),
-                    props.sidebarDescription ? (openBlock(), createElementBlock("div", _hoisted_5$a, toDisplayString$1(props.sidebarDescription), 1)) : createCommentVNode("", true)
+                  createElementVNode("div", _hoisted_3$j, [
+                    props.sidebarTitle ? (openBlock(), createElementBlock("div", _hoisted_4$e, toDisplayString$1(props.sidebarTitle), 1)) : createCommentVNode("", true),
+                    props.sidebarDescription ? (openBlock(), createElementBlock("div", _hoisted_5$b, toDisplayString$1(props.sidebarDescription), 1)) : createCommentVNode("", true)
                   ]),
                   createElementVNode("button", {
                     type: "button",
@@ -23892,10 +24488,10 @@ const _sfc_main$A = /* @__PURE__ */ defineComponent({
                         "stroke-linecap": "round"
                       })
                     ], -1)
-                  ])], 8, _hoisted_6$5)
+                  ])], 8, _hoisted_6$6)
                 ], 64))
               ])) : createCommentVNode("", true),
-              createElementVNode("div", _hoisted_7$3, [
+              createElementVNode("div", _hoisted_7$4, [
                 renderSlot(_ctx.$slots, "sidebar", normalizeProps(guardReactiveProps(slotBindings.value)), void 0, true)
               ])
             ], 4)
@@ -23906,7 +24502,7 @@ const _sfc_main$A = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const BpUiWrapper = /* @__PURE__ */ _export_sfc(_sfc_main$A, [["__scopeId", "data-v-1624a1ae"]]);
+const BpUiWrapper = /* @__PURE__ */ _export_sfc(_sfc_main$K, [["__scopeId", "data-v-1624a1ae"]]);
 const buttonTypes = [
   "default",
   "primary",
@@ -25298,7 +25894,7 @@ var button_group_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ d
 var button_group_default = button_group_vue_vue_type_script_setup_true_lang_default;
 const ElButton = withInstall(button_default, { ButtonGroup: button_group_default });
 withNoopInstall(button_group_default);
-const _sfc_main$z = /* @__PURE__ */ defineComponent({
+const _sfc_main$J = /* @__PURE__ */ defineComponent({
   ...{
     inheritAttrs: false
   },
@@ -25422,7 +26018,7 @@ const useCheckboxDisabled = ({ model, isChecked }) => {
     var _a, _b;
     const max = (_a = checkboxGroup == null ? void 0 : checkboxGroup.max) == null ? void 0 : _a.value;
     const min = (_b = checkboxGroup == null ? void 0 : checkboxGroup.min) == null ? void 0 : _b.value;
-    return !isUndefined(max) && model.value.length >= max && !isChecked.value || !isUndefined(min) && model.value.length <= min && isChecked.value;
+    return !isUndefined$1(max) && model.value.length >= max && !isChecked.value || !isUndefined$1(min) && model.value.length <= min && isChecked.value;
   });
   return {
     isDisabled: useFormDisabled(computed(() => {
@@ -25479,7 +26075,7 @@ const useCheckboxModel = (props) => {
   const selfModel = ref(false);
   const { emit } = getCurrentInstance();
   const checkboxGroup = inject(checkboxGroupContextKey, void 0);
-  const isGroup = computed(() => isUndefined(checkboxGroup) === false);
+  const isGroup = computed(() => isUndefined$1(checkboxGroup) === false);
   const isLimitExceeded = ref(false);
   const model = computed({
     get() {
@@ -25599,7 +26195,7 @@ const useCheckbox = (props, slots) => {
     onClickRoot
   };
 };
-const _hoisted_1$L = [
+const _hoisted_1$Q = [
   "id",
   "indeterminate",
   "name",
@@ -25664,7 +26260,7 @@ var checkbox_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defin
           onBlur: _cache[3] || (_cache[3] = ($event) => isFocused.value = false),
           onClick: _cache[4] || (_cache[4] = withModifiers(() => {
           }, ["stop"]))
-        }), null, 16, _hoisted_1$L), [[vModelCheckbox, unref(model)]]), createElementVNode("span", { class: normalizeClass(unref(ns).e("inner")) }, null, 2)], 2), unref(hasOwnLabel) ? (openBlock(), createElementBlock("span", {
+        }), null, 16, _hoisted_1$Q), [[vModelCheckbox, unref(model)]]), createElementVNode("span", { class: normalizeClass(unref(ns).e("inner")) }, null, 2)], 2), unref(hasOwnLabel) ? (openBlock(), createElementBlock("span", {
           key: 0,
           class: normalizeClass(unref(ns).e("label"))
         }, [renderSlot(_ctx.$slots, "default"), !_ctx.$slots.default ? (openBlock(), createElementBlock(Fragment, { key: 0 }, [createTextVNode(toDisplayString$1(__props.label), 1)], 64)) : createCommentVNode("v-if", true)], 2)) : createCommentVNode("v-if", true)]),
@@ -25681,7 +26277,7 @@ var checkbox_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defin
   }
 });
 var checkbox_default = checkbox_vue_vue_type_script_setup_true_lang_default;
-const _hoisted_1$K = [
+const _hoisted_1$P = [
   "name",
   "tabindex",
   "disabled"
@@ -25736,7 +26332,7 @@ var checkbox_button_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ *
         onBlur: _cache[3] || (_cache[3] = ($event) => isFocused.value = false),
         onClick: _cache[4] || (_cache[4] = withModifiers(() => {
         }, ["stop"]))
-      }), null, 16, _hoisted_1$K), [[vModelCheckbox, unref(model)]]), _ctx.$slots.default || __props.label ? (openBlock(), createElementBlock("span", {
+      }), null, 16, _hoisted_1$P), [[vModelCheckbox, unref(model)]]), _ctx.$slots.default || __props.label ? (openBlock(), createElementBlock("span", {
         key: 0,
         class: normalizeClass(unref(ns).be("button", "inner")),
         style: normalizeStyle(unref(isChecked) ? activeStyle.value : void 0)
@@ -25879,7 +26475,7 @@ const ElCheckbox = withInstall(checkbox_default, {
 });
 withNoopInstall(checkbox_button_default);
 const ElCheckboxGroup = withNoopInstall(checkbox_group_default);
-const _sfc_main$y = /* @__PURE__ */ defineComponent({
+const _sfc_main$I = /* @__PURE__ */ defineComponent({
   ...{
     inheritAttrs: false
   },
@@ -25944,7 +26540,7 @@ const _sfc_main$y = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_main$x = /* @__PURE__ */ defineComponent({
+const _sfc_main$H = /* @__PURE__ */ defineComponent({
   ...{
     inheritAttrs: false
   },
@@ -26096,7 +26692,7 @@ var col_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComp
 });
 var col_default = col_vue_vue_type_script_setup_true_lang_default;
 const ElCol = withInstall(col_default);
-const _sfc_main$w = /* @__PURE__ */ defineComponent({
+const _sfc_main$G = /* @__PURE__ */ defineComponent({
   ...{
     inheritAttrs: false
   },
@@ -26483,9 +27079,19 @@ const inputEmits = {
   compositionupdate: (evt) => evt instanceof CompositionEvent,
   compositionend: (evt) => evt instanceof CompositionEvent
 };
-({
-  clearIcon: markRaw(circle_close_default)
-});
+const inputPropsDefaults = {
+  disabled: void 0,
+  modelValue: "",
+  modelModifiers: () => ({}),
+  type: "text",
+  autocomplete: "off",
+  clearIcon: markRaw(circle_close_default),
+  wordLimitPosition: "inside",
+  tabindex: 0,
+  validateEvent: true,
+  inputStyle: () => ({}),
+  rows: 2
+};
 const DEFAULT_EXCLUDE_KEYS = ["class", "style"];
 const LISTENER_PREFIX = /^on[A-Z]/;
 const useAttrs = (params = {}) => {
@@ -26643,7 +27249,7 @@ function calcTextareaHeight(targetElement, minRows = 1, maxRows) {
   hiddenTextarea = void 0;
   return result2;
 }
-const _hoisted_1$J = [
+const _hoisted_1$O = [
   "id",
   "name",
   "minlength",
@@ -26660,7 +27266,7 @@ const _hoisted_1$J = [
   "role",
   "inputmode"
 ];
-const _hoisted_2$u = [
+const _hoisted_2$y = [
   "id",
   "name",
   "minlength",
@@ -26676,9 +27282,9 @@ const _hoisted_2$u = [
   "rows",
   "role"
 ];
-const COMPONENT_NAME$9 = "ElInput";
+const COMPONENT_NAME$c = "ElInput";
 var input_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
-  name: COMPONENT_NAME$9,
+  name: COMPONENT_NAME$c,
   inheritAttrs: false,
   __name: "input",
   props: inputProps,
@@ -26877,7 +27483,7 @@ var input_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineCo
       resizeTextarea();
     });
     onMounted(() => {
-      if (!props.formatter && props.parser) debugWarn(COMPONENT_NAME$9, "If you set the parser, you also need to set the formatter.");
+      if (!props.formatter && props.parser) debugWarn(COMPONENT_NAME$c, "If you set the parser, you also need to set the formatter.");
       setNativeInputValue();
       nextTick(resizeTextarea);
     });
@@ -26952,7 +27558,7 @@ var input_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineCo
             onInput: handleInput,
             onChange: handleChange,
             onKeydown: handleKeydown
-          }), null, 16, _hoisted_1$J),
+          }), null, 16, _hoisted_1$O),
           createCommentVNode(" suffix slot "),
           suffixVisible.value ? (openBlock(), createElementBlock("span", {
             key: 1,
@@ -27044,7 +27650,7 @@ var input_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineCo
           onBlur: _cache[7] || (_cache[7] = (...args) => unref(handleBlur) && unref(handleBlur)(...args)),
           onChange: handleChange,
           onKeydown: handleKeydown
-        }), null, 16, _hoisted_2$u),
+        }), null, 16, _hoisted_2$y),
         showClear.value ? (openBlock(), createBlock(unref(ElIcon), {
           key: 0,
           class: normalizeClass([unref(nsTextarea).e("icon"), unref(nsTextarea).e("clear")]),
@@ -27065,291 +27671,6 @@ var input_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineCo
 });
 var input_default = input_vue_vue_type_script_setup_true_lang_default;
 const ElInput = withInstall(input_default);
-var dayjs_min$1 = { exports: {} };
-var dayjs_min = dayjs_min$1.exports;
-var hasRequiredDayjs_min;
-function requireDayjs_min() {
-  if (hasRequiredDayjs_min) return dayjs_min$1.exports;
-  hasRequiredDayjs_min = 1;
-  (function(module2, exports$1) {
-    !(function(t, e) {
-      module2.exports = e();
-    })(dayjs_min, (function() {
-      var t = 1e3, e = 6e4, n = 36e5, r = "millisecond", i = "second", s3 = "minute", u3 = "hour", a3 = "day", o3 = "week", c3 = "month", f3 = "quarter", h3 = "year", d3 = "date", l3 = "Invalid Date", $ = /^(\d{4})[-/]?(\d{1,2})?[-/]?(\d{0,2})[Tt\s]*(\d{1,2})?:?(\d{1,2})?:?(\d{1,2})?[.:]?(\d+)?$/, y = /\[([^\]]+)]|Y{1,4}|M{1,4}|D{1,2}|d{1,4}|H{1,2}|h{1,2}|a|A|m{1,2}|s{1,2}|Z{1,2}|SSS/g, M3 = { name: "en", weekdays: "Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split("_"), months: "January_February_March_April_May_June_July_August_September_October_November_December".split("_"), ordinal: function(t3) {
-        var e3 = ["th", "st", "nd", "rd"], n3 = t3 % 100;
-        return "[" + t3 + (e3[(n3 - 20) % 10] || e3[n3] || e3[0]) + "]";
-      } }, m3 = function(t3, e3, n3) {
-        var r3 = String(t3);
-        return !r3 || r3.length >= e3 ? t3 : "" + Array(e3 + 1 - r3.length).join(n3) + t3;
-      }, v3 = { s: m3, z: function(t3) {
-        var e3 = -t3.utcOffset(), n3 = Math.abs(e3), r3 = Math.floor(n3 / 60), i3 = n3 % 60;
-        return (e3 <= 0 ? "+" : "-") + m3(r3, 2, "0") + ":" + m3(i3, 2, "0");
-      }, m: function t3(e3, n3) {
-        if (e3.date() < n3.date()) return -t3(n3, e3);
-        var r3 = 12 * (n3.year() - e3.year()) + (n3.month() - e3.month()), i3 = e3.clone().add(r3, c3), s4 = n3 - i3 < 0, u4 = e3.clone().add(r3 + (s4 ? -1 : 1), c3);
-        return +(-(r3 + (n3 - i3) / (s4 ? i3 - u4 : u4 - i3)) || 0);
-      }, a: function(t3) {
-        return t3 < 0 ? Math.ceil(t3) || 0 : Math.floor(t3);
-      }, p: function(t3) {
-        return { M: c3, y: h3, w: o3, d: a3, D: d3, h: u3, m: s3, s: i, ms: r, Q: f3 }[t3] || String(t3 || "").toLowerCase().replace(/s$/, "");
-      }, u: function(t3) {
-        return void 0 === t3;
-      } }, g = "en", D3 = {};
-      D3[g] = M3;
-      var p3 = "$isDayjsObject", S3 = function(t3) {
-        return t3 instanceof _3 || !(!t3 || !t3[p3]);
-      }, w3 = function t3(e3, n3, r3) {
-        var i3;
-        if (!e3) return g;
-        if ("string" == typeof e3) {
-          var s4 = e3.toLowerCase();
-          D3[s4] && (i3 = s4), n3 && (D3[s4] = n3, i3 = s4);
-          var u4 = e3.split("-");
-          if (!i3 && u4.length > 1) return t3(u4[0]);
-        } else {
-          var a4 = e3.name;
-          D3[a4] = e3, i3 = a4;
-        }
-        return !r3 && i3 && (g = i3), i3 || !r3 && g;
-      }, O3 = function(t3, e3) {
-        if (S3(t3)) return t3.clone();
-        var n3 = "object" == typeof e3 ? e3 : {};
-        return n3.date = t3, n3.args = arguments, new _3(n3);
-      }, b3 = v3;
-      b3.l = w3, b3.i = S3, b3.w = function(t3, e3) {
-        return O3(t3, { locale: e3.$L, utc: e3.$u, x: e3.$x, $offset: e3.$offset });
-      };
-      var _3 = (function() {
-        function M4(t3) {
-          this.$L = w3(t3.locale, null, true), this.parse(t3), this.$x = this.$x || t3.x || {}, this[p3] = true;
-        }
-        var m4 = M4.prototype;
-        return m4.parse = function(t3) {
-          this.$d = (function(t4) {
-            var e3 = t4.date, n3 = t4.utc;
-            if (null === e3) return /* @__PURE__ */ new Date(NaN);
-            if (b3.u(e3)) return /* @__PURE__ */ new Date();
-            if (e3 instanceof Date) return new Date(e3);
-            if ("string" == typeof e3 && !/Z$/i.test(e3)) {
-              var r3 = e3.match($);
-              if (r3) {
-                var i3 = r3[2] - 1 || 0, s4 = (r3[7] || "0").substring(0, 3);
-                return n3 ? new Date(Date.UTC(r3[1], i3, r3[3] || 1, r3[4] || 0, r3[5] || 0, r3[6] || 0, s4)) : new Date(r3[1], i3, r3[3] || 1, r3[4] || 0, r3[5] || 0, r3[6] || 0, s4);
-              }
-            }
-            return new Date(e3);
-          })(t3), this.init();
-        }, m4.init = function() {
-          var t3 = this.$d;
-          this.$y = t3.getFullYear(), this.$M = t3.getMonth(), this.$D = t3.getDate(), this.$W = t3.getDay(), this.$H = t3.getHours(), this.$m = t3.getMinutes(), this.$s = t3.getSeconds(), this.$ms = t3.getMilliseconds();
-        }, m4.$utils = function() {
-          return b3;
-        }, m4.isValid = function() {
-          return !(this.$d.toString() === l3);
-        }, m4.isSame = function(t3, e3) {
-          var n3 = O3(t3);
-          return this.startOf(e3) <= n3 && n3 <= this.endOf(e3);
-        }, m4.isAfter = function(t3, e3) {
-          return O3(t3) < this.startOf(e3);
-        }, m4.isBefore = function(t3, e3) {
-          return this.endOf(e3) < O3(t3);
-        }, m4.$g = function(t3, e3, n3) {
-          return b3.u(t3) ? this[e3] : this.set(n3, t3);
-        }, m4.unix = function() {
-          return Math.floor(this.valueOf() / 1e3);
-        }, m4.valueOf = function() {
-          return this.$d.getTime();
-        }, m4.startOf = function(t3, e3) {
-          var n3 = this, r3 = !!b3.u(e3) || e3, f4 = b3.p(t3), l4 = function(t4, e4) {
-            var i3 = b3.w(n3.$u ? Date.UTC(n3.$y, e4, t4) : new Date(n3.$y, e4, t4), n3);
-            return r3 ? i3 : i3.endOf(a3);
-          }, $3 = function(t4, e4) {
-            return b3.w(n3.toDate()[t4].apply(n3.toDate("s"), (r3 ? [0, 0, 0, 0] : [23, 59, 59, 999]).slice(e4)), n3);
-          }, y3 = this.$W, M5 = this.$M, m5 = this.$D, v4 = "set" + (this.$u ? "UTC" : "");
-          switch (f4) {
-            case h3:
-              return r3 ? l4(1, 0) : l4(31, 11);
-            case c3:
-              return r3 ? l4(1, M5) : l4(0, M5 + 1);
-            case o3:
-              var g3 = this.$locale().weekStart || 0, D4 = (y3 < g3 ? y3 + 7 : y3) - g3;
-              return l4(r3 ? m5 - D4 : m5 + (6 - D4), M5);
-            case a3:
-            case d3:
-              return $3(v4 + "Hours", 0);
-            case u3:
-              return $3(v4 + "Minutes", 1);
-            case s3:
-              return $3(v4 + "Seconds", 2);
-            case i:
-              return $3(v4 + "Milliseconds", 3);
-            default:
-              return this.clone();
-          }
-        }, m4.endOf = function(t3) {
-          return this.startOf(t3, false);
-        }, m4.$set = function(t3, e3) {
-          var n3, o4 = b3.p(t3), f4 = "set" + (this.$u ? "UTC" : ""), l4 = (n3 = {}, n3[a3] = f4 + "Date", n3[d3] = f4 + "Date", n3[c3] = f4 + "Month", n3[h3] = f4 + "FullYear", n3[u3] = f4 + "Hours", n3[s3] = f4 + "Minutes", n3[i] = f4 + "Seconds", n3[r] = f4 + "Milliseconds", n3)[o4], $3 = o4 === a3 ? this.$D + (e3 - this.$W) : e3;
-          if (o4 === c3 || o4 === h3) {
-            var y3 = this.clone().set(d3, 1);
-            y3.$d[l4]($3), y3.init(), this.$d = y3.set(d3, Math.min(this.$D, y3.daysInMonth())).$d;
-          } else l4 && this.$d[l4]($3);
-          return this.init(), this;
-        }, m4.set = function(t3, e3) {
-          return this.clone().$set(t3, e3);
-        }, m4.get = function(t3) {
-          return this[b3.p(t3)]();
-        }, m4.add = function(r3, f4) {
-          var d4, l4 = this;
-          r3 = Number(r3);
-          var $3 = b3.p(f4), y3 = function(t3) {
-            var e3 = O3(l4);
-            return b3.w(e3.date(e3.date() + Math.round(t3 * r3)), l4);
-          };
-          if ($3 === c3) return this.set(c3, this.$M + r3);
-          if ($3 === h3) return this.set(h3, this.$y + r3);
-          if ($3 === a3) return y3(1);
-          if ($3 === o3) return y3(7);
-          var M5 = (d4 = {}, d4[s3] = e, d4[u3] = n, d4[i] = t, d4)[$3] || 1, m5 = this.$d.getTime() + r3 * M5;
-          return b3.w(m5, this);
-        }, m4.subtract = function(t3, e3) {
-          return this.add(-1 * t3, e3);
-        }, m4.format = function(t3) {
-          var e3 = this, n3 = this.$locale();
-          if (!this.isValid()) return n3.invalidDate || l3;
-          var r3 = t3 || "YYYY-MM-DDTHH:mm:ssZ", i3 = b3.z(this), s4 = this.$H, u4 = this.$m, a4 = this.$M, o4 = n3.weekdays, c4 = n3.months, f4 = n3.meridiem, h4 = function(t4, n4, i4, s5) {
-            return t4 && (t4[n4] || t4(e3, r3)) || i4[n4].slice(0, s5);
-          }, d4 = function(t4) {
-            return b3.s(s4 % 12 || 12, t4, "0");
-          }, $3 = f4 || function(t4, e4, n4) {
-            var r4 = t4 < 12 ? "AM" : "PM";
-            return n4 ? r4.toLowerCase() : r4;
-          };
-          return r3.replace(y, (function(t4, r4) {
-            return r4 || (function(t5) {
-              switch (t5) {
-                case "YY":
-                  return String(e3.$y).slice(-2);
-                case "YYYY":
-                  return b3.s(e3.$y, 4, "0");
-                case "M":
-                  return a4 + 1;
-                case "MM":
-                  return b3.s(a4 + 1, 2, "0");
-                case "MMM":
-                  return h4(n3.monthsShort, a4, c4, 3);
-                case "MMMM":
-                  return h4(c4, a4);
-                case "D":
-                  return e3.$D;
-                case "DD":
-                  return b3.s(e3.$D, 2, "0");
-                case "d":
-                  return String(e3.$W);
-                case "dd":
-                  return h4(n3.weekdaysMin, e3.$W, o4, 2);
-                case "ddd":
-                  return h4(n3.weekdaysShort, e3.$W, o4, 3);
-                case "dddd":
-                  return o4[e3.$W];
-                case "H":
-                  return String(s4);
-                case "HH":
-                  return b3.s(s4, 2, "0");
-                case "h":
-                  return d4(1);
-                case "hh":
-                  return d4(2);
-                case "a":
-                  return $3(s4, u4, true);
-                case "A":
-                  return $3(s4, u4, false);
-                case "m":
-                  return String(u4);
-                case "mm":
-                  return b3.s(u4, 2, "0");
-                case "s":
-                  return String(e3.$s);
-                case "ss":
-                  return b3.s(e3.$s, 2, "0");
-                case "SSS":
-                  return b3.s(e3.$ms, 3, "0");
-                case "Z":
-                  return i3;
-              }
-              return null;
-            })(t4) || i3.replace(":", "");
-          }));
-        }, m4.utcOffset = function() {
-          return 15 * -Math.round(this.$d.getTimezoneOffset() / 15);
-        }, m4.diff = function(r3, d4, l4) {
-          var $3, y3 = this, M5 = b3.p(d4), m5 = O3(r3), v4 = (m5.utcOffset() - this.utcOffset()) * e, g3 = this - m5, D4 = function() {
-            return b3.m(y3, m5);
-          };
-          switch (M5) {
-            case h3:
-              $3 = D4() / 12;
-              break;
-            case c3:
-              $3 = D4();
-              break;
-            case f3:
-              $3 = D4() / 3;
-              break;
-            case o3:
-              $3 = (g3 - v4) / 6048e5;
-              break;
-            case a3:
-              $3 = (g3 - v4) / 864e5;
-              break;
-            case u3:
-              $3 = g3 / n;
-              break;
-            case s3:
-              $3 = g3 / e;
-              break;
-            case i:
-              $3 = g3 / t;
-              break;
-            default:
-              $3 = g3;
-          }
-          return l4 ? $3 : b3.a($3);
-        }, m4.daysInMonth = function() {
-          return this.endOf(c3).$D;
-        }, m4.$locale = function() {
-          return D3[this.$L];
-        }, m4.locale = function(t3, e3) {
-          if (!t3) return this.$L;
-          var n3 = this.clone(), r3 = w3(t3, e3, true);
-          return r3 && (n3.$L = r3), n3;
-        }, m4.clone = function() {
-          return b3.w(this.$d, this);
-        }, m4.toDate = function() {
-          return new Date(this.valueOf());
-        }, m4.toJSON = function() {
-          return this.isValid() ? this.toISOString() : null;
-        }, m4.toISOString = function() {
-          return this.$d.toISOString();
-        }, m4.toString = function() {
-          return this.$d.toUTCString();
-        }, M4;
-      })(), k = _3.prototype;
-      return O3.prototype = k, [["$ms", r], ["$s", i], ["$m", s3], ["$H", u3], ["$W", a3], ["$M", c3], ["$y", h3], ["$D", d3]].forEach((function(t3) {
-        k[t3[1]] = function(e3) {
-          return this.$g(e3, t3[0], t3[1]);
-        };
-      })), O3.extend = function(t3, e3) {
-        return t3.$i || (t3(e3, _3, O3), t3.$i = true), O3;
-      }, O3.locale = w3, O3.isDayjs = S3, O3.unix = function(t3) {
-        return O3(1e3 * t3);
-      }, O3.en = D3[g], O3.Ls = D3, O3.p = {}, O3;
-    }));
-  })(dayjs_min$1);
-  return dayjs_min$1.exports;
-}
-var dayjs_minExports = requireDayjs_min();
-const dayjs = /* @__PURE__ */ getDefaultExportFromCjs(dayjs_minExports);
 const buildTimeList = (value, bound) => {
   return [
     value > 0 ? value - 1 : void 0,
@@ -27381,7 +27702,7 @@ const valueEquals = function(a3, b3) {
   if (!aIsArray && !bIsArray) return dateEquals(a3, b3);
   return false;
 };
-const parseDate = function(date4, format2, lang) {
+const parseDate2 = function(date4, format2, lang) {
   const day = isEmpty(format2) || format2 === "x" ? dayjs(date4).locale(lang) : dayjs(date4, format2).locale(lang);
   return day.isValid() ? day : void 0;
 };
@@ -27420,8 +27741,8 @@ const useCommonPicker = (props, emit) => {
     let dayOrDays;
     if (valueIsEmpty.value) {
       if (pickerOptions.value.getDefaultValue) dayOrDays = pickerOptions.value.getDefaultValue();
-    } else if (isArray$3(props.modelValue)) dayOrDays = props.modelValue.map((d3) => parseDate(d3, props.valueFormat, lang.value));
-    else dayOrDays = parseDate(props.modelValue ?? "", props.valueFormat, lang.value);
+    } else if (isArray$3(props.modelValue)) dayOrDays = props.modelValue.map((d3) => parseDate2(d3, props.valueFormat, lang.value));
+    else dayOrDays = parseDate2(props.modelValue ?? "", props.valueFormat, lang.value);
     if (pickerOptions.value.getRangeAvailableTime) {
       const availableResult = pickerOptions.value.getRangeAvailableTime(dayOrDays);
       if (!isEqual(availableResult, dayOrDays)) {
@@ -27465,14 +27786,14 @@ const useCommonPicker = (props, emit) => {
     onSetPickerOption
   };
 };
-const _hoisted_1$I = [
+const _hoisted_1$N = [
   "id",
   "name",
   "placeholder",
   "value",
   "disabled"
 ];
-const _hoisted_2$t = [
+const _hoisted_2$x = [
   "id",
   "name",
   "placeholder",
@@ -27570,7 +27891,7 @@ var picker_range_trigger_vue_vue_type_script_setup_true_lang_default = /* @__PUR
           disabled: _ctx.disabled,
           onInput: handleStartInput,
           onChange: handleStartChange
-        }), null, 16, _hoisted_1$I),
+        }), null, 16, _hoisted_1$N),
         renderSlot(_ctx.$slots, "range-separator"),
         createElementVNode("input", mergeProps(unref(attrs), {
           id: _ctx.id && _ctx.id[1],
@@ -27583,7 +27904,7 @@ var picker_range_trigger_vue_vue_type_script_setup_true_lang_default = /* @__PUR
           disabled: _ctx.disabled,
           onInput: handleEndInput,
           onChange: handleEndChange
-        }), null, 16, _hoisted_2$t),
+        }), null, 16, _hoisted_2$x),
         renderSlot(_ctx.$slots, "suffix")
       ], 38);
     };
@@ -28310,6 +28631,7 @@ const useOldValue = (props, options) => {
   return oldValue;
 };
 const rAF = (fn2) => isClient ? window.requestAnimationFrame(fn2) : setTimeout(fn2, 16);
+const cAF = (handle) => isClient ? window.cancelAnimationFrame(handle) : clearTimeout(handle);
 const scrollbarProps = buildProps({
   distance: {
     type: Number,
@@ -28423,7 +28745,7 @@ const barProps = buildProps({
     required: true
   }
 });
-const COMPONENT_NAME$8 = "Thumb";
+const COMPONENT_NAME$b = "Thumb";
 var thumb_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
   __name: "thumb",
   props: thumbProps,
@@ -28431,7 +28753,7 @@ var thumb_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineCo
     const props = __props;
     const scrollbar = inject(scrollbarContextKey);
     const ns = useNamespace("scrollbar");
-    if (!scrollbar) throwError(COMPONENT_NAME$8, "can not inject scrollbar context");
+    if (!scrollbar) throwError(COMPONENT_NAME$b, "can not inject scrollbar context");
     const instance = ref();
     const thumb = ref();
     const thumbState = ref({});
@@ -28597,10 +28919,10 @@ var bar_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComp
   }
 });
 var bar_default = bar_vue_vue_type_script_setup_true_lang_default;
-const _hoisted_1$H = ["tabindex"];
-const COMPONENT_NAME$7 = "ElScrollbar";
+const _hoisted_1$M = ["tabindex"];
+const COMPONENT_NAME$a = "ElScrollbar";
 var scrollbar_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
-  name: COMPONENT_NAME$7,
+  name: COMPONENT_NAME$a,
   __name: "scrollbar",
   props: scrollbarProps,
   emits: scrollbarEmits,
@@ -28692,14 +29014,14 @@ var scrollbar_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defi
     }
     const setScrollTop = (value) => {
       if (!isNumber$2(value)) {
-        debugWarn(COMPONENT_NAME$7, "value must be a number");
+        debugWarn(COMPONENT_NAME$a, "value must be a number");
         return;
       }
       wrapRef.value.scrollTop = value;
     };
     const setScrollLeft = (value) => {
       if (!isNumber$2(value)) {
-        debugWarn(COMPONENT_NAME$7, "value must be a number");
+        debugWarn(COMPONENT_NAME$a, "value must be a number");
         return;
       }
       wrapRef.value.scrollLeft = value;
@@ -28782,7 +29104,7 @@ var scrollbar_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defi
         "role",
         "aria-label",
         "aria-orientation"
-      ]))], 46, _hoisted_1$H), !__props.native ? (openBlock(), createBlock(bar_default, {
+      ]))], 46, _hoisted_1$M), !__props.native ? (openBlock(), createBlock(bar_default, {
         key: 0,
         ref_key: "barRef",
         ref: barRef,
@@ -28862,8 +29184,8 @@ const basicTimeSpinnerProps = buildProps({
   },
   ...disabledTimeListsProps
 });
-const _hoisted_1$G = ["onClick"];
-const _hoisted_2$s = ["onMouseenter"];
+const _hoisted_1$L = ["onClick"];
+const _hoisted_2$w = ["onMouseenter"];
 var basic_time_spinner_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
   __name: "basic-time-spinner",
   props: basicTimeSpinnerProps,
@@ -29088,7 +29410,7 @@ var basic_time_spinner_vue_vue_type_script_setup_true_lang_default = /* @__PURE_
                 value: key,
                 disabled
               })
-            }, [item === "hours" ? (openBlock(), createElementBlock(Fragment, { key: 0 }, [createTextVNode(toDisplayString$1(("0" + (_ctx.amPmMode ? key % 12 || 12 : key)).slice(-2)) + toDisplayString$1(getAmPmFlag(key)), 1)], 64)) : (openBlock(), createElementBlock(Fragment, { key: 1 }, [createTextVNode(toDisplayString$1(("0" + key).slice(-2)), 1)], 64))], 10, _hoisted_1$G);
+            }, [item === "hours" ? (openBlock(), createElementBlock(Fragment, { key: 0 }, [createTextVNode(toDisplayString$1(("0" + (_ctx.amPmMode ? key % 12 || 12 : key)).slice(-2)) + toDisplayString$1(getAmPmFlag(key)), 1)], 64)) : (openBlock(), createElementBlock(Fragment, { key: 1 }, [createTextVNode(toDisplayString$1(("0" + key).slice(-2)), 1)], 64))], 10, _hoisted_1$L);
           }), 128))]),
           _: 2
         }, 1032, [
@@ -29121,7 +29443,7 @@ var basic_time_spinner_vue_vue_type_script_setup_true_lang_default = /* @__PURE_
               ])
             }, [unref(isNumber$2)(time) ? (openBlock(), createElementBlock(Fragment, { key: 0 }, [item === "hours" ? (openBlock(), createElementBlock(Fragment, { key: 0 }, [createTextVNode(toDisplayString$1(("0" + (_ctx.amPmMode ? time % 12 || 12 : time)).slice(-2)) + toDisplayString$1(getAmPmFlag(time)), 1)], 64)) : (openBlock(), createElementBlock(Fragment, { key: 1 }, [createTextVNode(toDisplayString$1(("0" + time).slice(-2)), 1)], 64))], 64)) : createCommentVNode("v-if", true)], 2);
           }), 128))], 2)
-        ], 42, _hoisted_2$s);
+        ], 42, _hoisted_2$w);
       }), 128)) : createCommentVNode("v-if", true)], 2);
     };
   }
@@ -29149,7 +29471,7 @@ var panel_time_pick_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ *
       valueOnClear: computed(() => (pickerBase == null ? void 0 : pickerBase.emptyValues) ? pickerBase.emptyValues.valueOnClear.value : null)
     });
     const transitionName = computed(() => {
-      return isUndefined(props.actualVisible) ? `${ns.namespace.value}-zoom-in-top` : "";
+      return isUndefined$1(props.actualVisible) ? `${ns.namespace.value}-zoom-in-top` : "";
     });
     const showSeconds = computed(() => {
       return props.format.includes("ss");
@@ -29787,9 +30109,9 @@ var basic_cell_render_default = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _hoisted_1$F = ["aria-label"];
-const _hoisted_2$r = ["aria-label"];
-const _hoisted_3$g = [
+const _hoisted_1$K = ["aria-label"];
+const _hoisted_2$v = ["aria-label"];
+const _hoisted_3$i = [
   "aria-current",
   "aria-selected",
   "tabindex",
@@ -29834,7 +30156,7 @@ var basic_date_table_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ 
           key,
           "aria-label": unref(t)("el.datepicker.weeksFull." + week),
           scope: "col"
-        }, toDisplayString$1(unref(t)("el.datepicker.weeks." + week)), 9, _hoisted_2$r);
+        }, toDisplayString$1(unref(t)("el.datepicker.weeks." + week)), 9, _hoisted_2$v);
       }), 128))]), (openBlock(true), createElementBlock(Fragment, null, renderList(unref(rows), (row, rowKey) => {
         return openBlock(), createElementBlock("tr", {
           key: rowKey,
@@ -29850,9 +30172,9 @@ var basic_date_table_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ 
             tabindex: _ctx.disabled ? void 0 : unref(isSelectedCell)(cell) ? 0 : -1,
             "aria-disabled": _ctx.disabled,
             onFocus: _cache[0] || (_cache[0] = (...args) => unref(handleFocus) && unref(handleFocus)(...args))
-          }, [createVNode(unref(basic_cell_render_default), { cell }, null, 8, ["cell"])], 42, _hoisted_3$g);
+          }, [createVNode(unref(basic_cell_render_default), { cell }, null, 8, ["cell"])], 42, _hoisted_3$i);
         }), 128))], 2);
-      }), 128))], 512)], 42, _hoisted_1$F);
+      }), 128))], 512)], 42, _hoisted_1$K);
     };
   }
 });
@@ -29861,8 +30183,8 @@ const basicMonthTableProps = buildProps({
   ...datePickerSharedProps,
   selectionMode: selectionModeWithDefault("month")
 });
-const _hoisted_1$E = ["aria-label"];
-const _hoisted_2$q = [
+const _hoisted_1$J = ["aria-label"];
+const _hoisted_2$u = [
   "aria-selected",
   "aria-label",
   "tabindex",
@@ -30052,9 +30374,9 @@ var basic_month_table_vue_vue_type_script_setup_true_lang_default = /* @__PURE__
           }, [createVNode(unref(basic_cell_render_default), { cell: {
             ...cell,
             renderText: unref(t)("el.datepicker.months." + months.value[cell.text])
-          } }, null, 8, ["cell"])], 42, _hoisted_2$q);
+          } }, null, 8, ["cell"])], 42, _hoisted_2$u);
         }), 128))]);
-      }), 128))], 512)], 42, _hoisted_1$E);
+      }), 128))], 512)], 42, _hoisted_1$J);
     };
   }
 });
@@ -30063,8 +30385,8 @@ const basicYearTableProps = buildProps({
   ...datePickerSharedProps,
   selectionMode: selectionModeWithDefault("year")
 });
-const _hoisted_1$D = ["aria-label"];
-const _hoisted_2$p = [
+const _hoisted_1$I = ["aria-label"];
+const _hoisted_2$t = [
   "aria-selected",
   "aria-label",
   "tabindex",
@@ -30255,20 +30577,20 @@ var basic_year_table_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ 
             "aria-label": String(cell.text),
             tabindex: cell.isSelected ? 0 : -1,
             onKeydown: [withKeys(withModifiers(handleYearTableClick, ["prevent", "stop"]), ["space"]), withKeys(withModifiers(handleYearTableClick, ["prevent", "stop"]), ["enter"])]
-          }, [createVNode(unref(basic_cell_render_default), { cell }, null, 8, ["cell"])], 42, _hoisted_2$p);
+          }, [createVNode(unref(basic_cell_render_default), { cell }, null, 8, ["cell"])], 42, _hoisted_2$t);
         }), 128))]);
-      }), 128))], 512)], 42, _hoisted_1$D);
+      }), 128))], 512)], 42, _hoisted_1$I);
     };
   }
 });
 var basic_year_table_default = basic_year_table_vue_vue_type_script_setup_true_lang_default;
-const _hoisted_1$C = ["disabled", "onClick"];
-const _hoisted_2$o = ["aria-label", "disabled"];
-const _hoisted_3$f = ["aria-label", "disabled"];
-const _hoisted_4$c = ["tabindex", "aria-disabled"];
-const _hoisted_5$9 = ["tabindex", "aria-disabled"];
-const _hoisted_6$4 = ["aria-label", "disabled"];
-const _hoisted_7$2 = ["aria-label", "disabled"];
+const _hoisted_1$H = ["disabled", "onClick"];
+const _hoisted_2$s = ["aria-label", "disabled"];
+const _hoisted_3$h = ["aria-label", "disabled"];
+const _hoisted_4$d = ["tabindex", "aria-disabled"];
+const _hoisted_5$a = ["tabindex", "aria-disabled"];
+const _hoisted_6$5 = ["aria-label", "disabled"];
+const _hoisted_7$3 = ["aria-label", "disabled"];
 var panel_date_pick_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
   __name: "panel-date-pick",
   props: panelDatePickProps,
@@ -30544,12 +30866,12 @@ var panel_date_pick_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ *
       return correctlyParseUserInput(value, props.format, lang.value, isDefaultFormat);
     };
     const getDefaultValue2 = () => {
-      const parseDate2 = dayjs(defaultValue.value).locale(lang.value);
+      const parseDate3 = dayjs(defaultValue.value).locale(lang.value);
       if (!defaultValue.value) {
         const defaultTimeDValue = defaultTimeD.value;
         return dayjs().hour(defaultTimeDValue.hour()).minute(defaultTimeDValue.minute()).second(defaultTimeDValue.second()).locale(lang.value);
       }
-      return parseDate2;
+      return parseDate3;
     };
     const handleFocusPicker = () => {
       var _a;
@@ -30688,7 +31010,7 @@ var panel_date_pick_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ *
             disabled: unref(dateDisabled),
             class: normalizeClass(unref(ppNs).e("shortcut")),
             onClick: ($event) => handleShortcutClick(shortcut)
-          }, toDisplayString$1(shortcut.text), 11, _hoisted_1$C);
+          }, toDisplayString$1(shortcut.text), 11, _hoisted_1$H);
         }), 128))], 2)) : createCommentVNode("v-if", true),
         createElementVNode("div", { class: normalizeClass(unref(ppNs).e("body")) }, [
           showTime.value ? (openBlock(), createElementBlock("div", {
@@ -30743,7 +31065,7 @@ var panel_date_pick_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ *
             }, [renderSlot(_ctx.$slots, "prev-year", {}, () => [createVNode(unref(ElIcon), null, {
               default: withCtx(() => [createVNode(unref(d_arrow_left_default))]),
               _: 1
-            })])], 10, _hoisted_2$o), withDirectives(createElementVNode("button", {
+            })])], 10, _hoisted_2$s), withDirectives(createElementVNode("button", {
               type: "button",
               "aria-label": unref(t)(`el.datepicker.prevMonth`),
               class: normalizeClass([unref(ppNs).e("icon-btn"), "arrow-left"]),
@@ -30752,7 +31074,7 @@ var panel_date_pick_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ *
             }, [renderSlot(_ctx.$slots, "prev-month", {}, () => [createVNode(unref(ElIcon), null, {
               default: withCtx(() => [createVNode(unref(arrow_left_default))]),
               _: 1
-            })])], 10, _hoisted_3$f), [[vShow, currentView.value === "date"]])], 2),
+            })])], 10, _hoisted_3$h), [[vShow, currentView.value === "date"]])], 2),
             createElementVNode("span", {
               role: "button",
               class: normalizeClass(unref(dpNs).e("header-label")),
@@ -30761,7 +31083,7 @@ var panel_date_pick_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ *
               "aria-disabled": _ctx.disabled,
               onKeydown: _cache[4] || (_cache[4] = withKeys(($event) => showPicker("year"), ["enter"])),
               onClick: _cache[5] || (_cache[5] = ($event) => showPicker("year"))
-            }, toDisplayString$1(yearLabel.value), 43, _hoisted_4$c),
+            }, toDisplayString$1(yearLabel.value), 43, _hoisted_4$d),
             withDirectives(createElementVNode("span", {
               role: "button",
               "aria-live": "polite",
@@ -30770,7 +31092,7 @@ var panel_date_pick_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ *
               class: normalizeClass([unref(dpNs).e("header-label"), { active: currentView.value === "month" }]),
               onKeydown: _cache[6] || (_cache[6] = withKeys(($event) => showPicker("month"), ["enter"])),
               onClick: _cache[7] || (_cache[7] = ($event) => showPicker("month"))
-            }, toDisplayString$1(unref(t)(`el.datepicker.month${month.value + 1}`)), 43, _hoisted_5$9), [[vShow, currentView.value === "date"]]),
+            }, toDisplayString$1(unref(t)(`el.datepicker.month${month.value + 1}`)), 43, _hoisted_5$a), [[vShow, currentView.value === "date"]]),
             createElementVNode("span", { class: normalizeClass(unref(dpNs).e("next-btn")) }, [withDirectives(createElementVNode("button", {
               type: "button",
               "aria-label": unref(t)(`el.datepicker.nextMonth`),
@@ -30780,7 +31102,7 @@ var panel_date_pick_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ *
             }, [renderSlot(_ctx.$slots, "next-month", {}, () => [createVNode(unref(ElIcon), null, {
               default: withCtx(() => [createVNode(unref(arrow_right_default))]),
               _: 1
-            })])], 10, _hoisted_6$4), [[vShow, currentView.value === "date"]]), createElementVNode("button", {
+            })])], 10, _hoisted_6$5), [[vShow, currentView.value === "date"]]), createElementVNode("button", {
               type: "button",
               "aria-label": unref(t)(`el.datepicker.nextYear`),
               class: normalizeClass([unref(ppNs).e("icon-btn"), "d-arrow-right"]),
@@ -30789,7 +31111,7 @@ var panel_date_pick_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ *
             }, [renderSlot(_ctx.$slots, "next-year", {}, () => [createVNode(unref(ElIcon), null, {
               default: withCtx(() => [createVNode(unref(d_arrow_right_default))]),
               _: 1
-            })])], 10, _hoisted_7$2)], 2)
+            })])], 10, _hoisted_7$3)], 2)
           ], 2), [[vShow, currentView.value !== "time"]]),
           createElementVNode("div", {
             class: normalizeClass(unref(ppNs).e("content")),
@@ -31074,19 +31396,19 @@ const usePanelDateRange = (props, emit, leftDate, rightDate) => {
     adjustDateByView
   };
 };
-const _hoisted_1$B = ["disabled", "onClick"];
-const _hoisted_2$n = ["aria-label", "disabled"];
-const _hoisted_3$e = ["aria-label", "disabled"];
-const _hoisted_4$b = ["disabled", "aria-label"];
-const _hoisted_5$8 = ["disabled", "aria-label"];
-const _hoisted_6$3 = ["tabindex", "aria-disabled"];
-const _hoisted_7$1 = ["tabindex", "aria-disabled"];
-const _hoisted_8$1 = ["disabled", "aria-label"];
-const _hoisted_9 = ["disabled", "aria-label"];
-const _hoisted_10 = ["aria-label", "disabled"];
-const _hoisted_11 = ["disabled", "aria-label"];
-const _hoisted_12 = ["tabindex", "aria-disabled"];
-const _hoisted_13 = ["tabindex", "aria-disabled"];
+const _hoisted_1$G = ["disabled", "onClick"];
+const _hoisted_2$r = ["aria-label", "disabled"];
+const _hoisted_3$g = ["aria-label", "disabled"];
+const _hoisted_4$c = ["disabled", "aria-label"];
+const _hoisted_5$9 = ["disabled", "aria-label"];
+const _hoisted_6$4 = ["tabindex", "aria-disabled"];
+const _hoisted_7$2 = ["tabindex", "aria-disabled"];
+const _hoisted_8$2 = ["disabled", "aria-label"];
+const _hoisted_9$1 = ["disabled", "aria-label"];
+const _hoisted_10$1 = ["aria-label", "disabled"];
+const _hoisted_11$1 = ["disabled", "aria-label"];
+const _hoisted_12$1 = ["tabindex", "aria-disabled"];
+const _hoisted_13$1 = ["tabindex", "aria-disabled"];
 const unit$2 = "month";
 var panel_date_range_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
   __name: "panel-date-range",
@@ -31372,7 +31694,7 @@ var panel_date_range_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ 
             disabled: unref(dateRangeDisabled),
             class: normalizeClass(unref(ppNs).e("shortcut")),
             onClick: ($event) => unref(handleShortcutClick)(shortcut)
-          }, toDisplayString$1(shortcut.text), 11, _hoisted_1$B);
+          }, toDisplayString$1(shortcut.text), 11, _hoisted_1$G);
         }), 128))], 2)) : createCommentVNode("v-if", true),
         createElementVNode("div", { class: normalizeClass(unref(ppNs).e("body")) }, [
           showTime.value ? (openBlock(), createElementBlock("div", {
@@ -31483,7 +31805,7 @@ var panel_date_range_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ 
               }, [renderSlot(_ctx.$slots, "prev-year", {}, () => [createVNode(unref(ElIcon), null, {
                 default: withCtx(() => [createVNode(unref(d_arrow_left_default))]),
                 _: 1
-              })])], 10, _hoisted_2$n),
+              })])], 10, _hoisted_2$r),
               withDirectives(createElementVNode("button", {
                 type: "button",
                 class: normalizeClass([unref(ppNs).e("icon-btn"), "arrow-left"]),
@@ -31493,7 +31815,7 @@ var panel_date_range_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ 
               }, [renderSlot(_ctx.$slots, "prev-month", {}, () => [createVNode(unref(ElIcon), null, {
                 default: withCtx(() => [createVNode(unref(arrow_left_default))]),
                 _: 1
-              })])], 10, _hoisted_3$e), [[vShow, unref(leftCurrentView) === "date"]]),
+              })])], 10, _hoisted_3$g), [[vShow, unref(leftCurrentView) === "date"]]),
               _ctx.unlinkPanels ? (openBlock(), createElementBlock("button", {
                 key: 0,
                 type: "button",
@@ -31504,7 +31826,7 @@ var panel_date_range_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ 
               }, [renderSlot(_ctx.$slots, "next-year", {}, () => [createVNode(unref(ElIcon), null, {
                 default: withCtx(() => [createVNode(unref(d_arrow_right_default))]),
                 _: 1
-              })])], 10, _hoisted_4$b)) : createCommentVNode("v-if", true),
+              })])], 10, _hoisted_4$c)) : createCommentVNode("v-if", true),
               _ctx.unlinkPanels && unref(leftCurrentView) === "date" ? (openBlock(), createElementBlock("button", {
                 key: 1,
                 type: "button",
@@ -31515,7 +31837,7 @@ var panel_date_range_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ 
               }, [renderSlot(_ctx.$slots, "next-month", {}, () => [createVNode(unref(ElIcon), null, {
                 default: withCtx(() => [createVNode(unref(arrow_right_default))]),
                 _: 1
-              })])], 10, _hoisted_5$8)) : createCommentVNode("v-if", true),
+              })])], 10, _hoisted_5$9)) : createCommentVNode("v-if", true),
               createElementVNode("div", null, [createElementVNode("span", {
                 role: "button",
                 class: normalizeClass(unref(drpNs).e("header-label")),
@@ -31524,7 +31846,7 @@ var panel_date_range_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ 
                 "aria-disabled": _ctx.disabled,
                 onKeydown: _cache[10] || (_cache[10] = withKeys(($event) => unref(showLeftPicker)("year"), ["enter"])),
                 onClick: _cache[11] || (_cache[11] = ($event) => unref(showLeftPicker)("year"))
-              }, toDisplayString$1(unref(leftYearLabel)), 43, _hoisted_6$3), withDirectives(createElementVNode("span", {
+              }, toDisplayString$1(unref(leftYearLabel)), 43, _hoisted_6$4), withDirectives(createElementVNode("span", {
                 role: "button",
                 "aria-live": "polite",
                 tabindex: _ctx.disabled ? void 0 : 0,
@@ -31532,7 +31854,7 @@ var panel_date_range_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ 
                 class: normalizeClass([unref(drpNs).e("header-label"), { active: unref(leftCurrentView) === "month" }]),
                 onKeydown: _cache[12] || (_cache[12] = withKeys(($event) => unref(showLeftPicker)("month"), ["enter"])),
                 onClick: _cache[13] || (_cache[13] = ($event) => unref(showLeftPicker)("month"))
-              }, toDisplayString$1(unref(t)(`el.datepicker.month${leftDate.value.month() + 1}`)), 43, _hoisted_7$1), [[vShow, unref(leftCurrentView) === "date"]])])
+              }, toDisplayString$1(unref(t)(`el.datepicker.month${leftDate.value.month() + 1}`)), 43, _hoisted_7$2), [[vShow, unref(leftCurrentView) === "date"]])])
             ], 2),
             unref(leftCurrentView) === "date" ? (openBlock(), createBlock(basic_date_table_default, {
               key: 0,
@@ -31609,7 +31931,7 @@ var panel_date_range_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ 
               }, [renderSlot(_ctx.$slots, "prev-year", {}, () => [createVNode(unref(ElIcon), null, {
                 default: withCtx(() => [createVNode(unref(d_arrow_left_default))]),
                 _: 1
-              })])], 10, _hoisted_8$1)) : createCommentVNode("v-if", true),
+              })])], 10, _hoisted_8$2)) : createCommentVNode("v-if", true),
               _ctx.unlinkPanels && unref(rightCurrentView) === "date" ? (openBlock(), createElementBlock("button", {
                 key: 1,
                 type: "button",
@@ -31620,7 +31942,7 @@ var panel_date_range_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ 
               }, [renderSlot(_ctx.$slots, "prev-month", {}, () => [createVNode(unref(ElIcon), null, {
                 default: withCtx(() => [createVNode(unref(arrow_left_default))]),
                 _: 1
-              })])], 10, _hoisted_9)) : createCommentVNode("v-if", true),
+              })])], 10, _hoisted_9$1)) : createCommentVNode("v-if", true),
               createElementVNode("button", {
                 type: "button",
                 "aria-label": unref(t)(`el.datepicker.nextYear`),
@@ -31630,7 +31952,7 @@ var panel_date_range_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ 
               }, [renderSlot(_ctx.$slots, "next-year", {}, () => [createVNode(unref(ElIcon), null, {
                 default: withCtx(() => [createVNode(unref(d_arrow_right_default))]),
                 _: 1
-              })])], 10, _hoisted_10),
+              })])], 10, _hoisted_10$1),
               withDirectives(createElementVNode("button", {
                 type: "button",
                 class: normalizeClass([unref(ppNs).e("icon-btn"), "arrow-right"]),
@@ -31640,7 +31962,7 @@ var panel_date_range_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ 
               }, [renderSlot(_ctx.$slots, "next-month", {}, () => [createVNode(unref(ElIcon), null, {
                 default: withCtx(() => [createVNode(unref(arrow_right_default))]),
                 _: 1
-              })])], 10, _hoisted_11), [[vShow, unref(rightCurrentView) === "date"]]),
+              })])], 10, _hoisted_11$1), [[vShow, unref(rightCurrentView) === "date"]]),
               createElementVNode("div", null, [createElementVNode("span", {
                 role: "button",
                 class: normalizeClass(unref(drpNs).e("header-label")),
@@ -31649,7 +31971,7 @@ var panel_date_range_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ 
                 "aria-disabled": _ctx.disabled,
                 onKeydown: _cache[14] || (_cache[14] = withKeys(($event) => unref(showRightPicker)("year"), ["enter"])),
                 onClick: _cache[15] || (_cache[15] = ($event) => unref(showRightPicker)("year"))
-              }, toDisplayString$1(unref(rightYearLabel)), 43, _hoisted_12), withDirectives(createElementVNode("span", {
+              }, toDisplayString$1(unref(rightYearLabel)), 43, _hoisted_12$1), withDirectives(createElementVNode("span", {
                 role: "button",
                 "aria-live": "polite",
                 tabindex: _ctx.disabled ? void 0 : 0,
@@ -31657,7 +31979,7 @@ var panel_date_range_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ 
                 class: normalizeClass([unref(drpNs).e("header-label"), { active: unref(rightCurrentView) === "month" }]),
                 onKeydown: _cache[16] || (_cache[16] = withKeys(($event) => unref(showRightPicker)("month"), ["enter"])),
                 onClick: _cache[17] || (_cache[17] = ($event) => unref(showRightPicker)("month"))
-              }, toDisplayString$1(unref(t)(`el.datepicker.month${rightDate.value.month() + 1}`)), 43, _hoisted_13), [[vShow, unref(rightCurrentView) === "date"]])])
+              }, toDisplayString$1(unref(t)(`el.datepicker.month${rightDate.value.month() + 1}`)), 43, _hoisted_13$1), [[vShow, unref(rightCurrentView) === "date"]])])
             ], 2),
             unref(rightCurrentView) === "date" ? (openBlock(), createBlock(basic_date_table_default, {
               key: 0,
@@ -31791,11 +32113,11 @@ const useMonthRangeHeader = ({ unlinkPanels, leftDate, rightDate }) => {
     })
   };
 };
-const _hoisted_1$A = ["disabled", "onClick"];
-const _hoisted_2$m = ["disabled"];
-const _hoisted_3$d = ["disabled"];
-const _hoisted_4$a = ["disabled"];
-const _hoisted_5$7 = ["disabled"];
+const _hoisted_1$F = ["disabled", "onClick"];
+const _hoisted_2$q = ["disabled"];
+const _hoisted_3$f = ["disabled"];
+const _hoisted_4$b = ["disabled"];
+const _hoisted_5$8 = ["disabled"];
 const unit$1 = "year";
 var panel_month_range_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
   name: "DatePickerMonthRange",
@@ -31886,7 +32208,7 @@ var panel_month_range_vue_vue_type_script_setup_true_lang_default = /* @__PURE__
             class: normalizeClass(unref(ppNs).e("shortcut")),
             disabled: unref(monthRangeDisabled),
             onClick: ($event) => unref(handleShortcutClick)(shortcut)
-          }, toDisplayString$1(shortcut.text), 11, _hoisted_1$A);
+          }, toDisplayString$1(shortcut.text), 11, _hoisted_1$F);
         }), 128))], 2)) : createCommentVNode("v-if", true),
         createElementVNode("div", { class: normalizeClass(unref(ppNs).e("body")) }, [createElementVNode("div", { class: normalizeClass([[unref(ppNs).e("content"), unref(drpNs).e("content")], "is-left"]) }, [createElementVNode("div", { class: normalizeClass(unref(drpNs).e("header")) }, [
           createElementVNode("button", {
@@ -31897,7 +32219,7 @@ var panel_month_range_vue_vue_type_script_setup_true_lang_default = /* @__PURE__
           }, [renderSlot(_ctx.$slots, "prev-year", {}, () => [createVNode(unref(ElIcon), null, {
             default: withCtx(() => [createVNode(unref(d_arrow_left_default))]),
             _: 1
-          })])], 10, _hoisted_2$m),
+          })])], 10, _hoisted_2$q),
           _ctx.unlinkPanels ? (openBlock(), createElementBlock("button", {
             key: 0,
             type: "button",
@@ -31907,7 +32229,7 @@ var panel_month_range_vue_vue_type_script_setup_true_lang_default = /* @__PURE__
           }, [renderSlot(_ctx.$slots, "next-year", {}, () => [createVNode(unref(ElIcon), null, {
             default: withCtx(() => [createVNode(unref(d_arrow_right_default))]),
             _: 1
-          })])], 10, _hoisted_3$d)) : createCommentVNode("v-if", true),
+          })])], 10, _hoisted_3$f)) : createCommentVNode("v-if", true),
           createElementVNode("div", null, toDisplayString$1(unref(leftLabel)), 1)
         ], 2), createVNode(basic_month_table_default, {
           "selection-mode": "range",
@@ -31941,7 +32263,7 @@ var panel_month_range_vue_vue_type_script_setup_true_lang_default = /* @__PURE__
           }, [renderSlot(_ctx.$slots, "prev-year", {}, () => [createVNode(unref(ElIcon), null, {
             default: withCtx(() => [createVNode(unref(d_arrow_left_default))]),
             _: 1
-          })])], 10, _hoisted_4$a)) : createCommentVNode("v-if", true),
+          })])], 10, _hoisted_4$b)) : createCommentVNode("v-if", true),
           createElementVNode("button", {
             type: "button",
             class: normalizeClass([unref(ppNs).e("icon-btn"), "d-arrow-right"]),
@@ -31950,7 +32272,7 @@ var panel_month_range_vue_vue_type_script_setup_true_lang_default = /* @__PURE__
           }, [renderSlot(_ctx.$slots, "next-year", {}, () => [createVNode(unref(ElIcon), null, {
             default: withCtx(() => [createVNode(unref(d_arrow_right_default))]),
             _: 1
-          })])], 10, _hoisted_5$7),
+          })])], 10, _hoisted_5$8),
           createElementVNode("div", null, toDisplayString$1(unref(rightLabel)), 1)
         ], 2), createVNode(basic_month_table_default, {
           "selection-mode": "range",
@@ -32022,11 +32344,11 @@ const useYearRangeHeader = ({ unlinkPanels, leftDate, rightDate }) => {
     })
   };
 };
-const _hoisted_1$z = ["disabled", "onClick"];
-const _hoisted_2$l = ["disabled"];
-const _hoisted_3$c = ["disabled"];
-const _hoisted_4$9 = ["disabled"];
-const _hoisted_5$6 = ["disabled"];
+const _hoisted_1$E = ["disabled", "onClick"];
+const _hoisted_2$p = ["disabled"];
+const _hoisted_3$e = ["disabled"];
+const _hoisted_4$a = ["disabled"];
+const _hoisted_5$7 = ["disabled"];
 const step = 10;
 const unit = "year";
 var panel_year_range_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
@@ -32158,7 +32480,7 @@ var panel_year_range_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ 
             class: normalizeClass(unref(ppNs).e("shortcut")),
             disabled: unref(yearRangeDisabled),
             onClick: ($event) => unref(handleShortcutClick)(shortcut)
-          }, toDisplayString$1(shortcut.text), 11, _hoisted_1$z);
+          }, toDisplayString$1(shortcut.text), 11, _hoisted_1$E);
         }), 128))], 2)) : createCommentVNode("v-if", true),
         createElementVNode("div", { class: normalizeClass(unref(ppNs).e("body")) }, [createElementVNode("div", { class: normalizeClass(leftPanelKls.value.content) }, [createElementVNode("div", { class: normalizeClass(unref(drpNs).e("header")) }, [
           createElementVNode("button", {
@@ -32169,7 +32491,7 @@ var panel_year_range_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ 
           }, [renderSlot(_ctx.$slots, "prev-year", {}, () => [createVNode(unref(ElIcon), null, {
             default: withCtx(() => [createVNode(unref(d_arrow_left_default))]),
             _: 1
-          })])], 10, _hoisted_2$l),
+          })])], 10, _hoisted_2$p),
           _ctx.unlinkPanels ? (openBlock(), createElementBlock("button", {
             key: 0,
             type: "button",
@@ -32179,7 +32501,7 @@ var panel_year_range_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ 
           }, [renderSlot(_ctx.$slots, "next-year", {}, () => [createVNode(unref(ElIcon), null, {
             default: withCtx(() => [createVNode(unref(d_arrow_right_default))]),
             _: 1
-          })])], 10, _hoisted_3$c)) : createCommentVNode("v-if", true),
+          })])], 10, _hoisted_3$e)) : createCommentVNode("v-if", true),
           createElementVNode("div", null, toDisplayString$1(unref(leftLabel)), 1)
         ], 2), createVNode(basic_year_table_default, {
           "selection-mode": "range",
@@ -32213,7 +32535,7 @@ var panel_year_range_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ 
           }, [renderSlot(_ctx.$slots, "prev-year", {}, () => [createVNode(unref(ElIcon), null, {
             default: withCtx(() => [createVNode(unref(d_arrow_left_default))]),
             _: 1
-          })])], 10, _hoisted_4$9)) : createCommentVNode("v-if", true),
+          })])], 10, _hoisted_4$a)) : createCommentVNode("v-if", true),
           createElementVNode("button", {
             type: "button",
             class: normalizeClass(rightPanelKls.value.arrowRightBtn),
@@ -32222,7 +32544,7 @@ var panel_year_range_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ 
           }, [renderSlot(_ctx.$slots, "next-year", {}, () => [createVNode(unref(ElIcon), null, {
             default: withCtx(() => [createVNode(unref(d_arrow_right_default))]),
             _: 1
-          })])], 10, _hoisted_5$6),
+          })])], 10, _hoisted_5$7),
           createElementVNode("div", null, toDisplayString$1(unref(rightLabel)), 1)
         ], 2), createVNode(basic_year_table_default, {
           "selection-mode": "range",
@@ -32265,6 +32587,9 @@ const getPanel = function(type4) {
       return panel_date_pick_default;
   }
 };
+function getDefaultExportFromCjs(x3) {
+  return x3 && x3.__esModule && Object.prototype.hasOwnProperty.call(x3, "default") ? x3["default"] : x3;
+}
 var customParseFormat$2 = { exports: {} };
 var customParseFormat$1 = customParseFormat$2.exports;
 var hasRequiredCustomParseFormat;
@@ -32682,7 +33007,7 @@ var date_picker_panel_default = /* @__PURE__ */ defineComponent({
   ],
   setup(props, { slots, emit, attrs }) {
     const ns = useNamespace("picker-panel");
-    if (isUndefined(inject(PICKER_BASE_INJECTION_KEY, void 0))) provide(PICKER_BASE_INJECTION_KEY, { props: reactive({ ...toRefs(props) }) });
+    if (isUndefined$1(inject(PICKER_BASE_INJECTION_KEY, void 0))) provide(PICKER_BASE_INJECTION_KEY, { props: reactive({ ...toRefs(props) }) });
     provide(ROOT_PICKER_INJECTION_KEY, {
       slots,
       pickerNs: ns
@@ -32984,6 +33309,86 @@ const useSameTarget = (handleClick) => {
     onMouseup
   };
 };
+const useThrottleRender = (loading, throttle2 = 0) => {
+  if (throttle2 === 0) return loading;
+  const throttled = ref(isObject$5(throttle2) && Boolean(throttle2.initVal));
+  let timeoutHandle = null;
+  const dispatchThrottling = (timer) => {
+    if (isUndefined$1(timer)) {
+      throttled.value = loading.value;
+      return;
+    }
+    if (timeoutHandle) clearTimeout(timeoutHandle);
+    timeoutHandle = setTimeout(() => {
+      throttled.value = loading.value;
+    }, timer);
+  };
+  const dispatcher = (type4) => {
+    if (type4 === "leading") if (isNumber$2(throttle2)) dispatchThrottling(throttle2);
+    else dispatchThrottling(throttle2.leading);
+    else if (isObject$5(throttle2)) dispatchThrottling(throttle2.trailing);
+    else throttled.value = false;
+  };
+  onMounted(() => dispatcher("leading"));
+  watch(() => loading.value, (val) => {
+    dispatcher(val ? "leading" : "trailing");
+  });
+  return throttled;
+};
+const getOrderedChildren = (vm, childComponentName, children) => {
+  return flattedChildren(vm.subTree).filter((n) => {
+    var _a;
+    return isVNode$1(n) && ((_a = n.type) == null ? void 0 : _a.name) === childComponentName && !!n.component;
+  }).map((n) => n.component.uid).map((uid) => children[uid]).filter((p3) => !!p3);
+};
+const useOrderedChildren = (vm, childComponentName) => {
+  const children = shallowRef({});
+  const orderedChildren = shallowRef([]);
+  const nodesMap = /* @__PURE__ */ new WeakMap();
+  const addChild = (child) => {
+    children.value[child.uid] = child;
+    triggerRef(children);
+    onMounted(() => {
+      const childNode = child.getVnode().el;
+      const parentNode = childNode.parentNode;
+      if (!nodesMap.has(parentNode)) {
+        nodesMap.set(parentNode, []);
+        const originalFn = parentNode.insertBefore.bind(parentNode);
+        parentNode.insertBefore = (node, anchor) => {
+          if (nodesMap.get(parentNode).some((el) => node === el || anchor === el)) triggerRef(children);
+          return originalFn(node, anchor);
+        };
+      }
+      nodesMap.get(parentNode).push(childNode);
+    });
+  };
+  const removeChild = (child) => {
+    delete children.value[child.uid];
+    triggerRef(children);
+    const childNode = child.getVnode().el;
+    const parentNode = childNode.parentNode;
+    const childNodes = nodesMap.get(parentNode);
+    const index = childNodes.indexOf(childNode);
+    childNodes.splice(index, 1);
+  };
+  const sortChildren = () => {
+    orderedChildren.value = getOrderedChildren(vm, childComponentName, children.value);
+  };
+  const IsolatedRenderer = (props) => {
+    return props.render();
+  };
+  return {
+    children: orderedChildren,
+    addChild,
+    removeChild,
+    ChildrenSorter: defineComponent({ setup(_3, { slots }) {
+      return () => {
+        sortChildren();
+        return slots.default ? h$2(IsolatedRenderer, { render: slots.default }) : null;
+      };
+    } })
+  };
+};
 const formMetaProps = buildProps({
   size: {
     type: String,
@@ -33035,7 +33440,7 @@ const formProps = buildProps({
     default: true
   }
 });
-const formEmits = { validate: (prop, isValid, message) => (isArray$3(prop) || isString$2(prop)) && isBoolean$2(isValid) && isString$2(message) };
+const formEmits = { validate: (prop, isValid, message2) => (isArray$3(prop) || isString$2(prop)) && isBoolean$2(isValid) && isString$2(message2) };
 const formItemValidateStates = [
   "",
   "error",
@@ -33113,9 +33518,9 @@ const filterFields = (fields, props) => {
   const normalized = castArray$1(props).map((prop) => isArray$3(prop) ? prop.join(".") : prop);
   return normalized.length > 0 ? fields.filter((field) => field.propString && normalized.includes(field.propString)) : fields;
 };
-const COMPONENT_NAME$6 = "ElForm";
+const COMPONENT_NAME$9 = "ElForm";
 var form_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
-  name: COMPONENT_NAME$6,
+  name: COMPONENT_NAME$9,
   __name: "form",
   props: formProps,
   emits: formEmits,
@@ -33151,11 +33556,11 @@ var form_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineCom
     };
     const setInitialValues = (initModel) => {
       if (!props.model) {
-        debugWarn(COMPONENT_NAME$6, "model is required for setInitialValues to work.");
+        debugWarn(COMPONENT_NAME$9, "model is required for setInitialValues to work.");
         return;
       }
       if (!initModel) {
-        debugWarn(COMPONENT_NAME$6, "initModel is required for setInitialValues to work.");
+        debugWarn(COMPONENT_NAME$9, "initModel is required for setInitialValues to work.");
         return;
       }
       for (const key of initialValues.keys()) initialValues.set(key, cloneDeep(getProp(initModel, key).value));
@@ -33165,7 +33570,7 @@ var form_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineCom
     };
     const resetFields = (properties = []) => {
       if (!props.model) {
-        debugWarn(COMPONENT_NAME$6, "model is required for resetFields to work.");
+        debugWarn(COMPONENT_NAME$9, "model is required for resetFields to work.");
         return;
       }
       filterFields(fields, properties).forEach((field) => field.resetField());
@@ -33178,14 +33583,14 @@ var form_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineCom
     };
     const isValidatable = computed(() => {
       const hasModel = !!props.model;
-      if (!hasModel) debugWarn(COMPONENT_NAME$6, "model is required for validate to work.");
+      if (!hasModel) debugWarn(COMPONENT_NAME$9, "model is required for validate to work.");
       return hasModel;
     });
     const obtainValidateFields = (props2) => {
       if (fields.length === 0) return [];
       const filteredFields = filterFields(fields, props2);
       if (!filteredFields.length) {
-        debugWarn(COMPONENT_NAME$6, "please pass correct props!");
+        debugWarn(COMPONENT_NAME$9, "please pass correct props!");
         return [];
       }
       return filteredFields;
@@ -33269,9 +33674,9 @@ var form_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineCom
   }
 });
 var form_default = form_vue_vue_type_script_setup_true_lang_default;
-const COMPONENT_NAME$5 = "ElLabelWrap";
+const COMPONENT_NAME$8 = "ElLabelWrap";
 var form_label_wrap_default = /* @__PURE__ */ defineComponent({
-  name: COMPONENT_NAME$5,
+  name: COMPONENT_NAME$8,
   props: {
     isAutoWidth: Boolean,
     updateAll: Boolean
@@ -33279,7 +33684,7 @@ var form_label_wrap_default = /* @__PURE__ */ defineComponent({
   setup(props, { slots }) {
     const formContext = inject(formContextKey, void 0);
     const formItemContext = inject(formItemContextKey);
-    if (!formItemContext) throwError(COMPONENT_NAME$5, "usage: <el-form-item><label-wrap /></el-form-item>");
+    if (!formItemContext) throwError(COMPONENT_NAME$8, "usage: <el-form-item><label-wrap /></el-form-item>");
     const ns = useNamespace("form");
     const el = ref();
     const computedWidth = ref(0);
@@ -34381,7 +34786,7 @@ Schema.register = function register(type4, validator) {
 Schema.warning = warning;
 Schema.messages = messages;
 Schema.validators = validators;
-const _hoisted_1$y = ["role", "aria-labelledby"];
+const _hoisted_1$D = ["role", "aria-labelledby"];
 var form_item_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
   name: "ElFormItem",
   __name: "form-item",
@@ -34632,7 +35037,7 @@ var form_item_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defi
           error: validateMessage.value
         }, () => [createElementVNode("div", { class: normalizeClass(validateClasses.value) }, toDisplayString$1(validateMessage.value), 3)]) : createCommentVNode("v-if", true)]),
         _: 3
-      }, 8, ["name"])], 6)], 10, _hoisted_1$y);
+      }, 8, ["name"])], 6)], 10, _hoisted_1$D);
     };
   }
 });
@@ -34833,8 +35238,8 @@ const tagEmits = {
   close: (evt) => evt instanceof MouseEvent,
   click: (evt) => evt instanceof MouseEvent
 };
-const _hoisted_1$x = ["aria-label"];
-const _hoisted_2$k = ["aria-label"];
+const _hoisted_1$C = ["aria-label"];
+const _hoisted_2$o = ["aria-label"];
 var tag_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
   name: "ElTag",
   __name: "tag",
@@ -34883,7 +35288,7 @@ var tag_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComp
       }, [createVNode(unref(ElIcon), null, {
         default: withCtx(() => [createVNode(unref(close_default))]),
         _: 1
-      })], 10, _hoisted_1$x)) : createCommentVNode("v-if", true)], 6)) : (openBlock(), createBlock(Transition, {
+      })], 10, _hoisted_1$C)) : createCommentVNode("v-if", true)], 6)) : (openBlock(), createBlock(Transition, {
         key: 1,
         name: `${unref(ns).namespace.value}-zoom-in-center`,
         appear: "",
@@ -34902,7 +35307,7 @@ var tag_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComp
         }, [createVNode(unref(ElIcon), null, {
           default: withCtx(() => [createVNode(unref(close_default))]),
           _: 1
-        })], 10, _hoisted_2$k)) : createCommentVNode("v-if", true)], 6)]),
+        })], 10, _hoisted_2$o)) : createCommentVNode("v-if", true)], 6)]),
         _: 3
       }, 8, ["name"]));
     };
@@ -35085,7 +35490,7 @@ const selectProps = buildProps({
 ({
   "popup-scroll": scrollbarEmits.scroll
 });
-const COMPONENT_NAME$4 = "ElOption";
+const COMPONENT_NAME$7 = "ElOption";
 const optionProps = buildProps({
   value: {
     type: [
@@ -35102,7 +35507,7 @@ const optionProps = buildProps({
 });
 function useOption(props, states) {
   const select = inject(selectKey);
-  if (!select) throwError(COMPONENT_NAME$4, "usage: <el-select><el-option /></el-select/>");
+  if (!select) throwError(COMPONENT_NAME$7, "usage: <el-select><el-option /></el-select/>");
   const selectGroup = inject(selectGroupKey, { disabled: false });
   const itemSelected = computed(() => {
     return contains(castArray$1(select.props.modelValue), props.value);
@@ -35166,8 +35571,8 @@ function useOption(props, states) {
   };
 }
 var option_vue_vue_type_script_lang_default = defineComponent({
-  name: COMPONENT_NAME$4,
-  componentName: COMPONENT_NAME$4,
+  name: COMPONENT_NAME$7,
+  componentName: COMPONENT_NAME$7,
   props: optionProps,
   setup(props) {
     const ns = useNamespace("select");
@@ -35219,7 +35624,7 @@ var option_vue_vue_type_script_lang_default = defineComponent({
     };
   }
 });
-const _hoisted_1$w = [
+const _hoisted_1$B = [
   "id",
   "aria-disabled",
   "aria-selected"
@@ -35233,7 +35638,7 @@ function _sfc_render$f(_ctx, _cache, $props, $setup, $data, $options) {
     "aria-selected": _ctx.itemSelected,
     onMousemove: _cache[0] || (_cache[0] = (...args) => _ctx.hoverItem && _ctx.hoverItem(...args)),
     onClick: _cache[1] || (_cache[1] = withModifiers((...args) => _ctx.selectOptionClick && _ctx.selectOptionClick(...args), ["stop"]))
-  }, [renderSlot(_ctx.$slots, "default", {}, () => [createElementVNode("span", null, toDisplayString$1(_ctx.currentLabel), 1)])], 42, _hoisted_1$w)), [[vShow, _ctx.visible]]);
+  }, [renderSlot(_ctx.$slots, "default", {}, () => [createElementVNode("span", null, toDisplayString$1(_ctx.currentLabel), 1)])], 42, _hoisted_1$B)), [[vShow, _ctx.visible]]);
 }
 var option_default = /* @__PURE__ */ _plugin_vue_export_helper_default(option_vue_vue_type_script_lang_default, [["render", _sfc_render$f]]);
 var option_group_vue_vue_type_script_lang_default = defineComponent({
@@ -35459,9 +35864,9 @@ const useSelect = (props, emit) => {
     }
   });
   const shouldShowPlaceholder = computed(() => {
-    if (props.multiple && !isUndefined(props.modelValue)) return castArray$1(props.modelValue).length === 0 && !states.inputValue;
+    if (props.multiple && !isUndefined$1(props.modelValue)) return castArray$1(props.modelValue).length === 0 && !states.inputValue;
     const value = isArray$3(props.modelValue) ? props.modelValue[0] : props.modelValue;
-    return props.filterable || isUndefined(value) ? !states.inputValue : true;
+    return props.filterable || isUndefined$1(value) ? !states.inputValue : true;
   });
   const currentPlaceholder = computed(() => {
     const _placeholder = props.placeholder ?? t("el.select.placeholder");
@@ -35528,7 +35933,7 @@ const useSelect = (props, emit) => {
       return;
     } else states.selectedLabel = "";
     const result2 = [];
-    if (!isUndefined(props.modelValue)) castArray$1(props.modelValue).forEach((value) => {
+    if (!isUndefined$1(props.modelValue)) castArray$1(props.modelValue).forEach((value) => {
       result2.push(getOption(value));
     });
     states.selected = result2;
@@ -35662,7 +36067,7 @@ const useSelect = (props, emit) => {
     });
   };
   const getValueIndex = (arr, option) => {
-    if (isUndefined(option)) return -1;
+    if (isUndefined$1(option)) return -1;
     if (!isObject$5(option.value)) return arr.indexOf(option.value);
     return arr.findIndex((item) => {
       return isEqual(get(item, props.valueKey), getValueKey(option));
@@ -35976,13 +36381,13 @@ var options_default = defineComponent({
     };
   }
 });
-const COMPONENT_NAME$3 = "ElSelect";
+const COMPONENT_NAME$6 = "ElSelect";
 const warnHandlerMap = /* @__PURE__ */ new WeakMap();
 const createSelectWarnHandler = (appContext) => {
   return (...args) => {
     var _a, _b;
-    const message = args[0];
-    if (!message || message.includes('Slot "default" invoked outside of the render function') && ((_a = args[2]) == null ? void 0 : _a.includes("ElTreeSelect"))) return;
+    const message2 = args[0];
+    if (!message2 || message2.includes('Slot "default" invoked outside of the render function') && ((_a = args[2]) == null ? void 0 : _a.includes("ElTreeSelect"))) return;
     const original = (_b = warnHandlerMap.get(appContext)) == null ? void 0 : _b.originalWarnHandler;
     if (original) {
       original(...args);
@@ -36004,8 +36409,8 @@ const getWarnHandlerRecord = (appContext) => {
   return record;
 };
 var select_vue_vue_type_script_lang_default = defineComponent({
-  name: COMPONENT_NAME$3,
-  componentName: COMPONENT_NAME$3,
+  name: COMPONENT_NAME$6,
+  componentName: COMPONENT_NAME$6,
   components: {
     ElSelectMenu: select_dropdown_default,
     ElOption: option_default,
@@ -36121,7 +36526,7 @@ var select_vue_vue_type_script_lang_default = defineComponent({
     };
   }
 });
-const _hoisted_1$v = [
+const _hoisted_1$A = [
   "id",
   "value",
   "name",
@@ -36134,8 +36539,8 @@ const _hoisted_1$v = [
   "aria-expanded",
   "aria-label"
 ];
-const _hoisted_2$j = ["textContent"];
-const _hoisted_3$b = { key: 1 };
+const _hoisted_2$n = ["textContent"];
+const _hoisted_3$d = { key: 1 };
 function _sfc_render$c(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_el_tag = resolveComponent("el-tag");
   const _component_el_tooltip = resolveComponent("el-tooltip");
@@ -36349,13 +36754,13 @@ function _sfc_render$c(_ctx, _cache, $props, $setup, $data, $options) {
             onChange: _cache[5] || (_cache[5] = withModifiers(() => {
             }, ["stop"])),
             onClick: _cache[6] || (_cache[6] = withModifiers((...args) => _ctx.toggleMenu && _ctx.toggleMenu(...args), ["stop"]))
-          }, null, 46, _hoisted_1$v), _ctx.filterable ? (openBlock(), createElementBlock("span", {
+          }, null, 46, _hoisted_1$A), _ctx.filterable ? (openBlock(), createElementBlock("span", {
             key: 0,
             ref: "calculatorRef",
             "aria-hidden": "true",
             class: normalizeClass(_ctx.nsSelect.e("input-calculator")),
             textContent: toDisplayString$1(_ctx.states.inputValue)
-          }, null, 10, _hoisted_2$j)) : createCommentVNode("v-if", true)], 2),
+          }, null, 10, _hoisted_2$n)) : createCommentVNode("v-if", true)], 2),
           _ctx.shouldShowPlaceholder ? (openBlock(), createElementBlock("div", {
             key: 1,
             class: normalizeClass([
@@ -36368,7 +36773,7 @@ function _sfc_render$c(_ctx, _cache, $props, $setup, $data, $options) {
             index: _ctx.getOption(_ctx.modelValue).index,
             label: _ctx.currentPlaceholder,
             value: _ctx.modelValue
-          }, () => [createElementVNode("span", null, toDisplayString$1(_ctx.currentPlaceholder), 1)]) : (openBlock(), createElementBlock("span", _hoisted_3$b, toDisplayString$1(_ctx.currentPlaceholder), 1))], 2)) : createCommentVNode("v-if", true)
+          }, () => [createElementVNode("span", null, toDisplayString$1(_ctx.currentPlaceholder), 1)]) : (openBlock(), createElementBlock("span", _hoisted_3$d, toDisplayString$1(_ctx.currentPlaceholder), 1))], 2)) : createCommentVNode("v-if", true)
         ], 2),
         createElementVNode("div", {
           ref: "suffixRef",
@@ -36648,7 +37053,7 @@ const useRadio = (props, emit) => {
     actualValue
   };
 };
-const _hoisted_1$u = [
+const _hoisted_1$z = [
   "value",
   "name",
   "disabled",
@@ -36695,7 +37100,7 @@ var radio_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineCo
         onChange: handleChange,
         onClick: _cache[3] || (_cache[3] = withModifiers(() => {
         }, ["stop"]))
-      }, null, 42, _hoisted_1$u), [[vModelRadio, unref(modelValue)]]), createElementVNode("span", { class: normalizeClass(unref(ns).e("inner")) }, null, 2)], 2), createElementVNode("span", {
+      }, null, 42, _hoisted_1$z), [[vModelRadio, unref(modelValue)]]), createElementVNode("span", { class: normalizeClass(unref(ns).e("inner")) }, null, 2)], 2), createElementVNode("span", {
         class: normalizeClass(unref(ns).e("label")),
         onKeydown: _cache[4] || (_cache[4] = withModifiers(() => {
         }, ["stop"]))
@@ -36704,7 +37109,7 @@ var radio_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineCo
   }
 });
 var radio_default = radio_vue_vue_type_script_setup_true_lang_default;
-const _hoisted_1$t = [
+const _hoisted_1$y = [
   "value",
   "name",
   "disabled"
@@ -36746,7 +37151,7 @@ var radio_button_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ d
         onBlur: _cache[2] || (_cache[2] = ($event) => focus.value = false),
         onClick: _cache[3] || (_cache[3] = withModifiers(() => {
         }, ["stop"]))
-      }, null, 42, _hoisted_1$t), [[vModelRadio, unref(modelValue)]]), createElementVNode("span", {
+      }, null, 42, _hoisted_1$y), [[vModelRadio, unref(modelValue)]]), createElementVNode("span", {
         class: normalizeClass(unref(ns).be("button", "inner")),
         style: normalizeStyle(unref(modelValue) === unref(actualValue) ? activeStyle.value : {}),
         onKeydown: _cache[4] || (_cache[4] = withModifiers(() => {
@@ -36756,7 +37161,7 @@ var radio_button_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ d
   }
 });
 var radio_button_default = radio_button_vue_vue_type_script_setup_true_lang_default;
-const _hoisted_1$s = [
+const _hoisted_1$x = [
   "id",
   "aria-label",
   "aria-labelledby"
@@ -36826,7 +37231,7 @@ var radio_group_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ de
         "aria-labelledby": unref(isLabeledByFormItem) ? unref(formItem).labelId : void 0
       }, [renderSlot(_ctx.$slots, "default", {}, () => [(openBlock(true), createElementBlock(Fragment, null, renderList(__props.options, (item, index) => {
         return openBlock(), createBlock(resolveDynamicComponent(optionComponent.value), mergeProps({ key: index }, { ref_for: true }, getOptionProps(item)), null, 16);
-      }), 128))])], 10, _hoisted_1$s);
+      }), 128))])], 10, _hoisted_1$x);
     };
   }
 });
@@ -36835,8 +37240,8 @@ const ElRadio = withInstall(radio_default, {
   RadioButton: radio_button_default,
   RadioGroup: radio_group_default
 });
-withNoopInstall(radio_group_default);
-withNoopInstall(radio_button_default);
+const ElRadioGroup = withNoopInstall(radio_group_default);
+const ElRadioButton = withNoopInstall(radio_button_default);
 const RowJustify = [
   "start",
   "center",
@@ -37048,7 +37453,7 @@ var overlay_default = defineComponent({
 const ElOverlay = overlay_default;
 const dialogInjectionKey = Symbol("dialogInjectionKey");
 const DEFAULT_DIALOG_TRANSITION = "dialog-fade";
-const COMPONENT_NAME$2 = "ElDialog";
+const COMPONENT_NAME$5 = "ElDialog";
 const useDialog = (props, targetRef) => {
   const emit = getCurrentInstance().emit;
   const { nextZIndex } = useZIndex();
@@ -37122,7 +37527,7 @@ const useDialog = (props, targetRef) => {
       config2.onAfterLeave = _mergeHook(config2.onAfterLeave, afterLeave);
       if (!config2.name) {
         config2.name = DEFAULT_DIALOG_TRANSITION;
-        debugWarn(COMPONENT_NAME$2, `transition.name is missing when using object syntax, fallback to '${DEFAULT_DIALOG_TRANSITION}'`);
+        debugWarn(COMPONENT_NAME$5, `transition.name is missing when using object syntax, fallback to '${DEFAULT_DIALOG_TRANSITION}'`);
       }
       return config2;
     }
@@ -37254,9 +37659,9 @@ const composeRefs = (...refs) => {
     });
   };
 };
-const _hoisted_1$r = ["aria-level"];
-const _hoisted_2$i = ["aria-label"];
-const _hoisted_3$a = ["id"];
+const _hoisted_1$w = ["aria-level"];
+const _hoisted_2$m = ["aria-label"];
+const _hoisted_3$c = ["id"];
 var dialog_content_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
   name: "ElDialogContent",
   __name: "dialog-content",
@@ -37302,7 +37707,7 @@ var dialog_content_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */
           role: "heading",
           "aria-level": __props.ariaLevel,
           class: normalizeClass(unref(ns).e("title"))
-        }, toDisplayString$1(__props.title), 11, _hoisted_1$r)]), __props.showClose ? (openBlock(), createElementBlock("button", {
+        }, toDisplayString$1(__props.title), 11, _hoisted_1$w)]), __props.showClose ? (openBlock(), createElementBlock("button", {
           key: 0,
           "aria-label": unref(t)("el.dialog.close"),
           class: normalizeClass(unref(ns).e("headerbtn")),
@@ -37311,11 +37716,11 @@ var dialog_content_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */
         }, [createVNode(unref(ElIcon), { class: normalizeClass(unref(ns).e("close")) }, {
           default: withCtx(() => [(openBlock(), createBlock(resolveDynamicComponent(__props.closeIcon || unref(Close))))]),
           _: 1
-        }, 8, ["class"])], 10, _hoisted_2$i)) : createCommentVNode("v-if", true)], 2),
+        }, 8, ["class"])], 10, _hoisted_2$m)) : createCommentVNode("v-if", true)], 2),
         createElementVNode("div", {
           id: unref(bodyId),
           class: normalizeClass([unref(ns).e("body"), __props.bodyClass])
-        }, [renderSlot(_ctx.$slots, "default")], 10, _hoisted_3$a),
+        }, [renderSlot(_ctx.$slots, "default")], 10, _hoisted_3$c),
         _ctx.$slots.footer ? (openBlock(), createElementBlock("footer", {
           key: 0,
           class: normalizeClass([unref(ns).e("footer"), __props.footerClass])
@@ -37325,7 +37730,7 @@ var dialog_content_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */
   }
 });
 var dialog_content_default = dialog_content_vue_vue_type_script_setup_true_lang_default;
-const _hoisted_1$q = [
+const _hoisted_1$v = [
   "aria-label",
   "aria-labelledby",
   "aria-describedby"
@@ -37460,7 +37865,7 @@ var dialog_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineC
               "onFocusAfterReleased",
               "onFocusoutPrevented",
               "onReleaseRequested"
-            ])], 46, _hoisted_1$q)]),
+            ])], 46, _hoisted_1$v)]),
             _: 3
           }, 8, [
             "mask",
@@ -37579,14 +37984,14 @@ function useResizable(props, target, emit) {
     isHorizontal
   };
 }
-const _hoisted_1$p = [
+const _hoisted_1$u = [
   "aria-label",
   "aria-labelledby",
   "aria-describedby"
 ];
-const _hoisted_2$h = ["id", "aria-level"];
-const _hoisted_3$9 = ["aria-label"];
-const _hoisted_4$8 = ["id"];
+const _hoisted_2$l = ["id", "aria-level"];
+const _hoisted_3$b = ["aria-label"];
+const _hoisted_4$9 = ["id"];
 var drawer_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
   name: "ElDrawer",
   inheritAttrs: false,
@@ -37688,7 +38093,7 @@ var drawer_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineC
                   role: "heading",
                   "aria-level": __props.headerAriaLevel,
                   class: normalizeClass(unref(ns).e("title"))
-                }, toDisplayString$1(__props.title), 11, _hoisted_2$h)]) : renderSlot(_ctx.$slots, "title", { key: 1 }, () => [createCommentVNode(" DEPRECATED SLOT ")]), __props.showClose ? (openBlock(), createElementBlock("button", {
+                }, toDisplayString$1(__props.title), 11, _hoisted_2$l)]) : renderSlot(_ctx.$slots, "title", { key: 1 }, () => [createCommentVNode(" DEPRECATED SLOT ")]), __props.showClose ? (openBlock(), createElementBlock("button", {
                   key: 2,
                   "aria-label": unref(t)("el.drawer.close"),
                   class: normalizeClass(unref(ns).e("close-btn")),
@@ -37697,12 +38102,12 @@ var drawer_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineC
                 }, [createVNode(unref(ElIcon), { class: normalizeClass(unref(ns).e("close")) }, {
                   default: withCtx(() => [createVNode(unref(close_default))]),
                   _: 1
-                }, 8, ["class"])], 10, _hoisted_3$9)) : createCommentVNode("v-if", true)], 2)) : createCommentVNode("v-if", true),
+                }, 8, ["class"])], 10, _hoisted_3$b)) : createCommentVNode("v-if", true)], 2)) : createCommentVNode("v-if", true),
                 unref(rendered) ? (openBlock(), createElementBlock("div", {
                   key: 1,
                   id: unref(bodyId),
                   class: normalizeClass([unref(ns).e("body"), __props.bodyClass])
-                }, [renderSlot(_ctx.$slots, "default")], 10, _hoisted_4$8)) : createCommentVNode("v-if", true),
+                }, [renderSlot(_ctx.$slots, "default")], 10, _hoisted_4$9)) : createCommentVNode("v-if", true),
                 _ctx.$slots.footer ? (openBlock(), createElementBlock("div", {
                   key: 2,
                   class: normalizeClass([unref(ns).e("footer"), __props.footerClass])
@@ -37714,7 +38119,7 @@ var drawer_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineC
                   style: normalizeStyle({ zIndex: unref(zIndex2) }),
                   class: normalizeClass(unref(ns).e("dragger"))
                 }, null, 6)) : createCommentVNode("v-if", true)
-              ], 16, _hoisted_1$p)]),
+              ], 16, _hoisted_1$u)]),
               _: 3
             }, 8, [
               "trapped",
@@ -38457,7 +38862,7 @@ var dropdown_item_impl_vue_vue_type_script_lang_default = defineComponent({
     };
   }
 });
-const _hoisted_1$o = [
+const _hoisted_1$t = [
   "aria-disabled",
   "tabindex",
   "role"
@@ -38485,7 +38890,7 @@ function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
   }), [_ctx.icon || _ctx.$slots.icon ? (openBlock(), createBlock(_component_el_icon, { key: 0 }, {
     default: withCtx(() => [renderSlot(_ctx.$slots, "icon", {}, () => [(openBlock(), createBlock(resolveDynamicComponent(_ctx.icon)))])]),
     _: 3
-  })) : createCommentVNode("v-if", true), renderSlot(_ctx.$slots, "default")], 16, _hoisted_1$o)], 64);
+  })) : createCommentVNode("v-if", true), renderSlot(_ctx.$slots, "default")], 16, _hoisted_1$t)], 64);
 }
 var dropdown_item_impl_default = /* @__PURE__ */ _plugin_vue_export_helper_default(dropdown_item_impl_vue_vue_type_script_lang_default, [["render", _sfc_render$5]]);
 const useDropdown = () => {
@@ -38617,7 +39022,7 @@ var dropdown_menu_vue_vue_type_script_lang_default = defineComponent({
     };
   }
 });
-const _hoisted_1$n = ["role", "aria-labelledby"];
+const _hoisted_1$s = ["role", "aria-labelledby"];
 function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("ul", {
     ref: _ctx.dropdownListWrapperRef,
@@ -38630,7 +39035,7 @@ function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
     onFocusout: _cache[1] || (_cache[1] = (...args) => _ctx.onBlur && _ctx.onBlur(...args)),
     onKeydown: _cache[2] || (_cache[2] = withModifiers((...args) => _ctx.handleKeydown && _ctx.handleKeydown(...args), ["self"])),
     onMousedown: _cache[3] || (_cache[3] = withModifiers((...args) => _ctx.onMousedown && _ctx.onMousedown(...args), ["self"]))
-  }, [renderSlot(_ctx.$slots, "default")], 46, _hoisted_1$n);
+  }, [renderSlot(_ctx.$slots, "default")], 46, _hoisted_1$s);
 }
 var dropdown_menu_default = /* @__PURE__ */ _plugin_vue_export_helper_default(dropdown_menu_vue_vue_type_script_lang_default, [["render", _sfc_render$3]]);
 const ElDropdown = withInstall(dropdown_default, {
@@ -38639,6 +39044,185 @@ const ElDropdown = withInstall(dropdown_default, {
 });
 const ElDropdownItem = withNoopInstall(dropdown_item_default);
 const ElDropdownMenu = withNoopInstall(dropdown_menu_default);
+const emptyProps = buildProps({
+  image: {
+    type: String,
+    default: ""
+  },
+  imageSize: Number,
+  description: {
+    type: String,
+    default: ""
+  }
+});
+const _hoisted_1$r = {
+  viewBox: "0 0 79 86",
+  version: "1.1",
+  xmlns: "http://www.w3.org/2000/svg",
+  "xmlns:xlink": "http://www.w3.org/1999/xlink"
+};
+const _hoisted_2$k = ["id"];
+const _hoisted_3$a = ["stop-color"];
+const _hoisted_4$8 = ["stop-color"];
+const _hoisted_5$6 = ["id"];
+const _hoisted_6$3 = ["stop-color"];
+const _hoisted_7$1 = ["stop-color"];
+const _hoisted_8$1 = ["id"];
+const _hoisted_9 = {
+  stroke: "none",
+  "stroke-width": "1",
+  fill: "none",
+  "fill-rule": "evenodd"
+};
+const _hoisted_10 = { transform: "translate(-1268.000000, -535.000000)" };
+const _hoisted_11 = { transform: "translate(1268.000000, 535.000000)" };
+const _hoisted_12 = ["fill"];
+const _hoisted_13 = ["fill"];
+const _hoisted_14 = { transform: "translate(34.500000, 31.500000) scale(-1, 1) rotate(-25.000000) translate(-34.500000, -31.500000) translate(7.000000, 10.000000)" };
+const _hoisted_15 = ["fill"];
+const _hoisted_16 = ["fill"];
+const _hoisted_17 = ["fill"];
+const _hoisted_18 = ["fill"];
+const _hoisted_19 = ["fill"];
+const _hoisted_20 = { transform: "translate(53.000000, 45.000000)" };
+const _hoisted_21 = ["fill", "xlink:href"];
+const _hoisted_22 = ["fill", "mask"];
+const _hoisted_23 = ["fill"];
+var img_empty_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
+  name: "ImgEmpty",
+  __name: "img-empty",
+  setup(__props) {
+    const ns = useNamespace("empty");
+    const id2 = useId();
+    return (_ctx, _cache) => {
+      return openBlock(), createElementBlock("svg", _hoisted_1$r, [createElementVNode("defs", null, [
+        createElementVNode("linearGradient", {
+          id: `linearGradient-1-${unref(id2)}`,
+          x1: "38.8503086%",
+          y1: "0%",
+          x2: "61.1496914%",
+          y2: "100%"
+        }, [createElementVNode("stop", {
+          "stop-color": `var(${unref(ns).cssVarBlockName("fill-color-1")})`,
+          offset: "0%"
+        }, null, 8, _hoisted_3$a), createElementVNode("stop", {
+          "stop-color": `var(${unref(ns).cssVarBlockName("fill-color-4")})`,
+          offset: "100%"
+        }, null, 8, _hoisted_4$8)], 8, _hoisted_2$k),
+        createElementVNode("linearGradient", {
+          id: `linearGradient-2-${unref(id2)}`,
+          x1: "0%",
+          y1: "9.5%",
+          x2: "100%",
+          y2: "90.5%"
+        }, [createElementVNode("stop", {
+          "stop-color": `var(${unref(ns).cssVarBlockName("fill-color-1")})`,
+          offset: "0%"
+        }, null, 8, _hoisted_6$3), createElementVNode("stop", {
+          "stop-color": `var(${unref(ns).cssVarBlockName("fill-color-6")})`,
+          offset: "100%"
+        }, null, 8, _hoisted_7$1)], 8, _hoisted_5$6),
+        createElementVNode("rect", {
+          id: `path-3-${unref(id2)}`,
+          x: "0",
+          y: "0",
+          width: "17",
+          height: "36"
+        }, null, 8, _hoisted_8$1)
+      ]), createElementVNode("g", _hoisted_9, [createElementVNode("g", _hoisted_10, [createElementVNode("g", _hoisted_11, [
+        createElementVNode("path", {
+          d: "M39.5,86 C61.3152476,86 79,83.9106622 79,81.3333333 C79,78.7560045 57.3152476,78 35.5,78 C13.6847524,78 0,78.7560045 0,81.3333333 C0,83.9106622 17.6847524,86 39.5,86 Z",
+          fill: `var(${unref(ns).cssVarBlockName("fill-color-3")})`
+        }, null, 8, _hoisted_12),
+        createElementVNode("polygon", {
+          fill: `var(${unref(ns).cssVarBlockName("fill-color-7")})`,
+          transform: "translate(27.500000, 51.500000) scale(1, -1) translate(-27.500000, -51.500000) ",
+          points: "13 58 53 58 42 45 2 45"
+        }, null, 8, _hoisted_13),
+        createElementVNode("g", _hoisted_14, [
+          createElementVNode("polygon", {
+            fill: `var(${unref(ns).cssVarBlockName("fill-color-7")})`,
+            transform: "translate(11.500000, 5.000000) scale(1, -1) translate(-11.500000, -5.000000) ",
+            points: "2.84078316e-14 3 18 3 23 7 5 7"
+          }, null, 8, _hoisted_15),
+          createElementVNode("polygon", {
+            fill: `var(${unref(ns).cssVarBlockName("fill-color-5")})`,
+            points: "-3.69149156e-15 7 38 7 38 43 -3.69149156e-15 43"
+          }, null, 8, _hoisted_16),
+          createElementVNode("rect", {
+            fill: `url(#linearGradient-1-${unref(id2)})`,
+            transform: "translate(46.500000, 25.000000) scale(-1, 1) translate(-46.500000, -25.000000) ",
+            x: "38",
+            y: "7",
+            width: "17",
+            height: "36"
+          }, null, 8, _hoisted_17),
+          createElementVNode("polygon", {
+            fill: `var(${unref(ns).cssVarBlockName("fill-color-2")})`,
+            transform: "translate(39.500000, 3.500000) scale(-1, 1) translate(-39.500000, -3.500000) ",
+            points: "24 7 41 7 55 -3.63806207e-12 38 -3.63806207e-12"
+          }, null, 8, _hoisted_18)
+        ]),
+        createElementVNode("rect", {
+          fill: `url(#linearGradient-2-${unref(id2)})`,
+          x: "13",
+          y: "45",
+          width: "40",
+          height: "36"
+        }, null, 8, _hoisted_19),
+        createElementVNode("g", _hoisted_20, [createElementVNode("use", {
+          fill: `var(${unref(ns).cssVarBlockName("fill-color-8")})`,
+          transform: "translate(8.500000, 18.000000) scale(-1, 1) translate(-8.500000, -18.000000) ",
+          "xlink:href": `#path-3-${unref(id2)}`
+        }, null, 8, _hoisted_21), createElementVNode("polygon", {
+          fill: `var(${unref(ns).cssVarBlockName("fill-color-9")})`,
+          mask: `url(#mask-4-${unref(id2)})`,
+          transform: "translate(12.000000, 9.000000) scale(-1, 1) translate(-12.000000, -9.000000) ",
+          points: "7 0 24 0 20 18 7 16.5"
+        }, null, 8, _hoisted_22)]),
+        createElementVNode("polygon", {
+          fill: `var(${unref(ns).cssVarBlockName("fill-color-2")})`,
+          transform: "translate(66.000000, 51.500000) scale(-1, 1) translate(-66.000000, -51.500000) ",
+          points: "62 45 79 45 70 58 53 58"
+        }, null, 8, _hoisted_23)
+      ])])])]);
+    };
+  }
+});
+var img_empty_default = img_empty_vue_vue_type_script_setup_true_lang_default;
+const _hoisted_1$q = ["src"];
+const _hoisted_2$j = { key: 1 };
+var empty_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
+  name: "ElEmpty",
+  __name: "empty",
+  props: emptyProps,
+  setup(__props) {
+    const props = __props;
+    const { t } = useLocale();
+    const ns = useNamespace("empty");
+    const emptyDescription = computed(() => props.description || t("el.table.emptyText"));
+    const imageStyle = computed(() => ({ width: addUnit(props.imageSize) }));
+    return (_ctx, _cache) => {
+      return openBlock(), createElementBlock("div", { class: normalizeClass(unref(ns).b()) }, [
+        createElementVNode("div", {
+          class: normalizeClass(unref(ns).e("image")),
+          style: normalizeStyle(imageStyle.value)
+        }, [__props.image ? (openBlock(), createElementBlock("img", {
+          key: 0,
+          src: __props.image,
+          ondragstart: "return false"
+        }, null, 8, _hoisted_1$q)) : renderSlot(_ctx.$slots, "image", { key: 1 }, () => [createVNode(img_empty_default)])], 6),
+        createElementVNode("div", { class: normalizeClass(unref(ns).e("description")) }, [_ctx.$slots.description ? renderSlot(_ctx.$slots, "description", { key: 0 }) : (openBlock(), createElementBlock("p", _hoisted_2$j, toDisplayString$1(emptyDescription.value), 1))], 2),
+        _ctx.$slots.default ? (openBlock(), createElementBlock("div", {
+          key: 0,
+          class: normalizeClass(unref(ns).e("bottom"))
+        }, [renderSlot(_ctx.$slots, "default")], 2)) : createCommentVNode("v-if", true)
+      ], 2);
+    };
+  }
+});
+var empty_default = empty_vue_vue_type_script_setup_true_lang_default;
+const ElEmpty = withInstall(empty_default);
 const imageProps = buildProps({
   hideOnClickModal: Boolean,
   src: {
@@ -38752,7 +39336,7 @@ const imageViewerEmits = {
   switch: (index) => isNumber$2(index),
   rotate: (deg) => isNumber$2(deg)
 };
-const _hoisted_1$m = ["src", "crossorigin"];
+const _hoisted_1$p = ["src", "crossorigin"];
 var image_viewer_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
   name: "ElImageViewer",
   __name: "image-viewer",
@@ -38775,7 +39359,7 @@ var image_viewer_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ d
     const { t } = useLocale();
     const ns = useNamespace("image-viewer");
     const { nextZIndex } = useZIndex();
-    const wrapper = ref();
+    const wrapper3 = ref();
     const imgRef = ref();
     const scopeEventListener = effectScope();
     const scaleClamped = computed(() => {
@@ -38867,7 +39451,7 @@ var image_viewer_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ d
       });
       scopeEventListener.run(() => {
         useEventListener(document, "keydown", keydownHandler);
-        useEventListener(wrapper, "wheel", mousewheelHandler);
+        useEventListener(wrapper3, "wheel", mousewheelHandler);
       });
     }
     function unregisterEventListener() {
@@ -38883,7 +39467,7 @@ var image_viewer_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ d
       e.target.alt = t("el.image.error");
     }
     function handleMouseDown(e) {
-      if (loading.value || e.button !== 0 || !wrapper.value) return;
+      if (loading.value || e.button !== 0 || !wrapper3.value) return;
       transform2.value.enableTransition = false;
       const { offsetX, offsetY } = transform2.value;
       const startX = e.pageX;
@@ -38903,7 +39487,7 @@ var image_viewer_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ d
       e.preventDefault();
     }
     function handleTouchStart(e) {
-      if (loading.value || !wrapper.value || e.touches.length !== 1) return;
+      if (loading.value || !wrapper3.value || e.touches.length !== 1) return;
       transform2.value.enableTransition = false;
       const { offsetX, offsetY } = transform2.value;
       const { pageX: startX, pageY: startY } = e.touches[0];
@@ -39026,14 +39610,14 @@ var image_viewer_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ d
         }, {
           default: withCtx(() => [createElementVNode("div", {
             ref_key: "wrapper",
-            ref: wrapper,
+            ref: wrapper3,
             tabindex: -1,
             class: normalizeClass(unref(ns).e("wrapper")),
             style: normalizeStyle({ zIndex: zIndex2.value })
           }, [createVNode(unref(focus_trap_default$1), {
             loop: "",
             trapped: "",
-            "focus-trap-el": wrapper.value,
+            "focus-trap-el": wrapper3.value,
             "focus-start-el": "container",
             onFocusoutPrevented,
             onReleaseRequested: onCloseRequested
@@ -39121,7 +39705,7 @@ var image_viewer_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ d
                 onError: handleImgError,
                 onMousedown: handleMouseDown,
                 onTouchstart: handleTouchStart
-              }, null, 46, _hoisted_1$m))], 2),
+              }, null, 46, _hoisted_1$p))], 2),
               renderSlot(_ctx.$slots, "default")
             ]),
             _: 3
@@ -39135,12 +39719,12 @@ var image_viewer_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ d
 });
 var image_viewer_default = image_viewer_vue_vue_type_script_setup_true_lang_default;
 const ElImageViewer = withInstall(image_viewer_default);
-const _hoisted_1$l = [
+const _hoisted_1$o = [
   "src",
   "loading",
   "crossorigin"
 ];
-const _hoisted_2$g = { key: 0 };
+const _hoisted_2$i = { key: 0 };
 var image_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
   name: "ElImage",
   inheritAttrs: false,
@@ -39276,7 +39860,7 @@ var image_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineCo
         onClick: clickHandler,
         onLoad: handleLoad,
         onError: handleError
-      }), null, 16, _hoisted_1$l)) : createCommentVNode("v-if", true), isLoading.value ? (openBlock(), createElementBlock("div", {
+      }), null, 16, _hoisted_1$o)) : createCommentVNode("v-if", true), isLoading.value ? (openBlock(), createElementBlock("div", {
         key: 1,
         class: normalizeClass(unref(ns).e("wrapper"))
       }, [renderSlot(_ctx.$slots, "placeholder", {}, () => [createElementVNode("div", { class: normalizeClass(unref(ns).e("placeholder")) }, null, 2)])], 2)) : createCommentVNode("v-if", true)], 64)), preview.value ? (openBlock(), createElementBlock(Fragment, { key: 2 }, [showViewer.value ? (openBlock(), createBlock(unref(ElImageViewer), {
@@ -39298,7 +39882,7 @@ var image_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineCo
         onSwitch: switchViewer
       }, createSlots({
         toolbar: withCtx((toolbar) => [renderSlot(_ctx.$slots, "toolbar", normalizeProps(guardReactiveProps(toolbar)))]),
-        default: withCtx(() => [_ctx.$slots.viewer ? (openBlock(), createElementBlock("div", _hoisted_2$g, [renderSlot(_ctx.$slots, "viewer")])) : createCommentVNode("v-if", true)]),
+        default: withCtx(() => [_ctx.$slots.viewer ? (openBlock(), createElementBlock("div", _hoisted_2$i, [renderSlot(_ctx.$slots, "viewer")])) : createCommentVNode("v-if", true)]),
         _: 2
       }, [_ctx.$slots.progress ? {
         name: "progress",
@@ -39399,8 +39983,8 @@ const inputNumberEmits = {
   [INPUT_EVENT]: (val) => isNumber$2(val) || isNil(val),
   [UPDATE_MODEL_EVENT]: (val) => isNumber$2(val) || isNil(val)
 };
-const _hoisted_1$k = ["aria-label"];
-const _hoisted_2$f = ["aria-label"];
+const _hoisted_1$n = ["aria-label"];
+const _hoisted_2$h = ["aria-label"];
 var input_number_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
   name: "ElInputNumber",
   __name: "input-number",
@@ -39421,7 +40005,7 @@ var input_number_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ d
     const maxDisabled = computed(() => isNumber$2(props.modelValue) && props.modelValue >= props.max);
     const numPrecision = computed(() => {
       const stepPrecision = getPrecision(props.step);
-      if (!isUndefined(props.precision)) {
+      if (!isUndefined$1(props.precision)) {
         if (stepPrecision > props.precision) debugWarn("InputNumber", "precision should not be less than the decimal places of step");
         return props.precision;
       } else return Math.max(getPrecision(props.modelValue), stepPrecision);
@@ -39437,12 +40021,12 @@ var input_number_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ d
       if (isNil(currentValue)) return "";
       if (isNumber$2(currentValue)) {
         if (Number.isNaN(currentValue)) return "";
-        if (!isUndefined(props.precision)) currentValue = currentValue.toFixed(props.precision);
+        if (!isUndefined$1(props.precision)) currentValue = currentValue.toFixed(props.precision);
       }
       return currentValue;
     });
     const toPrecision = (num, pre) => {
-      if (isUndefined(pre)) pre = numPrecision.value;
+      if (isUndefined$1(pre)) pre = numPrecision.value;
       if (pre === 0) return Math.round(num);
       let snum = String(num);
       const pointPos = snum.indexOf(".");
@@ -39517,7 +40101,7 @@ var input_number_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ d
         newVal = toPrecision(Math.round(toPrecision(newVal / step2)) * step2, precision);
         if (newVal !== value) update && emit(UPDATE_MODEL_EVENT, newVal);
       }
-      if (!isUndefined(precision)) newVal = toPrecision(newVal, precision);
+      if (!isUndefined$1(precision)) newVal = toPrecision(newVal, precision);
       if (newVal > max || newVal < min) {
         newVal = newVal > max ? max : min;
         update && emit(UPDATE_MODEL_EVENT, newVal);
@@ -39630,7 +40214,7 @@ var input_number_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ d
         }, [renderSlot(_ctx.$slots, "decrease-icon", {}, () => [createVNode(unref(ElIcon), null, {
           default: withCtx(() => [controlsAtRight.value ? (openBlock(), createBlock(unref(arrow_down_default), { key: 0 })) : (openBlock(), createBlock(unref(minus_default), { key: 1 }))]),
           _: 1
-        })])], 42, _hoisted_1$k)), [[unref(vRepeatClick), decrease]]) : createCommentVNode("v-if", true),
+        })])], 42, _hoisted_1$n)), [[unref(vRepeatClick), decrease]]) : createCommentVNode("v-if", true),
         __props.controls ? withDirectives((openBlock(), createElementBlock("span", {
           key: 1,
           role: "button",
@@ -39640,7 +40224,7 @@ var input_number_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ d
         }, [renderSlot(_ctx.$slots, "increase-icon", {}, () => [createVNode(unref(ElIcon), null, {
           default: withCtx(() => [controlsAtRight.value ? (openBlock(), createBlock(unref(arrow_up_default), { key: 0 })) : (openBlock(), createBlock(unref(plus_default), { key: 1 }))]),
           _: 1
-        })])], 42, _hoisted_2$f)), [[unref(vRepeatClick), increase]]) : createCommentVNode("v-if", true),
+        })])], 42, _hoisted_2$h)), [[unref(vRepeatClick), increase]]) : createCommentVNode("v-if", true),
         createVNode(unref(ElInput), {
           id: __props.id,
           ref_key: "input",
@@ -39727,7 +40311,7 @@ const linkProps = buildProps({
   icon: { type: iconPropType }
 });
 const linkEmits = { click: (evt) => evt instanceof MouseEvent };
-const _hoisted_1$j = ["href", "target"];
+const _hoisted_1$m = ["href", "target"];
 var link_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
   name: "ElLink",
   __name: "link",
@@ -39779,7 +40363,7 @@ var link_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineCom
           class: normalizeClass(unref(ns).e("inner"))
         }, [renderSlot(_ctx.$slots, "default")], 2)) : createCommentVNode("v-if", true),
         _ctx.$slots.icon ? renderSlot(_ctx.$slots, "icon", { key: 2 }) : createCommentVNode("v-if", true)
-      ], 10, _hoisted_1$j);
+      ], 10, _hoisted_1$m);
     };
   }
 });
@@ -39796,12 +40380,12 @@ const paginationPrevProps = buildProps({
   prevIcon: { type: iconPropType }
 });
 const paginationPrevEmits = { click: (evt) => evt instanceof MouseEvent };
-const _hoisted_1$i = [
+const _hoisted_1$l = [
   "disabled",
   "aria-label",
   "aria-disabled"
 ];
-const _hoisted_2$e = { key: 0 };
+const _hoisted_2$g = { key: 0 };
 var prev_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
   name: "ElPaginationPrev",
   __name: "prev",
@@ -39819,10 +40403,10 @@ var prev_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineCom
         "aria-label": _ctx.prevText || unref(t)("el.pagination.prev"),
         "aria-disabled": internalDisabled.value,
         onClick: _cache[0] || (_cache[0] = ($event) => _ctx.$emit("click", $event))
-      }, [_ctx.prevText ? (openBlock(), createElementBlock("span", _hoisted_2$e, toDisplayString$1(_ctx.prevText), 1)) : (openBlock(), createBlock(unref(ElIcon), { key: 1 }, {
+      }, [_ctx.prevText ? (openBlock(), createElementBlock("span", _hoisted_2$g, toDisplayString$1(_ctx.prevText), 1)) : (openBlock(), createBlock(unref(ElIcon), { key: 1 }, {
         default: withCtx(() => [(openBlock(), createBlock(resolveDynamicComponent(_ctx.prevIcon)))]),
         _: 1
-      }))], 8, _hoisted_1$i);
+      }))], 8, _hoisted_1$l);
     };
   }
 });
@@ -39840,12 +40424,12 @@ const paginationNextProps = buildProps({
   nextText: { type: String },
   nextIcon: { type: iconPropType }
 });
-const _hoisted_1$h = [
+const _hoisted_1$k = [
   "disabled",
   "aria-label",
   "aria-disabled"
 ];
-const _hoisted_2$d = { key: 0 };
+const _hoisted_2$f = { key: 0 };
 var next_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
   name: "ElPaginationNext",
   __name: "next",
@@ -39863,10 +40447,10 @@ var next_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineCom
         "aria-label": _ctx.nextText || unref(t)("el.pagination.next"),
         "aria-disabled": internalDisabled.value,
         onClick: _cache[0] || (_cache[0] = ($event) => _ctx.$emit("click", $event))
-      }, [_ctx.nextText ? (openBlock(), createElementBlock("span", _hoisted_2$d, toDisplayString$1(_ctx.nextText), 1)) : (openBlock(), createBlock(unref(ElIcon), { key: 1 }, {
+      }, [_ctx.nextText ? (openBlock(), createElementBlock("span", _hoisted_2$f, toDisplayString$1(_ctx.nextText), 1)) : (openBlock(), createBlock(unref(ElIcon), { key: 1 }, {
         default: withCtx(() => [(openBlock(), createBlock(resolveDynamicComponent(_ctx.nextIcon)))]),
         _: 1
-      }))], 8, _hoisted_1$h);
+      }))], 8, _hoisted_1$k);
     };
   }
 });
@@ -39962,7 +40546,7 @@ const paginationJumperProps = buildProps({ size: {
   type: String,
   values: componentSizes
 } });
-const _hoisted_1$g = ["disabled"];
+const _hoisted_1$j = ["disabled"];
 var jumper_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
   name: "ElPaginationJumper",
   __name: "jumper",
@@ -40008,7 +40592,7 @@ var jumper_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineC
           "aria-label"
         ]),
         createElementVNode("span", { class: normalizeClass([unref(ns).e("classifier")]) }, toDisplayString$1(unref(t)("el.pagination.pageClassifier")), 3)
-      ], 10, _hoisted_1$g);
+      ], 10, _hoisted_1$j);
     };
   }
 });
@@ -40017,7 +40601,7 @@ const paginationTotalProps = buildProps({ total: {
   type: Number,
   default: 1e3
 } });
-const _hoisted_1$f = ["disabled"];
+const _hoisted_1$i = ["disabled"];
 var total_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
   name: "ElPaginationTotal",
   __name: "total",
@@ -40030,7 +40614,7 @@ var total_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineCo
       return openBlock(), createElementBlock("span", {
         class: normalizeClass(unref(ns).e("total")),
         disabled: unref(disabled)
-      }, toDisplayString$1(unref(t)("el.pagination.total", { total: _ctx.total })), 11, _hoisted_1$f);
+      }, toDisplayString$1(unref(t)("el.pagination.total", { total: _ctx.total })), 11, _hoisted_1$i);
     };
   }
 });
@@ -40050,13 +40634,13 @@ const paginationPagerProps = buildProps({
   },
   disabled: Boolean
 });
-const _hoisted_1$e = [
+const _hoisted_1$h = [
   "aria-current",
   "aria-label",
   "tabindex"
 ];
-const _hoisted_2$c = ["tabindex", "aria-label"];
-const _hoisted_3$8 = [
+const _hoisted_2$e = ["tabindex", "aria-label"];
+const _hoisted_3$9 = [
   "aria-current",
   "aria-label",
   "tabindex"
@@ -40181,7 +40765,7 @@ var pager_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineCo
           "aria-current": _ctx.currentPage === 1,
           "aria-label": unref(t)("el.pagination.currentPage", { pager: 1 }),
           tabindex: tabindex.value
-        }, " 1 ", 10, _hoisted_1$e)) : createCommentVNode("v-if", true),
+        }, " 1 ", 10, _hoisted_1$h)) : createCommentVNode("v-if", true),
         showPrevMore.value ? (openBlock(), createElementBlock("li", {
           key: 1,
           class: normalizeClass(prevMoreKls.value),
@@ -40191,7 +40775,7 @@ var pager_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineCo
           onMouseleave: _cache[1] || (_cache[1] = ($event) => quickPrevHover.value = false),
           onFocus: _cache[2] || (_cache[2] = ($event) => onFocus(true)),
           onBlur: _cache[3] || (_cache[3] = ($event) => quickPrevFocus.value = false)
-        }, [(quickPrevHover.value || quickPrevFocus.value) && !_ctx.disabled ? (openBlock(), createBlock(unref(d_arrow_left_default), { key: 0 })) : (openBlock(), createBlock(unref(more_filled_default), { key: 1 }))], 42, _hoisted_2$c)) : createCommentVNode("v-if", true),
+        }, [(quickPrevHover.value || quickPrevFocus.value) && !_ctx.disabled ? (openBlock(), createBlock(unref(d_arrow_left_default), { key: 0 })) : (openBlock(), createBlock(unref(more_filled_default), { key: 1 }))], 42, _hoisted_2$e)) : createCommentVNode("v-if", true),
         (openBlock(true), createElementBlock(Fragment, null, renderList(pagers.value, (pager) => {
           return openBlock(), createElementBlock("li", {
             key: pager,
@@ -40199,7 +40783,7 @@ var pager_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineCo
             "aria-current": _ctx.currentPage === pager,
             "aria-label": unref(t)("el.pagination.currentPage", { pager }),
             tabindex: tabindex.value
-          }, toDisplayString$1(pager), 11, _hoisted_3$8);
+          }, toDisplayString$1(pager), 11, _hoisted_3$9);
         }), 128)),
         showNextMore.value ? (openBlock(), createElementBlock("li", {
           key: 2,
@@ -40543,9 +41127,9 @@ const progressProps = buildProps({
     default: (percentage) => `${percentage}%`
   }
 });
-const _hoisted_1$d = ["aria-valuenow"];
-const _hoisted_2$b = { viewBox: "0 0 100 100" };
-const _hoisted_3$7 = [
+const _hoisted_1$g = ["aria-valuenow"];
+const _hoisted_2$d = { viewBox: "0 0 100 100" };
+const _hoisted_3$8 = [
   "d",
   "stroke",
   "stroke-linecap",
@@ -40686,7 +41270,7 @@ var progress_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defin
           height: `${__props.width}px`,
           width: `${__props.width}px`
         })
-      }, [(openBlock(), createElementBlock("svg", _hoisted_2$b, [createElementVNode("path", {
+      }, [(openBlock(), createElementBlock("svg", _hoisted_2$d, [createElementVNode("path", {
         class: normalizeClass(unref(ns).be("circle", "track")),
         d: trackPath.value,
         stroke: `var(${unref(ns).cssVarName("fill-color-light")}, #e5e9f2)`,
@@ -40694,7 +41278,7 @@ var progress_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defin
         "stroke-width": relativeStrokeWidth.value,
         fill: "none",
         style: normalizeStyle(trailPathStyle.value)
-      }, null, 14, _hoisted_3$7), createElementVNode("path", {
+      }, null, 14, _hoisted_3$8), createElementVNode("path", {
         class: normalizeClass(unref(ns).be("circle", "path")),
         d: trackPath.value,
         stroke: stroke.value,
@@ -40710,7 +41294,7 @@ var progress_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defin
       }, [renderSlot(_ctx.$slots, "default", { percentage: __props.percentage }, () => [!__props.status ? (openBlock(), createElementBlock("span", _hoisted_5$4, toDisplayString$1(content.value), 1)) : (openBlock(), createBlock(unref(ElIcon), { key: 1 }, {
         default: withCtx(() => [(openBlock(), createBlock(resolveDynamicComponent(statusIcon.value)))]),
         _: 1
-      }))])], 6)) : createCommentVNode("v-if", true)], 10, _hoisted_1$d);
+      }))])], 6)) : createCommentVNode("v-if", true)], 10, _hoisted_1$g);
     };
   }
 });
@@ -40802,7 +41386,7 @@ const rateEmits = {
   [CHANGE_EVENT]: (value) => isNumber$2(value),
   [UPDATE_MODEL_EVENT]: (value) => isNumber$2(value)
 };
-const _hoisted_1$c = [
+const _hoisted_1$f = [
   "id",
   "aria-label",
   "aria-labelledby",
@@ -40812,7 +41396,7 @@ const _hoisted_1$c = [
   "tabindex",
   "aria-disabled"
 ];
-const _hoisted_2$a = ["onMousemove", "onClick"];
+const _hoisted_2$c = ["onMousemove", "onClick"];
 var rate_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
   name: "ElRate",
   __name: "rate",
@@ -40998,17 +41582,193 @@ var rate_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineCom
             }, 8, ["style", "class"]), [[vShow, showDecimalIcon(item)]])
           ]),
           _: 2
-        }, 1032, ["class"])], 42, _hoisted_2$a);
+        }, 1032, ["class"])], 42, _hoisted_2$c);
       }), 128)), __props.showText || __props.showScore ? (openBlock(), createElementBlock("span", {
         key: 0,
         class: normalizeClass(unref(ns).e("text")),
         style: normalizeStyle({ color: __props.textColor })
-      }, toDisplayString$1(text.value), 7)) : createCommentVNode("v-if", true)], 46, _hoisted_1$c);
+      }, toDisplayString$1(text.value), 7)) : createCommentVNode("v-if", true)], 46, _hoisted_1$f);
     };
   }
 });
 var rate_default = rate_vue_vue_type_script_setup_true_lang_default;
 const ElRate = withInstall(rate_default);
+const IconMap = {
+  primary: "icon-primary",
+  success: "icon-success",
+  warning: "icon-warning",
+  error: "icon-error",
+  info: "icon-info"
+};
+const IconComponentMap = {
+  [IconMap.primary]: info_filled_default,
+  [IconMap.success]: circle_check_filled_default,
+  [IconMap.warning]: warning_filled_default,
+  [IconMap.error]: circle_close_filled_default,
+  [IconMap.info]: info_filled_default
+};
+const resultProps = buildProps({
+  title: {
+    type: String,
+    default: ""
+  },
+  subTitle: {
+    type: String,
+    default: ""
+  },
+  icon: {
+    type: String,
+    values: [
+      "primary",
+      "success",
+      "warning",
+      "info",
+      "error"
+    ],
+    default: "info"
+  }
+});
+var result_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
+  name: "ElResult",
+  __name: "result",
+  props: resultProps,
+  setup(__props) {
+    const props = __props;
+    const ns = useNamespace("result");
+    const resultIcon = computed(() => {
+      const icon = props.icon;
+      const iconClass = icon && IconMap[icon] ? IconMap[icon] : "icon-info";
+      return {
+        class: iconClass,
+        component: IconComponentMap[iconClass] || IconComponentMap["icon-info"]
+      };
+    });
+    return (_ctx, _cache) => {
+      return openBlock(), createElementBlock("div", { class: normalizeClass(unref(ns).b()) }, [
+        createElementVNode("div", { class: normalizeClass(unref(ns).e("icon")) }, [renderSlot(_ctx.$slots, "icon", {}, () => [resultIcon.value.component ? (openBlock(), createBlock(resolveDynamicComponent(resultIcon.value.component), {
+          key: 0,
+          class: normalizeClass(resultIcon.value.class)
+        }, null, 8, ["class"])) : createCommentVNode("v-if", true)])], 2),
+        __props.title || _ctx.$slots.title ? (openBlock(), createElementBlock("div", {
+          key: 0,
+          class: normalizeClass(unref(ns).e("title"))
+        }, [renderSlot(_ctx.$slots, "title", {}, () => [createElementVNode("p", null, toDisplayString$1(__props.title), 1)])], 2)) : createCommentVNode("v-if", true),
+        __props.subTitle || _ctx.$slots["sub-title"] ? (openBlock(), createElementBlock("div", {
+          key: 1,
+          class: normalizeClass(unref(ns).e("subtitle"))
+        }, [renderSlot(_ctx.$slots, "sub-title", {}, () => [createElementVNode("p", null, toDisplayString$1(__props.subTitle), 1)])], 2)) : createCommentVNode("v-if", true),
+        _ctx.$slots.extra ? (openBlock(), createElementBlock("div", {
+          key: 2,
+          class: normalizeClass(unref(ns).e("extra"))
+        }, [renderSlot(_ctx.$slots, "extra")], 2)) : createCommentVNode("v-if", true)
+      ], 2);
+    };
+  }
+});
+var result_default = result_vue_vue_type_script_setup_true_lang_default;
+const ElResult = withInstall(result_default);
+const HORIZONTAL = "horizontal";
+const useWheel = ({ atEndEdge, atStartEdge, layout }, onWheelDelta) => {
+  let frameHandle;
+  let offset = 0;
+  const hasReachedEdge = (offset2) => {
+    return offset2 < 0 && atStartEdge.value || offset2 > 0 && atEndEdge.value;
+  };
+  const onWheel = (e) => {
+    cAF(frameHandle);
+    let { deltaX, deltaY } = e;
+    if (e.shiftKey && deltaY !== 0) {
+      deltaX = deltaY;
+      deltaY = 0;
+    }
+    const newOffset = layout.value === HORIZONTAL ? deltaX : deltaY;
+    if (hasReachedEdge(newOffset)) return;
+    offset += newOffset;
+    if (!isFirefox() && newOffset !== 0) e.preventDefault();
+    frameHandle = rAF(() => {
+      onWheelDelta(offset);
+      offset = 0;
+    });
+  };
+  return {
+    hasReachedEdge,
+    onWheel
+  };
+};
+const skeletonProps = buildProps({
+  animated: Boolean,
+  count: {
+    type: Number,
+    default: 1
+  },
+  rows: {
+    type: Number,
+    default: 3
+  },
+  loading: {
+    type: Boolean,
+    default: true
+  },
+  throttle: { type: definePropType([Number, Object]) }
+});
+const skeletonItemProps = buildProps({ variant: {
+  type: String,
+  values: [
+    "circle",
+    "rect",
+    "h1",
+    "h3",
+    "text",
+    "caption",
+    "p",
+    "image",
+    "button"
+  ],
+  default: "text"
+} });
+var skeleton_item_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
+  name: "ElSkeletonItem",
+  __name: "skeleton-item",
+  props: skeletonItemProps,
+  setup(__props) {
+    const ns = useNamespace("skeleton");
+    return (_ctx, _cache) => {
+      return openBlock(), createElementBlock("div", { class: normalizeClass([unref(ns).e("item"), unref(ns).e(__props.variant)]) }, [__props.variant === "image" ? (openBlock(), createBlock(unref(picture_filled_default), { key: 0 })) : createCommentVNode("v-if", true)], 2);
+    };
+  }
+});
+var skeleton_item_default = skeleton_item_vue_vue_type_script_setup_true_lang_default;
+var skeleton_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
+  name: "ElSkeleton",
+  __name: "skeleton",
+  props: skeletonProps,
+  setup(__props, { expose: __expose }) {
+    const props = __props;
+    const ns = useNamespace("skeleton");
+    const uiLoading = useThrottleRender(toRef(props, "loading"), props.throttle);
+    __expose({ uiLoading });
+    return (_ctx, _cache) => {
+      return unref(uiLoading) ? (openBlock(), createElementBlock("div", mergeProps({
+        key: 0,
+        class: [unref(ns).b(), unref(ns).is("animated", __props.animated)]
+      }, _ctx.$attrs), [(openBlock(true), createElementBlock(Fragment, null, renderList(__props.count, (i) => {
+        return openBlock(), createElementBlock(Fragment, { key: i }, [unref(uiLoading) ? renderSlot(_ctx.$slots, "template", { key: i }, () => [createVNode(skeleton_item_default, {
+          class: normalizeClass(unref(ns).is("first")),
+          variant: "p"
+        }, null, 8, ["class"]), (openBlock(true), createElementBlock(Fragment, null, renderList(__props.rows, (item) => {
+          return openBlock(), createBlock(skeleton_item_default, {
+            key: item,
+            class: normalizeClass([unref(ns).e("paragraph"), unref(ns).is("last", item === __props.rows && __props.rows > 1)]),
+            variant: "p"
+          }, null, 8, ["class"]);
+        }), 128))]) : createCommentVNode("v-if", true)], 64);
+      }), 128))], 16)) : renderSlot(_ctx.$slots, "default", normalizeProps(mergeProps({ key: 1 }, _ctx.$attrs)));
+    };
+  }
+});
+var skeleton_default = skeleton_vue_vue_type_script_setup_true_lang_default;
+const ElSkeleton = withInstall(skeleton_default, { SkeletonItem: skeleton_item_default });
+const ElSkeletonItem = withNoopInstall(skeleton_item_default);
 const isValidComponentSize = (val) => ["", ...componentSizes].includes(val);
 const switchProps = buildProps({
   modelValue: {
@@ -41079,7 +41839,7 @@ const switchEmits = {
   [CHANGE_EVENT]: (val) => isBoolean$2(val) || isString$2(val) || isNumber$2(val),
   [INPUT_EVENT]: (val) => isBoolean$2(val) || isString$2(val) || isNumber$2(val)
 };
-const _hoisted_1$b = [
+const _hoisted_1$e = [
   "id",
   "aria-checked",
   "aria-disabled",
@@ -41090,13 +41850,13 @@ const _hoisted_1$b = [
   "disabled",
   "tabindex"
 ];
-const _hoisted_2$9 = ["aria-hidden"];
-const _hoisted_3$6 = { key: 1 };
+const _hoisted_2$b = ["aria-hidden"];
+const _hoisted_3$7 = { key: 1 };
 const _hoisted_4$5 = { key: 1 };
 const _hoisted_5$3 = ["aria-hidden"];
-const COMPONENT_NAME$1 = "ElSwitch";
+const COMPONENT_NAME$4 = "ElSwitch";
 var switch_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
-  name: COMPONENT_NAME$1,
+  name: COMPONENT_NAME$4,
   __name: "switch",
   props: switchProps,
   emits: switchEmits,
@@ -41163,11 +41923,11 @@ var switch_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineC
         return;
       }
       const shouldChange = beforeChange();
-      if (![isPromise$1(shouldChange), isBoolean$2(shouldChange)].includes(true)) throwError(COMPONENT_NAME$1, "beforeChange must return type `Promise<boolean>` or `boolean`");
+      if (![isPromise$1(shouldChange), isBoolean$2(shouldChange)].includes(true)) throwError(COMPONENT_NAME$4, "beforeChange must return type `Promise<boolean>` or `boolean`");
       if (isPromise$1(shouldChange)) shouldChange.then((result2) => {
         if (result2) handleChange();
       }).catch((e) => {
-        debugWarn(COMPONENT_NAME$1, `some error occurred: ${e}`);
+        debugWarn(COMPONENT_NAME$4, `some error occurred: ${e}`);
       });
       else if (shouldChange) handleChange();
     };
@@ -41204,7 +41964,7 @@ var switch_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineC
           tabindex: __props.tabindex,
           onChange: handleChange,
           onKeydown: withKeys(switchValue, ["enter"])
-        }, null, 42, _hoisted_1$b),
+        }, null, 42, _hoisted_1$e),
         !__props.inlinePrompt && (__props.inactiveIcon || __props.inactiveText || _ctx.$slots.inactive) ? (openBlock(), createElementBlock("span", {
           key: 0,
           class: normalizeClass(labelLeftKls.value)
@@ -41214,7 +41974,7 @@ var switch_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineC
         })) : createCommentVNode("v-if", true), !__props.inactiveIcon && __props.inactiveText ? (openBlock(), createElementBlock("span", {
           key: 1,
           "aria-hidden": checked.value
-        }, toDisplayString$1(__props.inactiveText), 9, _hoisted_2$9)) : createCommentVNode("v-if", true)])], 2)) : createCommentVNode("v-if", true),
+        }, toDisplayString$1(__props.inactiveText), 9, _hoisted_2$b)) : createCommentVNode("v-if", true)])], 2)) : createCommentVNode("v-if", true),
         createElementVNode("span", {
           class: normalizeClass(unref(ns).e("core")),
           style: normalizeStyle(coreStyle.value)
@@ -41227,7 +41987,7 @@ var switch_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineC
         }, [renderSlot(_ctx.$slots, "inactive", {}, () => [__props.inactiveIcon ? (openBlock(), createBlock(unref(ElIcon), { key: 0 }, {
           default: withCtx(() => [(openBlock(), createBlock(resolveDynamicComponent(__props.inactiveIcon)))]),
           _: 1
-        })) : createCommentVNode("v-if", true), !__props.inactiveIcon && __props.inactiveText ? (openBlock(), createElementBlock("span", _hoisted_3$6, toDisplayString$1(__props.inactiveText), 1)) : createCommentVNode("v-if", true)])], 2)) : (openBlock(), createElementBlock("div", {
+        })) : createCommentVNode("v-if", true), !__props.inactiveIcon && __props.inactiveText ? (openBlock(), createElementBlock("span", _hoisted_3$7, toDisplayString$1(__props.inactiveText), 1)) : createCommentVNode("v-if", true)])], 2)) : (openBlock(), createElementBlock("div", {
           key: 1,
           class: normalizeClass(unref(ns).e("inner-wrapper"))
         }, [renderSlot(_ctx.$slots, "active", {}, () => [__props.activeIcon ? (openBlock(), createBlock(unref(ElIcon), { key: 0 }, {
@@ -41357,13 +42117,13 @@ function mergeOptions(defaults, config) {
   for (key in defaults) options[key] = defaults[key];
   for (key in config) if (hasOwn$2(config, key)) {
     const value = config[key];
-    if (!isUndefined(value)) options[key] = value;
+    if (!isUndefined$1(value)) options[key] = value;
   }
   return options;
 }
 function parseWidth(width) {
   if (width === "") return width;
-  if (!isUndefined(width)) {
+  if (!isUndefined$1(width)) {
     width = Number.parseInt(width, 10);
     if (Number.isNaN(width)) width = "";
   }
@@ -41371,7 +42131,7 @@ function parseWidth(width) {
 }
 function parseMinWidth(minWidth) {
   if (minWidth === "") return minWidth;
-  if (!isUndefined(minWidth)) {
+  if (!isUndefined$1(minWidth)) {
     minWidth = parseWidth(minWidth);
     if (Number.isNaN(minWidth)) minWidth = 80;
   }
@@ -41825,7 +42585,7 @@ function useTree(watcherData) {
     const data = id2 && treeData.value[id2];
     if (id2 && data && "expanded" in data) {
       const oldExpanded = data.expanded;
-      expanded = isUndefined(expanded) ? !data.expanded : expanded;
+      expanded = isUndefined$1(expanded) ? !data.expanded : expanded;
       treeData.value[id2].expanded = expanded;
       if (oldExpanded !== expanded) instance.emit("expand-change", row, expanded);
       expanded && isUseLazy(data) && loadData(row, id2, data);
@@ -42838,9 +43598,9 @@ var filter_panel_vue_vue_type_script_lang_default = defineComponent({
     };
   }
 });
-const _hoisted_1$a = ["disabled"];
-const _hoisted_2$8 = ["tabindex", "aria-checked"];
-const _hoisted_3$5 = [
+const _hoisted_1$d = ["disabled"];
+const _hoisted_2$a = ["tabindex", "aria-checked"];
+const _hoisted_3$6 = [
   "tabindex",
   "aria-checked",
   "onClick"
@@ -42899,7 +43659,7 @@ function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
       disabled: _ctx.filteredValue.length === 0,
       type: "button",
       onClick: _cache[1] || (_cache[1] = (...args) => _ctx.handleConfirm && _ctx.handleConfirm(...args))
-    }, toDisplayString$1(_ctx.t("el.table.confirmFilter")), 11, _hoisted_1$a), createElementVNode("button", {
+    }, toDisplayString$1(_ctx.t("el.table.confirmFilter")), 11, _hoisted_1$d), createElementVNode("button", {
       type: "button",
       onClick: _cache[2] || (_cache[2] = (...args) => _ctx.handleReset && _ctx.handleReset(...args))
     }, toDisplayString$1(_ctx.t("el.table.resetFilter")), 1)], 2)], 2)) : (openBlock(), createElementBlock("ul", {
@@ -42915,7 +43675,7 @@ function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
       tabindex: _ctx.checkedIndex === 0 ? 0 : -1,
       "aria-checked": _ctx.isPropAbsent(_ctx.filterValue),
       onClick: _cache[3] || (_cache[3] = ($event) => _ctx.handleSelect(null, 0))
-    }, toDisplayString$1(_ctx.t("el.table.clearFilter")), 11, _hoisted_2$8), (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.filters, (filter, idx) => {
+    }, toDisplayString$1(_ctx.t("el.table.clearFilter")), 11, _hoisted_2$a), (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.filters, (filter, idx) => {
       return openBlock(), createElementBlock("li", {
         key: filter.value,
         role: "radio",
@@ -42923,7 +43683,7 @@ function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
         tabindex: _ctx.checkedIndex === idx + 1 ? 0 : -1,
         "aria-checked": _ctx.isActive(filter),
         onClick: ($event) => _ctx.handleSelect(filter.value, idx + 1)
-      }, toDisplayString$1(filter.text), 11, _hoisted_3$5);
+      }, toDisplayString$1(filter.text), 11, _hoisted_3$6);
     }), 128))], 34))]),
     default: withCtx(() => {
       var _a;
@@ -43577,7 +44337,7 @@ function useStyles(props) {
     getColspanRealWidth
   };
 }
-const _hoisted_1$9 = ["colspan", "rowspan"];
+const _hoisted_1$c = ["colspan", "rowspan"];
 var td_wrapper_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
   name: "TableTdWrapper",
   __name: "td-wrapper",
@@ -43596,7 +44356,7 @@ var td_wrapper_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ def
       return openBlock(), createElementBlock("td", {
         colspan: __props.colspan,
         rowspan: __props.rowspan
-      }, [renderSlot(_ctx.$slots, "default")], 8, _hoisted_1$9);
+      }, [renderSlot(_ctx.$slots, "default")], 8, _hoisted_1$c);
     };
   }
 });
@@ -44347,7 +45107,7 @@ function hColgroup(props) {
   const isAuto = props.tableLayout === "auto";
   let columns = props.columns || [];
   if (isAuto) {
-    if (columns.every(({ width }) => isUndefined(width))) columns = [];
+    if (columns.every(({ width }) => isUndefined$1(width))) columns = [];
   }
   const getPropsData = (column) => {
     const propsData = {
@@ -44509,8 +45269,8 @@ var table_vue_vue_type_script_lang_default = defineComponent({
     };
   }
 });
-const _hoisted_1$8 = ["data-prefix"];
-const _hoisted_2$7 = {
+const _hoisted_1$b = ["data-prefix"];
+const _hoisted_2$9 = {
   ref: "hiddenColumns",
   class: "hidden-columns"
 };
@@ -44549,7 +45309,7 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
     ref: "tableInnerWrapper",
     class: normalizeClass(_ctx.ns.e("inner-wrapper"))
   }, [
-    createElementVNode("div", _hoisted_2$7, [renderSlot(_ctx.$slots, "default")], 512),
+    createElementVNode("div", _hoisted_2$9, [renderSlot(_ctx.$slots, "default")], 512),
     _ctx.showHeader && _ctx.tableLayout === "fixed" ? withDirectives((openBlock(), createElementBlock("div", {
       key: 0,
       ref: "headerWrapper",
@@ -44714,7 +45474,7 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
   ], 2), withDirectives(createElementVNode("div", {
     ref: "resizeProxy",
     class: normalizeClass(_ctx.ns.e("column-resize-proxy"))
-  }, null, 2), [[vShow, _ctx.resizeProxyVisible]])], 46, _hoisted_1$8);
+  }, null, 2), [[vShow, _ctx.resizeProxyVisible]])], 46, _hoisted_1$b);
 }
 var table_default = /* @__PURE__ */ _plugin_vue_export_helper_default(table_vue_vue_type_script_lang_default, [["render", _sfc_render$1]]);
 const defaultClassNames = {
@@ -44924,7 +45684,7 @@ function useWatcher(owner, props_) {
     parentProps.forEach((key) => {
       if (hasOwn$2(owner.value.props, key)) watch(() => owner.value.props[key], (newVal) => {
         if (instance.columnConfig.value.type === "selection") return;
-        if (!isUndefined(props_[key])) return;
+        if (!isUndefined$1(props_[key])) return;
         instance.columnConfig.value[key] = newVal;
       });
     });
@@ -44934,7 +45694,7 @@ function useWatcher(owner, props_) {
       return (_a = globalConfig2.value) == null ? void 0 : _a.showOverflowTooltip;
     }, (newVal) => {
       if (instance.columnConfig.value.type === "selection") return;
-      if (!isUndefined(props_.showOverflowTooltip) || !isUndefined(owner.value.props.showOverflowTooltip)) return;
+      if (!isUndefined$1(props_.showOverflowTooltip) || !isUndefined$1(owner.value.props.showOverflowTooltip)) return;
       instance.columnConfig.value.showOverflowTooltip = newVal;
     });
   };
@@ -44977,7 +45737,7 @@ function useRender(props, slots, owner) {
     if (realMinWidth.value) column.minWidth = realMinWidth.value;
     if (!realWidth.value && realMinWidth.value) column.width = void 0;
     if (!column.minWidth) column.minWidth = 80;
-    column.realWidth = Number(isUndefined(column.width) ? column.minWidth : column.width);
+    column.realWidth = Number(isUndefined$1(column.width) ? column.minWidth : column.width);
     return column;
   };
   const setColumnForcedProps = (column) => {
@@ -44985,7 +45745,7 @@ function useRender(props, slots, owner) {
     const source = cellForced[type4] || {};
     Object.keys(source).forEach((prop) => {
       const value = source[prop];
-      if (prop !== "className" && !isUndefined(value)) column[prop] = value;
+      if (prop !== "className" && !isUndefined$1(value)) column[prop] = value;
     });
     const className = getDefaultClassName(type4);
     if (className) {
@@ -45173,8 +45933,8 @@ var table_column_default = defineComponent({
       isSubColumn.value = owner.value !== parent2;
       const type4 = props.type || "default";
       const sortable = props.sortable === "" ? true : props.sortable;
-      const showOverflowTooltip = type4 === "selection" ? false : isUndefined(props.showOverflowTooltip) ? parent2.props.showOverflowTooltip ?? ((_a = globalConfig2.value) == null ? void 0 : _a.showOverflowTooltip) : props.showOverflowTooltip;
-      const tooltipFormatter = isUndefined(props.tooltipFormatter) ? parent2.props.tooltipFormatter ?? ((_b = globalConfig2.value) == null ? void 0 : _b.tooltipFormatter) : props.tooltipFormatter;
+      const showOverflowTooltip = type4 === "selection" ? false : isUndefined$1(props.showOverflowTooltip) ? parent2.props.showOverflowTooltip ?? ((_a = globalConfig2.value) == null ? void 0 : _a.showOverflowTooltip) : props.showOverflowTooltip;
+      const tooltipFormatter = isUndefined$1(props.tooltipFormatter) ? parent2.props.tooltipFormatter ?? ((_b = globalConfig2.value) == null ? void 0 : _b.tooltipFormatter) : props.tooltipFormatter;
       const defaults = {
         ...cellStarts[type4],
         id: columnId.value,
@@ -45263,10 +46023,597 @@ var table_column_default = defineComponent({
 var tableColumn_default = table_column_default;
 const ElTable = withInstall(table_default, { TableColumn: tableColumn_default });
 const ElTableColumn = withNoopInstall(tableColumn_default);
+const tabsRootContextKey = Symbol("tabsRootContextKey");
+const tabBarProps = buildProps({
+  tabs: {
+    type: definePropType(Array),
+    default: () => mutable([])
+  },
+  tabRefs: {
+    type: definePropType(Object),
+    default: () => mutable({})
+  }
+});
+const COMPONENT_NAME$3 = "ElTabBar";
+var tab_bar_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
+  name: COMPONENT_NAME$3,
+  __name: "tab-bar",
+  props: tabBarProps,
+  setup(__props, { expose: __expose }) {
+    const props = __props;
+    const rootTabs = inject(tabsRootContextKey);
+    if (!rootTabs) throwError(COMPONENT_NAME$3, "<el-tabs><el-tab-bar /></el-tabs>");
+    const ns = useNamespace("tabs");
+    const barRef = ref();
+    const barStyle = ref();
+    const renderActiveBar = computed(() => {
+      var _a;
+      return isUndefined$1(rootTabs.props.defaultValue) || Boolean((_a = barStyle.value) == null ? void 0 : _a.transform);
+    });
+    const getBarStyle = () => {
+      let offset = 0;
+      let tabSize = 0;
+      const sizeName = ["top", "bottom"].includes(rootTabs.props.tabPosition) ? "width" : "height";
+      const sizeDir = sizeName === "width" ? "x" : "y";
+      const position = sizeDir === "x" ? "left" : "top";
+      props.tabs.every((tab) => {
+        if (isUndefined$1(tab.paneName)) return false;
+        const $el = props.tabRefs[tab.paneName];
+        if (!$el) return false;
+        if (!tab.active) return true;
+        offset = $el[`offset${capitalize$1(position)}`];
+        tabSize = $el[`client${capitalize$1(sizeName)}`];
+        const tabStyles = window.getComputedStyle($el);
+        if (sizeName === "width") {
+          tabSize -= Number.parseFloat(tabStyles.paddingLeft) + Number.parseFloat(tabStyles.paddingRight);
+          offset += Number.parseFloat(tabStyles.paddingLeft);
+        }
+        return false;
+      });
+      return {
+        [sizeName]: `${tabSize}px`,
+        transform: `translate${capitalize$1(sizeDir)}(${offset}px)`
+      };
+    };
+    const update = () => barStyle.value = getBarStyle();
+    const tabObservers = [];
+    const observerTabs = () => {
+      tabObservers.forEach((observer) => observer.stop());
+      tabObservers.length = 0;
+      Object.values(props.tabRefs).forEach((tab) => {
+        tabObservers.push(useResizeObserver(tab, update));
+      });
+    };
+    watch(() => props.tabs, async () => {
+      await nextTick();
+      update();
+      observerTabs();
+    }, { immediate: true });
+    const barObserver = useResizeObserver(barRef, () => update());
+    onBeforeUnmount(() => {
+      tabObservers.forEach((observer) => observer.stop());
+      tabObservers.length = 0;
+      barObserver.stop();
+    });
+    __expose({
+      ref: barRef,
+      update
+    });
+    return (_ctx, _cache) => {
+      return renderActiveBar.value ? (openBlock(), createElementBlock("div", {
+        key: 0,
+        ref_key: "barRef",
+        ref: barRef,
+        class: normalizeClass([unref(ns).e("active-bar"), unref(ns).is(unref(rootTabs).props.tabPosition)]),
+        style: normalizeStyle(barStyle.value)
+      }, null, 6)) : createCommentVNode("v-if", true);
+    };
+  }
+});
+var tab_bar_default = tab_bar_vue_vue_type_script_setup_true_lang_default;
+const tabNavProps = buildProps({
+  panes: {
+    type: definePropType(Array),
+    default: () => mutable([])
+  },
+  currentName: {
+    type: [String, Number],
+    default: ""
+  },
+  editable: Boolean,
+  type: {
+    type: String,
+    values: [
+      "card",
+      "border-card",
+      ""
+    ],
+    default: ""
+  },
+  stretch: Boolean,
+  tabindex: {
+    type: [String, Number],
+    default: void 0
+  }
+});
+const tabNavEmits = {
+  tabClick: (tab, tabName, ev) => ev instanceof Event,
+  tabRemove: (tab, ev) => ev instanceof Event
+};
+const COMPONENT_NAME$2 = "ElTabNav";
+const TabNav = /* @__PURE__ */ defineComponent({
+  name: COMPONENT_NAME$2,
+  props: tabNavProps,
+  emits: tabNavEmits,
+  setup(props, { expose, emit }) {
+    const rootTabs = inject(tabsRootContextKey);
+    if (!rootTabs) throwError(COMPONENT_NAME$2, `<el-tabs><tab-nav /></el-tabs>`);
+    const ns = useNamespace("tabs");
+    const visibility = useDocumentVisibility();
+    const focused = useWindowFocus();
+    const navScroll$ = ref();
+    const nav$ = ref();
+    const el$ = ref();
+    const tabRefsMap = ref({});
+    const tabBarRef = ref();
+    const scrollable = ref(false);
+    const navOffset = ref(0);
+    const isFocus = ref(false);
+    const focusable = ref(true);
+    const tracker = shallowRef();
+    const isHorizontal = computed(() => ["top", "bottom"].includes(rootTabs.props.tabPosition));
+    const sizeName = computed(() => isHorizontal.value ? "width" : "height");
+    const navStyle = computed(() => {
+      return { transform: `translate${sizeName.value === "width" ? "X" : "Y"}(-${navOffset.value}px)` };
+    });
+    const { width: navContainerWidth, height: navContainerHeight } = useElementSize(navScroll$);
+    const { width: navWidth, height: navHeight } = useElementSize(nav$, {
+      width: 0,
+      height: 0
+    }, { box: "border-box" });
+    const navContainerSize = computed(() => isHorizontal.value ? navContainerWidth.value : navContainerHeight.value);
+    const navSize = computed(() => isHorizontal.value ? navWidth.value : navHeight.value);
+    const { onWheel } = useWheel({
+      atStartEdge: computed(() => navOffset.value <= 0),
+      atEndEdge: computed(() => navSize.value - navOffset.value <= navContainerSize.value),
+      layout: computed(() => isHorizontal.value ? "horizontal" : "vertical")
+    }, (offset) => {
+      navOffset.value = clamp$1(navOffset.value + offset, 0, navSize.value - navContainerSize.value);
+    });
+    const scrollPrev = () => {
+      if (!navScroll$.value) return;
+      const containerSize = navScroll$.value[`offset${capitalize$1(sizeName.value)}`];
+      const currentOffset = navOffset.value;
+      if (!currentOffset) return;
+      navOffset.value = currentOffset > containerSize ? currentOffset - containerSize : 0;
+    };
+    const scrollNext = () => {
+      if (!navScroll$.value || !nav$.value) return;
+      const navSize2 = nav$.value[`offset${capitalize$1(sizeName.value)}`];
+      const containerSize = navScroll$.value[`offset${capitalize$1(sizeName.value)}`];
+      const currentOffset = navOffset.value;
+      if (navSize2 - currentOffset <= containerSize) return;
+      navOffset.value = navSize2 - currentOffset > containerSize * 2 ? currentOffset + containerSize : navSize2 - containerSize;
+    };
+    const scrollToActiveTab = async () => {
+      const nav = nav$.value;
+      if (!scrollable.value || !el$.value || !navScroll$.value || !nav) return;
+      await nextTick();
+      const activeTab = tabRefsMap.value[props.currentName];
+      if (!activeTab) return;
+      const navScroll = navScroll$.value;
+      const activeTabBounding = activeTab.getBoundingClientRect();
+      const navScrollBounding = navScroll.getBoundingClientRect();
+      const maxOffset = isHorizontal.value ? nav.offsetWidth - navScrollBounding.width : nav.offsetHeight - navScrollBounding.height;
+      const currentOffset = navOffset.value;
+      let newOffset = currentOffset;
+      if (isHorizontal.value) {
+        if (activeTabBounding.left < navScrollBounding.left) newOffset = currentOffset - (navScrollBounding.left - activeTabBounding.left);
+        if (activeTabBounding.right > navScrollBounding.right) newOffset = currentOffset + activeTabBounding.right - navScrollBounding.right;
+      } else {
+        if (activeTabBounding.top < navScrollBounding.top) newOffset = currentOffset - (navScrollBounding.top - activeTabBounding.top);
+        if (activeTabBounding.bottom > navScrollBounding.bottom) newOffset = currentOffset + (activeTabBounding.bottom - navScrollBounding.bottom);
+      }
+      newOffset = Math.max(newOffset, 0);
+      navOffset.value = Math.min(newOffset, maxOffset);
+    };
+    const update = () => {
+      var _a;
+      if (!nav$.value || !navScroll$.value) return;
+      props.stretch && ((_a = tabBarRef.value) == null ? void 0 : _a.update());
+      const navSize2 = nav$.value[`offset${capitalize$1(sizeName.value)}`];
+      const containerSize = navScroll$.value[`offset${capitalize$1(sizeName.value)}`];
+      const currentOffset = navOffset.value;
+      if (containerSize < navSize2) {
+        scrollable.value = scrollable.value || {};
+        scrollable.value.prev = currentOffset;
+        scrollable.value.next = currentOffset + containerSize < navSize2;
+        if (navSize2 - currentOffset < containerSize) navOffset.value = navSize2 - containerSize;
+      } else {
+        scrollable.value = false;
+        if (currentOffset > 0) navOffset.value = 0;
+      }
+    };
+    const changeTab = (event) => {
+      const code = getEventCode(event);
+      let step2 = 0;
+      switch (code) {
+        case EVENT_CODE.left:
+        case EVENT_CODE.up:
+          step2 = -1;
+          break;
+        case EVENT_CODE.right:
+        case EVENT_CODE.down:
+          step2 = 1;
+          break;
+        default:
+          return;
+      }
+      const tabList = Array.from(event.currentTarget.querySelectorAll("[role=tab]:not(.is-disabled)"));
+      let nextIndex = tabList.indexOf(event.target) + step2;
+      if (nextIndex < 0) nextIndex = tabList.length - 1;
+      else if (nextIndex >= tabList.length) nextIndex = 0;
+      tabList[nextIndex].focus({ preventScroll: true });
+      tabList[nextIndex].click();
+      setFocus();
+    };
+    const setFocus = () => {
+      if (focusable.value) isFocus.value = true;
+    };
+    const removeFocus = () => isFocus.value = false;
+    const setRefs = (el, key) => {
+      tabRefsMap.value[key] = el;
+    };
+    const focusActiveTab = async () => {
+      var _a;
+      await nextTick();
+      (_a = tabRefsMap.value[props.currentName]) == null ? void 0 : _a.focus({ preventScroll: true });
+    };
+    watch(visibility, (visibility2) => {
+      if (visibility2 === "hidden") focusable.value = false;
+      else if (visibility2 === "visible") setTimeout(() => focusable.value = true, 50);
+    });
+    watch(focused, (focused2) => {
+      if (focused2) setTimeout(() => focusable.value = true, 50);
+      else focusable.value = false;
+    });
+    useResizeObserver(el$, () => {
+      rAF(update);
+    });
+    onMounted(() => setTimeout(() => scrollToActiveTab(), 0));
+    onUpdated(() => update());
+    expose({
+      scrollToActiveTab,
+      removeFocus,
+      focusActiveTab,
+      tabListRef: nav$,
+      tabBarRef,
+      scheduleRender: () => triggerRef(tracker)
+    });
+    return () => {
+      const scrollBtn = scrollable.value ? [createVNode("span", {
+        "class": [ns.e("nav-prev"), ns.is("disabled", !scrollable.value.prev)],
+        "onClick": scrollPrev
+      }, [createVNode(ElIcon, null, { default: () => [createVNode(arrow_left_default, null, null)] })]), createVNode("span", {
+        "class": [ns.e("nav-next"), ns.is("disabled", !scrollable.value.next)],
+        "onClick": scrollNext
+      }, [createVNode(ElIcon, null, { default: () => [createVNode(arrow_right_default, null, null)] })])] : null;
+      const tabs = props.panes.map((pane, index) => {
+        var _a, _b;
+        const uid = pane.uid;
+        const disabled = pane.props.disabled;
+        const tabName = pane.props.name ?? pane.index ?? `${index}`;
+        const closable = !disabled && (pane.isClosable || pane.props.closable !== false && props.editable);
+        pane.index = `${index}`;
+        const btnClose = closable ? createVNode(ElIcon, {
+          "class": "is-icon-close",
+          "onClick": (ev) => emit("tabRemove", pane, ev)
+        }, { default: () => [createVNode(close_default, null, null)] }) : null;
+        const tabLabelContent = ((_b = (_a = pane.slots).label) == null ? void 0 : _b.call(_a)) || pane.props.label;
+        const tabindex = !disabled && pane.active ? props.tabindex ?? rootTabs.props.tabindex : -1;
+        return createVNode("div", {
+          "ref": (el) => setRefs(el, tabName),
+          "class": [
+            ns.e("item"),
+            ns.is(rootTabs.props.tabPosition),
+            ns.is("active", pane.active),
+            ns.is("disabled", disabled),
+            ns.is("closable", closable),
+            ns.is("focus", isFocus.value)
+          ],
+          "id": `tab-${tabName}`,
+          "key": `tab-${uid}`,
+          "aria-controls": `pane-${tabName}`,
+          "role": "tab",
+          "aria-selected": pane.active,
+          "tabindex": tabindex,
+          "onFocus": () => setFocus(),
+          "onBlur": () => removeFocus(),
+          "onClick": (ev) => {
+            removeFocus();
+            emit("tabClick", pane, tabName, ev);
+          },
+          "onKeydown": (ev) => {
+            const code = getEventCode(ev);
+            if (closable && (code === EVENT_CODE.delete || code === EVENT_CODE.backspace)) emit("tabRemove", pane, ev);
+          }
+        }, [...[tabLabelContent, btnClose]]);
+      });
+      tracker.value;
+      return createVNode("div", {
+        "ref": el$,
+        "class": [
+          ns.e("nav-wrap"),
+          ns.is("scrollable", !!scrollable.value),
+          ns.is(rootTabs.props.tabPosition)
+        ]
+      }, [scrollBtn, createVNode("div", {
+        "class": ns.e("nav-scroll"),
+        "ref": navScroll$
+      }, [props.panes.length > 0 ? createVNode("div", {
+        "class": [
+          ns.e("nav"),
+          ns.is(rootTabs.props.tabPosition),
+          ns.is("stretch", props.stretch && ["top", "bottom"].includes(rootTabs.props.tabPosition))
+        ],
+        "ref": nav$,
+        "style": navStyle.value,
+        "role": "tablist",
+        "onKeydown": changeTab,
+        "onWheel": onWheel
+      }, [...[!props.type ? createVNode(tab_bar_default, {
+        "ref": tabBarRef,
+        "tabs": [...props.panes],
+        "tabRefs": tabRefsMap.value
+      }, null) : null, tabs]]) : null])]);
+    };
+  }
+});
+const tabsProps = buildProps({
+  type: {
+    type: String,
+    values: [
+      "card",
+      "border-card",
+      ""
+    ],
+    default: ""
+  },
+  closable: Boolean,
+  addable: Boolean,
+  modelValue: { type: [String, Number] },
+  defaultValue: { type: [String, Number] },
+  editable: Boolean,
+  tabPosition: {
+    type: String,
+    values: [
+      "top",
+      "right",
+      "bottom",
+      "left"
+    ],
+    default: "top"
+  },
+  beforeLeave: {
+    type: definePropType(Function),
+    default: () => true
+  },
+  stretch: Boolean,
+  tabindex: {
+    type: [String, Number],
+    default: 0
+  }
+});
+const isPaneName = (value) => isString$2(value) || isNumber$2(value);
+const tabsEmits = {
+  [UPDATE_MODEL_EVENT]: (name) => isPaneName(name),
+  tabClick: (pane, ev) => ev instanceof Event,
+  tabChange: (name) => isPaneName(name),
+  edit: (paneName, action) => ["remove", "add"].includes(action),
+  tabRemove: (name) => isPaneName(name),
+  tabAdd: () => true
+};
+const Tabs = /* @__PURE__ */ defineComponent({
+  name: "ElTabs",
+  props: tabsProps,
+  emits: tabsEmits,
+  setup(props, { emit, slots, expose }) {
+    const ns = useNamespace("tabs");
+    const isVertical = computed(() => ["left", "right"].includes(props.tabPosition));
+    const { children: panes, addChild: registerPane, removeChild: unregisterPane, ChildrenSorter: PanesSorter } = useOrderedChildren(getCurrentInstance(), "ElTabPane");
+    const nav$ = ref();
+    const currentName = ref((isUndefined$1(props.modelValue) ? props.defaultValue : props.modelValue) ?? "0");
+    const setCurrentName = async (value, trigger = false) => {
+      var _a, _b, _c, _d2;
+      if (currentName.value === value || isUndefined$1(value)) return;
+      try {
+        let canLeave;
+        if (props.beforeLeave) {
+          const result2 = props.beforeLeave(value, currentName.value);
+          canLeave = result2 instanceof Promise ? await result2 : result2;
+        } else canLeave = true;
+        if (canLeave !== false) {
+          const isFocusInsidePane = (_a = panes.value.find((item) => item.paneName === currentName.value)) == null ? void 0 : _a.isFocusInsidePane();
+          currentName.value = value;
+          if (trigger) {
+            emit(UPDATE_MODEL_EVENT, value);
+            emit("tabChange", value);
+          }
+          (_c = (_b = nav$.value) == null ? void 0 : _b.removeFocus) == null ? void 0 : _c.call(_b);
+          if (isFocusInsidePane) (_d2 = nav$.value) == null ? void 0 : _d2.focusActiveTab();
+        }
+      } catch {
+      }
+    };
+    const handleTabClick = (tab, tabName, event) => {
+      if (tab.props.disabled) return;
+      emit("tabClick", tab, event);
+      setCurrentName(tabName, true);
+    };
+    const handleTabRemove = (pane, ev) => {
+      if (pane.props.disabled || isUndefined$1(pane.props.name)) return;
+      ev.stopPropagation();
+      emit("edit", pane.props.name, "remove");
+      emit("tabRemove", pane.props.name);
+    };
+    const handleTabAdd = () => {
+      emit("edit", void 0, "add");
+      emit("tabAdd");
+    };
+    const handleKeydown = (event) => {
+      const code = getEventCode(event);
+      if ([EVENT_CODE.enter, EVENT_CODE.numpadEnter].includes(code)) handleTabAdd();
+    };
+    const swapChildren = (vnode) => {
+      const actualFirstChild = vnode.el.firstChild;
+      const firstChild = ["bottom", "right"].includes(props.tabPosition) ? vnode.children[0].el : vnode.children[1].el;
+      if (actualFirstChild !== firstChild) actualFirstChild.before(firstChild);
+    };
+    watch(() => props.modelValue, (modelValue) => setCurrentName(modelValue));
+    watch(currentName, async () => {
+      var _a;
+      await nextTick();
+      (_a = nav$.value) == null ? void 0 : _a.scrollToActiveTab();
+    });
+    provide(tabsRootContextKey, {
+      props,
+      currentName,
+      registerPane,
+      unregisterPane,
+      nav$
+    });
+    expose({
+      currentName,
+      get tabNavRef() {
+        return omit(nav$.value, ["scheduleRender"]);
+      }
+    });
+    return () => {
+      const addSlot = slots["add-icon"];
+      const newButton = props.editable || props.addable ? createVNode("div", {
+        "class": [ns.e("new-tab"), isVertical.value && ns.e("new-tab-vertical")],
+        "tabindex": props.tabindex,
+        "onClick": handleTabAdd,
+        "onKeydown": handleKeydown
+      }, [addSlot ? renderSlot(slots, "add-icon") : createVNode(ElIcon, { "class": ns.is("icon-plus") }, { default: () => [createVNode(plus_default, null, null)] })]) : null;
+      const tabNav = () => createVNode(TabNav, {
+        "ref": nav$,
+        "currentName": currentName.value,
+        "editable": props.editable,
+        "type": props.type,
+        "panes": panes.value,
+        "stretch": props.stretch,
+        "onTabClick": handleTabClick,
+        "onTabRemove": handleTabRemove
+      }, null);
+      const header = createVNode("div", { "class": [
+        ns.e("header"),
+        isVertical.value && ns.e("header-vertical"),
+        ns.is(props.tabPosition)
+      ] }, [createVNode(PanesSorter, null, {
+        default: tabNav,
+        $stable: true
+      }), newButton]);
+      const panels = createVNode("div", { "class": ns.e("content") }, [renderSlot(slots, "default")]);
+      return createVNode("div", {
+        "class": [
+          ns.b(),
+          ns.m(props.tabPosition),
+          {
+            [ns.m("card")]: props.type === "card",
+            [ns.m("border-card")]: props.type === "border-card"
+          }
+        ],
+        "onVnodeMounted": swapChildren,
+        "onVnodeUpdated": swapChildren
+      }, [panels, header]);
+    };
+  }
+});
+const tabPaneProps = buildProps({
+  label: {
+    type: String,
+    default: ""
+  },
+  name: { type: [String, Number] },
+  closable: {
+    type: Boolean,
+    default: void 0
+  },
+  disabled: Boolean,
+  lazy: Boolean
+});
+const _hoisted_1$a = [
+  "id",
+  "aria-hidden",
+  "aria-labelledby"
+];
+const COMPONENT_NAME$1 = "ElTabPane";
+var tab_pane_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
+  name: COMPONENT_NAME$1,
+  __name: "tab-pane",
+  props: tabPaneProps,
+  setup(__props) {
+    const props = __props;
+    const instance = getCurrentInstance();
+    const slots = useSlots();
+    const tabsRoot = inject(tabsRootContextKey);
+    if (!tabsRoot) throwError(COMPONENT_NAME$1, "usage: <el-tabs><el-tab-pane /></el-tabs/>");
+    const ns = useNamespace("tab-pane");
+    const paneRef = ref();
+    const index = ref();
+    const isClosable = computed(() => props.closable ?? tabsRoot.props.closable);
+    const active = computed(() => tabsRoot.currentName.value === (props.name ?? index.value));
+    const loaded = ref(active.value);
+    const paneName = computed(() => props.name ?? index.value);
+    const shouldBeRender = computed(() => !props.lazy || loaded.value || active.value);
+    const isFocusInsidePane = () => {
+      var _a;
+      return (_a = paneRef.value) == null ? void 0 : _a.contains(document.activeElement);
+    };
+    watch(active, (val) => {
+      if (val) loaded.value = true;
+    });
+    const pane = reactive({
+      uid: instance.uid,
+      getVnode: () => instance.vnode,
+      slots,
+      props,
+      paneName,
+      active,
+      index,
+      isClosable,
+      isFocusInsidePane
+    });
+    tabsRoot.registerPane(pane);
+    onBeforeUnmount(() => {
+      tabsRoot.unregisterPane(pane);
+    });
+    onBeforeUpdate(() => {
+      var _a;
+      if (slots.label) (_a = tabsRoot.nav$.value) == null ? void 0 : _a.scheduleRender();
+    });
+    return (_ctx, _cache) => {
+      return shouldBeRender.value ? withDirectives((openBlock(), createElementBlock("div", {
+        key: 0,
+        id: `pane-${paneName.value}`,
+        ref_key: "paneRef",
+        ref: paneRef,
+        class: normalizeClass(unref(ns).b()),
+        role: "tabpanel",
+        "aria-hidden": !active.value,
+        "aria-labelledby": `tab-${paneName.value}`
+      }, [renderSlot(_ctx.$slots, "default")], 10, _hoisted_1$a)), [[vShow, active.value]]) : createCommentVNode("v-if", true);
+    };
+  }
+});
+var tab_pane_default = tab_pane_vue_vue_type_script_setup_true_lang_default;
+const ElTabs = withInstall(Tabs, { TabPane: tab_pane_default });
+const ElTabPane = withNoopInstall(tab_pane_default);
 const SCOPE$1 = "ElUpload";
 var UploadAjaxError = class extends Error {
-  constructor(message, status, method4, url2) {
-    super(message);
+  constructor(message2, status, method4, url2) {
+    super(message2);
     this.name = "UploadAjaxError";
     this.status = status;
     this.method = method4;
@@ -45485,13 +46832,13 @@ const uploadDraggerProps = buildProps({
   directory: Boolean
 });
 const uploadDraggerEmits = { file: (file) => isArray$3(file) };
-const _hoisted_1$7 = [
+const _hoisted_1$9 = [
   "tabindex",
   "aria-disabled",
   "onKeydown"
 ];
-const _hoisted_2$6 = ["src", "crossorigin"];
-const _hoisted_3$4 = ["onClick"];
+const _hoisted_2$8 = ["src", "crossorigin"];
+const _hoisted_3$5 = ["onClick"];
 const _hoisted_4$3 = ["title"];
 const _hoisted_5$2 = ["onClick"];
 const _hoisted_6$2 = ["onClick"];
@@ -45548,7 +46895,7 @@ var upload_list_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ de
               src: file.url,
               crossorigin: __props.crossorigin,
               alt: ""
-            }, null, 10, _hoisted_2$6)) : createCommentVNode("v-if", true),
+            }, null, 10, _hoisted_2$8)) : createCommentVNode("v-if", true),
             file.status === "uploading" || __props.listType !== "picture-card" ? (openBlock(), createElementBlock("div", {
               key: 1,
               class: normalizeClass(unref(nsUpload).be("list", "item-info"))
@@ -45561,7 +46908,7 @@ var upload_list_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ de
             }, 8, ["class"]), createElementVNode("span", {
               class: normalizeClass(unref(nsUpload).be("list", "item-file-name")),
               title: file.name
-            }, toDisplayString$1(file.name), 11, _hoisted_4$3)], 10, _hoisted_3$4), file.status === "uploading" ? (openBlock(), createBlock(unref(ElProgress), {
+            }, toDisplayString$1(file.name), 11, _hoisted_4$3)], 10, _hoisted_3$5), file.status === "uploading" ? (openBlock(), createBlock(unref(ElProgress), {
               key: 0,
               type: __props.listType === "picture-card" ? "circle" : "line",
               "stroke-width": __props.listType === "picture-card" ? 6 : 2,
@@ -45624,7 +46971,7 @@ var upload_list_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ de
               default: withCtx(() => [createVNode(unref(delete_default))]),
               _: 1
             }, 8, ["class"])], 10, _hoisted_6$2)) : createCommentVNode("v-if", true)], 2)) : createCommentVNode("v-if", true)
-          ])], 42, _hoisted_1$7);
+          ])], 42, _hoisted_1$9);
         }), 128)), renderSlot(_ctx.$slots, "append")]),
         _: 3
       }, 8, ["class", "name"]);
@@ -45712,12 +47059,12 @@ var upload_dragger_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */
   }
 });
 var upload_dragger_default = upload_dragger_vue_vue_type_script_setup_true_lang_default;
-const _hoisted_1$6 = [
+const _hoisted_1$8 = [
   "tabindex",
   "aria-disabled",
   "onKeydown"
 ];
-const _hoisted_2$5 = [
+const _hoisted_2$7 = [
   "name",
   "disabled",
   "multiple",
@@ -45868,7 +47215,7 @@ var upload_content_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */
         onChange: handleChange,
         onClick: _cache[0] || (_cache[0] = withModifiers(() => {
         }, ["stop"]))
-      }, null, 42, _hoisted_2$5)], 42, _hoisted_1$6);
+      }, null, 42, _hoisted_2$7)], 42, _hoisted_1$8);
     };
   }
 });
@@ -46098,6 +47445,394 @@ var upload_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineC
 });
 var upload_default = upload_vue_vue_type_script_setup_true_lang_default;
 const ElUpload = withInstall(upload_default);
+const messageTypes$1 = [
+  "primary",
+  "success",
+  "info",
+  "warning",
+  "error"
+];
+const messagePlacement = [
+  "top",
+  "top-left",
+  "top-right",
+  "bottom",
+  "bottom-left",
+  "bottom-right"
+];
+const MESSAGE_DEFAULT_PLACEMENT = "top";
+const messageDefaults = mutable({
+  customClass: "",
+  dangerouslyUseHTMLString: false,
+  duration: 3e3,
+  icon: void 0,
+  id: "",
+  message: "",
+  onClose: void 0,
+  showClose: false,
+  type: "info",
+  plain: false,
+  offset: 16,
+  placement: void 0,
+  zIndex: 0,
+  grouping: false,
+  repeatNum: 1,
+  appendTo: isClient ? document.body : void 0
+});
+const messageProps = buildProps({
+  customClass: {
+    type: String,
+    default: messageDefaults.customClass
+  },
+  dangerouslyUseHTMLString: {
+    type: Boolean,
+    default: messageDefaults.dangerouslyUseHTMLString
+  },
+  duration: {
+    type: Number,
+    default: messageDefaults.duration
+  },
+  icon: {
+    type: iconPropType,
+    default: messageDefaults.icon
+  },
+  id: {
+    type: String,
+    default: messageDefaults.id
+  },
+  message: {
+    type: definePropType([
+      String,
+      Object,
+      Function
+    ]),
+    default: messageDefaults.message
+  },
+  onClose: {
+    type: definePropType(Function),
+    default: messageDefaults.onClose
+  },
+  showClose: {
+    type: Boolean,
+    default: messageDefaults.showClose
+  },
+  type: {
+    type: String,
+    values: messageTypes$1,
+    default: messageDefaults.type
+  },
+  plain: {
+    type: Boolean,
+    default: messageDefaults.plain
+  },
+  offset: {
+    type: Number,
+    default: messageDefaults.offset
+  },
+  placement: {
+    type: String,
+    values: messagePlacement,
+    default: messageDefaults.placement
+  },
+  zIndex: {
+    type: Number,
+    default: messageDefaults.zIndex
+  },
+  grouping: {
+    type: Boolean,
+    default: messageDefaults.grouping
+  },
+  repeatNum: {
+    type: Number,
+    default: messageDefaults.repeatNum
+  }
+});
+const messageEmits = { destroy: () => true };
+const placementInstances = shallowReactive({});
+const getOrCreatePlacementInstances = (placement) => {
+  if (!placementInstances[placement]) placementInstances[placement] = shallowReactive([]);
+  return placementInstances[placement];
+};
+const getInstance = (id2, placement) => {
+  const instances = placementInstances[placement] || [];
+  const idx = instances.findIndex((instance) => instance.id === id2);
+  const current = instances[idx];
+  let prev;
+  if (idx > 0) prev = instances[idx - 1];
+  return {
+    current,
+    prev
+  };
+};
+const getLastOffset = (id2, placement) => {
+  const { prev } = getInstance(id2, placement);
+  if (!prev) return 0;
+  return prev.vm.exposed.bottom.value;
+};
+const getOffsetOrSpace = (id2, offset, placement) => {
+  return (placementInstances[placement] || []).findIndex((instance) => instance.id === id2) > 0 ? 16 : offset;
+};
+const _hoisted_1$7 = ["id"];
+const _hoisted_2$6 = ["innerHTML"];
+var message_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
+  name: "ElMessage",
+  __name: "message",
+  props: messageProps,
+  emits: messageEmits,
+  setup(__props, { expose: __expose, emit: __emit }) {
+    const { Close } = TypeComponents;
+    const props = __props;
+    const emit = __emit;
+    const isStartTransition = ref(false);
+    const { ns, zIndex: zIndex2 } = useGlobalComponentSettings("message");
+    const { currentZIndex, nextZIndex } = zIndex2;
+    const messageRef = ref();
+    const visible = ref(false);
+    const height = ref(0);
+    let stopTimer = void 0;
+    const badgeType = computed(() => props.type ? props.type === "error" ? "danger" : props.type : "info");
+    const typeClass = computed(() => {
+      const type4 = props.type;
+      return { [ns.bm("icon", type4)]: type4 && TypeComponentsMap[type4] };
+    });
+    const iconComponent = computed(() => props.icon || TypeComponentsMap[props.type] || "");
+    const placement = computed(() => props.placement || MESSAGE_DEFAULT_PLACEMENT);
+    const lastOffset = computed(() => getLastOffset(props.id, placement.value));
+    const offset = computed(() => {
+      return getOffsetOrSpace(props.id, props.offset, placement.value) + lastOffset.value;
+    });
+    const bottom = computed(() => height.value + offset.value);
+    const horizontalClass = computed(() => {
+      if (placement.value.includes("left")) return ns.is("left");
+      if (placement.value.includes("right")) return ns.is("right");
+      return ns.is("center");
+    });
+    const verticalProperty = computed(() => placement.value.startsWith("top") ? "top" : "bottom");
+    const customStyle = computed(() => ({
+      [verticalProperty.value]: `${offset.value}px`,
+      zIndex: currentZIndex.value
+    }));
+    function startTimer() {
+      if (props.duration === 0) return;
+      ({ stop: stopTimer } = useTimeoutFn(() => {
+        close2();
+      }, props.duration));
+    }
+    function clearTimer() {
+      stopTimer == null ? void 0 : stopTimer();
+    }
+    function close2() {
+      visible.value = false;
+      nextTick(() => {
+        var _a;
+        if (!isStartTransition.value) {
+          (_a = props.onClose) == null ? void 0 : _a.call(props);
+          emit("destroy");
+        }
+      });
+    }
+    function keydown(event) {
+      if (getEventCode(event) === EVENT_CODE.esc) close2();
+    }
+    onMounted(() => {
+      startTimer();
+      nextZIndex();
+      visible.value = true;
+    });
+    watch(() => props.repeatNum, () => {
+      clearTimer();
+      startTimer();
+    });
+    useEventListener(document, "keydown", keydown);
+    useResizeObserver(messageRef, () => {
+      height.value = messageRef.value.getBoundingClientRect().height;
+    });
+    __expose({
+      visible,
+      bottom,
+      close: close2
+    });
+    return (_ctx, _cache) => {
+      return openBlock(), createBlock(Transition, {
+        name: unref(ns).b("fade"),
+        onBeforeEnter: _cache[0] || (_cache[0] = ($event) => isStartTransition.value = true),
+        onBeforeLeave: __props.onClose,
+        onAfterLeave: _cache[1] || (_cache[1] = ($event) => _ctx.$emit("destroy")),
+        persisted: ""
+      }, {
+        default: withCtx(() => [withDirectives(createElementVNode("div", {
+          id: __props.id,
+          ref_key: "messageRef",
+          ref: messageRef,
+          class: normalizeClass([
+            unref(ns).b(),
+            { [unref(ns).m(__props.type)]: __props.type },
+            unref(ns).is("closable", __props.showClose),
+            unref(ns).is("plain", __props.plain),
+            unref(ns).is("bottom", verticalProperty.value === "bottom"),
+            horizontalClass.value,
+            __props.customClass
+          ]),
+          style: normalizeStyle(customStyle.value),
+          role: "alert",
+          onMouseenter: clearTimer,
+          onMouseleave: startTimer
+        }, [
+          __props.repeatNum > 1 ? (openBlock(), createBlock(unref(ElBadge), {
+            key: 0,
+            value: __props.repeatNum,
+            type: badgeType.value,
+            class: normalizeClass(unref(ns).e("badge"))
+          }, null, 8, [
+            "value",
+            "type",
+            "class"
+          ])) : createCommentVNode("v-if", true),
+          iconComponent.value ? (openBlock(), createBlock(unref(ElIcon), {
+            key: 1,
+            class: normalizeClass([unref(ns).e("icon"), typeClass.value])
+          }, {
+            default: withCtx(() => [(openBlock(), createBlock(resolveDynamicComponent(iconComponent.value)))]),
+            _: 1
+          }, 8, ["class"])) : createCommentVNode("v-if", true),
+          renderSlot(_ctx.$slots, "default", {}, () => [!__props.dangerouslyUseHTMLString ? (openBlock(), createElementBlock("p", {
+            key: 0,
+            class: normalizeClass(unref(ns).e("content"))
+          }, toDisplayString$1(__props.message), 3)) : (openBlock(), createElementBlock(Fragment, { key: 1 }, [createCommentVNode(" Caution here, message could've been compromised, never use user's input as message "), createElementVNode("p", {
+            class: normalizeClass(unref(ns).e("content")),
+            innerHTML: __props.message
+          }, null, 10, _hoisted_2$6)], 2112))]),
+          __props.showClose ? (openBlock(), createBlock(unref(ElIcon), {
+            key: 2,
+            class: normalizeClass(unref(ns).e("closeBtn")),
+            onClick: withModifiers(close2, ["stop"])
+          }, {
+            default: withCtx(() => [createVNode(unref(Close))]),
+            _: 1
+          }, 8, ["class"])) : createCommentVNode("v-if", true)
+        ], 46, _hoisted_1$7), [[vShow, visible.value]])]),
+        _: 3
+      }, 8, ["name", "onBeforeLeave"]);
+    };
+  }
+});
+var message_default = message_vue_vue_type_script_setup_true_lang_default;
+let seed$1 = 1;
+const normalizeAppendTo = (normalized) => {
+  if (!normalized.appendTo) normalized.appendTo = document.body;
+  else if (isString$2(normalized.appendTo)) {
+    let appendTo = document.querySelector(normalized.appendTo);
+    if (!isElement(appendTo)) {
+      debugWarn("ElMessage", "the appendTo option is not an HTMLElement. Falling back to document.body.");
+      appendTo = document.body;
+    }
+    normalized.appendTo = appendTo;
+  }
+};
+const normalizePlacement = (normalized) => {
+  if (!normalized.placement && isString$2(messageConfig.placement) && messageConfig.placement) normalized.placement = messageConfig.placement;
+  if (!normalized.placement) normalized.placement = MESSAGE_DEFAULT_PLACEMENT;
+  if (!messagePlacement.includes(normalized.placement)) {
+    debugWarn("ElMessage", `Invalid placement: ${normalized.placement}. Falling back to '${MESSAGE_DEFAULT_PLACEMENT}'.`);
+    normalized.placement = MESSAGE_DEFAULT_PLACEMENT;
+  }
+};
+const normalizeOptions = (params) => {
+  const options = !params || isString$2(params) || isVNode$1(params) || isFunction$3(params) ? { message: params } : params;
+  const normalized = {
+    ...messageDefaults,
+    ...options
+  };
+  normalizeAppendTo(normalized);
+  normalizePlacement(normalized);
+  if (isBoolean$2(messageConfig.grouping) && !normalized.grouping) normalized.grouping = messageConfig.grouping;
+  if (isNumber$2(messageConfig.duration) && normalized.duration === 3e3) normalized.duration = messageConfig.duration;
+  if (isNumber$2(messageConfig.offset) && normalized.offset === 16) normalized.offset = messageConfig.offset;
+  if (isBoolean$2(messageConfig.showClose) && !normalized.showClose) normalized.showClose = messageConfig.showClose;
+  if (isBoolean$2(messageConfig.plain) && !normalized.plain) normalized.plain = messageConfig.plain;
+  return normalized;
+};
+const closeMessage = (instance) => {
+  const instances = placementInstances[instance.props.placement || MESSAGE_DEFAULT_PLACEMENT];
+  const idx = instances.indexOf(instance);
+  if (idx === -1) return;
+  instances.splice(idx, 1);
+  const { handler } = instance;
+  handler.close();
+};
+const createMessage = ({ appendTo, ...options }, context) => {
+  const id2 = `message_${seed$1++}`;
+  const userOnClose = options.onClose;
+  const container = document.createElement("div");
+  const props = {
+    ...options,
+    id: id2,
+    onClose: () => {
+      userOnClose == null ? void 0 : userOnClose();
+      closeMessage(instance);
+    },
+    onDestroy: () => {
+      render(null, container);
+    }
+  };
+  const vnode = createVNode(message_default, props, isFunction$3(props.message) || isVNode$1(props.message) ? { default: isFunction$3(props.message) ? props.message : () => props.message } : null);
+  vnode.appContext = context || message._context;
+  render(vnode, container);
+  appendTo.appendChild(container.firstElementChild);
+  const vm = vnode.component;
+  const instance = {
+    id: id2,
+    vnode,
+    vm,
+    handler: { close: () => {
+      vm.exposed.close();
+    } },
+    props: vnode.component.props
+  };
+  return instance;
+};
+const message = (options = {}, context) => {
+  if (!isClient) return { close: () => void 0 };
+  const normalized = normalizeOptions(options);
+  const instances = getOrCreatePlacementInstances(normalized.placement || MESSAGE_DEFAULT_PLACEMENT);
+  if (normalized.grouping && instances.length) {
+    const instance2 = instances.find(({ vnode: vm }) => {
+      var _a;
+      return ((_a = vm.props) == null ? void 0 : _a.message) === normalized.message;
+    });
+    if (instance2) {
+      instance2.props.repeatNum += 1;
+      instance2.props.type = normalized.type;
+      return instance2.handler;
+    }
+  }
+  if (isNumber$2(messageConfig.max) && instances.length >= messageConfig.max) return { close: () => void 0 };
+  const instance = createMessage(normalized, context);
+  instances.push(instance);
+  return instance.handler;
+};
+messageTypes$1.forEach((type4) => {
+  message[type4] = (options = {}, appContext) => {
+    return message({
+      ...normalizeOptions(options),
+      type: type4
+    }, appContext);
+  };
+});
+function closeAll$1(type4) {
+  for (const placement in placementInstances) if (hasOwn$2(placementInstances, placement)) {
+    const instances = [...placementInstances[placement]];
+    for (const instance of instances) if (!type4 || type4 === instance.props.type) instance.handler.close();
+  }
+}
+function closeAllByPlacement(placement) {
+  if (!placementInstances[placement]) return;
+  [...placementInstances[placement]].forEach((instance) => instance.handler.close());
+}
+message.closeAll = closeAll$1;
+message.closeAllByPlacement = closeAllByPlacement;
+message._context = null;
+const ElMessage = withInstallFunction(message, "$message");
 var index_vue_vue_type_script_lang_default = defineComponent({
   name: "ElMessageBox",
   directives: { TrapFocus },
@@ -46336,9 +48071,9 @@ var index_vue_vue_type_script_lang_default = defineComponent({
     };
   }
 });
-const _hoisted_1$5 = ["aria-label", "aria-describedby"];
-const _hoisted_2$4 = ["aria-label"];
-const _hoisted_3$3 = ["id"];
+const _hoisted_1$6 = ["aria-label", "aria-describedby"];
+const _hoisted_2$5 = ["aria-label"];
+const _hoisted_3$4 = ["id"];
 function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_el_icon = resolveComponent("el-icon");
   const _component_el_input = resolveComponent("el-input");
@@ -46405,7 +48140,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
           }, [createVNode(_component_el_icon, { class: normalizeClass(_ctx.ns.e("close")) }, {
             default: withCtx(() => [(openBlock(), createBlock(resolveDynamicComponent(_ctx.closeIcon || "close")))]),
             _: 1
-          }, 8, ["class"])], 42, _hoisted_2$4)) : createCommentVNode("v-if", true)], 2)) : createCommentVNode("v-if", true),
+          }, 8, ["class"])], 42, _hoisted_2$5)) : createCommentVNode("v-if", true)], 2)) : createCommentVNode("v-if", true),
           createElementVNode("div", {
             id: _ctx.contentId,
             class: normalizeClass(_ctx.ns.e("content"))
@@ -46447,7 +48182,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
           ]), createElementVNode("div", {
             class: normalizeClass(_ctx.ns.e("errormsg")),
             style: normalizeStyle({ visibility: !!_ctx.editorErrorMessage ? "visible" : "hidden" })
-          }, toDisplayString$1(_ctx.editorErrorMessage), 7)], 2), [[vShow, _ctx.showInput]])], 10, _hoisted_3$3),
+          }, toDisplayString$1(_ctx.editorErrorMessage), 7)], 2), [[vShow, _ctx.showInput]])], 10, _hoisted_3$4),
           createElementVNode("div", { class: normalizeClass(_ctx.ns.e("btns")) }, [_ctx.showCancelButton ? (openBlock(), createBlock(_component_el_button, {
             key: 0,
             type: _ctx.cancelButtonType === "text" ? "" : _ctx.cancelButtonType,
@@ -46502,7 +48237,7 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
         "focus-trap-el",
         "focus-start-el",
         "onReleaseRequested"
-      ])], 42, _hoisted_1$5)]),
+      ])], 42, _hoisted_1$6)]),
       _: 3
     }, 8, [
       "z-index",
@@ -46597,16 +48332,16 @@ MESSAGE_BOX_VARIANTS.forEach((boxType) => {
   MessageBox[boxType] = messageBoxFactory(boxType);
 });
 function messageBoxFactory(boxType) {
-  return (message, title, options, appContext) => {
+  return (message2, title, options, appContext) => {
     let titleOrOpts = "";
     if (isObject$5(title)) {
       options = title;
       titleOrOpts = "";
-    } else if (isUndefined(title)) titleOrOpts = "";
+    } else if (isUndefined$1(title)) titleOrOpts = "";
     else titleOrOpts = title;
     return MessageBox(Object.assign({
       title: titleOrOpts,
-      message,
+      message: message2,
       type: "",
       ...MESSAGE_BOX_DEFAULT_OPTS[boxType]
     }, options, { boxType }), appContext);
@@ -46629,7 +48364,7 @@ _MessageBox.install = (app) => {
   app.config.globalProperties.$prompt = _MessageBox.prompt;
 };
 const ElMessageBox = _MessageBox;
-const notificationTypes = [
+const notificationTypes$1 = [
   "primary",
   "success",
   "info",
@@ -46691,7 +48426,7 @@ const notificationProps = buildProps({
   },
   type: {
     type: String,
-    values: [...notificationTypes, ""],
+    values: [...notificationTypes$1, ""],
     default: ""
   },
   zIndex: Number,
@@ -46701,9 +48436,9 @@ const notificationProps = buildProps({
   }
 });
 const notificationEmits = { destroy: () => true };
-const _hoisted_1$4 = ["id"];
-const _hoisted_2$3 = ["textContent"];
-const _hoisted_3$2 = { key: 0 };
+const _hoisted_1$5 = ["id"];
+const _hoisted_2$4 = ["textContent"];
+const _hoisted_3$3 = { key: 0 };
 const _hoisted_4$2 = ["innerHTML"];
 var notification_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ defineComponent({
   name: "ElNotification",
@@ -46796,11 +48531,11 @@ var notification_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ d
           createElementVNode("h2", {
             class: normalizeClass(unref(ns).e("title")),
             textContent: toDisplayString$1(__props.title)
-          }, null, 10, _hoisted_2$3),
+          }, null, 10, _hoisted_2$4),
           withDirectives(createElementVNode("div", {
             class: normalizeClass(unref(ns).e("content")),
             style: normalizeStyle(!!__props.title ? void 0 : { margin: 0 })
-          }, [renderSlot(_ctx.$slots, "default", {}, () => [!__props.dangerouslyUseHTMLString ? (openBlock(), createElementBlock("p", _hoisted_3$2, toDisplayString$1(__props.message), 1)) : (openBlock(), createElementBlock(Fragment, { key: 1 }, [createCommentVNode(" Caution here, message could've been compromised, never use user's input as message "), createElementVNode("p", { innerHTML: __props.message }, null, 8, _hoisted_4$2)], 2112))])], 6), [[vShow, __props.message]]),
+          }, [renderSlot(_ctx.$slots, "default", {}, () => [!__props.dangerouslyUseHTMLString ? (openBlock(), createElementBlock("p", _hoisted_3$3, toDisplayString$1(__props.message), 1)) : (openBlock(), createElementBlock(Fragment, { key: 1 }, [createCommentVNode(" Caution here, message could've been compromised, never use user's input as message "), createElementVNode("p", { innerHTML: __props.message }, null, 8, _hoisted_4$2)], 2112))])], 6), [[vShow, __props.message]]),
           __props.showClose ? (openBlock(), createBlock(unref(ElIcon), {
             key: 0,
             class: normalizeClass(unref(ns).e("closeBtn")),
@@ -46809,7 +48544,7 @@ var notification_vue_vue_type_script_setup_true_lang_default = /* @__PURE__ */ d
             default: withCtx(() => [(openBlock(), createBlock(resolveDynamicComponent(__props.closeIcon)))]),
             _: 1
           }, 8, ["class"])) : createCommentVNode("v-if", true)
-        ], 2)], 46, _hoisted_1$4), [[vShow, visible.value]])]),
+        ], 2)], 46, _hoisted_1$5), [[vShow, visible.value]])]),
         _: 3
       }, 8, ["name", "onBeforeLeave"]);
     };
@@ -46853,7 +48588,7 @@ const notify = function(options = {}, context) {
   }
   const container = document.createElement("div");
   const vm = createVNode(notification_default, props, isFunction$3(props.message) ? props.message : isVNode$1(props.message) ? () => props.message : null);
-  vm.appContext = isUndefined(context) ? notify._context : context;
+  vm.appContext = isUndefined$1(context) ? notify._context : context;
   vm.props.onDestroy = () => {
     render(null, container);
   };
@@ -46864,7 +48599,7 @@ const notify = function(options = {}, context) {
     vm.component.exposed.visible.value = false;
   } };
 };
-notificationTypes.forEach((type4) => {
+notificationTypes$1.forEach((type4) => {
   notify[type4] = (options = {}, appContext) => {
     if (isString$2(options) || isVNode$1(options)) options = { message: options };
     return notify({
@@ -47110,6 +48845,10 @@ var directive_default = {
 const VPopover = "popover";
 const ElPopoverDirective = withInstallDirective(directive_default, VPopover);
 const ElPopover = withInstall(popover_default, { directive: ElPopoverDirective });
+function normalizeFirstDayOfWeek(value) {
+  const parsedValue = typeof value === "string" && value.trim() !== "" ? Number(value) : value;
+  return typeof parsedValue === "number" && Number.isInteger(parsedValue) && parsedValue >= 0 && parsedValue <= 6 ? parsedValue : void 0;
+}
 function useDatePickerLocale(props) {
   const { locale: elementLocale } = useLocale();
   const stringLocale = shallowRef(null);
@@ -47130,7 +48869,7 @@ function useDatePickerLocale(props) {
   });
   return computed(() => {
     const baseElementLocale = typeof props.locale === "string" ? stringLocale.value ?? elementLocale.value : props.locale ?? elementLocale.value;
-    const firstDayOfWeek = typeof props.firstDayOfWeek === "number" && Number.isInteger(props.firstDayOfWeek) && props.firstDayOfWeek >= 0 && props.firstDayOfWeek <= 6 ? props.firstDayOfWeek : void 0;
+    const firstDayOfWeek = normalizeFirstDayOfWeek(props.firstDayOfWeek);
     if (firstDayOfWeek === void 0) {
       return baseElementLocale;
     }
@@ -47142,13 +48881,14 @@ function useDatePickerLocale(props) {
       baseLocaleName.replace("_", "-").toLowerCase(),
       baseLocaleName.replace("-", "_"),
       baseLocaleName.replace("-", "_").toLowerCase()
-    ].find((candidate) => dayjs$1.Ls[candidate]) ?? "en";
+    ].find((candidate) => dayjs.Ls[candidate]) ?? "en";
     const customLocaleName = `${normalizedBaseLocaleName}-fdow-${firstDayOfWeek}`;
-    if (!dayjs$1.Ls[customLocaleName]) {
-      dayjs$1.locale(
+    if (!dayjs.Ls[customLocaleName]) {
+      dayjs.locale(
         customLocaleName,
         {
-          ...dayjs$1.Ls[normalizedBaseLocaleName],
+          ...dayjs.Ls[normalizedBaseLocaleName],
+          name: customLocaleName,
           weekStart: firstDayOfWeek
         },
         true
@@ -47160,7 +48900,7 @@ function useDatePickerLocale(props) {
     };
   });
 }
-const _sfc_main$v = /* @__PURE__ */ defineComponent({
+const _sfc_main$F = /* @__PURE__ */ defineComponent({
   ...{
     inheritAttrs: false
   },
@@ -47171,7 +48911,7 @@ const _sfc_main$v = /* @__PURE__ */ defineComponent({
       type: [Object, String],
       required: false
     },
-    firstDayOfWeek: Number
+    firstDayOfWeek: [Number, String]
   },
   emits: ["update:modelValue"],
   setup(__props, { expose: __expose, emit: __emit }) {
@@ -47188,9 +48928,8 @@ const _sfc_main$v = /* @__PURE__ */ defineComponent({
     });
     const elRef = ref();
     const localConfigLocale = useDatePickerLocale(props);
-    provideGlobalConfig(computed(() => ({
-      locale: localConfigLocale.value
-    })));
+    const datePickerKey = computed(() => localConfigLocale.value.name);
+    const namespace = useGlobalConfig("namespace", "bp");
     const popperClass = computed(() => mergeClassNames(
       "bp-popper",
       "bp-ui-date-picker-popper",
@@ -47199,33 +48938,42 @@ const _sfc_main$v = /* @__PURE__ */ defineComponent({
     const forwardedSlotNames = useForwardSlotNames();
     __expose(createForwardExpose(elRef));
     return (_ctx, _cache) => {
-      return openBlock(), createBlock(unref(ElDatePicker), mergeProps({
-        ref_key: "elRef",
-        ref: elRef
-      }, unref(bindings), {
-        modelValue: model.value,
-        "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => model.value = $event),
-        "popper-class": popperClass.value,
-        class: "bp-ui-date-picker bp-date-editor bp-input bpa-form-control"
-      }), createSlots({ _: 2 }, [
-        renderList(unref(forwardedSlotNames), (slotName) => {
-          return {
-            name: slotName,
-            fn: withCtx((slotProps) => [
-              renderSlot(_ctx.$slots, slotName, normalizeProps(guardReactiveProps(slotProps ?? {})))
-            ])
-          };
-        })
-      ]), 1040, ["modelValue", "popper-class"]);
+      return openBlock(), createBlock(unref(ElConfigProvider), {
+        locale: unref(localConfigLocale),
+        namespace: unref(namespace)
+      }, {
+        default: withCtx(() => [
+          (openBlock(), createBlock(unref(ElDatePicker), mergeProps({
+            key: datePickerKey.value,
+            ref_key: "elRef",
+            ref: elRef
+          }, unref(bindings), {
+            modelValue: model.value,
+            "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => model.value = $event),
+            "popper-class": popperClass.value,
+            class: "bp-ui-date-picker bp-date-editor bp-input bpa-form-control"
+          }), createSlots({ _: 2 }, [
+            renderList(unref(forwardedSlotNames), (slotName) => {
+              return {
+                name: slotName,
+                fn: withCtx((slotProps) => [
+                  renderSlot(_ctx.$slots, slotName, normalizeProps(guardReactiveProps(slotProps ?? {})))
+                ])
+              };
+            })
+          ]), 1040, ["modelValue", "popper-class"]))
+        ]),
+        _: 3
+      }, 8, ["locale", "namespace"]);
     };
   }
 });
-const _hoisted_1$3 = {
+const _hoisted_1$4 = {
   key: 1,
   class: "bp-ui-drawer__header-content"
 };
-const _hoisted_2$2 = { class: "bp-ui-drawer__header-copy" };
-const _hoisted_3$1 = ["id"];
+const _hoisted_2$3 = { class: "bp-ui-drawer__header-copy" };
+const _hoisted_3$2 = ["id"];
 const _hoisted_4$1 = {
   key: 1,
   class: "bp-ui-drawer__description"
@@ -47235,7 +48983,7 @@ const _hoisted_5$1 = {
   class: "bp-ui-drawer__header-actions"
 };
 const _hoisted_6$1 = ["onClick"];
-const _sfc_main$u = /* @__PURE__ */ defineComponent({
+const _sfc_main$E = /* @__PURE__ */ defineComponent({
   ...{
     inheritAttrs: false
   },
@@ -47376,8 +49124,8 @@ const _sfc_main$u = /* @__PURE__ */ defineComponent({
               requestClose,
               titleId,
               titleClass
-            }) : hasHeaderContent.value ? (openBlock(), createElementBlock("div", _hoisted_1$3, [
-              createElementVNode("div", _hoisted_2$2, [
+            }) : hasHeaderContent.value ? (openBlock(), createElementBlock("div", _hoisted_1$4, [
+              createElementVNode("div", _hoisted_2$3, [
                 hasTitle.value ? (openBlock(), createElementBlock("div", {
                   key: 0,
                   id: titleId,
@@ -47386,7 +49134,7 @@ const _sfc_main$u = /* @__PURE__ */ defineComponent({
                   renderSlot(_ctx.$slots, "title", {}, () => [
                     createTextVNode(toDisplayString$1(props.title), 1)
                   ])
-                ], 10, _hoisted_3$1)) : createCommentVNode("", true),
+                ], 10, _hoisted_3$2)) : createCommentVNode("", true),
                 hasDescription.value ? (openBlock(), createElementBlock("div", _hoisted_4$1, toDisplayString$1(props.description), 1)) : createCommentVNode("", true)
               ]),
               _ctx.$slots["header-actions"] || showCloseButton.value ? (openBlock(), createElementBlock("div", _hoisted_5$1, [
@@ -47437,7 +49185,7 @@ const _sfc_main$u = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_main$t = /* @__PURE__ */ defineComponent({
+const _sfc_main$D = /* @__PURE__ */ defineComponent({
   ...{
     inheritAttrs: false
   },
@@ -47508,7 +49256,7 @@ const _sfc_main$t = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_main$s = /* @__PURE__ */ defineComponent({
+const _sfc_main$C = /* @__PURE__ */ defineComponent({
   ...{
     name: "BpUiDropdownItem",
     inheritAttrs: false
@@ -47549,7 +49297,7 @@ const _sfc_main$s = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_main$r = /* @__PURE__ */ defineComponent({
+const _sfc_main$B = /* @__PURE__ */ defineComponent({
   ...{
     name: "BpUiDropdownMenu",
     inheritAttrs: false
@@ -47579,9 +49327,9 @@ const _sfc_main$r = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _hoisted_1$2 = { key: 2 };
-const _hoisted_2$1 = { class: "bp-ui-dropdown__trigger-label" };
-const _hoisted_3 = {
+const _hoisted_1$3 = { key: 2 };
+const _hoisted_2$2 = { class: "bp-ui-dropdown__trigger-label" };
+const _hoisted_3$1 = {
   key: 1,
   class: "bp-ui-dropdown__item-content"
 };
@@ -47602,7 +49350,7 @@ const _hoisted_8 = {
   key: 2,
   class: "bp-ui-dropdown__item-shortcut"
 };
-const _sfc_main$q = /* @__PURE__ */ defineComponent({
+const _sfc_main$A = /* @__PURE__ */ defineComponent({
   ...{
     name: "BpUiDropdown",
     inheritAttrs: false
@@ -47852,19 +49600,19 @@ const _sfc_main$q = /* @__PURE__ */ defineComponent({
         onCommand: handleCommand
       }), createSlots({
         default: withCtx(() => [
-          _ctx.$slots.default ? renderSlot(_ctx.$slots, "default", normalizeProps(mergeProps({ key: 0 }, slotBindings.value))) : _ctx.$slots.trigger ? renderSlot(_ctx.$slots, "trigger", normalizeProps(mergeProps({ key: 1 }, slotBindings.value))) : props.splitButton ? (openBlock(), createElementBlock("span", _hoisted_1$2, toDisplayString$1(resolvedButtonLabel.value), 1)) : (openBlock(), createBlock(_sfc_main$z, normalizeProps(mergeProps({ key: 3 }, triggerButtonProps.value)), {
+          _ctx.$slots.default ? renderSlot(_ctx.$slots, "default", normalizeProps(mergeProps({ key: 0 }, slotBindings.value))) : _ctx.$slots.trigger ? renderSlot(_ctx.$slots, "trigger", normalizeProps(mergeProps({ key: 1 }, slotBindings.value))) : props.splitButton ? (openBlock(), createElementBlock("span", _hoisted_1$3, toDisplayString$1(resolvedButtonLabel.value), 1)) : (openBlock(), createBlock(_sfc_main$J, normalizeProps(mergeProps({ key: 3 }, triggerButtonProps.value)), {
             default: withCtx(() => [
-              createElementVNode("span", _hoisted_2$1, toDisplayString$1(resolvedButtonLabel.value), 1),
+              createElementVNode("span", _hoisted_2$2, toDisplayString$1(resolvedButtonLabel.value), 1),
               createVNode(unref(arrow_down_default), { class: "bp-ui-dropdown__trigger-caret" })
             ]),
             _: 1
           }, 16))
         ]),
         dropdown: withCtx(() => [
-          _ctx.$slots.dropdown ? renderSlot(_ctx.$slots, "dropdown", normalizeProps(mergeProps({ key: 0 }, slotBindings.value))) : _ctx.$slots.menu ? renderSlot(_ctx.$slots, "menu", normalizeProps(mergeProps({ key: 1 }, slotBindings.value))) : normalizedItems.value.length > 0 ? (openBlock(), createBlock(_sfc_main$r, { key: 2 }, {
+          _ctx.$slots.dropdown ? renderSlot(_ctx.$slots, "dropdown", normalizeProps(mergeProps({ key: 0 }, slotBindings.value))) : _ctx.$slots.menu ? renderSlot(_ctx.$slots, "menu", normalizeProps(mergeProps({ key: 1 }, slotBindings.value))) : normalizedItems.value.length > 0 ? (openBlock(), createBlock(_sfc_main$B, { key: 2 }, {
             default: withCtx(() => [
               (openBlock(true), createElementBlock(Fragment, null, renderList(normalizedItems.value, (item) => {
-                return openBlock(), createBlock(_sfc_main$s, {
+                return openBlock(), createBlock(_sfc_main$C, {
                   key: item.key,
                   command: item.command,
                   disabled: item.disabled,
@@ -47878,7 +49626,7 @@ const _sfc_main$q = /* @__PURE__ */ defineComponent({
                     _ctx.$slots.item ? renderSlot(_ctx.$slots, "item", mergeProps({
                       key: 0,
                       item
-                    }, { ref_for: true }, slotBindings.value)) : (openBlock(), createElementBlock("div", _hoisted_3, [
+                    }, { ref_for: true }, slotBindings.value)) : (openBlock(), createElementBlock("div", _hoisted_3$1, [
                       _ctx.$slots["item-icon"] ? renderSlot(_ctx.$slots, "item-icon", {
                         key: 0,
                         item
@@ -47913,7 +49661,87 @@ const _sfc_main$q = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_main$p = /* @__PURE__ */ defineComponent({
+const _sfc_main$z = /* @__PURE__ */ defineComponent({
+  ...{
+    name: "BpUiEmpty",
+    inheritAttrs: false
+  },
+  __name: "BpUiEmpty",
+  props: {
+    ...emptyProps,
+    actionLabel: {
+      type: String,
+      default: ""
+    },
+    compact: Boolean,
+    state: {
+      type: String,
+      default: "empty"
+    }
+  },
+  emits: ["action"],
+  setup(__props, { expose: __expose, emit: __emit }) {
+    const props = __props;
+    const emit = __emit;
+    const elRef = ref();
+    const bindings = useForwardBindings(props, ["actionLabel", "compact", "state"]);
+    const emptyClass = computed(() => mergeClassNames(
+      "bp-ui-empty bp-empty bpa-empty",
+      `bp-ui-empty--${props.state}`,
+      {
+        "bp-ui-empty--compact": props.compact,
+        "has-action": !!props.actionLabel
+      }
+    ));
+    function handleAction(event) {
+      emit("action", event);
+    }
+    __expose(createForwardExpose(elRef, {
+      emptyRef: elRef
+    }));
+    return (_ctx, _cache) => {
+      return openBlock(), createBlock(unref(ElEmpty), mergeProps({
+        ref_key: "elRef",
+        ref: elRef
+      }, unref(bindings), { class: emptyClass.value }), createSlots({ _: 2 }, [
+        _ctx.$slots.image ? {
+          name: "image",
+          fn: withCtx(() => [
+            renderSlot(_ctx.$slots, "image")
+          ]),
+          key: "0"
+        } : void 0,
+        _ctx.$slots.description ? {
+          name: "description",
+          fn: withCtx(() => [
+            renderSlot(_ctx.$slots, "description")
+          ]),
+          key: "1"
+        } : void 0,
+        _ctx.$slots.default || __props.actionLabel ? {
+          name: "default",
+          fn: withCtx(() => [
+            renderSlot(_ctx.$slots, "default", {}, () => [
+              __props.actionLabel ? (openBlock(), createBlock(_sfc_main$J, {
+                key: 0,
+                type: "primary",
+                class: "bp-ui-empty__action",
+                onClick: handleAction
+              }, {
+                default: withCtx(() => [
+                  createTextVNode(toDisplayString$1(__props.actionLabel), 1)
+                ]),
+                _: 1
+              })) : createCommentVNode("", true)
+            ])
+          ]),
+          key: "2"
+        } : void 0
+      ]), 1040, ["class"]);
+    };
+  }
+});
+const _sfc_main$y = /* @__PURE__ */ defineComponent({
   ...{
     inheritAttrs: false
   },
@@ -47944,7 +49772,7 @@ const _sfc_main$p = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_main$o = /* @__PURE__ */ defineComponent({
+const _sfc_main$x = /* @__PURE__ */ defineComponent({
   ...{
     inheritAttrs: false
   },
@@ -47973,7 +49801,7 @@ const _sfc_main$o = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_main$n = /* @__PURE__ */ defineComponent({
+const _sfc_main$w = /* @__PURE__ */ defineComponent({
   ...{
     inheritAttrs: false
   },
@@ -48002,7 +49830,7 @@ const _sfc_main$n = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_main$m = /* @__PURE__ */ defineComponent({
+const _sfc_main$v = /* @__PURE__ */ defineComponent({
   ...{
     inheritAttrs: false
   },
@@ -48033,7 +49861,8 @@ const _sfc_main$m = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_main$l = /* @__PURE__ */ defineComponent({
+const BpUiElementPlusIcons = ElementPlusIcons;
+const _sfc_main$u = /* @__PURE__ */ defineComponent({
   ...{
     name: "BpUiIcon",
     inheritAttrs: false
@@ -48044,13 +49873,37 @@ const _sfc_main$l = /* @__PURE__ */ defineComponent({
     const props = __props;
     const bindings = useForwardBindings(props);
     const forwardedSlotNames = useForwardSlotNames();
+    const hasDefaultSlot = computed(() => forwardedSlotNames.value.includes("default"));
+    const legacyIconComponent = computed(() => resolveLegacyIconComponent(bindings.value.class));
     const elRef = ref();
+    function toPascalCase(value) {
+      return value.split(/[-_\s]+/).filter(Boolean).map((part) => part.charAt(0).toUpperCase() + part.slice(1)).join("");
+    }
+    function resolveLegacyIconComponent(classValue) {
+      const classNames = mergeClassNames(classValue).split(/\s+/).filter(Boolean);
+      for (const className of classNames) {
+        const match = /^bp-icon-(.+)$/.exec(className);
+        if (!match) {
+          continue;
+        }
+        const icon = BpUiElementPlusIcons[toPascalCase(match[1])];
+        if (icon) {
+          return icon;
+        }
+      }
+      return void 0;
+    }
     __expose(createForwardExpose(elRef));
     return (_ctx, _cache) => {
       return openBlock(), createBlock(unref(ElIcon), mergeProps({
         ref_key: "elRef",
         ref: elRef
-      }, unref(bindings), { class: "bp-ui-icon bp-icon" }), createSlots({ _: 2 }, [
+      }, unref(bindings), { class: "bp-ui-icon bp-icon" }), createSlots({
+        default: withCtx(() => [
+          legacyIconComponent.value && !hasDefaultSlot.value ? (openBlock(), createBlock(resolveDynamicComponent(legacyIconComponent.value), { key: 0 })) : createCommentVNode("", true)
+        ]),
+        _: 2
+      }, [
         renderList(unref(forwardedSlotNames), (slotName) => {
           return {
             name: slotName,
@@ -48063,7 +49916,7 @@ const _sfc_main$l = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_main$k = /* @__PURE__ */ defineComponent({
+const _sfc_main$t = /* @__PURE__ */ defineComponent({
   ...{
     name: "BpUiImage",
     inheritAttrs: false
@@ -48102,12 +49955,12 @@ const _sfc_main$k = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_main$j = /* @__PURE__ */ defineComponent({
+const _sfc_main$s = /* @__PURE__ */ defineComponent({
   ...{
     inheritAttrs: false
   },
   __name: "BpUiInput",
-  props: {
+  props: /* @__PURE__ */ mergeDefaults({
     id: {},
     size: {},
     disabled: { type: Boolean },
@@ -48140,7 +49993,7 @@ const _sfc_main$j = /* @__PURE__ */ defineComponent({
     ariaLabel: {},
     inputmode: {},
     name: {}
-  },
+  }, inputPropsDefaults),
   emits: ["update:modelValue"],
   setup(__props, { expose: __expose, emit: __emit }) {
     const props = __props;
@@ -48174,7 +50027,7 @@ const _sfc_main$j = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_main$i = /* @__PURE__ */ defineComponent({
+const _sfc_main$r = /* @__PURE__ */ defineComponent({
   ...{
     inheritAttrs: false
   },
@@ -48238,7 +50091,7 @@ const _sfc_main$i = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_main$h = /* @__PURE__ */ defineComponent({
+const _sfc_main$q = /* @__PURE__ */ defineComponent({
   ...{
     inheritAttrs: false
   },
@@ -48274,7 +50127,7 @@ const _sfc_main$h = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_main$g = /* @__PURE__ */ defineComponent({
+const _sfc_main$p = /* @__PURE__ */ defineComponent({
   ...{
     name: "BpUiOption",
     inheritAttrs: false
@@ -48333,7 +50186,7 @@ const _sfc_main$g = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_main$f = /* @__PURE__ */ defineComponent({
+const _sfc_main$o = /* @__PURE__ */ defineComponent({
   ...{
     name: "BpUiOptionGroup",
     inheritAttrs: false
@@ -48366,7 +50219,7 @@ const _sfc_main$f = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_main$e = /* @__PURE__ */ defineComponent({
+const _sfc_main$n = /* @__PURE__ */ defineComponent({
   ...{
     name: "BpUiPagination",
     inheritAttrs: false
@@ -48583,9 +50436,9 @@ const _sfc_main$e = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _hoisted_1$1 = { class: "bp-popconfirm__main bp-ui-popconfirm__main" };
-const _hoisted_2 = { class: "bp-popconfirm__action bp-ui-popconfirm__action" };
-const _sfc_main$d = /* @__PURE__ */ defineComponent({
+const _hoisted_1$2 = { class: "bp-popconfirm__main bp-ui-popconfirm__main" };
+const _hoisted_2$1 = { class: "bp-popconfirm__action bp-ui-popconfirm__action" };
+const _sfc_main$m = /* @__PURE__ */ defineComponent({
   ...{
     name: "BpUiPopconfirm",
     inheritAttrs: false
@@ -48813,7 +50666,7 @@ const _sfc_main$d = /* @__PURE__ */ defineComponent({
               tabindex: "-1",
               class: "bp-popconfirm bp-ui-popconfirm__content"
             }, [
-              createElementVNode("div", _hoisted_1$1, [
+              createElementVNode("div", _hoisted_1$2, [
                 !props.hideIcon && props.icon ? (openBlock(), createBlock(unref(ElIcon), {
                   key: 0,
                   class: "bp-popconfirm__icon bp-ui-popconfirm__icon",
@@ -48828,9 +50681,9 @@ const _sfc_main$d = /* @__PURE__ */ defineComponent({
                   createTextVNode(toDisplayString$1(props.title), 1)
                 ])
               ]),
-              createElementVNode("div", _hoisted_2, [
+              createElementVNode("div", _hoisted_2$1, [
                 renderSlot(_ctx.$slots, "actions", normalizeProps(guardReactiveProps(slotBindings.value)), () => [
-                  createVNode(_sfc_main$z, {
+                  createVNode(_sfc_main$J, {
                     size: "small",
                     type: props.cancelButtonType === "text" ? void 0 : props.cancelButtonType,
                     text: props.cancelButtonType === "text",
@@ -48842,7 +50695,7 @@ const _sfc_main$d = /* @__PURE__ */ defineComponent({
                     ]),
                     _: 1
                   }, 8, ["type", "text"]),
-                  createVNode(_sfc_main$z, {
+                  createVNode(_sfc_main$J, {
                     size: "small",
                     type: props.confirmButtonType === "text" ? void 0 : props.confirmButtonType,
                     text: props.confirmButtonType === "text",
@@ -48867,14 +50720,17 @@ const _sfc_main$d = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_main$c = /* @__PURE__ */ defineComponent({
+const _sfc_main$l = /* @__PURE__ */ defineComponent({
   ...{
     inheritAttrs: false
   },
   __name: "BpUiPopover",
   props: {
     ...popoverProps,
-    modelValue: Boolean,
+    modelValue: {
+      type: Boolean,
+      default: void 0
+    },
     virtualRef: {
       type: Object,
       default: null
@@ -48958,7 +50814,78 @@ const _sfc_main$c = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_main$b = /* @__PURE__ */ defineComponent({
+const _hoisted_1$1 = {
+  key: 0,
+  class: "bp-ui-progress__header"
+};
+const _hoisted_2 = {
+  key: 0,
+  class: "bp-ui-progress__label"
+};
+const _hoisted_3 = {
+  key: 1,
+  class: "bp-ui-progress__helper"
+};
+const _sfc_main$k = /* @__PURE__ */ defineComponent({
+  ...{
+    name: "BpUiProgress",
+    inheritAttrs: false
+  },
+  __name: "BpUiProgress",
+  props: {
+    ...progressProps,
+    label: {
+      type: String,
+      default: ""
+    },
+    helperText: {
+      type: String,
+      default: ""
+    },
+    compact: Boolean
+  },
+  setup(__props, { expose: __expose }) {
+    const props = __props;
+    const elRef = ref();
+    const bindings = useForwardBindings(props, ["compact", "helperText", "label"]);
+    const progressClass = computed(() => mergeClassNames(
+      "bp-ui-progress bp-progress bpa-progress",
+      `bp-ui-progress--${props.type}`,
+      props.status && `bp-ui-progress--${props.status}`,
+      {
+        "bp-ui-progress--compact": props.compact,
+        "is-indeterminate": props.indeterminate,
+        "is-striped": props.striped
+      }
+    ));
+    __expose(createForwardExpose(elRef, {
+      progressRef: elRef
+    }));
+    return (_ctx, _cache) => {
+      return openBlock(), createElementBlock("div", {
+        class: normalizeClass(progressClass.value)
+      }, [
+        __props.label || __props.helperText || _ctx.$slots.label || _ctx.$slots.helper ? (openBlock(), createElementBlock("div", _hoisted_1$1, [
+          __props.label || _ctx.$slots.label ? (openBlock(), createElementBlock("div", _hoisted_2, [
+            renderSlot(_ctx.$slots, "label", {}, () => [
+              createTextVNode(toDisplayString$1(__props.label), 1)
+            ])
+          ])) : createCommentVNode("", true),
+          __props.helperText || _ctx.$slots.helper ? (openBlock(), createElementBlock("div", _hoisted_3, [
+            renderSlot(_ctx.$slots, "helper", {}, () => [
+              createTextVNode(toDisplayString$1(__props.helperText), 1)
+            ])
+          ])) : createCommentVNode("", true)
+        ])) : createCommentVNode("", true),
+        createVNode(unref(ElProgress), mergeProps({
+          ref_key: "elRef",
+          ref: elRef
+        }, unref(bindings), { class: "bp-ui-progress__bar" }), null, 16)
+      ], 2);
+    };
+  }
+});
+const _sfc_main$j = /* @__PURE__ */ defineComponent({
   ...{
     inheritAttrs: false
   },
@@ -48991,7 +50918,7 @@ const _sfc_main$b = /* @__PURE__ */ defineComponent({
       }, unref(bindings), {
         modelValue: model.value,
         "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => model.value = $event),
-        class: "bp-ui-radio bp-radio"
+        class: "bp-ui-radio bp-radio bpa-radio"
       }), createSlots({
         default: withCtx(() => [
           renderSlot(_ctx.$slots, "default", {}, () => [
@@ -49012,7 +50939,112 @@ const _sfc_main$b = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_main$a = /* @__PURE__ */ defineComponent({
+const _sfc_main$i = /* @__PURE__ */ defineComponent({
+  ...{
+    inheritAttrs: false
+  },
+  __name: "BpUiRadioButton",
+  props: {
+    modelValue: { type: [String, Number, Boolean] },
+    size: {},
+    disabled: { type: Boolean },
+    label: { type: [String, Number, Boolean] },
+    value: { type: [String, Number, Boolean] },
+    name: {}
+  },
+  emits: ["update:modelValue"],
+  setup(__props, { expose: __expose, emit: __emit }) {
+    const props = __props;
+    const bindings = useForwardBindings(props, ["modelValue"]);
+    const emit = __emit;
+    const model = computed({
+      get: () => props.modelValue,
+      set: (value) => emit("update:modelValue", value)
+    });
+    const elRef = ref();
+    const forwardedSlotNames = useForwardSlotNames(["default"]);
+    __expose(createForwardExpose(elRef));
+    return (_ctx, _cache) => {
+      return openBlock(), createBlock(unref(ElRadioButton), mergeProps({
+        ref_key: "elRef",
+        ref: elRef
+      }, unref(bindings), {
+        modelValue: model.value,
+        "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => model.value = $event),
+        class: "bp-ui-radio-button bp-radio-button bpa-radio-button"
+      }), createSlots({
+        default: withCtx(() => [
+          renderSlot(_ctx.$slots, "default", {}, () => [
+            createTextVNode(toDisplayString$1(props.label), 1)
+          ])
+        ]),
+        _: 2
+      }, [
+        renderList(unref(forwardedSlotNames), (slotName) => {
+          return {
+            name: slotName,
+            fn: withCtx((slotProps) => [
+              renderSlot(_ctx.$slots, slotName, normalizeProps(guardReactiveProps(slotProps ?? {})))
+            ])
+          };
+        })
+      ]), 1040, ["modelValue"]);
+    };
+  }
+});
+const _sfc_main$h = /* @__PURE__ */ defineComponent({
+  ...{
+    inheritAttrs: false
+  },
+  __name: "BpUiRadioGroup",
+  props: {
+    ariaLabel: {},
+    id: {},
+    size: {},
+    disabled: { type: Boolean },
+    modelValue: {},
+    fill: {},
+    textColor: {},
+    name: {},
+    validateEvent: { type: Boolean },
+    options: {},
+    props: {},
+    type: {}
+  },
+  emits: ["update:modelValue"],
+  setup(__props, { expose: __expose, emit: __emit }) {
+    const props = __props;
+    const bindings = useForwardBindings(props, ["modelValue"]);
+    const emit = __emit;
+    const model = computed({
+      get: () => props.modelValue,
+      set: (value) => emit("update:modelValue", value)
+    });
+    const elRef = ref();
+    const forwardedSlotNames = useForwardSlotNames();
+    __expose(createForwardExpose(elRef));
+    return (_ctx, _cache) => {
+      return openBlock(), createBlock(unref(ElRadioGroup), mergeProps({
+        ref_key: "elRef",
+        ref: elRef
+      }, unref(bindings), {
+        modelValue: model.value,
+        "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => model.value = $event),
+        class: "bp-ui-radio-group bp-radio-group bpa-radio-group"
+      }), createSlots({ _: 2 }, [
+        renderList(unref(forwardedSlotNames), (slotName) => {
+          return {
+            name: slotName,
+            fn: withCtx((slotProps) => [
+              renderSlot(_ctx.$slots, slotName, normalizeProps(guardReactiveProps(slotProps ?? {})))
+            ])
+          };
+        })
+      ]), 1040, ["modelValue"]);
+    };
+  }
+});
+const _sfc_main$g = /* @__PURE__ */ defineComponent({
   ...{
     inheritAttrs: false
   },
@@ -49240,7 +51272,78 @@ const _sfc_main$a = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_main$9 = /* @__PURE__ */ defineComponent({
+const _sfc_main$f = /* @__PURE__ */ defineComponent({
+  ...{
+    name: "BpUiResult",
+    inheritAttrs: false
+  },
+  __name: "BpUiResult",
+  props: {
+    ...resultProps,
+    actionLabel: {
+      type: String,
+      default: ""
+    },
+    compact: Boolean
+  },
+  emits: ["action"],
+  setup(__props, { expose: __expose, emit: __emit }) {
+    const props = __props;
+    const emit = __emit;
+    const elRef = ref();
+    const forwardedSlotNames = useForwardSlotNames(["extra"]);
+    const bindings = useForwardBindings(props, ["actionLabel", "compact"]);
+    const resultClass = computed(() => mergeClassNames(
+      "bp-ui-result bp-result bpa-result",
+      `bp-ui-result--${props.icon}`,
+      {
+        "bp-ui-result--compact": props.compact,
+        "has-action": !!props.actionLabel
+      }
+    ));
+    function handleAction(event) {
+      emit("action", event);
+    }
+    __expose(createForwardExpose(elRef, {
+      resultRef: elRef
+    }));
+    return (_ctx, _cache) => {
+      return openBlock(), createBlock(unref(ElResult), mergeProps({
+        ref_key: "elRef",
+        ref: elRef
+      }, unref(bindings), { class: resultClass.value }), createSlots({ _: 2 }, [
+        renderList(unref(forwardedSlotNames), (slotName) => {
+          return {
+            name: slotName,
+            fn: withCtx((slotProps) => [
+              renderSlot(_ctx.$slots, slotName, normalizeProps(guardReactiveProps(slotProps ?? {})))
+            ])
+          };
+        }),
+        _ctx.$slots.extra || __props.actionLabel ? {
+          name: "extra",
+          fn: withCtx(() => [
+            renderSlot(_ctx.$slots, "extra", {}, () => [
+              __props.actionLabel ? (openBlock(), createBlock(_sfc_main$J, {
+                key: 0,
+                type: "primary",
+                class: "bp-ui-result__action",
+                onClick: handleAction
+              }, {
+                default: withCtx(() => [
+                  createTextVNode(toDisplayString$1(__props.actionLabel), 1)
+                ]),
+                _: 1
+              })) : createCommentVNode("", true)
+            ])
+          ]),
+          key: "0"
+        } : void 0
+      ]), 1040, ["class"]);
+    };
+  }
+});
+const _sfc_main$e = /* @__PURE__ */ defineComponent({
   ...{
     inheritAttrs: false
   },
@@ -49274,7 +51377,7 @@ const _sfc_main$9 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_main$8 = /* @__PURE__ */ defineComponent({
+const _sfc_main$d = /* @__PURE__ */ defineComponent({
   ...{
     inheritAttrs: false
   },
@@ -49322,66 +51425,13 @@ const _sfc_main$8 = /* @__PURE__ */ defineComponent({
   }
 });
 const _hoisted_1 = { key: 1 };
-const _sfc_main$7 = /* @__PURE__ */ defineComponent({
+const _sfc_main$c = /* @__PURE__ */ defineComponent({
   ...{
     name: "BpUiSelect",
     inheritAttrs: false
   },
   __name: "BpUiSelect",
-  props: {
-    ariaLabel: {},
-    emptyValues: {},
-    valueOnClear: {},
-    name: {},
-    id: {},
-    modelValue: {},
-    autocomplete: {},
-    automaticDropdown: { type: Boolean },
-    size: {},
-    effect: {},
-    disabled: { type: Boolean },
-    clearable: { type: Boolean },
-    filterable: { type: Boolean },
-    allowCreate: { type: Boolean },
-    loading: { type: Boolean },
-    popperClass: {},
-    popperStyle: {},
-    popperOptions: {},
-    remote: { type: Boolean },
-    debounce: {},
-    loadingText: {},
-    noMatchText: {},
-    noDataText: {},
-    remoteMethod: {},
-    filterMethod: {},
-    multiple: { type: Boolean },
-    multipleLimit: {},
-    placeholder: {},
-    defaultFirstOption: { type: Boolean },
-    reserveKeyword: { type: Boolean },
-    valueKey: {},
-    collapseTags: { type: Boolean },
-    collapseTagsTooltip: { type: Boolean },
-    tagTooltip: {},
-    maxCollapseTags: {},
-    teleported: { type: Boolean },
-    persistent: { type: Boolean },
-    clearIcon: {},
-    fitInputWidth: { type: Boolean },
-    suffixIcon: {},
-    tagType: {},
-    tagEffect: {},
-    validateEvent: { type: Boolean },
-    remoteShowSuffix: { type: Boolean },
-    showArrow: { type: Boolean },
-    offset: {},
-    placement: {},
-    fallbackPlacements: {},
-    tabindex: {},
-    appendTo: {},
-    options: {},
-    props: {}
-  },
+  props: selectProps,
   emits: ["update:modelValue"],
   setup(__props, { expose: __expose, emit: __emit }) {
     const props = __props;
@@ -49587,6 +51637,83 @@ const _sfc_main$7 = /* @__PURE__ */ defineComponent({
           };
         })
       ]), 1040, ["modelValue", "append-to", "teleported", "popper-class"]);
+    };
+  }
+});
+const _sfc_main$b = /* @__PURE__ */ defineComponent({
+  ...{
+    name: "BpUiSkeleton",
+    inheritAttrs: false
+  },
+  __name: "BpUiSkeleton",
+  props: {
+    ...skeletonProps,
+    compact: Boolean,
+    card: Boolean
+  },
+  setup(__props, { expose: __expose }) {
+    const props = __props;
+    const elRef = ref();
+    const forwardedSlotNames = useForwardSlotNames();
+    const bindings = useForwardBindings(props, ["card", "compact"]);
+    const skeletonClass = computed(() => mergeClassNames(
+      "bp-ui-skeleton bp-skeleton bpa-skeleton",
+      {
+        "bp-ui-skeleton--card": props.card,
+        "bp-ui-skeleton--compact": props.compact,
+        "is-animated": props.animated,
+        "is-loading": props.loading
+      }
+    ));
+    __expose(createForwardExpose(elRef, {
+      skeletonRef: elRef
+    }));
+    return (_ctx, _cache) => {
+      return openBlock(), createBlock(unref(ElSkeleton), mergeProps({
+        ref_key: "elRef",
+        ref: elRef
+      }, unref(bindings), { class: skeletonClass.value }), createSlots({ _: 2 }, [
+        renderList(unref(forwardedSlotNames), (slotName) => {
+          return {
+            name: slotName,
+            fn: withCtx((slotProps) => [
+              renderSlot(_ctx.$slots, slotName, normalizeProps(guardReactiveProps(slotProps ?? {})))
+            ])
+          };
+        })
+      ]), 1040, ["class"]);
+    };
+  }
+});
+const _sfc_main$a = /* @__PURE__ */ defineComponent({
+  ...{
+    name: "BpUiSkeletonItem",
+    inheritAttrs: false
+  },
+  __name: "BpUiSkeletonItem",
+  props: {
+    ...skeletonItemProps,
+    block: Boolean
+  },
+  setup(__props, { expose: __expose }) {
+    const props = __props;
+    const elRef = ref();
+    const bindings = useForwardBindings(props, ["block"]);
+    const skeletonItemClass = computed(() => mergeClassNames(
+      "bp-ui-skeleton-item bp-skeleton__item bpa-skeleton-item",
+      `bp-ui-skeleton-item--${props.variant}`,
+      {
+        "bp-ui-skeleton-item--block": props.block
+      }
+    ));
+    __expose(createForwardExpose(elRef, {
+      skeletonItemRef: elRef
+    }));
+    return (_ctx, _cache) => {
+      return openBlock(), createBlock(unref(ElSkeletonItem), mergeProps({
+        ref_key: "elRef",
+        ref: elRef
+      }, unref(bindings), { class: skeletonItemClass.value }), null, 16, ["class"]);
     };
   }
 });
@@ -53790,7 +55917,7 @@ function getExampleNumber() {
   return withMetadataArgument(getExampleNumber$1, arguments);
 }
 const examples = { "AC": "40123", "AD": "312345", "AE": "501234567", "AF": "701234567", "AG": "2684641234", "AI": "2642351234", "AL": "672123456", "AM": "77123456", "AO": "923123456", "AR": "91123456789", "AS": "6847331234", "AT": "664123456", "AU": "412345678", "AW": "5601234", "AX": "412345678", "AZ": "401234567", "BA": "61123456", "BB": "2462501234", "BD": "1812345678", "BE": "450001234", "BF": "70123456", "BG": "43012345", "BH": "36001234", "BI": "79561234", "BJ": "0195123456", "BL": "690001234", "BM": "4413701234", "BN": "7123456", "BO": "71234567", "BQ": "3181234", "BR": "11961234567", "BS": "2423591234", "BT": "17123456", "BW": "71123456", "BY": "294911911", "BZ": "6221234", "CA": "5062345678", "CC": "412345678", "CD": "991234567", "CF": "70012345", "CG": "061234567", "CH": "781234567", "CI": "0123456789", "CK": "71234", "CL": "221234567", "CM": "671234567", "CN": "13123456789", "CO": "3211234567", "CR": "83123456", "CU": "51234567", "CV": "9911234", "CW": "95181234", "CX": "412345678", "CY": "96123456", "CZ": "601123456", "DE": "15123456789", "DJ": "77831001", "DK": "34412345", "DM": "7672251234", "DO": "8092345678", "DZ": "551234567", "EC": "991234567", "EE": "51234567", "EG": "1001234567", "EH": "650123456", "ER": "7123456", "ES": "612345678", "ET": "911234567", "FI": "412345678", "FJ": "7012345", "FK": "51234", "FM": "3501234", "FO": "211234", "FR": "612345678", "GA": "06031234", "GB": "7400123456", "GD": "4734031234", "GE": "555123456", "GF": "694201234", "GG": "7781123456", "GH": "231234567", "GI": "57123456", "GL": "221234", "GM": "3012345", "GN": "601123456", "GP": "690001234", "GQ": "222123456", "GR": "6912345678", "GT": "51234567", "GU": "6713001234", "GW": "955012345", "GY": "6091234", "HK": "51234567", "HN": "91234567", "HR": "921234567", "HT": "34101234", "HU": "201234567", "ID": "812345678", "IE": "850123456", "IL": "502345678", "IM": "7924123456", "IN": "8123456789", "IO": "3801234", "IQ": "7912345678", "IR": "9123456789", "IS": "6111234", "IT": "3123456789", "JE": "7797712345", "JM": "8762101234", "JO": "790123456", "JP": "9012345678", "KE": "712123456", "KG": "700123456", "KH": "91234567", "KI": "72001234", "KM": "3212345", "KN": "8697652917", "KP": "1921234567", "KR": "1020000000", "KW": "50012345", "KY": "3453231234", "KZ": "7710009998", "LA": "2023123456", "LB": "71123456", "LC": "7582845678", "LI": "660234567", "LK": "712345678", "LR": "770123456", "LS": "50123456", "LT": "61234567", "LU": "628123456", "LV": "21234567", "LY": "912345678", "MA": "650123456", "MC": "612345678", "MD": "62112345", "ME": "60123456", "MF": "690001234", "MG": "321234567", "MH": "2351234", "MK": "72345678", "ML": "65012345", "MM": "92123456", "MN": "88123456", "MO": "66123456", "MP": "6702345678", "MQ": "696201234", "MR": "22123456", "MS": "6644923456", "MT": "96961234", "MU": "52512345", "MV": "7712345", "MW": "991234567", "MX": "2221234567", "MY": "123456789", "MZ": "821234567", "NA": "811234567", "NC": "751234", "NE": "93123456", "NF": "381234", "NG": "8021234567", "NI": "81234567", "NL": "612345678", "NO": "40612345", "NP": "9841234567", "NR": "5551234", "NU": "8884012", "NZ": "211234567", "OM": "92123456", "PA": "61234567", "PE": "912345678", "PF": "87123456", "PG": "70123456", "PH": "9051234567", "PK": "3012345678", "PL": "512345678", "PM": "551234", "PR": "7872345678", "PS": "599123456", "PT": "912345678", "PW": "6201234", "PY": "961456789", "QA": "33123456", "RE": "692123456", "RO": "712034567", "RS": "601234567", "RU": "9123456789", "RW": "720123456", "SA": "512345678", "SB": "7421234", "SC": "2510123", "SD": "911231234", "SE": "701234567", "SG": "81234567", "SH": "51234", "SI": "31234567", "SJ": "41234567", "SK": "912123456", "SL": "25123456", "SM": "66661212", "SN": "701234567", "SO": "71123456", "SR": "7412345", "SS": "977123456", "ST": "9812345", "SV": "70123456", "SX": "7215205678", "SY": "944567890", "SZ": "76123456", "TA": "8999", "TC": "6492311234", "TD": "63012345", "TG": "90112345", "TH": "812345678", "TJ": "917123456", "TK": "7290", "TL": "77212345", "TM": "66123456", "TN": "20123456", "TO": "7715123", "TR": "5012345678", "TT": "8682911234", "TV": "901234", "TW": "912345678", "TZ": "621234567", "UA": "501234567", "UG": "712345678", "US": "2015550123", "UY": "94231234", "UZ": "912345678", "VA": "3123456789", "VC": "7844301234", "VE": "4121234567", "VG": "2843001234", "VI": "3406421234", "VN": "912345678", "VU": "5912345", "WF": "821234", "WS": "7212345", "XK": "43201234", "YE": "712345678", "YT": "639012345", "ZA": "711234567", "ZM": "955123456", "ZW": "712345678" };
-const _sfc_main$6 = /* @__PURE__ */ defineComponent({
+const _sfc_main$9 = /* @__PURE__ */ defineComponent({
   ...{
     inheritAttrs: false
   },
@@ -54067,7 +56194,7 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_main$5 = /* @__PURE__ */ defineComponent({
+const _sfc_main$8 = /* @__PURE__ */ defineComponent({
   ...{
     inheritAttrs: false
   },
@@ -54183,7 +56310,177 @@ const _sfc_main$5 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_main$4 = /* @__PURE__ */ defineComponent({
+const _sfc_main$7 = /* @__PURE__ */ defineComponent({
+  ...{
+    name: "BpUiTab",
+    inheritAttrs: false
+  },
+  __name: "BpUiTab",
+  props: {
+    type: {},
+    closable: { type: Boolean },
+    addable: { type: Boolean },
+    modelValue: {},
+    defaultValue: {},
+    editable: { type: Boolean },
+    tabPosition: {},
+    beforeLeave: {},
+    stretch: { type: Boolean },
+    tabindex: {},
+    activeName: {}
+  },
+  emits: ["update:modelValue", "update:activeName", "tab-click", "tabClick", "tab-change", "tabChange", "edit", "tab-remove", "tabRemove", "tab-add", "tabAdd"],
+  setup(__props, { expose: __expose, emit: __emit }) {
+    const props = __props;
+    const emit = __emit;
+    const currentInstance = getCurrentInstance();
+    const internalActiveName = ref(props.defaultValue ?? props.modelValue ?? props.activeName ?? "0");
+    const bindings = useForwardBindings(
+      props,
+      ["activeName", "modelValue"],
+      ["activeName", "active-name", "modelValue", "model-value"]
+    );
+    const forwardedSlotNames = useForwardSlotNames(["default"]);
+    const elRef = ref();
+    function hasIncomingProp(...keys2) {
+      const rawProps = (currentInstance == null ? void 0 : currentInstance.vnode.props) ?? {};
+      return keys2.some((key) => Object.prototype.hasOwnProperty.call(rawProps, key));
+    }
+    const isActiveNameControlled = computed(() => hasIncomingProp(
+      "modelValue",
+      "model-value",
+      "activeName",
+      "active-name"
+    ));
+    const activeName = computed({
+      get: () => props.modelValue ?? props.activeName ?? internalActiveName.value,
+      set: (name) => {
+        if (!isActiveNameControlled.value) {
+          internalActiveName.value = name;
+        }
+        emit("update:modelValue", name);
+        emit("update:activeName", name);
+      }
+    });
+    const tabClass = computed(() => mergeClassNames(
+      "bp-ui-tab bp-tab bpa-tab",
+      props.type ? `bp-ui-tab--${props.type}` : void 0,
+      props.tabPosition ? `bp-ui-tab--${props.tabPosition}` : void 0,
+      {
+        "is-addable": props.addable,
+        "is-closable": props.closable,
+        "is-editable": props.editable,
+        "is-stretch": props.stretch
+      }
+    ));
+    function handleTabClick(pane, event) {
+      emit("tab-click", pane, event);
+      emit("tabClick", pane, event);
+    }
+    function handleTabChange(name) {
+      emit("tab-change", name);
+      emit("tabChange", name);
+    }
+    function handleEdit(paneName, action) {
+      emit("edit", paneName, action);
+    }
+    function handleTabRemove(name) {
+      emit("tab-remove", name);
+      emit("tabRemove", name);
+    }
+    function handleTabAdd() {
+      emit("tab-add");
+      emit("tabAdd");
+    }
+    __expose(createForwardExpose(elRef, {
+      activeName
+    }));
+    return (_ctx, _cache) => {
+      return openBlock(), createBlock(unref(ElTabs), mergeProps({
+        ref_key: "elRef",
+        ref: elRef
+      }, unref(bindings), {
+        modelValue: activeName.value,
+        "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => activeName.value = $event),
+        class: tabClass.value,
+        onTabClick: handleTabClick,
+        onTabChange: handleTabChange,
+        onEdit: handleEdit,
+        onTabRemove: handleTabRemove,
+        onTabAdd: handleTabAdd
+      }), createSlots({
+        default: withCtx(() => [
+          renderSlot(_ctx.$slots, "default")
+        ]),
+        _: 2
+      }, [
+        renderList(unref(forwardedSlotNames), (slotName) => {
+          return {
+            name: slotName,
+            fn: withCtx((slotProps) => [
+              renderSlot(_ctx.$slots, slotName, normalizeProps(guardReactiveProps(slotProps ?? {})))
+            ])
+          };
+        })
+      ]), 1040, ["modelValue", "class"]);
+    };
+  }
+});
+const _sfc_main$6 = /* @__PURE__ */ defineComponent({
+  ...{
+    name: "BpUiTabPane",
+    inheritAttrs: false
+  },
+  __name: "BpUiTabPane",
+  props: {
+    label: {},
+    name: {},
+    closable: { type: Boolean },
+    disabled: { type: Boolean },
+    lazy: { type: Boolean }
+  },
+  setup(__props, { expose: __expose }) {
+    const props = __props;
+    const slots = useSlots();
+    const bindings = useForwardBindings(props, ["label"]);
+    const forwardedSlotNames = useForwardSlotNames(["default", "label"]);
+    const labelSlotText = useSlotText(slots.label);
+    const resolvedLabel = computed(() => props.label || labelSlotText.value || "");
+    const elRef = ref();
+    __expose(createForwardExpose(elRef));
+    return (_ctx, _cache) => {
+      return openBlock(), createBlock(unref(ElTabPane), mergeProps({
+        ref_key: "elRef",
+        ref: elRef
+      }, unref(bindings), {
+        label: resolvedLabel.value,
+        class: "bp-ui-tab-pane bp-tab-pane bpa-tab-pane"
+      }), createSlots({
+        default: withCtx(() => [
+          renderSlot(_ctx.$slots, "default")
+        ]),
+        _: 2
+      }, [
+        _ctx.$slots.label ? {
+          name: "label",
+          fn: withCtx(() => [
+            renderSlot(_ctx.$slots, "label")
+          ]),
+          key: "0"
+        } : void 0,
+        renderList(unref(forwardedSlotNames), (slotName) => {
+          return {
+            name: slotName,
+            fn: withCtx((slotProps) => [
+              renderSlot(_ctx.$slots, slotName, normalizeProps(guardReactiveProps(slotProps ?? {})))
+            ])
+          };
+        })
+      ]), 1040, ["label"]);
+    };
+  }
+});
+const _sfc_main$5 = /* @__PURE__ */ defineComponent({
   ...{
     name: "BpUiTable",
     inheritAttrs: false
@@ -54217,8 +56514,7 @@ const _sfc_main$4 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const BpUiElementPlusIcons = ElementPlusIcons;
-const _sfc_main$3 = /* @__PURE__ */ defineComponent({
+const _sfc_main$4 = /* @__PURE__ */ defineComponent({
   ...{
     // Element Plus table inspects child vnode names and expects ElTableColumn.
     // Keep the public registration name as BpUiTableColumn, but identify the
@@ -54257,7 +56553,7 @@ const _sfc_main$3 = /* @__PURE__ */ defineComponent({
         hasExpandRenderer.value ? {
           name: "expand",
           fn: withCtx((slotProps) => [
-            _ctx.$slots.expand ? renderSlot(_ctx.$slots, "expand", normalizeProps(mergeProps({ key: 0 }, slotProps ?? {}))) : (openBlock(), createBlock(_sfc_main$l, { key: 1 }, {
+            _ctx.$slots.expand ? renderSlot(_ctx.$slots, "expand", normalizeProps(mergeProps({ key: 0 }, slotProps ?? {}))) : (openBlock(), createBlock(_sfc_main$u, { key: 1 }, {
               default: withCtx(() => [
                 (openBlock(), createBlock(resolveDynamicComponent(resolveExpandIcon(Boolean(slotProps == null ? void 0 : slotProps.expanded)))))
               ]),
@@ -54275,6 +56571,203 @@ const _sfc_main$3 = /* @__PURE__ */ defineComponent({
           };
         })
       ]), 1040);
+    };
+  }
+});
+const _sfc_main$3 = /* @__PURE__ */ defineComponent({
+  ...{
+    name: "BpUiTag",
+    inheritAttrs: false
+  },
+  __name: "BpUiTag",
+  props: {
+    ...tagProps,
+    label: {
+      type: [String, Number],
+      default: void 0
+    },
+    value: {
+      type: [String, Number, Boolean, Object],
+      default: void 0
+    },
+    visible: {
+      type: Boolean,
+      default: void 0
+    },
+    clickable: Boolean,
+    selected: Boolean,
+    muted: Boolean,
+    disabled: Boolean,
+    ariaLabel: {
+      type: String,
+      default: void 0
+    }
+  },
+  emits: ["update:visible", "close", "click", "dismiss", "activate"],
+  setup(__props, { expose: __expose, emit: __emit }) {
+    const props = __props;
+    const emit = __emit;
+    const attrs = useAttrs$1();
+    const slots = useSlots();
+    const currentInstance = getCurrentInstance();
+    const internalVisible = ref(true);
+    const elRef = ref();
+    const defaultSlotText = useSlotText(slots.default);
+    const forwardedSlotNames = useForwardSlotNames(["default"]);
+    const bindings = useForwardBindings(
+      props,
+      [
+        "ariaLabel",
+        "clickable",
+        "disabled",
+        "label",
+        "muted",
+        "selected",
+        "value",
+        "visible"
+      ],
+      ["ariaLabel", "ariaDisabled", "role", "tabindex", "tabIndex"]
+    );
+    const isVisibleControlled = computed(() => {
+      const rawProps = (currentInstance == null ? void 0 : currentInstance.vnode.props) ?? {};
+      return Object.prototype.hasOwnProperty.call(rawProps, "visible");
+    });
+    const isRendered = computed(() => {
+      if (isVisibleControlled.value) {
+        return props.visible !== false;
+      }
+      return internalVisible.value;
+    });
+    const payload = computed(() => ({
+      label: props.label ?? defaultSlotText.value,
+      value: props.value
+    }));
+    const tagClass = computed(() => mergeClassNames(
+      "bp-ui-tag bp-tag bpa-tag",
+      props.type ? `bp-ui-tag--${props.type}` : void 0,
+      props.effect ? `bp-ui-tag--${props.effect}` : void 0,
+      props.size ? `bp-ui-tag--${props.size}` : void 0,
+      {
+        "bp-ui-tag--closable": props.closable,
+        "bp-ui-tag--hit": props.hit,
+        "bp-ui-tag--round": props.round,
+        "is-clickable": props.clickable && !props.disabled,
+        "is-disabled": props.disabled,
+        "is-muted": props.muted,
+        "is-selected": props.selected
+      }
+    ));
+    const resolvedAriaLabel = computed(() => {
+      const attrValue = resolveAttrValue(attrs, "ariaLabel");
+      return props.ariaLabel ?? (typeof attrValue === "string" ? attrValue : void 0);
+    });
+    const resolvedAriaDisabled = computed(() => {
+      if (props.disabled) {
+        return "true";
+      }
+      const attrValue = resolveAttrValue(attrs, "ariaDisabled");
+      return typeof attrValue === "string" || typeof attrValue === "boolean" ? attrValue : void 0;
+    });
+    const resolvedRole = computed(() => {
+      const attrValue = resolveAttrValue(attrs, "role");
+      if (typeof attrValue === "string") {
+        return attrValue;
+      }
+      return props.clickable ? "button" : void 0;
+    });
+    const resolvedTabIndex = computed(() => {
+      const attrValue = resolveAttrValue(attrs, "tabindex");
+      if (props.disabled) {
+        return -1;
+      }
+      if (typeof attrValue === "string" || typeof attrValue === "number") {
+        return attrValue;
+      }
+      return props.clickable ? 0 : void 0;
+    });
+    function setVisible(visible) {
+      if (!isVisibleControlled.value) {
+        internalVisible.value = visible;
+      }
+      emit("update:visible", visible);
+    }
+    function show() {
+      setVisible(true);
+    }
+    function hide() {
+      setVisible(false);
+    }
+    function toggle(force) {
+      setVisible(force ?? !isRendered.value);
+    }
+    function emitActivation(event) {
+      emit("click", event, payload.value);
+      emit("activate", payload.value, event);
+    }
+    function handleClick(event) {
+      if (props.disabled) {
+        event.preventDefault();
+        return;
+      }
+      emitActivation(event);
+    }
+    function handleClose(event) {
+      if (props.disabled) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
+      setVisible(false);
+      emit("close", event, payload.value);
+      emit("dismiss", payload.value, event);
+    }
+    function handleKeydown(event) {
+      if (!props.clickable || props.disabled || event.target !== event.currentTarget) {
+        return;
+      }
+      if (event.key !== "Enter" && event.key !== " ") {
+        return;
+      }
+      event.preventDefault();
+      emitActivation(event);
+    }
+    __expose(createForwardExpose(elRef, {
+      hide,
+      show,
+      tagRef: elRef,
+      toggle
+    }));
+    return (_ctx, _cache) => {
+      return isRendered.value ? (openBlock(), createBlock(unref(ElTag), mergeProps({
+        key: 0,
+        ref_key: "elRef",
+        ref: elRef
+      }, unref(bindings), {
+        "aria-disabled": resolvedAriaDisabled.value,
+        "aria-label": resolvedAriaLabel.value,
+        class: tagClass.value,
+        role: resolvedRole.value,
+        tabindex: resolvedTabIndex.value,
+        onClick: handleClick,
+        onClose: handleClose,
+        onKeydown: handleKeydown
+      }), createSlots({
+        default: withCtx(() => [
+          renderSlot(_ctx.$slots, "default", {}, () => [
+            createTextVNode(toDisplayString$1(props.label), 1)
+          ])
+        ]),
+        _: 2
+      }, [
+        renderList(unref(forwardedSlotNames), (slotName) => {
+          return {
+            name: slotName,
+            fn: withCtx((slotProps) => [
+              renderSlot(_ctx.$slots, slotName, normalizeProps(guardReactiveProps(slotProps ?? {})))
+            ])
+          };
+        })
+      ]), 1040, ["aria-disabled", "aria-label", "class", "role", "tabindex"])) : createCommentVNode("", true);
     };
   }
 });
@@ -54297,14 +56790,14 @@ function warnOnce$1(msg) {
 }
 const inBrowser$1 = typeof window !== "undefined";
 const RE_ARGS$1 = /\{([0-9a-zA-Z]+)\}/g;
-function format$2(message, ...args) {
+function format$2(message2, ...args) {
   if (args.length === 1 && isObject$1(args[0])) {
     args = args[0];
   }
   if (!args || !args.hasOwnProperty) {
     args = {};
   }
-  return message.replace(RE_ARGS$1, (match, identifier) => {
+  return message2.replace(RE_ARGS$1, (match, identifier) => {
     return args.hasOwnProperty(identifier) ? args[identifier] : "";
   });
 }
@@ -54416,14 +56909,14 @@ let measure;
   }
 }
 const RE_ARGS = /\{([0-9a-zA-Z]+)\}/g;
-function format$1(message, ...args) {
+function format$1(message2, ...args) {
   if (args.length === 1 && isObject(args[0])) {
     args = args[0];
   }
   if (!args || !args.hasOwnProperty) {
     args = {};
   }
-  return message.replace(RE_ARGS, (match, identifier) => {
+  return message2.replace(RE_ARGS, (match, identifier) => {
     return args.hasOwnProperty(identifier) ? args[identifier] : "";
   });
 }
@@ -55663,17 +58156,17 @@ function optimize(ast) {
   }
   return ast;
 }
-function optimizeMessageNode(message) {
-  if (message.items.length === 1) {
-    const item = message.items[0];
+function optimizeMessageNode(message2) {
+  if (message2.items.length === 1) {
+    const item = message2.items[0];
     if (item.type === 3 || item.type === 9) {
-      message.static = item.value;
+      message2.static = item.value;
       delete item.value;
     }
   } else {
     const values = [];
-    for (let i = 0; i < message.items.length; i++) {
-      const item = message.items[i];
+    for (let i = 0; i < message2.items.length; i++) {
+      const item = message2.items[i];
       if (!(item.type === 3 || item.type === 9)) {
         break;
       }
@@ -55682,10 +58175,10 @@ function optimizeMessageNode(message) {
       }
       values.push(item.value);
     }
-    if (values.length === message.items.length) {
-      message.static = join(values);
-      for (let i = 0; i < message.items.length; i++) {
-        const item = message.items[i];
+    if (values.length === message2.items.length) {
+      message2.static = join(values);
+      for (let i = 0; i < message2.items.length; i++) {
+        const item = message2.items[i];
         if (item.type === 3 || item.type === 9) {
           delete item.value;
         }
@@ -55715,16 +58208,16 @@ function minify(node) {
       break;
     }
     case 2: {
-      const message = node;
-      const items = message.items;
+      const message2 = node;
+      const items = message2.items;
       for (let i = 0; i < items.length; i++) {
         minify(items[i]);
       }
-      message.i = items;
-      delete message.items;
-      if (message.static) {
-        message.s = message.static;
-        delete message.static;
+      message2.i = items;
+      delete message2.items;
+      if (message2.static) {
+        message2.s = message2.static;
+        delete message2.static;
       }
       break;
     }
@@ -56149,29 +58642,29 @@ function checkHtmlMessage(source, warnHtmlMessage) {
     warn(format$1(WARN_MESSAGE, { source }));
   }
 }
-const defaultOnCacheKey = (message) => message;
+const defaultOnCacheKey = (message2) => message2;
 let compileCache = create();
-function baseCompile(message, options = {}) {
+function baseCompile(message2, options = {}) {
   let detectError = false;
   const onError = options.onError || defaultOnError;
   options.onError = (err) => {
     detectError = true;
     onError(err);
   };
-  return { ...baseCompile$1(message, options), detectError };
+  return { ...baseCompile$1(message2, options), detectError };
 }
 // @__NO_SIDE_EFFECTS__
-function compile(message, context) {
-  if (!__INTLIFY_DROP_MESSAGE_COMPILER__ && isString(message)) {
+function compile(message2, context) {
+  if (!__INTLIFY_DROP_MESSAGE_COMPILER__ && isString(message2)) {
     const warnHtmlMessage = isBoolean(context.warnHtmlMessage) ? context.warnHtmlMessage : true;
-    checkHtmlMessage(message, warnHtmlMessage);
+    checkHtmlMessage(message2, warnHtmlMessage);
     const onCacheKey = context.onCacheKey || defaultOnCacheKey;
-    const cacheKey = onCacheKey(message);
+    const cacheKey = onCacheKey(message2);
     const cached = compileCache[cacheKey];
     if (cached) {
       return cached;
     }
-    const { ast, detectError } = baseCompile(message, {
+    const { ast, detectError } = baseCompile(message2, {
       ...context,
       location: true,
       jit: true
@@ -56179,19 +58672,19 @@ function compile(message, context) {
     const msg = format(ast);
     return !detectError ? compileCache[cacheKey] = msg : msg;
   } else {
-    if (!isMessageAST(message)) {
+    if (!isMessageAST(message2)) {
       warn(`the message that is resolve with key '${context.key}' is not supported for jit compilation`);
-      return (() => message);
+      return (() => message2);
     }
-    const cacheKey = message.cacheKey;
+    const cacheKey = message2.cacheKey;
     if (cacheKey) {
       const cached = compileCache[cacheKey];
       if (cached) {
         return cached;
       }
-      return compileCache[cacheKey] = format(message);
+      return compileCache[cacheKey] = format(message2);
     } else {
-      return format(message);
+      return format(message2);
     }
   }
 }
@@ -57278,7 +59771,7 @@ function createMessageContext(options = {}) {
   const _named = options.named || create();
   isNumber(options.pluralIndex) && normalizeNamed(pluralIndex, _named);
   const named = (key) => _named[key];
-  function message(key, useLinked) {
+  function message2(key, useLinked) {
     const msg = isFunction(options.messages) ? options.messages(key, !!useLinked) : isObject(options.messages) ? options.messages[key] : false;
     return !msg ? options.parent ? options.parent.message(key) : DEFAULT_MESSAGE : msg;
   }
@@ -57305,7 +59798,7 @@ function createMessageContext(options = {}) {
         type22 = arg2 || type22;
       }
     }
-    const ret = message(key, true)(ctx);
+    const ret = message2(key, true)(ctx);
     const msg = (
       // The message in vnode resolved with linked are returned as an array by processor.nomalize
       type22 === "vnode" && isArray(ret) && modifier ? ret[0] : ret
@@ -57332,7 +59825,7 @@ function createMessageContext(options = {}) {
     [
       "message"
       /* HelperNameMap.MESSAGE */
-    ]: message,
+    ]: message2,
     [
       "type"
       /* HelperNameMap.TYPE */
@@ -57365,7 +59858,7 @@ function translate(context, ...args) {
   const enableDefaultMsg = fallbackFormat || defaultMsgOrKey != null && (isString(defaultMsgOrKey) || isFunction(defaultMsgOrKey));
   const locale = getLocale(context, options);
   escapeParameter && escapeParams(options);
-  let [formatScope, targetLocale, message] = !resolvedMessage ? resolveMessageFormat(context, key, locale, fallbackLocale2, fallbackWarn, missingWarn) : [
+  let [formatScope, targetLocale, message2] = !resolvedMessage ? resolveMessageFormat(context, key, locale, fallbackLocale2, fallbackWarn, missingWarn) : [
     key,
     locale,
     messages2[locale] || create()
@@ -57393,7 +59886,7 @@ function translate(context, ...args) {
   if (occurred) {
     return format2;
   }
-  const ctxOptions = getMessageContextOptions(context, targetLocale, message, options);
+  const ctxOptions = getMessageContextOptions(context, targetLocale, message2, options);
   const msgContext = createMessageContext(ctxOptions);
   const messaged = evaluateMessage(context, msg, msgContext);
   let ret = postTranslation ? postTranslation(messaged, key) : messaged;
@@ -57427,7 +59920,7 @@ function escapeParams(options) {
 function resolveMessageFormat(context, key, locale, fallbackLocale2, fallbackWarn, missingWarn) {
   const { messages: messages2, onWarn, messageResolver: resolveValue2, localeFallbacker } = context;
   const locales = localeFallbacker(context, fallbackLocale2, locale);
-  let message = create();
+  let message2 = create();
   let targetLocale;
   let format2 = null;
   let from = locale;
@@ -57453,7 +59946,7 @@ function resolveMessageFormat(context, key, locale, fallbackLocale2, fallbackWar
         });
       }
     }
-    message = messages2[targetLocale] || create();
+    message2 = messages2[targetLocale] || create();
     let start = null;
     let startTag;
     let endTag;
@@ -57463,8 +59956,8 @@ function resolveMessageFormat(context, key, locale, fallbackLocale2, fallbackWar
       endTag = "intlify-message-resolve-end";
       mark && mark(startTag);
     }
-    if ((format2 = resolveValue2(message, key)) === null) {
-      format2 = message[key];
+    if ((format2 = resolveValue2(message2, key)) === null) {
+      format2 = message2[key];
     }
     if (inBrowser) {
       const end = window.performance.now();
@@ -57501,7 +59994,7 @@ function resolveMessageFormat(context, key, locale, fallbackLocale2, fallbackWar
     }
     from = to;
   }
-  return [format2, targetLocale, message];
+  return [format2, targetLocale, message2];
 }
 function compileMessageFormat(context, key, targetLocale, format2, cacheBaseKey, onError) {
   const { messageCompiler, warnHtmlMessage } = context;
@@ -57611,7 +60104,7 @@ function getCompileContext(context, locale, key, source, warnHtmlMessage, onErro
       onError && onError(err);
       {
         const _source = getSourceForCodeFrame(source);
-        const message = `Message compilation error: ${err.message}`;
+        const message2 = `Message compilation error: ${err.message}`;
         const codeFrame = err.location && _source && generateCodeFrame(_source, err.location.start.offset, err.location.end.offset);
         const emitter = context.__v_emitter;
         if (emitter && _source) {
@@ -57623,8 +60116,8 @@ function getCompileContext(context, locale, key, source, warnHtmlMessage, onErro
             groupId: `${"translate"}:${key}`
           });
         }
-        console.error(codeFrame ? `${message}
-${codeFrame}` : message);
+        console.error(codeFrame ? `${message2}
+${codeFrame}` : message2);
       }
     },
     onCacheKey: (source2) => generateFormatCacheKey(locale, key, source2)
@@ -57639,12 +60132,12 @@ function getSourceForCodeFrame(source) {
     }
   }
 }
-function getMessageContextOptions(context, locale, message, options) {
+function getMessageContextOptions(context, locale, message2, options) {
   const { modifiers, pluralRules, messageResolver: resolveValue2, fallbackLocale: fallbackLocale2, fallbackWarn, missingWarn, fallbackContext } = context;
   const resolveMessage = (key, useLinked) => {
-    let val = resolveValue2(message, key);
+    let val = resolveValue2(message2, key);
     if (val == null && (fallbackContext || useLinked)) {
-      const [, , message2] = resolveMessageFormat(
+      const [, , message22] = resolveMessageFormat(
         fallbackContext || context,
         // NOTE: if has fallbackContext, fallback to root, else if use linked, fallback to local context
         key,
@@ -57653,7 +60146,7 @@ function getMessageContextOptions(context, locale, message, options) {
         fallbackWarn,
         missingWarn
       );
-      val = resolveValue2(message2, key);
+      val = resolveValue2(message22, key);
     }
     if (isString(val) || isMessageAST(val)) {
       let occurred = false;
@@ -58268,8 +60761,8 @@ function createComposer(options = {}) {
         return false;
       }
       const targetLocale = isString$1(locale2) ? locale2 : _locale.value;
-      const message = getLocaleMessage(targetLocale);
-      const resolved = _context.messageResolver(message, key);
+      const message2 = getLocaleMessage(targetLocale);
+      const resolved = _context.messageResolver(message2, key);
       return isMessageAST(resolved) || isMessageFunction(resolved) || isString$1(resolved);
     }, () => [key], "translate exists", (root2) => {
       return Reflect.apply(root2.te, root2, [key, locale2]);
@@ -58295,22 +60788,22 @@ function createComposer(options = {}) {
   function getLocaleMessage(locale2) {
     return _messages.value[locale2] || {};
   }
-  function setLocaleMessage(locale2, message) {
+  function setLocaleMessage(locale2, message2) {
     if (flatJson) {
-      const _message = { [locale2]: message };
+      const _message = { [locale2]: message2 };
       for (const key in _message) {
         if (hasOwn$1(_message, key)) {
           handleFlatJson(_message[key]);
         }
       }
-      message = _message[locale2];
+      message2 = _message[locale2];
     }
-    _messages.value[locale2] = message;
+    _messages.value[locale2] = message2;
     _context.messages = _messages.value;
   }
-  function mergeLocaleMessage(locale2, message) {
+  function mergeLocaleMessage(locale2, message2) {
     _messages.value[locale2] = _messages.value[locale2] || {};
-    const _message = { [locale2]: message };
+    const _message = { [locale2]: message2 };
     if (flatJson) {
       for (const key in _message) {
         if (hasOwn$1(_message, key)) {
@@ -58318,8 +60811,8 @@ function createComposer(options = {}) {
         }
       }
     }
-    message = _message[locale2];
-    deepCopy(message, _messages.value[locale2]);
+    message2 = _message[locale2];
+    deepCopy(message2, _messages.value[locale2]);
     _context.messages = _messages.value;
   }
   function getDateTimeFormat(locale2) {
@@ -58824,8 +61317,8 @@ function convertComposerOptions(options) {
     const sharedMessages = options.sharedMessages;
     const locales = Object.keys(sharedMessages);
     messages2 = locales.reduce((messages22, locale2) => {
-      const message = messages22[locale2] || (messages22[locale2] = {});
-      assign$1(message, sharedMessages[locale2]);
+      const message2 = messages22[locale2] || (messages22[locale2] = {});
+      assign$1(message2, sharedMessages[locale2]);
       return messages22;
     }, messages2 || {});
   }
@@ -59015,12 +61508,12 @@ function createVueI18n(options = {}) {
       return composer.getLocaleMessage(locale);
     },
     // setLocaleMessage
-    setLocaleMessage(locale, message) {
-      composer.setLocaleMessage(locale, message);
+    setLocaleMessage(locale, message2) {
+      composer.setLocaleMessage(locale, message2);
     },
     // mergeLocaleMessage
-    mergeLocaleMessage(locale, message) {
-      composer.mergeLocaleMessage(locale, message);
+    mergeLocaleMessage(locale, message2) {
+      composer.mergeLocaleMessage(locale, message2);
     },
     // d
     d(...args) {
@@ -59885,7 +62378,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
       type: [Object, String],
       required: false
     },
-    firstDayOfWeek: Number
+    firstDayOfWeek: [Number, String]
   },
   emits: ["update:modelValue"],
   setup(__props, { expose: __expose, emit: __emit }) {
@@ -59902,9 +62395,8 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
     });
     const elRef = ref();
     const localConfigLocale = useDatePickerLocale(props);
-    provideGlobalConfig(computed(() => ({
-      locale: localConfigLocale.value
-    })));
+    const datePickerKey = computed(() => localConfigLocale.value.name);
+    const namespace = useGlobalConfig("namespace", "bp");
     const popperClass = computed(() => mergeClassNames(
       "bp-popper",
       "bp-ui-date-time-picker-popper",
@@ -59915,27 +62407,36 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
     const forwardedSlotNames = useForwardSlotNames();
     __expose(createForwardExpose(elRef));
     return (_ctx, _cache) => {
-      return openBlock(), createBlock(unref(ElDatePicker), mergeProps({
-        ref_key: "elRef",
-        ref: elRef
-      }, unref(bindings), {
-        modelValue: model.value,
-        "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => model.value = $event),
-        type: "datetime",
-        format: displayFormat.value,
-        "time-format": resolvedTimeFormat.value,
-        "popper-class": popperClass.value,
-        class: "bp-ui-date-time-picker bp-date-editor bp-input bpa-form-control"
-      }), createSlots({ _: 2 }, [
-        renderList(unref(forwardedSlotNames), (slotName) => {
-          return {
-            name: slotName,
-            fn: withCtx((slotProps) => [
-              renderSlot(_ctx.$slots, slotName, normalizeProps(guardReactiveProps(slotProps ?? {})))
-            ])
-          };
-        })
-      ]), 1040, ["modelValue", "format", "time-format", "popper-class"]);
+      return openBlock(), createBlock(unref(ElConfigProvider), {
+        locale: unref(localConfigLocale),
+        namespace: unref(namespace)
+      }, {
+        default: withCtx(() => [
+          (openBlock(), createBlock(unref(ElDatePicker), mergeProps({
+            key: datePickerKey.value,
+            ref_key: "elRef",
+            ref: elRef
+          }, unref(bindings), {
+            modelValue: model.value,
+            "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => model.value = $event),
+            type: "datetime",
+            format: displayFormat.value,
+            "time-format": resolvedTimeFormat.value,
+            "popper-class": popperClass.value,
+            class: "bp-ui-date-time-picker bp-date-editor bp-input bpa-form-control"
+          }), createSlots({ _: 2 }, [
+            renderList(unref(forwardedSlotNames), (slotName) => {
+              return {
+                name: slotName,
+                fn: withCtx((slotProps) => [
+                  renderSlot(_ctx.$slots, slotName, normalizeProps(guardReactiveProps(slotProps ?? {})))
+                ])
+              };
+            })
+          ]), 1040, ["modelValue", "format", "time-format", "popper-class"]))
+        ]),
+        _: 3
+      }, 8, ["locale", "namespace"]);
     };
   }
 });
@@ -60090,7 +62591,7 @@ const buttonTypeClassMap = {
 function isMessageBoxOptions(value) {
   return Boolean(value) && typeof value === "object" && !isVNode$1(value);
 }
-function resolveAppendToTarget(value) {
+function resolveAppendToTarget$2(value) {
   const appendTo = normalizeAppendToTarget(value);
   if (typeof appendTo === "string") {
     const normalizedSelector = appendTo.trim();
@@ -60144,7 +62645,7 @@ function normalizeMessageBoxOptions(options, getAppendTo, kind) {
   const cancelButtonType = options.cancelButtonType ?? "";
   return {
     ...options,
-    appendTo: resolveAppendToTarget(options.appendTo) ?? getAppendTo(),
+    appendTo: resolveAppendToTarget$2(options.appendTo) ?? getAppendTo(),
     buttonSize,
     customClass: mergeClassNames(
       messageBoxRootClass,
@@ -60166,8 +62667,8 @@ function normalizeMessageBoxOptions(options, getAppendTo, kind) {
     )
   };
 }
-function createShortcutMethod(kind, normalizeOptions, resolveAppContext) {
-  return ((message, title, options, appContext) => {
+function createShortcutMethod(kind, normalizeOptions2, resolveAppContext) {
+  return ((message2, title, options, appContext) => {
     let resolvedTitle = "";
     let resolvedOptions;
     let resolvedAppContext;
@@ -60180,9 +62681,9 @@ function createShortcutMethod(kind, normalizeOptions, resolveAppContext) {
       resolvedAppContext = appContext;
     }
     return ElMessageBox[kind](
-      message,
+      message2,
       resolvedTitle,
-      normalizeOptions(resolvedOptions, kind),
+      normalizeOptions2(resolvedOptions, kind),
       resolveAppContext(resolvedAppContext)
     );
   });
@@ -60196,18 +62697,18 @@ function createBpUiMessageBox(options = {}) {
   };
   const resolveAppendTo = () => {
     var _a;
-    return resolveAppendToTarget((_a = options.getAppendTo) == null ? void 0 : _a.call(options)) ?? resolveAppendToTarget(options.appendTo) ?? getActiveBpUiOverlayRoot();
+    return resolveAppendToTarget$2((_a = options.getAppendTo) == null ? void 0 : _a.call(options)) ?? resolveAppendToTarget$2(options.appendTo) ?? getActiveBpUiOverlayRoot();
   };
-  const normalizeOptions = (messageBoxOptions, kind) => normalizeMessageBoxOptions(messageBoxOptions ?? {}, resolveAppendTo, kind);
+  const normalizeOptions2 = (messageBoxOptions, kind) => normalizeMessageBoxOptions(messageBoxOptions ?? {}, resolveAppendTo, kind);
   const messageBox = ((messageBoxOptions, appContext) => {
     return ElMessageBox(
       normalizeMessageBoxOptions(normalizeMessageBoxInput(messageBoxOptions), resolveAppendTo),
       resolveAppContext(appContext)
     );
   });
-  messageBox.alert = createShortcutMethod("alert", normalizeOptions, resolveAppContext);
-  messageBox.confirm = createShortcutMethod("confirm", normalizeOptions, resolveAppContext);
-  messageBox.prompt = createShortcutMethod("prompt", normalizeOptions, resolveAppContext);
+  messageBox.alert = createShortcutMethod("alert", normalizeOptions2, resolveAppContext);
+  messageBox.confirm = createShortcutMethod("confirm", normalizeOptions2, resolveAppContext);
+  messageBox.prompt = createShortcutMethod("prompt", normalizeOptions2, resolveAppContext);
   messageBox.close = () => {
     ElMessageBox.close();
   };
@@ -60258,6 +62759,221 @@ function installBpUiMessageBox(app) {
   BpUiMessageBox.install(app);
 }
 const BpUiMessageBox = createBpUiMessageBox();
+const messageRootClass = "bp-ui-message bp-message bpa-message";
+const messageTypes = ["primary", "success", "warning", "error", "info"];
+function isMessageOptions(value) {
+  return Boolean(value) && typeof value === "object" && !isVNode$1(value);
+}
+function normalizeMessageParams(options) {
+  if (typeof options === "string" || isVNode$1(options) || typeof options === "function") {
+    return {
+      message: options
+    };
+  }
+  return {
+    ...options ?? {}
+  };
+}
+function resolveAppendToTarget$1(value) {
+  const appendTo = normalizeAppendToTarget(value);
+  if (typeof appendTo === "string") {
+    const normalizedSelector = appendTo.trim();
+    return normalizedSelector || void 0;
+  }
+  return appendTo;
+}
+function normalizeMessageOptions(options, getAppendTo, type4) {
+  const resolvedType = type4 || options.type;
+  return {
+    ...options,
+    type: resolvedType,
+    appendTo: resolveAppendToTarget$1(options.appendTo) ?? getAppendTo(),
+    customClass: mergeClassNames(
+      messageRootClass,
+      resolvedType && `bp-ui-message--${resolvedType}`,
+      options.customClass
+    )
+  };
+}
+function createTypedMessageMethod(type4, invoke) {
+  return ((options, appContext) => {
+    if (isMessageOptions(options)) {
+      return invoke({ ...options, type: type4 }, appContext);
+    }
+    return invoke({ message: options, type: type4 }, appContext);
+  });
+}
+function createBpUiMessage(options = {}) {
+  let hasBoundAppContext = Object.prototype.hasOwnProperty.call(options, "appContext");
+  let boundAppContext = options.appContext ?? null;
+  const resolveAppContext = (appContext) => {
+    var _a;
+    return appContext ?? (hasBoundAppContext ? boundAppContext : ((_a = options.getAppContext) == null ? void 0 : _a.call(options)) ?? getBpUiAppContext() ?? null);
+  };
+  const resolveAppendTo = () => {
+    var _a;
+    return resolveAppendToTarget$1((_a = options.getAppendTo) == null ? void 0 : _a.call(options)) ?? resolveAppendToTarget$1(options.appendTo) ?? getActiveBpUiOverlayRoot();
+  };
+  const message2 = ((messageOptions, appContext) => {
+    return ElMessage(
+      normalizeMessageOptions(normalizeMessageParams(messageOptions), resolveAppendTo),
+      resolveAppContext(appContext)
+    );
+  });
+  messageTypes.forEach((type4) => {
+    message2[type4] = createTypedMessageMethod(type4, message2);
+  });
+  message2.closeAll = (type4) => ElMessage.closeAll(type4);
+  message2.closeAllByPlacement = (placement) => {
+    ElMessage.closeAllByPlacement(placement);
+  };
+  message2.install = (app) => {
+    hasBoundAppContext = true;
+    boundAppContext = app._context;
+    setBpUiAppContext(app._context);
+    const appMessage = createBpUiMessage({
+      appContext: app._context
+    });
+    app.config.globalProperties.$message = appMessage;
+    app.config.globalProperties.$bpMessage = appMessage;
+  };
+  message2.raw = ElMessage;
+  Object.defineProperty(message2, "_context", {
+    configurable: true,
+    enumerable: true,
+    get() {
+      return resolveAppContext();
+    },
+    set(value) {
+      hasBoundAppContext = true;
+      boundAppContext = value;
+    }
+  });
+  return message2;
+}
+function useBpUiMessage() {
+  const currentInstance = getCurrentInstance();
+  if (!currentInstance) {
+    return createBpUiMessage();
+  }
+  const overlayRoot = useBpUiOverlayRoot();
+  return createBpUiMessage({
+    appContext: currentInstance.appContext,
+    getAppendTo: () => overlayRoot.value
+  });
+}
+function installBpUiMessage(app) {
+  BpUiMessage.install(app);
+}
+const BpUiMessage = createBpUiMessage();
+const notificationRootClass = "bp-ui-notification bp-notification bpa-notification";
+const notificationTypes = ["primary", "success", "warning", "error", "info"];
+function isNotificationOptions(value) {
+  return Boolean(value) && typeof value === "object" && !isVNode$1(value);
+}
+function normalizeNotificationParams(options) {
+  if (typeof options === "string" || isVNode$1(options) || typeof options === "function") {
+    return {
+      message: options
+    };
+  }
+  return {
+    ...options ?? {}
+  };
+}
+function resolveAppendToTarget(value) {
+  const appendTo = normalizeAppendToTarget(value);
+  if (typeof appendTo === "string") {
+    const normalizedSelector = appendTo.trim();
+    return normalizedSelector || void 0;
+  }
+  return appendTo;
+}
+function normalizeNotificationOptions(options, getAppendTo, type4) {
+  const resolvedType = type4 || options.type;
+  return {
+    ...options,
+    type: resolvedType,
+    appendTo: resolveAppendToTarget(options.appendTo) ?? getAppendTo(),
+    customClass: mergeClassNames(
+      notificationRootClass,
+      resolvedType && `bp-ui-notification--${resolvedType}`,
+      options.customClass
+    )
+  };
+}
+function createTypedNotificationMethod(type4, invoke) {
+  return ((options, appContext) => {
+    if (isNotificationOptions(options)) {
+      return invoke({ ...options, type: type4 }, appContext);
+    }
+    return invoke({ message: options, type: type4 }, appContext);
+  });
+}
+function createBpUiNotification(options = {}) {
+  let hasBoundAppContext = Object.prototype.hasOwnProperty.call(options, "appContext");
+  let boundAppContext = options.appContext ?? null;
+  const resolveAppContext = (appContext) => {
+    var _a;
+    return appContext ?? (hasBoundAppContext ? boundAppContext : ((_a = options.getAppContext) == null ? void 0 : _a.call(options)) ?? getBpUiAppContext() ?? ElNotification._context ?? null);
+  };
+  const resolveAppendTo = () => {
+    var _a;
+    return resolveAppendToTarget((_a = options.getAppendTo) == null ? void 0 : _a.call(options)) ?? resolveAppendToTarget(options.appendTo) ?? getActiveBpUiOverlayRoot();
+  };
+  const notification = ((notificationOptions, appContext) => {
+    return ElNotification(
+      normalizeNotificationOptions(normalizeNotificationParams(notificationOptions), resolveAppendTo),
+      resolveAppContext(appContext)
+    );
+  });
+  notificationTypes.forEach((type4) => {
+    notification[type4] = createTypedNotificationMethod(type4, notification);
+  });
+  notification.closeAll = () => ElNotification.closeAll();
+  notification.updateOffsets = (position) => {
+    ElNotification.updateOffsets(position);
+  };
+  notification.install = (app) => {
+    hasBoundAppContext = true;
+    boundAppContext = app._context;
+    setBpUiAppContext(app._context);
+    ElNotification._context = app._context;
+    const appNotification = createBpUiNotification({
+      appContext: app._context
+    });
+    app.config.globalProperties.$notify = appNotification;
+    app.config.globalProperties.$bpNotification = appNotification;
+  };
+  notification.raw = ElNotification;
+  Object.defineProperty(notification, "_context", {
+    configurable: true,
+    enumerable: true,
+    get() {
+      return resolveAppContext();
+    },
+    set(value) {
+      hasBoundAppContext = true;
+      boundAppContext = value;
+    }
+  });
+  return notification;
+}
+function useBpUiNotification() {
+  const currentInstance = getCurrentInstance();
+  if (!currentInstance) {
+    return createBpUiNotification();
+  }
+  const overlayRoot = useBpUiOverlayRoot();
+  return createBpUiNotification({
+    appContext: currentInstance.appContext,
+    getAppendTo: () => overlayRoot.value
+  });
+}
+function installBpUiNotification(app) {
+  BpUiNotification.install(app);
+}
+const BpUiNotification = createBpUiNotification();
 let tableOverridesInstalled = false;
 function installBpUiTableOverrides() {
   if (tableOverridesInstalled) {
@@ -60308,7 +63024,7 @@ function installBpUiTableOverrides() {
             ];
           }
           return [
-            h$2(_sfc_main$l, null, {
+            h$2(_sfc_main$u, null, {
               default: () => [h$2(circle_plus_filled_default)]
             })
           ];
@@ -60319,49 +63035,66 @@ function installBpUiTableOverrides() {
 }
 const BookingPressUIComponents = {
   BpUiWrapper,
-  BpUiAvatar: _sfc_main$F,
-  BpUiAside: _sfc_main$E,
-  BpUiButton: _sfc_main$z,
-  BpUiCheckbox: _sfc_main$y,
-  BpUiCheckboxGroup: _sfc_main$x,
-  BpUiCol: _sfc_main$w,
-  BpUiContainer: _sfc_main$C,
-  BpUiDatePicker: _sfc_main$v,
+  BpUiAlert: _sfc_main$P,
+  BpUiAvatar: _sfc_main$R,
+  BpUiAside: _sfc_main$Q,
+  BpUiBadge: _sfc_main$O,
+  BpUiButton: _sfc_main$J,
+  BpUiCheckbox: _sfc_main$I,
+  BpUiCheckboxGroup: _sfc_main$H,
+  BpUiCol: _sfc_main$G,
+  BpUiContainer: _sfc_main$M,
+  BpUiDatePicker: _sfc_main$F,
   BpUiDateTimePicker: _sfc_main$2,
-  BpUiDialog: _sfc_main$t,
-  BpUiDrawer: _sfc_main$u,
-  BpUiDropdown: _sfc_main$q,
-  BpUiDropdownItem: _sfc_main$s,
-  BpUiDropdownMenu: _sfc_main$r,
-  BpUiFooter: _sfc_main$p,
-  BpUiForm: _sfc_main$o,
-  BpUiFormItem: _sfc_main$n,
-  BpUiHeader: _sfc_main$m,
-  BpUiIcon: _sfc_main$l,
-  BpUiImage: _sfc_main$k,
-  BpUiInput: _sfc_main$j,
-  BpUiInputNumber: _sfc_main$i,
-  BpUiLink: _sfc_main$h,
-  BpUiMain: _sfc_main$B,
-  BpUiOption: _sfc_main$g,
-  BpUiOptionGroup: _sfc_main$f,
-  BpUiPagination: _sfc_main$e,
-  BpUiPopconfirm: _sfc_main$d,
-  BpUiPopover: _sfc_main$c,
-  BpUiRadio: _sfc_main$b,
-  BpUiRate: _sfc_main$a,
-  BpUiRow: _sfc_main$9,
-  BpUiScrollbar: _sfc_main$8,
-  BpUiSelect: _sfc_main$7,
-  BpUiSwitch: _sfc_main$5,
-  BpUiTable: _sfc_main$4,
-  BpUiTableColumn: _sfc_main$3,
-  BpUiTelInput: _sfc_main$6,
+  BpUiDialog: _sfc_main$D,
+  BpUiDrawer: _sfc_main$E,
+  BpUiDropdown: _sfc_main$A,
+  BpUiDropdownItem: _sfc_main$C,
+  BpUiDropdownMenu: _sfc_main$B,
+  BpUiEmpty: _sfc_main$z,
+  BpUiFooter: _sfc_main$y,
+  BpUiForm: _sfc_main$x,
+  BpUiFormItem: _sfc_main$w,
+  BpUiHeader: _sfc_main$v,
+  BpUiIcon: _sfc_main$u,
+  BpUiImage: _sfc_main$t,
+  BpUiInput: _sfc_main$s,
+  BpUiInputNumber: _sfc_main$r,
+  BpUiLink: _sfc_main$q,
+  BpUiMain: _sfc_main$L,
+  BpUiOption: _sfc_main$p,
+  BpUiOptionGroup: _sfc_main$o,
+  BpUiPagination: _sfc_main$n,
+  BpUiPopconfirm: _sfc_main$m,
+  BpUiPopover: _sfc_main$l,
+  BpUiProgress: _sfc_main$k,
+  BpUiRadio: _sfc_main$j,
+  BpUiRadioButton: _sfc_main$i,
+  BpUiRadioGroup: _sfc_main$h,
+  BpUiRate: _sfc_main$g,
+  BpUiResult: _sfc_main$f,
+  BpUiRow: _sfc_main$e,
+  BpUiScrollbar: _sfc_main$d,
+  BpUiSelect: _sfc_main$c,
+  BpUiSkeleton: _sfc_main$b,
+  BpUiSkeletonItem: _sfc_main$a,
+  BpUiSwitch: _sfc_main$8,
+  BpUiTab: _sfc_main$7,
+  BpUiTabPane: _sfc_main$6,
+  BpUiTable: _sfc_main$5,
+  BpUiTableColumn: _sfc_main$4,
+  BpUiTag: _sfc_main$3,
+  BpUiTelInput: _sfc_main$9,
   BpUiTooltip: _sfc_main$1,
   BpUiUpload
 };
 const components = Object.entries(BookingPressUIComponents);
-const BpUiNotification = ElNotification;
+const componentAliases = [
+  ["ElTag", _sfc_main$3],
+  ["ELTag", _sfc_main$3],
+  ["bp-ui-datepicker", _sfc_main$F],
+  ["bp-ui-datetime-picker", _sfc_main$2]
+];
 function installBookingPressUI(app, options = {}) {
   void configureBookingPressUiLocale(options);
   installBpUiTableOverrides();
@@ -60374,7 +63107,8 @@ function installBookingPressUI(app, options = {}) {
     app,
     true
   );
-  ElNotification.install(app);
+  installBpUiMessage(app);
+  installBpUiNotification(app);
   installBpUiMessageBox(app);
   Object.entries(BpUiElementPlusIcons).forEach(([name, component]) => {
     app.component(name, component);
@@ -60384,6 +63118,9 @@ function installBookingPressUI(app, options = {}) {
     themeRoot.classList.add("bp-ui-root");
   }
   components.forEach(([name, component]) => {
+    app.component(name, component);
+  });
+  componentAliases.forEach(([name, component]) => {
     app.component(name, component);
   });
   return app;
@@ -60400,9 +63137,14 @@ const BookingPressUI = {
   notification: BpUiNotification,
   BpUiNotification,
   ElNotification: BpUiNotification,
+  message: BpUiMessage,
+  BpUiMessage,
+  ElMessage: BpUiMessage,
   messageBox: BpUiMessageBox,
   BpUiMessageBox,
   ElMessageBox: BpUiMessageBox,
+  ElTag: _sfc_main$3,
+  ELTag: _sfc_main$3,
   createMessageBox: createBpUiMessageBox,
   icons: BpUiElementPlusIcons,
   components: BookingPressUIComponents
@@ -64189,11 +66931,23 @@ export {
   bottom_right_default as BottomRight,
   bowl_default as Bowl,
   box_default as Box,
+  _sfc_main$P as BpUiAlert,
+  _sfc_main$O as BpUiBadge,
   BpUiElementPlusIcons,
+  _sfc_main$z as BpUiEmpty,
+  BpUiMessage,
   BpUiMessageBox,
   BpUiNotification,
-  _sfc_main$a as BpUiRate,
-  _sfc_main$6 as BpUiTelInput,
+  _sfc_main$k as BpUiProgress,
+  _sfc_main$j as BpUiRadio,
+  _sfc_main$i as BpUiRadioButton,
+  _sfc_main$h as BpUiRadioGroup,
+  _sfc_main$g as BpUiRate,
+  _sfc_main$f as BpUiResult,
+  _sfc_main$b as BpUiSkeleton,
+  _sfc_main$a as BpUiSkeletonItem,
+  _sfc_main$3 as BpUiTag,
+  _sfc_main$9 as BpUiTelInput,
   BpUiWrapper,
   briefcase_default as Briefcase,
   brush_default as Brush,
@@ -64263,10 +67017,13 @@ export {
   document_remove_default as DocumentRemove,
   download_default as Download,
   drizzling_default as Drizzling,
+  _sfc_main$3 as ELTag,
   edit_default as Edit,
   edit_pen_default as EditPen,
+  BpUiMessage as ElMessage,
   BpUiMessageBox as ElMessageBox,
-  ElNotification,
+  BpUiNotification as ElNotification,
+  _sfc_main$3 as ElTag,
   eleme_default as Eleme,
   eleme_filled_default as ElemeFilled,
   element_plus_default as ElementPlus,
@@ -64336,7 +67093,7 @@ export {
   medal_default as Medal,
   memo_default as Memo,
   menu_default as Menu,
-  message_default as Message,
+  message_default$1 as Message,
   message_box_default as MessageBox,
   mic_default as Mic,
   microphone_default as Microphone,
@@ -64467,10 +67224,14 @@ export {
   zoom_in_default as ZoomIn,
   zoom_out_default as ZoomOut,
   configureBookingPressUiLocale,
+  createBpUiMessage,
   createBpUiMessageBox,
+  createBpUiNotification,
   BookingPressUI as default,
   installBookingPressUI,
   resolveBookingPressUiElementLocale,
   setBookingPressUiLocale,
-  useBpUiMessageBox
+  useBpUiMessage,
+  useBpUiMessageBox,
+  useBpUiNotification
 };

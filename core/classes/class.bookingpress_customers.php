@@ -1069,6 +1069,11 @@ if (! class_exists('bookingpress_customers') ) {
                 if( file_exists( BOOKINGPRESS_TMP_IMAGES_DIR . '/' . $bookingpress_file_name ) ){
                     wp_delete_file(BOOKINGPRESS_TMP_IMAGES_DIR . '/' . $bookingpress_file_name);
                 }
+                $response['variant'] = 'success';
+                $response['title']   = esc_html__('Success', 'bookingpress-appointment-booking');
+                $response['msg']     = esc_html__('Avatar removed successfully.', 'bookingpress-appointment-booking');
+                wp_send_json($response);
+
             }
             die;
         }
@@ -1151,8 +1156,8 @@ if (! class_exists('bookingpress_customers') ) {
             'upload_url'       => '',
             'upload_file_name' => '',
             );
-         //phpcs:ignore 
-         $bookingpress_fileupload_obj = new bookingpress_fileupload_class( $_FILES['file'] );
+            //phpcs:ignore 
+            $bookingpress_fileupload_obj = new bookingpress_fileupload_class( $_FILES['file'] );
 
             if (! $bookingpress_fileupload_obj ) {
                 $return_data['error'] = 1;
@@ -2157,7 +2162,7 @@ if (! class_exists('bookingpress_customers') ) {
 
                     $bookingpress_avatar_url              = get_avatar_url($customer['bookingpress_wpuser_id']);
                     $bookingpress_get_existing_avatar_url = $BookingPress->get_bookingpress_customersmeta($customer['bookingpress_customer_id'], 'customer_avatar_details');
-                    $bookingpress_get_existing_avatar_url = ! empty($bookingpress_get_existing_avatar_url) ? maybe_unserialize($bookingpress_get_existing_avatar_url) : array();
+                    $bookingpress_get_existing_avatar_url = ! empty($bookingpress_get_existing_avatar_url) ? BookingPress\BookingPressLoader::bpa_safe_maybe_unserialize($bookingpress_get_existing_avatar_url) : array();
                     if (! empty($bookingpress_get_existing_avatar_url[0]['url']) ) {
                         $bookingpress_avatar_url = $bookingpress_get_existing_avatar_url[0]['url'];
                     } else {
@@ -2499,7 +2504,7 @@ if (! class_exists('bookingpress_customers') ) {
                     $user_img_name = sanitize_file_name($_REQUEST['avatar_name']); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
 
                     $bookingpress_get_existing_avatar_details = $BookingPress->get_bookingpress_customersmeta($bookingpress_update_id, 'customer_avatar_details');
-                    $bookingpress_get_existing_avatar_details = ! empty($bookingpress_get_existing_avatar_details) ? maybe_unserialize($bookingpress_get_existing_avatar_details) : array();
+                    $bookingpress_get_existing_avatar_details = ! empty($bookingpress_get_existing_avatar_details) ? BookingPress\BookingPressLoader::bpa_safe_maybe_unserialize($bookingpress_get_existing_avatar_details) : array();
                     $bookingpress_get_existing_avatar_url     = ! empty($bookingpress_get_existing_avatar_details[0]['url']) ? $bookingpress_get_existing_avatar_details[0]['url'] : '';
 
                     if ($user_img_url != $bookingpress_get_existing_avatar_url ) {
@@ -2600,6 +2605,9 @@ if (! class_exists('bookingpress_customers') ) {
                         $bookingpress_edit_customer_details['bookingpress_wpuser_id'] = '';
                     }
                     $bookingpress_edit_customer_details['bookingpress_user_name'] = stripslashes_deep($bookingpress_edit_customer_details['bookingpress_user_name']);
+                    if (empty($bookingpress_edit_customer_details['bookingpress_user_name'])) {
+                        $bookingpress_edit_customer_details['bookingpress_user_name'] = stripslashes_deep($bookingpress_edit_customer_details['bookingpress_user_email']);
+                    }
                     $bookingpress_edit_customer_details['bookingpress_user_firstname'] = stripslashes_deep($bookingpress_edit_customer_details['bookingpress_user_firstname']);
                     $bookingpress_edit_customer_details['bookingpress_user_lastname'] = stripslashes_deep($bookingpress_edit_customer_details['bookingpress_user_lastname']);
                     $bookingpress_edit_customer_details['bookingpress_user_email'] = stripslashes_deep($bookingpress_edit_customer_details['bookingpress_user_email']); 
@@ -2614,7 +2622,7 @@ if (! class_exists('bookingpress_customers') ) {
 
                     //$bookingpress_edit_customer_details['avatar_list'] = $bookingpress_get_existing_avatar_list;
 
-                    $bookingpress_get_existing_avatar_list             = ! empty($bookingpress_get_existing_avatar_list) ? maybe_unserialize($bookingpress_get_existing_avatar_list) : array();
+                    $bookingpress_get_existing_avatar_list             = ! empty($bookingpress_get_existing_avatar_list) ? BookingPress\BookingPressLoader::bpa_safe_maybe_unserialize($bookingpress_get_existing_avatar_list) : array();
                     $bookingpress_edit_customer_details['avatar_name'] = ! empty($bookingpress_get_existing_avatar_list[0]['name']) ? $bookingpress_get_existing_avatar_list[0]['name'] : '';
                     $bookingpress_edit_customer_details['avatar_url']  = ! empty($bookingpress_get_existing_avatar_list[0]['url']) ? $bookingpress_get_existing_avatar_list[0]['url'] : '';
 

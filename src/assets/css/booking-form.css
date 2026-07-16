@@ -251,6 +251,16 @@
     flex: 0 0 auto;
 }
 
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-tabs--foot .bpa-front-btn--borderless svg {
+    width: 20px;
+    height: 20px;
+    margin-right: 6px;
+    fill: currentColor;
+    vertical-align: middle;
+    flex: 0 0 auto;
+}
+
 /* Correction #5: no-services placeholder + preselected-service block */
 .bpa-frontend-main-container.bpa-frontend-vue3
     .bpa-front-tabs--panel-body__service .bpa-front-no-service-placeholder,
@@ -373,11 +383,14 @@
     position: relative;
 }
 
-.bpa-frontend-main-container.bpa-frontend-vue3
-    .bpa-front-module--bd-form .bp-form-item__content {
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front-module--bd-form .bp-form-item__content {
     display: block;
     margin-left: 0 !important;
-    line-height: normal !important;
+    line-height: 40px !important;
+}
+
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front-module--bd-form .bp-form-item__content .bp-checkbox-group{
+    line-height: 40px !important;
 }
 
 /* Required asterisk: tint + spacing. Position (right:-14px; top:0) is
@@ -402,10 +415,20 @@
  * `.bp-input__inner` is kept fully chrome-less (no border, no
  * outline, no box-shadow) so there is exactly one visible frame.
  *
+ * Border-color is sourced from `--bp-v3-border` (emitted by
+ * CustomizeCssGenerator from the customize-panel `border_color`
+ * setting) so text / email inputs track the same color as the
+ * `.bpa-front-form-control` rule used by `<textarea>` and the
+ * `.bpa-front-form-control.--bpa-country-dropdown` override used
+ * by the phone field. Without this, the wrapper here pinned the
+ * legacy `--bpa-gt-gray-400` constant and text inputs visibly
+ * drifted from the other field types as soon as the admin picked
+ * a non-default border color.
+ *
  * Legacy values (bookingpress_front.css):
  *   padding:10px 16px; font-size:14px; line-height:18px;
  *   font-weight:400; color:var(--bpa-dt-black-400);
- *   background:transparent; border:1px solid var(--bpa-gt-gray-400);
+ *   background:transparent; border:1px solid <border-color>;
  *   border-radius:var(--bpa-radius-4px);
  *   focus: border-color unchanged, box-shadow:0 0 0 3px rgba(207,214,229,.24).
  * ---------------------------------------------------------------- */
@@ -424,7 +447,7 @@
     align-items: center;
     padding: 10px 16px !important;
     background-color: transparent !important;
-    border: 1px solid var(--bpa-gt-gray-400, #cfd6e5) !important;
+    border: 1px solid var(--bp-v3-border, #CFD6E5) !important;
     border-radius: var(--bpa-radius-4px, 4px) !important;
     box-shadow: none !important;
     transition: box-shadow .2s ease;
@@ -432,10 +455,14 @@
     box-sizing: border-box;
 }
 
+.bpa-frontend-main-container.bpa-frontend-vue3 .bpa-front-module--bd-form .bpa-front-form-control.bp-select .bp-select__wrapper{
+    box-shadow: none !important;
+}
+
 .bpa-frontend-main-container.bpa-frontend-vue3
     .bpa-front-module--bd-form .bp-input__wrapper:hover {
     box-shadow: none !important;
-    border-color: var(--bpa-gt-gray-400, #cfd6e5) !important;
+    border-color: var(--bp-v3-border, #CFD6E5) !important;
 }
 
 .bpa-frontend-main-container.bpa-frontend-vue3
@@ -444,12 +471,22 @@
     .bpa-front-module--bd-form .bp-input__wrapper.is-focus,
 .bpa-frontend-main-container.bpa-frontend-vue3
     .bpa-front-module--bd-form .bp-input__wrapper:focus-within {
-    border-color: var(--bpa-gt-gray-400, #cfd6e5) !important;
+    border-color: var(--bp-v3-border, #CFD6E5) !important;
     box-shadow: 0 0 0 3px rgba(207, 214, 229, .24) !important;
     outline: 0 !important;
 }
 
-/* Chrome-less inner input — text + caret only. */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bpa-front-form-control--date-picker .bp-input__wrapper.is-focus{
+        box-shadow:none !important;
+    }
+
+/* Chrome-less inner input — text + caret only.
+ * `color` + `font-family` are intentionally OMITTED here so the customize
+ * generator (form-v3-custom.css) can set them from the `label_title_color`
+ * and `title_font_family` keys without being beaten by this higher-specificity
+ * selector. Without that omission the typed text doesn't track customize
+ * (regression Issue 1 in batch-7 manual QA). */
 .bpa-frontend-main-container.bpa-frontend-vue3
     .bpa-front-module--bd-form .bp-input__inner {
     width: 100%;
@@ -463,14 +500,15 @@
     font-size: 14px !important;
     line-height: 18px !important;
     font-weight: 400 !important;
-    color: var(--bpa-dt-black-400, #374151) !important;
-    font-family: var(--bpa-primary-font, inherit) !important;
     box-sizing: border-box;
 }
 
 .bpa-frontend-main-container.bpa-frontend-vue3
     .bpa-front-module--bd-form .bp-input__inner::placeholder {
-    color: rgba(114, 126, 149, .75) !important;
+    /* Color + font-family are set by the customize generator (form-v3-custom.css)
+     * — see CustomizeCssGenerator::compile_legacy_booking_form_parity(). Leaving
+     * those declarations OUT of this rule prevents this higher-specificity
+     * selector from undercutting the customize layer (Issue 8 in batch-5 QA). */
     font-weight: 400;
     font-size: 14px;
 }
@@ -489,31 +527,48 @@
 }
 
 /* Textarea: legacy resizes off, fixed 92px min height. `.bp-textarea__inner`
- * in the Vue 3 bundle sits where legacy `.el-textarea__inner` did. */
+ * in the Vue 3 bundle sits where legacy `.el-textarea__inner` did.
+ * Textarea is wrapped in `.bp-input__wrapper.bp-input__wrapper--textarea`
+ * — wrapper owns the border / focus shadow (mirrors the input pattern
+ * so :focus styling can't fall through to the customize generator's
+ * primary-coloured `textarea.bpa-front-form-control:focus` rule). The
+ * <textarea> itself stays chrome-less; only height/resize/font here. */
 .bpa-frontend-main-container.bpa-frontend-vue3
     .bpa-front-module--bd-form .bp-textarea__inner {
     padding: 10px 16px !important;
     font-size: 14px !important;
     line-height: 18px !important;
     font-weight: 400 !important;
-    color: var(--bpa-dt-black-400, #374151) !important;
     background-color: transparent !important;
-    border: 1px solid var(--bpa-gt-gray-400, #cfd6e5) !important;
-    border-radius: var(--bpa-radius-4px, 4px) !important;
+    border: 0 !important;
+    border-radius: 0 !important;
     width: 100%;
     max-width: 100% !important;
     height: 92px !important;
     resize: none !important;
     box-shadow: none !important;
-    font-family: var(--bpa-primary-font, inherit) !important;
+    outline: 0 !important;
+    /* `color` + `font-family` are emitted by the customize generator (see
+     * the bp-input__inner rule above for the same reasoning — Issue 1
+     * batch-7 manual QA). */
 }
 
 .bpa-frontend-main-container.bpa-frontend-vue3
     .bpa-front-module--bd-form .bp-textarea__inner:focus {
-    border-color: var(--bpa-gt-gray-400, #cfd6e5) !important;
+    border: 0 !important;
     background-color: transparent !important;
-    box-shadow: 0 0 0 3px rgba(207, 214, 229, .24) !important;
-    outline: 0;
+    box-shadow: none !important;
+    outline: 0 !important;
+}
+
+/* Wrapper variant for textarea: block layout (no flex centering — the
+ * <textarea> sets its own height) and zero padding (the <textarea>'s
+ * own padding paints the inset). Border + focus shadow still come from
+ * the shared `.bp-input__wrapper` rules above. */
+.bpa-frontend-main-container.bpa-frontend-vue3
+    .bpa-front-module--bd-form .bp-input__wrapper.bp-input__wrapper--textarea {
+    display: block;
+    padding: 0 !important;
 }
 
 /* ============================================================
@@ -545,7 +600,7 @@
     border-radius: var(--bpa-radius-4px, 4px);
     background: transparent;
     width: 100%;
-    box-shadow: none;
+    box-shadow: none !important;
     /* Issue 2 — strip the upstream `bp-ui-tel-input__surface` padding
      * (`0 16px`) on every viewport so the country dropdown sits flush
      * against the left wrapper edge. With the padding present, the
@@ -624,7 +679,13 @@
 }
 
 /* The phone number <input> on the right side — no border, flush
- * with the dropdown, rounded only on the right corners. */
+ * with the dropdown, rounded only on the right corners.
+ * `color` is intentionally OMITTED so the customize generator's
+ * `label_title_color` rule (form-v3-custom.css) can paint the typed
+ * phone number text — without that omission this 4-class selector
+ * beats the customize layer and the phone number renders in the
+ * hardcoded grey while every other text field tracks customize
+ * (Issue 1 follow-up in batch-7 manual QA). */
 .bpa-frontend-main-container.bpa-frontend-vue3
     .bpa-front-module--bd-form .bp-ui-tel-input .vti__input,
 .bpa-frontend-main-container.bpa-frontend-vue3
@@ -636,7 +697,6 @@
     height: auto !important;
     font-size: 14px !important;
     line-height: 18px !important;
-    color: var(--bpa-dt-black-400, #374151) !important;
     background: transparent !important;
     width: 100%;
 }
@@ -1233,7 +1293,7 @@
  * single red error frame painted on the wrapper. */
 .bpa-frontend-main-container.bpa-frontend-vue3
     .bpa-front-module--bd-form .bp-form-item.is-error .bp-ui-tel-input .vti__dropdown {
-    border-right-color: var(--bpa-sc-danger, #ef4444) !important;
+    /* border-right-color: var(--bpa-sc-danger, #ef4444) !important; */
     box-shadow: none !important;
     outline: 0 !important;
 }

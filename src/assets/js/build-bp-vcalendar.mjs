@@ -51,7 +51,46 @@ const src = readFileSync(SRC, 'utf8');
 // Single global substitution. Vue's runtime checks both
 // `process.env.NODE_ENV === "production"` and `!== "production"`, so
 // replacing the LHS in all cases yields a consistent production build.
-const processed = src.replace(/process\.env\.NODE_ENV/g, '"production"');
+const MOUNT_DATE_PICKER_MARKER = 'mountDatePicker:function(host,initialProps,handlers){';
+const MOUNT_CALENDAR_BRIDGE = [
+    'mountCalendar:function(host,initialProps,handlers){',
+    'handlers=handlers||{};',
+    'var app=Kc({',
+    'data:function(){return{p:Object.assign({},initialProps||{})};},',
+    'methods:{',
+    'updateProps:function(patch){if(!patch)return;for(var k in patch){if(Object.prototype.hasOwnProperty.call(patch,k)){this.p[k]=patch[k];}}},',
+    'move:function(page,options){var calendar=this.$refs.calendar;if(calendar&&typeof calendar.move===`function`){return calendar.move(page,options);}}',
+    '},',
+    'render:function(){',
+    'var bound=Object.assign({},this.p);',
+    'bound.ref=`calendar`;',
+    'if(typeof handlers.onDayClick===`function`){bound.onDayclick=function(day,event){handlers.onDayClick(day,event);};}',
+    'if(typeof handlers.onDayMouseEnter===`function`){bound.onDaymouseenter=function(day,event){handlers.onDayMouseEnter(day,event);};}',
+    'if(typeof handlers.onDidMove===`function`){bound.onDidMove=function(page){handlers.onDidMove(page);};}',
+    'return ks(FO,bound);',
+    '}',
+    '});',
+    'try{app.use(kT,{});}catch(e){}',
+    'var vm=app.mount(host);',
+    'var unmounted=false;',
+    'function applyPatch(next){if(!next)return;if(typeof vm.updateProps===`function`){vm.updateProps(next);return;}for(var k in next){if(Object.prototype.hasOwnProperty.call(next,k)){vm.p[k]=next[k];}}}',
+    'return{app:app,vm:vm,props:vm.p,setProps:function(next){applyPatch(next);},updateProps:function(next){applyPatch(next);},move:function(page,options){return vm.move(page,options);},unmount:function(){if(unmounted)return;unmounted=true;try{app.unmount();}catch(e){}}};',
+    '},',
+].join('');
+
+let processed = src.replace(/process\.env\.NODE_ENV/g, '"production"');
+
+if (!processed.includes('window.BpVCalendar={DatePicker:sk,')) {
+    throw new Error('build-bp-vcalendar: BpVCalendar export marker was not found');
+}
+
+if (!processed.includes(MOUNT_DATE_PICKER_MARKER)) {
+    throw new Error('build-bp-vcalendar: mountDatePicker marker was not found');
+}
+
+processed = processed
+    .replace('window.BpVCalendar={DatePicker:sk,', 'window.BpVCalendar={Calendar:FO,DatePicker:sk,')
+    .replace(MOUNT_DATE_PICKER_MARKER, MOUNT_CALENDAR_BRIDGE + MOUNT_DATE_PICKER_MARKER);
 
 if (/process\.env/.test(processed)) {
     throw new Error('build-bp-vcalendar: stray process.env reference remains after substitution');

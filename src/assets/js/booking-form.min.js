@@ -3021,12 +3021,28 @@ export function createBookingFormApp(instance) {
                                                                 @keydown="bpa_handle_service_keypress(service_index, $event)"
                                                                 @click="selectService(service_details.bookingpress_service_id, service_details.bookingpress_service_name, service_details.bookingpress_service_price, service_details.service_price_without_currency, 'true')"
                                                             >
-                                                                <div
-                                                                    class="bpa-front-si-card--checkmark-icon"
-                                                                    v-if="String(state.appointment_step_form_data.selected_service) === String(service_details.bookingpress_service_id)"
-                                                                >
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM9.29 16.29 5.7 12.7c-.39-.39-.39-1.02 0-1.41.39-.39 1.02-.39 1.41 0L10 14.17l6.88-6.88c.39-.39 1.02-.39 1.41 0 .39.39.39 1.02 0 1.41l-7.59 7.59c-.38.39-1.02.39-1.41 0z"/></svg>
-                                                                </div>
+                                                                <div class="bpa-front-si-card--checkmark-icon" v-if="(String(state.appointment_step_form_data.selected_service) === String(service_details.bookingpress_service_id) || (typeof window.bookingpress_service_extra_cls_services !== 'undefined' && typeof window.bookingpress_service_extra_cls_services[service_details.bookingpress_service_id] !== 'undefined')) && typeof window.is_club_service === 'undefined'">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM9.29 16.29 5.7 12.7c-.39-.39-.39-1.02 0-1.41.39-.39 1.02-.39 1.41 0L10 14.17l6.88-6.88c.39-.39 1.02-.39 1.41 0 .39.39.39 1.02 0 1.41l-7.59 7.59c-.38.39-1.02.39-1.41 0z"/></svg>
+</div>
+<div class="bpa-front-si-card--checkmark-icon-multiservice" v-if="(typeof window.is_club_service !== 'undefined' && (window.is_club_service == 'true' || window.is_club_service == true))">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" v-if="typeof window.bookingpress_service_extra_cls_services !== 'undefined' && typeof window.bookingpress_service_extra_cls_services[service_details.bookingpress_service_id] !== 'undefined'">
+        <rect x="2" y="2" width="20" height="20" rx="6" style="fill:var(--bpa-pt-main-green)"/>
+        <rect x="6" y="6" width="12" height="12" rx="6" style="fill:var( --bpa-pt-price-button-text-color )"/>
+        <g clip-path="url(#clip0_3047_24293)">
+        <path d="M12 5C8.136 5 5 8.136 5 12C5 15.864 8.136 19 12 19C15.864 19 19 15.864 19 12C19 8.136 15.864 5 12 5ZM10.103 15.003L7.59 12.49C7.317 12.217 7.317 11.776 7.59 11.503C7.863 11.23 8.304 11.23 8.577 11.503L10.6 13.519L15.416 8.703C15.689 8.43 16.13 8.43 16.403 8.703C16.676 8.976 16.676 9.417 16.403 9.69L11.09 15.003C10.824 15.276 10.376 15.276 10.103 15.003Z" style="fill:var(--bpa-pt-main-green)"/>
+        </g>
+        <defs>
+        <clipPath id="clip0_3047_24293">
+        <rect width="24" height="24" style="fill:var( --bpa-pt-price-button-text-color )"/>
+        </clipPath>
+        </defs>
+    </svg>
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" v-else>
+        <rect x="0.499083" y="0.499083" width="19.0018" height="19.0018" rx="5.50092" stroke="#CFD6E6" stroke-width="0.998165"/>
+        <path d="M10 6.5V13.5" stroke="#727E95" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M6.49902 10H13.499" stroke="#727E95" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+</div>
                                                                 <div class="bpa-front-si-card__left" v-if="!service_details.use_placeholder">
                                                                     <img :src="service_details.img_url" :alt="service_details.bookingpress_service_name">
                                                                 </div>
@@ -3718,7 +3734,7 @@ export function createBookingFormApp(instance) {
                                         >
                                             <div class="bpa-fm--bs-amount-item">
                                                 <div
-                                                    class="bpa-front-total-payment-amount-label"
+                                                    class="bpa-bs-ai__item"
                                                     v-html="state.bookingpress_total_amount_text || str('total_amount_text', 'Total Amount Payable')"
                                                 ></div>
                                                 <div

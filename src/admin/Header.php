@@ -15,14 +15,17 @@ class Header extends Base{
         $scoped_hooks = [
             'bookingpress',
             'bookingpress-calendar',
+            'bookingpress_appointments',
             'bookingpress_addons',
             'bookingpress_customers',
+            'bookingpress_growth_tools',
+            'bookingpress_settings',
         ];
 
         return apply_filters( 'bookingpress_scoped_pages', $scoped_hooks );
 
     }
-
+    
     public static function bookingpress_header_menubar_script_data( $dashboard_data ){
 
         $bpa_current_date_for_bf_popup = current_time('timestamp', true); //GMT/ UTC+00 timeszone
@@ -113,10 +116,12 @@ class Header extends Base{
 
     public static function bookingpress_scoped_nonces(){
         $scoped_nonces = [
-            'bookingpress_page_bookingpress'            => 'bpa_dashboard_wp_nonce',
-            'bookingpress_page_bookingpress-calendar'   => 'bpa_calendar_wp_nonce',
-            'bookingpress_page_bookingpress_addons'     => 'bpa_addons_wp_nonce',
-            'bookingpress_page_bookingpress_customers'  => 'bpa_customers_wp_nonce',
+            'bookingpress_page_bookingpress'                => 'bpa_dashboard_wp_nonce',
+            'bookingpress_page_bookingpress_appointments'   => 'bpa_appointments_wp_nonce',
+            'bookingpress_page_bookingpress-calendar'       => 'bpa_calendar_wp_nonce',
+            'bookingpress_page_bookingpress_addons'         => 'bpa_addons_wp_nonce',
+            'bookingpress_page_bookingpress_customers'      => 'bpa_customers_wp_nonce',
+            'bookingpress_page_bookingpress_settings'  => 'bpa_settings_wp_nonce',
         ];
 
         return apply_filters( 'bookingpress_scoped_nonces', $scoped_nonces );

@@ -31,6 +31,7 @@ class Permissions {
                 'search_appointments',
                 'search_customer',
                 'retrieve_customers',
+                'manage_helper_options',
                 'search_user',
             ),
             'bookingpress_customers' => array(
@@ -43,6 +44,7 @@ class Permissions {
                 'upload_customer_avatar',
                 'remove_customer_avatar',
                 'customer_export',
+                'manage_helper_options',
                 'customer_import',
             ),
             'bookingpress_customize' => array(
@@ -110,6 +112,7 @@ class Permissions {
                 'download_debug_payment_logs',
                 'send_test_gmail_email',
                 'import_export_settings',
+                'manage_helper_options',
             ),
             'bookingpress_addons' => array(
                 'retrieve_addons',

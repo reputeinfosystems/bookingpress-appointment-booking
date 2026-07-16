@@ -15,7 +15,7 @@ if (! class_exists('bookingpress_import_export') ) {
             add_action('bookingpress_settings_add_dynamic_on_load_method',array($this,'bookingpress_settings_add_dynamic_on_load_method_func'),10);
 
             /* BookingPress Lite Setting Page */
-            add_filter('bookingpress_lite_general_settings_add_tab_filter', array($this, 'bookingpress_general_settings_add_tab_filter_func'));
+            //add_filter('bookingpress_lite_general_settings_add_tab_filter', array($this, 'bookingpress_general_settings_add_tab_filter_func'));
 
             /* Add debug log  */
             /* Function to add Debug Log in Settings - view - download and delete */                            
@@ -460,7 +460,7 @@ if (! class_exists('bookingpress_import_export') ) {
             return $file_url;
         }
 
-        function bookingpress_import_data_continue_process_func($import_id = ""){
+        function bookingpress_import_data_continue_process_func($import_id = "", $is_return = false){
             @ini_set('memory_limit','512M'); // phpcs:ignore       
             global $BookingPress,$tbl_bookingpress_import_data_log,$tbl_bookingpress_import_detail_log,$tbl_bookingpress_import_record_rel,$wpdb;
             
@@ -479,6 +479,9 @@ if (! class_exists('bookingpress_import_export') ) {
                 $response['title'] = esc_html__( 'Error', 'bookingpress-appointment-booking');
                 $response['msg'] = $bpa_error_msg;
 
+                if( $is_return ){
+                    return $response;
+                }
                 wp_send_json( $response );
                 die;
             }
@@ -1529,7 +1532,11 @@ if (! class_exists('bookingpress_import_export') ) {
                             $response['msg']                    = esc_html__( 'Success', 'bookingpress-appointment-booking' );
                             $response['is_complete']            = '';
                             $response['import_log_data']        = $this->get_import_log_data();
-                            $response['import_detail_id']       = $detail_import_id;                                
+                            $response['import_detail_id']       = $detail_import_id;   
+                            do_action('bookingpress_after_save_customize_settings');
+                            if( $is_return ){
+                                return $response;
+                            }                             
                             echo wp_json_encode( $response );
                             die();                            
                         }else{
@@ -1541,6 +1548,9 @@ if (! class_exists('bookingpress_import_export') ) {
                             $response['is_complete']            = $import_id;
                             $response['import_log_data']        = '';
                             $this->bookingpress_remove_import_export_directory('import');
+                            if( $is_return ){
+                                return $response;
+                            } 
                             echo wp_json_encode( $response );
                             die(); 
 
@@ -1548,12 +1558,12 @@ if (! class_exists('bookingpress_import_export') ) {
 
                     }    
                 }
-
+                if( $is_return ){
+                    return $response;
+                } 
                 echo wp_json_encode( $response );
                 die();
-            }
-
-            
+            }           
             
         }
 
@@ -1569,7 +1579,7 @@ if (! class_exists('bookingpress_import_export') ) {
          *
          * @return void
         */
-        function bookingpress_import_data_process_func(){
+        function bookingpress_import_data_process_func($is_return = false){
             global $BookingPress,$tbl_bookingpress_import_data_log,$tbl_bookingpress_import_detail_log,$tbl_bookingpress_import_record_rel,$wpdb,$bookingpress_other_debug_log_id;
             @ini_set('memory_limit','512M');// phpcs:ignore
             set_time_limit(0);
@@ -1588,7 +1598,9 @@ if (! class_exists('bookingpress_import_export') ) {
                 $response['variant'] = 'error';
                 $response['title'] = esc_html__( 'Error', 'bookingpress-appointment-booking');
                 $response['msg'] = $bpa_error_msg;
-
+                if($is_return){
+                    return $response;
+                }
                 wp_send_json( $response );
                 die;
             }
@@ -1598,12 +1610,20 @@ if (! class_exists('bookingpress_import_export') ) {
                 if(!empty($_POST['bookingpress_import_data'])){ //phpcs:ignore
                     //$_POST['bookingpress_import_data'] = gzuncompress($_POST['bookingpress_import_data']);
                 }
-                $bookingpress_import_data = stripslashes($_POST['bookingpress_import_data']); // phpcs:ignore
+                // Change this line in bookingpress_import_data_process_func:
+                //$bookingpress_import_data = stripslashes($_POST['bookingpress_import_data']);
+                $bookingpress_import_data = $_POST['bookingpress_import_data'];
+                if (!$this->bookingpress_isvalidjson($bookingpress_import_data)) {
+                    $bookingpress_import_data = stripslashes($bookingpress_import_data);
+                }
                 if(!$this->bookingpress_isvalidjson($bookingpress_import_data)){
                     $response['variant']     = 'error';
                     $response['title']       = esc_html__( 'Error', 'bookingpress-appointment-booking' );
                     $response['msg']         = esc_html__( 'Sorry, Your request can not be processed your added data not valid.', 'bookingpress-appointment-booking' );
                     $response['coupon_data'] = array(); 
+                    if($is_return){
+                        return $response;
+                    }
                     echo wp_json_encode( $response );
                     die();
                 }
@@ -1639,7 +1659,10 @@ if (! class_exists('bookingpress_import_export') ) {
                         $response['variant']     = 'error';
                         $response['title']       = esc_html__( 'Error', 'bookingpress-appointment-booking' );
                         $response['msg']         = $message;
-                        $response['coupon_data'] = array();              
+                        $response['coupon_data'] = array(); 
+                        if($is_return){
+                            return $response;
+                        }             
                         echo wp_json_encode( $response );
                         die(); 
 
@@ -1649,7 +1672,10 @@ if (! class_exists('bookingpress_import_export') ) {
                         $response['variant']     = 'error';
                         $response['title']       = esc_html__( 'Error', 'bookingpress-appointment-booking' );
                         $response['msg']         = esc_html__( 'Sorry, Please activate all addons or modules that are active on the export website.', 'bookingpress-appointment-booking' );
-                        $response['coupon_data'] = array();              
+                        $response['coupon_data'] = array();    
+                        if($is_return){
+                            return $response;
+                        }          
                         echo wp_json_encode( $response );
                         die();
 
@@ -1675,7 +1701,10 @@ if (! class_exists('bookingpress_import_export') ) {
                     $response['variant']     = 'error';
                     $response['title']       = esc_html__( 'Error', 'bookingpress-appointment-booking' );
                     $response['msg']         = esc_html__( 'Sorry, Import data not found.', 'bookingpress-appointment-booking' );
-                    $response['coupon_data'] = array();   
+                    $response['coupon_data'] = array(); 
+                    if($is_return){
+                        return $response;
+                    }  
                     echo wp_json_encode( $response );
                     die();                     
                 }
@@ -1710,6 +1739,9 @@ if (! class_exists('bookingpress_import_export') ) {
                         $response['title']       = esc_html__( 'Error', 'bookingpress-appointment-booking' );
                         $response['msg']         = $bookingpress_confirm_msg;
                         $response['coupon_data'] = array();  
+                        if($is_return){
+                            return $response;
+                        }
                         echo wp_json_encode( $response );
                         die();
                     }                     
@@ -1795,7 +1827,10 @@ if (! class_exists('bookingpress_import_export') ) {
                 $response['import_log_data']        = $this->get_import_log_data();           
                 //$response['import_log_data']        = $this->get_export_log_data();
 
-            }            
+            }    
+            if($is_return){
+                return $response;
+            }        
             echo wp_json_encode($response);
             exit();                           
 
@@ -1882,7 +1917,7 @@ if (! class_exists('bookingpress_import_export') ) {
          * Function for export data continue process
          *
         */
-        function bookingpress_export_data_continue_process_func($export_id = ""){
+        function bookingpress_export_data_continue_process_func($export_id = "", $is_return = false){
             @ini_set('memory_limit','512M');// phpcs:ignore
             global $wpdb,$tbl_bookingpress_export_data_log,$tbl_bookingpress_export_data_log_detail,$bookingpress_other_debug_log_id;
 
@@ -1899,7 +1934,7 @@ if (! class_exists('bookingpress_import_export') ) {
                 $response['variant'] = 'error';
                 $response['title'] = esc_html__( 'Error', 'bookingpress-appointment-booking');
                 $response['msg'] = $bpa_error_msg;
-
+                if($is_return){ return $response; }
                 wp_send_json( $response );
                 die;
             }
@@ -2143,7 +2178,8 @@ if (! class_exists('bookingpress_import_export') ) {
                             $response['export_data_file']       = '';
                             $response['is_complete']            = '';
                             $response['export_log_data']        = $this->get_export_log_data();
-                            $response['export_detail_id']       = $export_detail_id;                                
+                            $response['export_detail_id']       = $export_detail_id;     
+                            if($is_return){ return $response; }                           
                             echo wp_json_encode( $response );
                             die();
                             
@@ -2182,7 +2218,7 @@ if (! class_exists('bookingpress_import_export') ) {
                         $export_file = site_url().'?bpa_page=bookingpress_download&action=download_bookingpress_export&export_token='.base64_encode( $export_token ).'&export_state='.$nonce;  
 
                         $response['last_export_file']       = $export_file;
-
+                        if($is_return){ return $response; }
                         echo wp_json_encode( $response );
                         die();                                               
                     }
@@ -2194,11 +2230,12 @@ if (! class_exists('bookingpress_import_export') ) {
                 
                 $response['export_data_file']       = '';
                 $response['is_complete']            = '';
-                $response['export_detail_id']       = $export_detail_id;                                
+                $response['export_detail_id']       = $export_detail_id;  
+                if($is_return){ return $response; }                              
                 echo wp_json_encode( $response );
                 die();
             }
-
+            if($is_return){ return $response; }
             echo wp_json_encode( $response );
             die();
         }        
@@ -2490,7 +2527,7 @@ if (! class_exists('bookingpress_import_export') ) {
          *
          * @return void
         */
-        function bookingpress_export_data_process_func(){
+        function bookingpress_export_data_process_func($is_return = false){
             global $BookingPress,$tbl_bookingpress_export_data_log,$tbl_bookingpress_export_data_log_detail,$wpdb,$bookingpress_other_debug_log_id;
             @ini_set('memory_limit','512M');// phpcs:ignore
 
@@ -2503,7 +2540,7 @@ if (! class_exists('bookingpress_import_export') ) {
                 $response['variant'] = 'error';
                 $response['title'] = esc_html__( 'Error', 'bookingpress-appointment-booking');
                 $response['msg'] = $bpa_error_msg;
-
+                if($is_return){ return $response; }
                 wp_send_json( $response );
                 die;
             }
@@ -2540,7 +2577,8 @@ if (! class_exists('bookingpress_import_export') ) {
                         $response['variant']     = 'error';
                         $response['title']       = esc_html__( 'Error', 'bookingpress-appointment-booking' );
                         $response['msg']         = esc_html__( 'Please select export list items.', 'bookingpress-appointment-booking' );
-                        $response['coupon_data'] = array();              
+                        $response['coupon_data'] = array(); 
+                        if($is_return){ return $response; }             
                         echo wp_json_encode( $response );
                         die();
                     }
@@ -2717,17 +2755,12 @@ if (! class_exists('bookingpress_import_export') ) {
                   
 
                 }
-
+                if($is_return){ return $response; }
                 echo wp_json_encode($response);
                 exit();               
-
-            }
-            
-
+            }          
         }
-
         /* Export Data function oer here */
-
 
         /**
          * Function for add new setting tab view file
@@ -2912,6 +2945,17 @@ if (! class_exists('bookingpress_import_export') ) {
                 foreach ( $bookingpress_export_logs as $bookingpress_debug_log_key => $bookingpress_debug_log_val ) {	
 
                     $bookingpress_export_logs_detail = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".$tbl_bookingpress_import_detail_log." Where import_id = %d ",$bookingpress_debug_log_val['import_id']), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared --Reason: $tbl_bookingpress_staffmembers_services is a table name. false alarm
+
+                    if ( ! empty( $bookingpress_debug_log_val['import_data'] ) ) {
+                        $decoded_import_data = json_decode(
+                            $bookingpress_debug_log_val['import_data'],
+                            true
+                        );
+
+                        if ( JSON_ERROR_NONE === json_last_error() ) {
+                            $bookingpress_debug_log_val['import_data'] = $decoded_import_data;
+                        }
+                    }
                     $bookingpress_debug_log_val['import_in_detail'] = $bookingpress_export_logs_detail;                    
                     $bookingpress_debug_log_data[] = array(
 						'payment_debug_log_id'         => $bookingpress_debug_log_val['export_id'],
@@ -2949,11 +2993,23 @@ if (! class_exists('bookingpress_import_export') ) {
                 foreach ( $bookingpress_export_logs as $bookingpress_debug_log_key => $bookingpress_debug_log_val ) {	
 
                     $bookingpress_export_logs_detail = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".$tbl_bookingpress_export_data_log_detail." Where export_id = %d ",$bookingpress_debug_log_val['export_id']), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared --Reason: $tbl_bookingpress_export_data_log_detail is a table name. false alarm
-                    $bookingpress_debug_log_val['export_in_detail'] = $bookingpress_export_logs_detail;                    
+                    $bookingpress_debug_log_val['export_in_detail'] = $bookingpress_export_logs_detail;       
+                    
+                    if ( ! empty( $bookingpress_debug_log_val['export_data'] ) ) {
+                        $decoded_export_data = json_decode(
+                            $bookingpress_debug_log_val['export_data'],
+                            true
+                        );
+
+                        if ( JSON_ERROR_NONE === json_last_error() ) {
+                            $bookingpress_debug_log_val['export_data'] = $decoded_export_data;
+                        }
+                    }
+
                     $bookingpress_debug_log_data[] = array(
 						'payment_debug_log_id'         => $bookingpress_debug_log_val['export_id'],
 						'payment_debug_log_name'       => 'export_data_log',
-						'payment_debug_log_data'       => wp_json_encode(stripslashes_deep($bookingpress_debug_log_val)),
+						'payment_debug_log_data'       => wp_json_encode($bookingpress_debug_log_val),
 						'payment_debug_log_added_date' => date( $bookingpress_date_format, strtotime( $bookingpress_debug_log_val['updated_at'] ) ),
 					);
 
@@ -3010,11 +3066,23 @@ if (! class_exists('bookingpress_import_export') ) {
                 foreach ( $bookingpress_export_logs as $bookingpress_debug_log_key => $bookingpress_debug_log_val ) {	
 
                     $bookingpress_export_logs_detail = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".$tbl_bookingpress_import_detail_log." Where import_id = %d ",$bookingpress_debug_log_val['import_id']), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared --Reason: $tbl_bookingpress_staffmembers_services is a table name. false alarm
+
+                    if ( ! empty( $bookingpress_debug_log_val['import_data'] ) ) {
+                        $decoded_export_data = json_decode(
+                            $bookingpress_debug_log_val['import_data'],
+                            true
+                        );
+
+                        if ( JSON_ERROR_NONE === json_last_error() ) {
+                            $bookingpress_debug_log_val['import_data'] = $decoded_export_data;
+                        }
+                    }
+
                     $bookingpress_debug_log_val['import_in_detail'] = $bookingpress_export_logs_detail;                    
                     $bookingpress_debug_log_data[] = array(
 						'payment_debug_log_id'         => $bookingpress_debug_log_val['import_id'],
 						'payment_debug_log_name'       => 'import_data_log',
-						'payment_debug_log_data'       => wp_json_encode(stripslashes_deep($bookingpress_debug_log_val)),
+						'payment_debug_log_data'       => wp_json_encode($bookingpress_debug_log_val),
 						'payment_debug_log_added_date' => date( $bookingpress_date_format, strtotime( $bookingpress_debug_log_val['updated_at'] ) ),
 					);
 
@@ -3034,11 +3102,23 @@ if (! class_exists('bookingpress_import_export') ) {
 				$bookingpress_date_format    = get_option( 'date_format' );
                 foreach ( $bookingpress_export_logs as $bookingpress_debug_log_key => $bookingpress_debug_log_val ) {	
                     $bookingpress_export_logs_detail = $wpdb->get_results($wpdb->prepare("SELECT * FROM ".$tbl_bookingpress_export_data_log_detail." Where export_id = %d ",$bookingpress_debug_log_val['export_id']), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared --Reason: $tbl_bookingpress_export_data_log_detail is a table name. false alarm
-                    $bookingpress_debug_log_val['export_in_detail'] = $bookingpress_export_logs_detail;                    
+                    $bookingpress_debug_log_val['export_in_detail'] = $bookingpress_export_logs_detail;  
+                    
+                    if ( ! empty( $bookingpress_debug_log_val['export_data'] ) ) {
+                        $decoded_export_data = json_decode(
+                            $bookingpress_debug_log_val['export_data'],
+                            true
+                        );
+
+                        if ( JSON_ERROR_NONE === json_last_error() ) {
+                            $bookingpress_debug_log_val['export_data'] = $decoded_export_data;
+                        }
+                    }
+
                     $bookingpress_debug_log_data[] = array(
 						'payment_debug_log_id'         => $bookingpress_debug_log_val['export_id'],
 						'payment_debug_log_name'       => 'export_data_log',
-						'payment_debug_log_data'       => wp_json_encode(stripslashes_deep($bookingpress_debug_log_val)),
+						'payment_debug_log_data'       => wp_json_encode($bookingpress_debug_log_val),
 						'payment_debug_log_added_date' => date( $bookingpress_date_format, strtotime( $bookingpress_debug_log_val['updated_at'] ) ),
 					);
 
@@ -3827,7 +3907,7 @@ if (! class_exists('bookingpress_import_export') ) {
                     $bookingpress_export_log_data[$export_data['export_id']] = array('export_complete'=>$export_data['export_complete'],'export_file'=>$export_file,'export_detail'=>$bookingpress_export_details);
                 }
 
-            }
+            }            
             return $bookingpress_export_log_data;
         }
 

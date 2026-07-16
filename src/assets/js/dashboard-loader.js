@@ -371,6 +371,85 @@ const initDashboardWrapper = () => {
                 console.error('Error updating appointment status:', error);
             });
         },
+        bookingpress_price_with_currency_symbol(price_amount, ignore_symbol = false) {
+            const vm = this;
+            if ("String" == typeof price_amount) {
+                price_amount = parseFloat(price_amount);
+            }
+
+            let currency_separator = vm.bookingpress_currency_separator;
+            let decimal_points = vm.bookingpress_decimal_points;
+
+            if ("comma-dot" == currency_separator) {
+                price_amount = vm.bookingpress_number_format(price_amount, decimal_points, ".", ",", ignore_symbol);
+            } else if ("dot-comma" == currency_separator) {
+                price_amount = vm.bookingpress_number_format(price_amount, decimal_points, ",", ".", ignore_symbol);
+            } else if ("space-dot" == currency_separator) {
+                price_amount = vm.bookingpress_number_format(price_amount, decimal_points, ".", " ", ignore_symbol);
+            } else if ("space-comma" == currency_separator) {
+                price_amount = vm.bookingpress_number_format(price_amount, decimal_points, ",", " ", ignore_symbol);
+            } else if ("Custom" == currency_separator) {
+                let custom_comma_separator = vm.bookingpress_custom_comma_separator;
+                let custom_thousand_separator = vm.bookingpress_custom_thousand_separator;
+                price_amount = vm.bookingpress_number_format(price_amount, decimal_points, custom_comma_separator, custom_thousand_separator);
+            }
+
+            if (true == ignore_symbol) {
+                return price_amount;
+            }
+
+            let currency_symbol = vm.bookingpress_currency_symbol;
+            let currency_symbol_pos = vm.bookingpress_currency_symbol_position;
+
+            if ("before" == currency_symbol_pos) {
+                price_amount = currency_symbol + price_amount;
+            } else if ("before_with_space" == currency_symbol_pos) {
+                price_amount = currency_symbol + " " + price_amount;
+            } else if ("after" == currency_symbol_pos) {
+                price_amount = price_amount + currency_symbol;
+            } else if ("after_with_space" == currency_symbol_pos) {
+                price_amount = price_amount + " " + currency_symbol;
+            }
+
+            return price_amount;
+
+        },
+        bookingpress_number_format(number, decimals, decPoint, thousandsSep, skip_separator = false) {
+            number = (number + "").replace(/[^0-9+\-Ee.]/g, "");
+            const n = !isFinite(+number) ? 0 : +number;
+            const prec = !isFinite(+decimals) ? 0 : Math.abs(decimals);
+            const sep = (typeof thousandsSep === "undefined") ? "," : thousandsSep;
+            const dec = (typeof decPoint === "undefined" || true == skip_separator) ? "." : decPoint;
+            let s = "";
+            const toFixedFix = function (n, prec) {
+                if (("" + n).indexOf("e") === -1) {
+                    return +(Math.round(n + "e+" + prec) + "e-" + prec);
+                } else {
+                    const arr = ("" + n).split("e");
+                    let sig = "";
+                    if (+arr[1] + prec > 0) {
+                        sig = "+";
+                    }
+                    return (+(Math.round(+arr[0] + "e" + sig + (+arr[1] + prec)) + "e-" + prec)).toFixed(prec);
+                }
+            };
+            /* @todo: for IE parseFloat(0.55).toFixed(0) = 0; */
+            s = (prec ? toFixedFix(n, prec).toString() : "" + Math.round(n)).split(".");
+            if (false == skip_separator) {
+                if (s[0].length > 3) {
+                    s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
+                }
+            }
+            if ((s[1] || "").length < prec) {
+                s[1] = s[1] || "";
+                s[1] += new Array(prec - s[1].length + 1).join("0");
+            }
+            if (true == skip_separator) {
+                return parseFloat(s.join(dec));
+            } else {
+                return s.join(dec);
+            }
+        },
         loadUpcomingAppointments:function(){
             const vm = this;
             fetch(rest_url + '/dashboard/upcoming-appointments', {
@@ -388,12 +467,12 @@ const initDashboardWrapper = () => {
             .then( response => {
                 if( response.success ){
                     // Handle the successful response here
-                    this.items = response.data.upcoming_appointments;
-                    this.totalItems = response.data.totalItems;
-                    this.form_field_data = response.data.form_field_data
+                    vm.items = response.data.upcoming_appointments;
+                    vm.totalItems = response.data.totalItems;
+                    vm.form_field_data = response.data.form_field_data
                 }
-
-                wp.hooks.doAction( 'bookingpress_modify_appointment_success_response_data', response );
+                
+                wp.hooks.doAction( 'bookingpress_modify_appointment_success_response_data', response, vm );
             })
             .catch( error => {
                 console.error('Error fetching upcoming appointments:', error);

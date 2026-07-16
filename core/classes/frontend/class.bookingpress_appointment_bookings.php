@@ -3202,7 +3202,38 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
          * @return void
          */
         function bookingpress_my_appointments_func( $atts, $content, $tag )
-        {   
+        {
+
+                /**
+                 * MB-1A: opt-in Vue 3 renderer for the My Booking shortcode.
+                 *
+                 * Default is FALSE — the legacy Vue 2 path below keeps serving
+                 * the shortcode. When a site/add-on returns true, render the
+                 * greenfield Vue 3 scaffold instead (read path only; cancel /
+                 * reschedule / retry / delete-account remain on legacy).
+                 *
+                 * MB-6D-B: `bookingpress_my_appointments_force_legacy` is the
+                 * ABSOLUTE final kill switch — when it returns true the legacy
+                 * renderer is used no matter what `bookingpress_my_appointments_use_vue3`
+                 * resolves to (filter ordering/priority is irrelevant, because
+                 * this gate is evaluated here at the final shortcode branch).
+                 *
+                 * @param bool   $use_vue3 Whether to use the Vue 3 renderer.
+                 * @param array  $atts     Shortcode attributes.
+                 * @param string $tag      Shortcode tag.
+                 */
+                $bookingpress_my_appointments_use_vue3    = apply_filters( 'bookingpress_my_appointments_use_vue3', false, $atts, $tag );
+                $bookingpress_my_appointments_force_legacy = apply_filters( 'bookingpress_my_appointments_force_legacy', false, $atts, $tag );
+                // Render Vue 3 only when opted in AND not force-legacy AND the
+                // renderer class is present AND the environment can actually mount
+                // it (WP Script Modules / WP 6.5+). Never emit a shell that cannot
+                // boot; force_legacy here overrides any use_vue3 value.
+                if ( $bookingpress_my_appointments_use_vue3
+                    && ! $bookingpress_my_appointments_force_legacy
+                    && class_exists( '\BookingPress\Vue3\MyBookings\MyBookings' )
+                    && \BookingPress\Vue3\MyBookings\MyBookings::is_supported() ) {
+                    return \BookingPress\Vue3\MyBookings\MyBookings::render( is_array( $atts ) ? $atts : array() );
+                }
 
                 global $wpdb, $BookingPress,$bookingpress_global_options;
 
@@ -3465,7 +3496,7 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                 $bpa_avatar_url = get_avatar_url( $bpa_login_customer_id );
 
                 $bookingpress_get_existing_avatar_url = $BookingPress->get_bookingpress_customersmeta( $bookingpress_current_user_id, 'customer_avatar_details' );
-                $bookingpress_get_existing_avatar_url = ! empty( $bookingpress_get_existing_avatar_url ) ? maybe_unserialize( $bookingpress_get_existing_avatar_url ) : array();            
+                $bookingpress_get_existing_avatar_url = ! empty( $bookingpress_get_existing_avatar_url ) ? BookingPress\BookingPressLoader::bpa_safe_maybe_unserialize( $bookingpress_get_existing_avatar_url ) : array();            
                 $use_default_placeholder = false;
                 if ( ! empty( $bookingpress_get_existing_avatar_url[0]['url'] ) ) {
                     $bookingpress_user_avatar = $bookingpress_get_existing_avatar_url[0]['url'];
@@ -5140,6 +5171,14 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
             }
 
             $morning_time = array_values( $morning_time );
+            
+            foreach( $afternoon_time as $mkey => $mvalue ){
+                if( !empty( $mvalue['is_next_day'] ) && ( true === $mvalue['is_next_day'] || 'true' == $mvalue['is_next_day'] ) ){
+                    $next_day_times[] = $mvalue;
+                    unset( $afternoon_time[ $mkey ] );
+                }
+            }
+            $afternoon_time = array_values( $afternoon_time );
 
             $return_data = array(
                 'morning_time'   => $morning_time,
@@ -6500,7 +6539,7 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                     $service_img_details = (!empty($service_img_details))?$service_img_details:array();
                 }else{                                        
                     $service_meta_details                    = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$tbl_bookingpress_servicesmeta} WHERE bookingpress_service_id = %d AND bookingpress_servicemeta_name = 'service_image_details'", $service_id), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_servicesmeta is table name defined globally. False Positive alarm                    
-                    $service_img_details                     = ! empty($service_meta_details['bookingpress_servicemeta_value']) ? maybe_unserialize($service_meta_details['bookingpress_servicemeta_value']) : array();                        
+                    $service_img_details                     = ! empty($service_meta_details['bookingpress_servicemeta_value']) ? BookingPress\BookingPressLoader::bpa_safe_maybe_unserialize($service_meta_details['bookingpress_servicemeta_value']) : array();                        
                 }
 
                 $bpa_user_placeholder = !empty( $service_img_details[0]['url'] ) ? false : true;

@@ -235,9 +235,9 @@ if (! class_exists('bookingpress_settings') ) {
 
                         ?>
                         <script>
-                            window.opener.app.notification_setting_form.bookingpress_response_email = <?php echo wp_json_encode( $email ); ?>;
-                            window.opener.app.notification_setting_form.bookingpress_gmail_auth = '<?php echo wp_json_encode($response_data); ?>';
-                            window.opener.app.notification_setting_form.bookingpress_gmail_auth_token = <?php echo wp_json_encode( $access_token ); ?>;
+                            window.opener.BookingPressSettings.notification_setting_form.bookingpress_response_email = <?php echo wp_json_encode( $email ); ?>;
+                            window.opener.BookingPressSettings.notification_setting_form.bookingpress_gmail_auth = '<?php echo wp_json_encode($response_data); ?>';
+                            window.opener.BookingPressSettings.notification_setting_form.bookingpress_gmail_auth_token = <?php echo wp_json_encode( $access_token ); ?>;
                             window.close();
                         </script>
                         <?php
@@ -1551,7 +1551,7 @@ if (! class_exists('bookingpress_settings') ) {
          *
          * @return void
          */
-        function bookingpress_upload_company_avatar_func()
+        function bookingpress_upload_company_avatar_func($is_return = false)
         {
             $return_data = array(
                 'error'            => 0,
@@ -1570,6 +1570,9 @@ if (! class_exists('bookingpress_settings') ) {
                 $response['title'] = esc_html__( 'Error', 'bookingpress-appointment-booking');
                 $response['msg'] = $bpa_error_msg;
 
+                if($is_return){
+                    return $response;
+                }
                 wp_send_json( $response );
                 die;
             }
@@ -1612,7 +1615,9 @@ if (! class_exists('bookingpress_settings') ) {
                     $return_data['upload_file_name'] = $file_name;
                 }
             }
-
+            if($is_return){
+                return $response;
+            }
             echo wp_json_encode($return_data);
             exit();
         }
@@ -3154,7 +3159,7 @@ if (! class_exists('bookingpress_settings') ) {
          *
          * @return void
          */
-        public function bookingpress_get_settings_details()
+        public function bookingpress_get_settings_details($is_return = false)
         {
             $response              = array();
 
@@ -3168,6 +3173,9 @@ if (! class_exists('bookingpress_settings') ) {
                 $response['title'] = esc_html__( 'Error', 'bookingpress-appointment-booking');
                 $response['msg'] = $bpa_error_msg;
 
+                if($is_return){
+                    return $response;
+                }
                 wp_send_json( $response );
                 die;
             }
@@ -3215,7 +3223,9 @@ if (! class_exists('bookingpress_settings') ) {
                 $response = apply_filters('bookingpress_modify_get_settings_response_data', $response, $_POST); //phpcs:ignore
 
             }
-
+            if($is_return){
+                return $response;
+            }
             echo wp_json_encode($response);
             exit();
         }
@@ -3225,7 +3235,7 @@ if (! class_exists('bookingpress_settings') ) {
          *
          * @return void
          */
-        public function bookingpress_save_settings_details()
+        public function bookingpress_save_settings_details($is_return = false)
         {
             global $BookingPress, $wpdb, $tbl_bookingpress_form_fields;
             $response              = array();
@@ -3240,6 +3250,9 @@ if (! class_exists('bookingpress_settings') ) {
                 $response['title'] = esc_html__( 'Error', 'bookingpress-appointment-booking');
                 $response['msg'] = $bpa_error_msg;
 
+                if($is_return){
+                    return $response;
+                }
                 wp_send_json( $response );
                 die;
             }
@@ -3322,7 +3335,9 @@ if (! class_exists('bookingpress_settings') ) {
 
             wp_cache_delete( 'bookingpress_all_general_settings' );
             wp_cache_delete( 'bookingpress_all_customize_settings' );
-
+            if($is_return){
+                return $response;
+            }
             echo wp_json_encode($response);
             exit();
         }
@@ -3332,7 +3347,7 @@ if (! class_exists('bookingpress_settings') ) {
          *
          * @return void
          */
-        public function bookingpress_save_default_work_hours()
+        public function bookingpress_save_default_work_hours($is_return = false)
         {
 	        global $wpdb, $BookingPress, $tbl_bookingpress_default_workhours,$bookingpress_global_options;
             $response              = array();
@@ -3346,7 +3361,7 @@ if (! class_exists('bookingpress_settings') ) {
                 $response['variant'] = 'error';
                 $response['title'] = esc_html__( 'Error', 'bookingpress-appointment-booking');
                 $response['msg'] = $bpa_error_msg;
-
+                if($is_return){ return $response; }
                 wp_send_json( $response );
                 die;
             }
@@ -3389,6 +3404,23 @@ if (! class_exists('bookingpress_settings') ) {
                     $dayname           = strtolower($timing_key);
                     $start_time        = ( $timing_val['start_time'] != 'Off' ) ? date('H:i:s', strtotime($timing_val['start_time'])) : null;
                     $end_time          = ( $timing_val['start_time'] != 'Off' ) ? date('H:i:s', strtotime($timing_val['end_time'])) : null;
+
+                    /**
+                     * Allow the general working hours to persist EXTENDED (overnight,
+                     * >= 24:00:00) end times. Lite normalises with
+                     * date('H:i:s', strtotime(...)), which returns FALSE for an hour
+                     * like "25:00:00" and corrupts the stored value. Pro's shift layer
+                     * hooks this to pass such values through raw (mirroring how service /
+                     * staff work hours are stored), which the availability layer already
+                     * resolves as a next-day window.
+                     */
+                    if ( $timing_val['start_time'] != 'Off' ) {
+                        $bookingpress_normalized_workhour_times = apply_filters( 'bookingpress_save_default_workhour_times', array( 'start_time' => $start_time, 'end_time' => $end_time ), $timing_val, $dayname );
+                        if ( is_array( $bookingpress_normalized_workhour_times ) ) {
+                            $start_time = isset( $bookingpress_normalized_workhour_times['start_time'] ) ? $bookingpress_normalized_workhour_times['start_time'] : $start_time;
+                            $end_time   = isset( $bookingpress_normalized_workhour_times['end_time'] ) ? $bookingpress_normalized_workhour_times['end_time'] : $end_time;
+                        }
+                    }
                     $workhours_counter = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(bookingpress_workhours_id) as total FROM {$tbl_bookingpress_default_workhours} WHERE bookingpress_workday_key = %s AND bookingpress_is_break = 0", $dayname ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_default_workhours is table name defined globally. False Positive alarm
 
                     if ($workhours_counter > 0 ) {
@@ -3426,7 +3458,7 @@ if (! class_exists('bookingpress_settings') ) {
 
             wp_cache_delete( 'bookingpress_all_general_settings' );
             wp_cache_delete( 'bookingpress_all_customize_settings' );
-
+            if($is_return){ return $response; }
             echo wp_json_encode($response);
             exit();
         }
@@ -3524,9 +3556,9 @@ if (! class_exists('bookingpress_settings') ) {
                 } while ( $curr_time <= $default_end_time );
 
                 $bookingpress_workhours_data[] = array(
-                'day_name'    => ucfirst($days_val),
-                'break_times' => $bookingpress_breaks_arr,
-                'worktimes'   => $bookingpress_times_arr,
+                    'day_name'    => ucfirst($days_val),
+                    'break_times' => $bookingpress_breaks_arr,
+                    'worktimes'   => $bookingpress_times_arr,
                 );
 
                 $selected_timing_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$tbl_bookingpress_default_workhours} WHERE bookingpress_workday_key = %s AND bookingpress_is_break = 0", $days_val ), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_default_workhours is table name defined globally. False Positive alarm

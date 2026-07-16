@@ -1457,6 +1457,7 @@ if (! class_exists('bookingpress_customize') ) {
                         'is_hide'        => 0,
                         'is_default'     => 1,
                         'field_position' => 1,
+                        'maxlength'      => '255',
                     ),
                     'firstname'     => array(
                         'field_name'     => 'firstname',
@@ -1469,6 +1470,7 @@ if (! class_exists('bookingpress_customize') ) {
                         'is_hide'        => 0,
                         'is_default'     => 1,
                         'field_position' => 2,
+                        'maxlength'      => '255',
                     ),
                     'lastname'      => array(
                         'field_name'     => 'lastname',
@@ -1481,6 +1483,7 @@ if (! class_exists('bookingpress_customize') ) {
                         'is_hide'        => 0,
                         'is_default'     => 1,
                         'field_position' => 3,
+                        'maxlength'      => '255',
                     ),
                     'email_address' => array(
                         'field_name'     => 'email_address',
@@ -1493,6 +1496,7 @@ if (! class_exists('bookingpress_customize') ) {
                         'is_hide'        => 0,
                         'is_default'     => 1,
                         'field_position' => 4,
+                        'maxlength'      => '255',
                     ),
                     'phone_number'  => array(
                         'field_name'     => 'phone_number',
@@ -1506,6 +1510,7 @@ if (! class_exists('bookingpress_customize') ) {
                         'is_default'     => 1,
                         'field_position' => 5,
                         'set_custom_placeholder' => 0,
+                        'maxlength'      => '63',
                     ),
                     'note'          => array(
                         'field_name'     => 'note',
@@ -1529,6 +1534,7 @@ if (! class_exists('bookingpress_customize') ) {
                         'error_message'  => esc_html__('Please enter your username', 'bookingpress-appointment-booking'),
                         'is_hide'        => 1,
                         'field_position' => 8,
+                        'maxlength'      => '255',
                     ),
                 ),
                 'my_booking_field_settings'              => array(

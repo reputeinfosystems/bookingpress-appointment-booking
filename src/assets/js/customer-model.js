@@ -238,20 +238,34 @@ const initNewCustomerDialog = () => {
                     }
                 });
             },
-            bookingpress_upload_customer_avatar_func(response, file, fileList) {
-                const vm2 = this
-                if (response != '') {
-                    if ("undefined" != typeof response.error && 1 == response.error) {
+            bookingpress_upload_customer_avatar_func(response ,file, fileList) {
+
+                const vm2 = this;
+
+                const formData = new FormData();
+                formData.append("file", file.raw);
+                fetch(rest_url + '/customer/upload_avatar', {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'X-WP-Nonce': BookingPressConfig.rest_nonce
+                    },
+                    body: formData
+                })
+               .then(res => res.json())
+                .then(response => {
+                    if (response.error === 1) {
                         vm2.bookingpress_image_upload_err(response.msg, file, fileList);
-                        vm2.customer.avatar_url = ''
-                        vm2.customer.avatar_name = ''
-                        vm2.$refs.avatarRef.clearFiles()
+                        vm2.customer.avatar_url = '';
+                        vm2.customer.avatar_name = '';
+                        vm2.$refs.avatarRef.clearFiles();
                     } else {
-                        vm2.customer.avatar_url = response.upload_url
-                        vm2.customer.avatar_name = response.upload_file_name
+                        vm2.customer.avatar_url = response.upload_url;
+                        vm2.customer.avatar_name = response.upload_file_name;
                     }
-                }
+                });
             },
+            
             bookingpress_image_upload_limit(files, fileList) {
                 const vm2 = this
                 if (vm2.customer.avatar_url != '') {
@@ -277,27 +291,53 @@ const initNewCustomerDialog = () => {
                 });
             },
             bookingpress_remove_customer_avatar(file, fileList) {
-                const vm = this
-                var upload_url = vm.customer.avatar_url
+                const vm = this;
 
-                const postData = new FormData();
-                postData.append('action', 'bookingpress_remove_customer_avatar');
-                postData.append('upload_file_url', upload_url);
-                postData.append('_wpnonce', BookingPressConfig._wpnonce);
-
-                fetch(BookingPressConfig.ajax_url, {
+                fetch(rest_url + '/customer/remove_avatar', {
                     method: 'POST',
-                    body: postData
-                })
-                    .then(response => response.json())
-                    .then(rest_response => {
-                        vm.customer.avatar_url = ''
-                        vm.customer.avatar_name = ''
-                        vm.$refs.avatarRef.clearFiles()
+                    credentials: 'same-origin',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-WP-Nonce': BookingPressConfig.rest_nonce,
+                    },
+                    body: JSON.stringify({
+                        upload_file_url: vm.customer.avatar_url
                     })
-                    .catch(error => {
-                        console.log(error);
+                })
+                .then(res => res.json())
+                .then(rest_response => {
+                    if (rest_response.error) {
+                        vm.$notify({
+                            title: 'Error',
+                            message: rest_response.msg || 'Failed to remove avatar',
+                            type: 'error',
+                            duration: BookingPressConfig.notification_timeout
+                        });
+                        return;
+                    }
+
+                    vm.customer.avatar_url = '';
+                    vm.customer.avatar_name = '';
+                    vm.$refs.avatarRef.clearFiles();
+
+                    vm.$notify({
+                        title: rest_response.title || 'Success',
+                        message: rest_response.msg || 'Avatar removed',
+                        type: rest_response.variant || 'success',
+                        duration: BookingPressConfig.notification_timeout
                     });
+
+                })
+                .catch(error => {
+                    console.log(error);
+
+                    vm.$notify({
+                        title: 'Error',
+                        message: 'Something went wrong',
+                        type: 'error',
+                        duration: BookingPressConfig.notification_timeout
+                    });
+                });
             },
             checkUploadedFile(file) {
                 const vm2 = this

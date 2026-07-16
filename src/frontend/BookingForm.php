@@ -62,35 +62,24 @@ class BookingForm extends Base {
 	/**
 	 * Register hooks.
 	 *
+	 * **M7 — intentionally a no-op.** Before M7 this class registered
+	 * `[bookingpress_form_vue3]` and conditionally overrode `[bookingpress_form]`,
+	 * and ran the JSON-island filter for its own loader handle. All of
+	 * those responsibilities moved to `BookingPress\Vue3\Routing` and
+	 * `BookingPress\Vue3\Assets` in M7. This `init()` stays as a method on
+	 * the class so existing callers (`BookingPressLoader::init` and any
+	 * third-party that may have referenced this) keep working without
+	 * fatal errors — it simply does nothing now.
+	 *
+	 * The class file itself remains in the tree through one deprecation
+	 * cycle. M9 (or a later cleanup ticket) will remove it.
+	 *
 	 * Called from `BookingPress\BookingPressLoader::init()` on `plugins_loaded`.
 	 *
 	 * @return void
 	 */
 	public static function init() {
-		parent::init();
-
-		add_shortcode( self::SHORTCODE, array( static::class, 'render_shortcode' ) );
-
-		// When the Pro add-on is not active, transparently route the legacy
-		// `[bookingpress_form]` shortcode to the Vue 3 renderer so existing
-		// pages keep working without manual edits. Pro is re-checked on every
-		// page load — activating Pro restores the legacy Vue 2 handler on the
-		// next request because Pro registers its own version of the shortcode
-		// after this hook runs.
-		//
-		// The legacy handler in
-		// core/classes/frontend/class.bookingpress_appointment_bookings.php
-		// is registered during plugin file load (before `plugins_loaded`),
-		// so this `add_shortcode` call — running on `plugins_loaded` via
-		// BookingPressLoader::init() — overrides it cleanly.
-		if ( ! self::is_pro_active() ) {
-			add_shortcode( 'bookingpress_form', array( static::class, 'render_shortcode' ) );
-		}
-
-		add_filter(
-			'script_module_data_' . self::MODULE_FORM_LOADER,
-			array( static::class, 'filter_module_data' )
-		);
+		// no-op — see method-level docblock.
 	}
 
 	/**
@@ -323,6 +312,62 @@ class BookingForm extends Base {
 		$helper = self::get_legacy_helper();
 		if ( $helper && method_exists( $helper, 'bookingpress_load_booking_form_custom_css' ) ) {
 			$helper->bookingpress_load_booking_form_custom_css();
+		}
+
+		// PayPal JS SDK — port of legacy `bookingpress_paypal_scripts_add`
+		// (class.bookingpress_appointment_bookings.php:683). The legacy
+		// hook fires on `bookingpress_add_frontend_js` which the V3
+		// shortcode does NOT trigger, so we enqueue here explicitly when
+		// PayPal popup mode is enabled. Required for the v3
+		// `renderPayPalButtons()` `paypal.Buttons(...).render(...)` call
+		// in SummaryStep.js to work.
+		self::maybe_enqueue_paypal_sdk();
+	}
+
+	/**
+	 * Enqueue the PayPal JS SDK if PayPal popup mode is enabled and the
+	 * credentials are set. Mirrors legacy `bookingpress_paypal_scripts_add`
+	 * 1:1 so popup mode behaves the same way in the Vue 3 render path.
+	 *
+	 * @return void
+	 */
+	private static function maybe_enqueue_paypal_sdk() {
+		$helper = self::get_legacy_helper();
+		if ( ! $helper || ! method_exists( $helper, 'bookingpress_get_settings' ) ) {
+			return;
+		}
+
+		$paypal_payment      = $helper->bookingpress_get_settings( 'paypal_payment', 'payment_setting' );
+		$paypal_payment_mode = $helper->bookingpress_get_settings( 'paypal_payment_method_type', 'payment_setting' );
+
+		// Treat the stored value the same way PaymentService::is_truthy does.
+		$is_paypal_on = ( 'true' === strtolower( (string) $paypal_payment ) || '1' === (string) $paypal_payment );
+		if ( ! $is_paypal_on || 'popup' !== (string) $paypal_payment_mode ) {
+			return;
+		}
+
+		$client_id     = (string) $helper->bookingpress_get_settings( 'paypal_client_id', 'payment_setting' );
+		$client_secret = (string) $helper->bookingpress_get_settings( 'paypal_client_secret', 'payment_setting' );
+		if ( '' === $client_id || '' === $client_secret ) {
+			return;
+		}
+
+		$currency_name = (string) $helper->bookingpress_get_settings( 'payment_default_currency', 'payment_setting' );
+		$currency_code = method_exists( $helper, 'bookingpress_get_currency_code' )
+			? (string) $helper->bookingpress_get_currency_code( $currency_name )
+			: ( '' !== $currency_name ? $currency_name : 'USD' );
+		if ( '' === $currency_code ) {
+			$currency_code = 'USD';
+		}
+
+		if ( ! wp_script_is( 'bookingpress-paypal-script', 'enqueued' ) && ! wp_script_is( 'bookingpress-paypal-script', 'registered' ) ) {
+			wp_enqueue_script(
+				'bookingpress-paypal-script',
+				'https://www.paypal.com/sdk/js?client-id=' . rawurlencode( $client_id ) . '&currency=' . rawurlencode( $currency_code ) . '&disable-funding=credit,card',
+				array(),
+				null,
+				true
+			);
 		}
 	}
 

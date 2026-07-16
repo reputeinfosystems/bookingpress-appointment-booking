@@ -123,7 +123,6 @@ if (! class_exists('bookingpress_fileupload_class') ) {
                     $this->error_message = esc_html__('Sorry, Your request could not be processed due to security reasons.', 'bookingpress-appointment-booking');
                     return false;
                 }
-
                 if (! wp_verify_nonce($this->nonce_data, $this->nonce_action) ) {
                     $this->error_message = esc_html__('Sorry, Your request could not be processed due to security reasons.', 'bookingpress-appointment-booking');
                     return false;

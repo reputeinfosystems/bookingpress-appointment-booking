@@ -31,6 +31,18 @@ class CustomerRoutes extends Base {
             'callback' => [ $this, 'get_existing_user_details' ],
             'permission_callback' => $this->permission_callback_for( 'search_user' )
         ] );
+
+        register_rest_route( 'bookingpress-app/v1', '/customer/upload_avatar', [
+            'methods'  => 'POST',
+            'callback' => [ $this, 'upload_customer_avatar' ],
+            'permission_callback' => $this->permission_callback_for( 'upload_customer_avatar' )
+        ] );
+
+        register_rest_route( 'bookingpress-app/v1', '/customer/remove_avatar', [
+            'methods'  => 'POST',
+            'callback' => [ $this, 'remove_customer_avatar' ],
+            'permission_callback' => $this->permission_callback_for( 'remove_customer_avatar' )
+        ] );
     }
 
     public function get_existing_user_details( $request ) {
@@ -134,4 +146,94 @@ class CustomerRoutes extends Base {
 
         return new \WP_REST_Response( $json_data, 200 );
     }
+
+    public function upload_customer_avatar( $request ) {
+        $_REQUEST['_wpnonce'] = wp_create_nonce( 'bpa_wp_nonce' );
+        $return_data = array(
+            'error'            => 0,
+            'msg'              => '',
+            'upload_url'       => '',
+            'upload_file_name' => '',
+        );
+
+        if (
+            ! isset($_FILES['file']) ||
+            empty($_FILES['file']['tmp_name'])
+        ) {
+            return new \WP_REST_Response([
+                'error' => 1,
+                'msg'   => 'No file received'
+            ], 400);
+        }
+
+        $file = $_FILES['file'];
+        $file_name = isset($file['name']) ? current_time('timestamp') . '_' . sanitize_file_name($file['name']) : '';
+
+        $upload_dir = BOOKINGPRESS_TMP_IMAGES_DIR . '/';
+        $upload_url = BOOKINGPRESS_TMP_IMAGES_URL . '/';
+
+        if ( ! file_exists($upload_dir) ) {
+            wp_mkdir_p($upload_dir);
+        }
+
+        $destination = $upload_dir . $file_name;
+        $check_file = wp_check_filetype_and_ext(
+            $file['tmp_name'],
+            $file['name']
+        );
+
+        if ( empty( $check_file['ext'] ) ) {
+            $return_data['error'] = 1;
+            $return_data['msg']   = esc_html__('Invalid file extension. Please select valid file', 'bookingpress-appointment-booking');
+            return new \WP_REST_Response($return_data, 200);
+        }
+
+        $upload_file = move_uploaded_file($file['tmp_name'], $destination);
+        if ( ! $upload_file ) {
+            $return_data['error'] = 1;
+            $return_data['msg']   = esc_html__('Something went wrong while updating the file', 'bookingpress-appointment-booking');
+            return new \WP_REST_Response($return_data, 200);
+        }
+
+        $return_data['error']            = 0;
+        $return_data['msg']              = esc_html__('Avatar uploaded successfully', 'bookingpress-appointment-booking');
+        $return_data['upload_url']       = $upload_url . $file_name;
+        $return_data['upload_file_name'] = $file_name;
+
+        return new \WP_REST_Response($return_data, 200);
+    }
+
+    public function remove_customer_avatar( $request ){
+        global $wpdb;
+
+        $response = array();
+        $_REQUEST['_wpnonce'] = wp_create_nonce( 'bpa_wp_nonce' );
+
+        // REST input instead of $_POST
+        $upload_file_url = $request->get_param('upload_file_url');
+
+        if ( ! empty( $upload_file_url ) ) {
+
+            $bookingpress_uploaded_avatar_url = esc_url_raw($upload_file_url);
+            $bookingpress_file_name_arr = explode('/', $bookingpress_uploaded_avatar_url);
+            $bookingpress_file_name = $bookingpress_file_name_arr[ count($bookingpress_file_name_arr) - 1 ];
+
+            if ( file_exists( BOOKINGPRESS_TMP_IMAGES_DIR . '/' . $bookingpress_file_name ) ) {
+                wp_delete_file( BOOKINGPRESS_TMP_IMAGES_DIR . '/' . $bookingpress_file_name );
+            }
+
+            $response['variant'] = 'success';
+            $response['title']   = esc_html__('Success', 'bookingpress-appointment-booking');
+            $response['msg']     = esc_html__('Avatar removed successfully.', 'bookingpress-appointment-booking');
+
+            return new \WP_REST_Response($response, 200);
+        }
+
+        $response['variant'] = 'error';
+        $response['title']   = esc_html__('Error', 'bookingpress-appointment-booking');
+        $response['msg']     = esc_html__('No file provided.', 'bookingpress-appointment-booking');
+
+        return new \WP_REST_Response($response, 400);
+    }
+
 }

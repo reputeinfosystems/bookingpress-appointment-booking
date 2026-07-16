@@ -1775,8 +1775,64 @@ if( version_compare( $bookingpress_old_version, '1.5.2', '<') ){
     $wpdb->query("ALTER TABLE {$tbl_bookingpress_entries_meta} CHANGE `bookingpress_entry_meta_value` `bookingpress_entry_meta_value` LONGTEXT NULL DEFAULT NULL"); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $bookingpress_entries_meta is table name defined globally. False Positive alarm 
 }
 
+if (version_compare($bookingpress_old_version, '1.5.6', '<') ) {
+    global $BookingPress;  
+    
+    $bookingpress_background_color = $BookingPress->bookingpress_get_customize_settings('background_color', 'booking_form');
+    $bookingpress_footer_background_color = $BookingPress->bookingpress_get_customize_settings('footer_background_color', 'booking_form');
+    $bookingpress_primary_color = $BookingPress->bookingpress_get_customize_settings('primary_color', 'booking_form');
+    $bookingpress_content_color = $BookingPress->bookingpress_get_customize_settings('content_color', 'booking_form');
+    $bookingpress_label_title_color = $BookingPress->bookingpress_get_customize_settings('label_title_color', 'booking_form');
+    $bookingpress_title_font_family = $BookingPress->bookingpress_get_customize_settings('title_font_family', 'booking_form');        
+    $bookingpress_sub_title_color = $BookingPress->bookingpress_get_customize_settings('sub_title_color', 'booking_form');
+    $bookingpress_price_button_text_color = $BookingPress->bookingpress_get_customize_settings('price_button_text_color', 'booking_form');    
+    $bookingpress_primary_background_color = $BookingPress->bookingpress_get_customize_settings('primary_background_color', 'booking_form');
+    $bookingpress_border_color= $BookingPress->bookingpress_get_customize_settings('border_color', 'booking_form');
+
+    $bookingpress_background_color = !empty($bookingpress_background_color) ? $bookingpress_background_color : '#fff';
+    $bookingpress_footer_background_color = !empty($bookingpress_footer_background_color) ? $bookingpress_footer_background_color : '#f4f7fb';
+    $bookingpress_primary_color = !empty($bookingpress_primary_color) ? $bookingpress_primary_color : '#12D488';
+    $bookingpress_content_color = !empty($bookingpress_content_color) ? $bookingpress_content_color : '#727E95';
+    $bookingpress_label_title_color = !empty($bookingpress_label_title_color) ? $bookingpress_label_title_color : '#202C45';
+    $bookingpress_title_font_family = !empty($bookingpress_title_font_family) ? $bookingpress_title_font_family : '';    
+    $bookingpress_sub_title_color = !empty($bookingpress_sub_title_color) ? $bookingpress_sub_title_color : '#535D71';
+    $bookingpress_price_button_text_color = !empty($bookingpress_price_button_text_color) ? $bookingpress_price_button_text_color : '#fff';    
+    $bookingpress_primary_background_color = !empty($bookingpress_primary_background_color) ? $bookingpress_primary_background_color : '#e2faf1';
+    $bookingpress_border_color = !empty($bookingpress_border_color) ? $bookingpress_border_color : '#CFD6E5';
+
+    $bookingpress_custom_data_arr['action'][] = 'bookingpress_save_my_booking_settings';
+    $bookingpress_custom_data_arr['action'][] = 'bookingpress_save_booking_form_settings';
+
+    $my_booking_form = array(
+        'background_color' => $bookingpress_background_color,
+        'row_background_color' => $bookingpress_footer_background_color,
+        'primary_color' => $bookingpress_primary_color,
+        'content_color' => $bookingpress_content_color,
+        'label_title_color' => $bookingpress_label_title_color,
+        'title_font_family' => $bookingpress_title_font_family,        
+        'sub_title_color'   => $bookingpress_sub_title_color,
+        'price_button_text_color' => $bookingpress_price_button_text_color,        
+        'border_color'         => $bookingpress_border_color,
+    );
+    $booking_form = array(
+        'background_color' => $bookingpress_background_color,
+        'footer_background_color' => $bookingpress_footer_background_color,
+        'primary_color' => $bookingpress_primary_color,
+        'primary_background_color'=> $bookingpress_primary_background_color,
+        'label_title_color' => $bookingpress_label_title_color,
+        'title_font_family' => $bookingpress_title_font_family,                
+        'content_color' => $bookingpress_content_color,                
+        'price_button_text_color' => $bookingpress_price_button_text_color,
+        'sub_title_color' => $bookingpress_sub_title_color,
+        'border_color'         => $bookingpress_border_color,
+    );
+    $bookingpress_custom_data_arr['booking_form'] = $booking_form;
+    $bookingpress_custom_data_arr['my_booking_form'] = $my_booking_form;
+    $BookingPress->bookingpress_generate_customize_css_func($bookingpress_custom_data_arr);
+}
+
 $BookingPress->bookingpress_cleanup_transient_data_hook_callback();
-$bookingpress_new_version = '1.5.5';
+$bookingpress_new_version = '1.5.6';
 update_option('bookingpress_new_version_installed', 1);
 update_option('bookingpress_version', $bookingpress_new_version);
 update_option('bookingpress_updated_date_' . $bookingpress_new_version, current_time('mysql'));

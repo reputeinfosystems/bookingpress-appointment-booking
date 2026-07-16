@@ -1,0 +1,14 @@
+# Disable browser caching for the Vue3 booking form ES modules.
+#
+# Relative `import` statements inside these files (e.g. `./components/App.js`)
+# resolve to URLs without WordPress's `?ver=` cache-buster, so the browser
+# would otherwise serve stale code after every edit. Override that with
+# explicit no-cache headers — only affects this folder.
+
+<IfModule mod_headers.c>
+    <FilesMatch "\.(js|mjs)$">
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+        Header set Pragma "no-cache"
+        Header set Expires "0"
+    </FilesMatch>
+</IfModule>
