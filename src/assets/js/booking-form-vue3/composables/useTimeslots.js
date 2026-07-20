@@ -290,6 +290,16 @@ export function useTimeslots(state, api, bus) {
       else if (h < n) out.evening.push(slot);
       else out.night.push(slot);
     }
+    // "Hide time slot grouping" (customize toggle, surfaced by a Pro feature
+    // via config.hideTimeslotGrouping; unset in Lite): collapse the four
+    // buckets into ONE heading-less list, same order as the grouped render
+    // (morning→night concatenated, overnight slots last) — mirrors the legacy
+    // flat branch in Pro's appointment_booking_form.php (v-else of the
+    // hide_time_slot_grouping check). DateTimeStep suppresses the sub-heading
+    // for the 'all' bucket key.
+    if (cfg.hideTimeslotGrouping) {
+      return { all: out.morning.concat(out.afternoon, out.evening, out.night) };
+    }
     return out;
   });
 

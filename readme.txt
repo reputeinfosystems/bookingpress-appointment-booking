@@ -3,9 +3,9 @@ Contributors: reputeinfosystems
 Tags: booking, appointment, booking calendar, scheduling, booking system
 Donate link: https://bookingpressplugin.com/
 Requires at least: 6.5
-Tested up to: 7.0.1
+Tested up to: 7.0.2
 Requires PHP: 7.4
-Stable tag: 1.5.6
+Stable tag: 1.5.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -220,8 +220,18 @@ Please follow the steps for installation:
 
 == Changelog ==
 
+= 1.5.8 =
+* Fixed: 'Hide Timeslot Grouping' is not working
+* Fixed: Booking form shortcode with category attribute doesn't work properly when multiple category ids are defined
+* Fixed: date is not blocked even if it doesn't have any timeslots available
+* Fixed: Pay Locally & PayPal button text not retrieved from the customization settings
+* Other minor bug fixes & Improvements
+
+= 1.5.7 =
+* Minor bug fixes & Improvements
+
 = 1.5.6 =
-* Added Vue3 Compatibility
+* Added Vue.js version 3 Compatibility
 * Improved overall performance at backend and frontend
 * Other minor bug fixes
 

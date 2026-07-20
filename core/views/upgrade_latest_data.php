@@ -1831,8 +1831,14 @@ if (version_compare($bookingpress_old_version, '1.5.6', '<') ) {
     $BookingPress->bookingpress_generate_customize_css_func($bookingpress_custom_data_arr);
 }
 
+if (version_compare($bookingpress_old_version, '1.5.7', '<') ) {
+    $setting_tbl = $wpdb->prefix . 'bookingpress_settings';
+
+    $wpdb->query( "ALTER TABLE {$setting_tbl} MODIFY COLUMN `setting_value` LONGTEXT" );
+}
+
 $BookingPress->bookingpress_cleanup_transient_data_hook_callback();
-$bookingpress_new_version = '1.5.6';
+$bookingpress_new_version = '1.5.8';
 update_option('bookingpress_new_version_installed', 1);
 update_option('bookingpress_version', $bookingpress_new_version);
 update_option('bookingpress_updated_date_' . $bookingpress_new_version, current_time('mysql'));

@@ -711,6 +711,17 @@ class AvailabilityService implements AvailabilityServiceInterface {
 		// the service's configured `max_capacity` via Hooks::FILTER_SLOT_CAPACITY.
 		$capacity = max( 1, (int) $capacity );
 
+		// Legacy-compat bridge: the external-calendar add-ons (Google / Outlook /
+		// Apple) block busy events by hooking the LEGACY filter
+		// `bookingpress_modify_booked_appointment_data`, which only the Vue2
+		// front-end fired. Fire it here too and merge the rows in as booked
+		// ranges. Deliberately AFTER Hooks::FILTER_BOOKED_RANGES: Pro's staff
+		// feature REPLACES the ranges wholesale when a staff is selected (which
+		// is exactly when calendar sync applies) and Multiple Quantity rewrites
+		// each range's `count` from DB rows — both would drop/corrupt the
+		// external rows if merged earlier.
+		$booked_ranges = $this->merge_external_booked_ranges( $booked_ranges, (int) $service_id, (string) $date, $capacity, is_array( $context ) ? $context : array() );
+
 		// Normalise break gaps to timestamps once. A slot whose [start, end)
 		// overlaps any break is dropped (legacy parity: a break removes the
 		// slots it covers). Lite passes none; Pro shift management supplies the
@@ -728,15 +739,14 @@ class AvailabilityService implements AvailabilityServiceInterface {
 			$break_ranges[] = array( 'start' => (int) $bs, 'end' => (int) $be );
 		}
 
-		for ( $ts = $start_ts; $ts + $duration_min * 60 <= $end_ts; $ts += $step_min * 60 ) {
-			// Released-form parity: drop past slots. For future dates
-			// `$ts` is always > now so this branch never triggers; for
-			// today it skips every slot whose start moment has already
-			// passed in WP-local time.
-			if ( $ts <= $now_ts ) {
-				continue;
+		usort(
+			$break_ranges,
+			static function ( $left, $right ) {
+				return $left['start'] <=> $right['start'];
 			}
+		);
 
+		for ( $ts = $start_ts; $ts + $duration_min * 60 <= $end_ts; $ts += $step_min * 60 ) {
 			$slot_start  = gmdate( 'H:i', $ts );
 			$slot_end_ts = $ts + $duration_min * 60;
 			$slot_end    = gmdate( 'H:i', $slot_end_ts );
@@ -749,6 +759,10 @@ class AvailabilityService implements AvailabilityServiceInterface {
 				foreach ( $break_ranges as $brk ) {
 					if ( $ts < $brk['end'] && $slot_end_ts > $brk['start'] ) {
 						$in_break = true;
+						// Legacy parity: restart the slot grid exactly when the break
+						// ends. The for-loop increment advances this adjusted cursor
+						// to the break end on the next iteration.
+						$ts = (int) $brk['end'] - ( $step_min * 60 );
 						break;
 					}
 				}
@@ -757,10 +771,36 @@ class AvailabilityService implements AvailabilityServiceInterface {
 				}
 			}
 
+			// Released-form parity: drop past slots after break processing so a
+			// break that has already passed still realigns today's remaining grid.
+			// Future dates never enter this branch.
+			if ( $ts <= $now_ts ) {
+				continue;
+			}
+
 			$booked_here  = 0;
 			$drop_crossed = false;
 			foreach ( $booked_ranges as $br ) {
 				if ( $ts < $br['end_ts'] && $slot_end_ts > $br['start_ts'] ) {
+					// Legacy parity (Lite class.bookingpress_appointment_bookings.php
+					// §4915-4932 + the Pro `bookingpress_is_slot_booked_with_share_timeslot`
+					// callback §497-532): when "Share timeslot between all services"
+					// is ON, an overlapping booking of a DIFFERENT service fully
+					// blocks this slot regardless of remaining capacity — UNLESS
+					// "Share capacity between timeslots" is ALSO on, which flips the
+					// block back into ordinary capacity math (the foreign booking
+					// just consumes seats, legacy Pro lines 504-507). Which foreign
+					// bookings reach this loop is decided upstream
+					// (Hooks::FILTER_BOOKED_RANGES — e.g. Pro's share-scope drops
+					// other-category services), so any that survive must count.
+					// Lite-only note: $share_capacity is seeded true and $capacity
+					// is 1, so a foreign booking still zeroes the slot — identical
+					// to legacy Lite's unconditional block.
+					$booked_service = isset( $br['service_id'] ) ? (int) $br['service_id'] : (int) $service_id;
+					if ( $share_timeslots && (int) $service_id !== $booked_service && ! $share_capacity ) {
+						$drop_crossed = true;
+						break;
+					}
 					if ( $share_capacity
 						|| ( $ts === (int) $br['start_ts'] && $slot_end_ts === (int) $br['end_ts'] )
 					) {
@@ -899,5 +939,102 @@ class AvailabilityService implements AvailabilityServiceInterface {
 			);
 		}
 		return $out;
+	}
+
+	/**
+	 * Merge externally-blocked ranges from the legacy
+	 * `bookingpress_modify_booked_appointment_data` filter (Google / Outlook /
+	 * Apple calendar add-ons) into the Vue3 booked ranges.
+	 *
+	 * The legacy callbacks append rows shaped like appointment rows
+	 * (`bookingpress_appointment_date/_end_date/_time/_end_time` plus a
+	 * `*_blocked` flag) and resolve the selected staff member from the legacy
+	 * AJAX `$_POST['selected_staffmember']` key. The Vue3 REST request carries
+	 * the staff id in `$context` instead, so it is mirrored into `$_POST` for
+	 * the duration of the call. Each merged range carries `count = $capacity`
+	 * so the busy event fully blocks the slot — legacy parity, where the
+	 * injected `bookingpress_selected_extra_members` equals the staff capacity
+	 * so no seats remain. Inert when no add-on hooks the legacy filter.
+	 *
+	 * @param array $booked_ranges Vue3 ranges (`start_ts`,`end_ts`,`count`,`service_id`).
+	 * @param int   $service_id
+	 * @param string $date
+	 * @param int   $capacity      Effective per-slot capacity.
+	 * @param array $context       Caller context (the REST request).
+	 *
+	 * @return array
+	 */
+	private function merge_external_booked_ranges( $booked_ranges, $service_id, $date, $capacity, array $context ) {
+		if ( ! has_filter( 'bookingpress_modify_booked_appointment_data' ) ) {
+			return $booked_ranges;
+		}
+
+		$staff_id = 0;
+		foreach ( array( 'selected_staff', 'selected_staff_member_id' ) as $k ) {
+			if ( ! empty( $context[ $k ] ) && (int) $context[ $k ] > 0 ) {
+				$staff_id = (int) $context[ $k ];
+				break;
+			}
+		}
+
+		$mirror_staff = ( $staff_id > 0 && ! isset( $_POST['selected_staffmember'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		if ( $mirror_staff ) {
+			$_POST['selected_staffmember'] = $staff_id;
+		}
+
+		// 3rd arg must be non-empty: the legacy callbacks bail on empty
+		// `$service_timings` (they never read its contents otherwise).
+		$legacy_rows = apply_filters(
+			'bookingpress_modify_booked_appointment_data',
+			array(),
+			(string) $date,
+			array( 'bookingpress_form_v3' => true ),
+			(int) $service_id
+		);
+
+		if ( $mirror_staff ) {
+			unset( $_POST['selected_staffmember'] );
+		}
+
+		if ( ! is_array( $legacy_rows ) || empty( $legacy_rows ) ) {
+			return $booked_ranges;
+		}
+
+		foreach ( $legacy_rows as $row ) {
+			if ( ! is_array( $row ) || empty( $row['bookingpress_appointment_date'] ) || ! isset( $row['bookingpress_appointment_time'] ) ) {
+				continue;
+			}
+
+			$start_ts = strtotime( $row['bookingpress_appointment_date'] . ' ' . $row['bookingpress_appointment_time'] );
+			if ( false === $start_ts ) {
+				continue;
+			}
+
+			$end_d = isset( $row['bookingpress_appointment_end_date'] ) ? (string) $row['bookingpress_appointment_end_date'] : '';
+			$end_t = isset( $row['bookingpress_appointment_end_time'] ) ? (string) $row['bookingpress_appointment_end_time'] : '';
+
+			$end_date = ( '' === $end_d || '0000-00-00' === $end_d ) ? (string) $row['bookingpress_appointment_date'] : $end_d;
+			if ( '' === $end_t || '00:00:00' === $end_t ) {
+				// Same normalization as get_booked_ranges(): explicit next-day
+				// end date means literal midnight; same-day means end-of-day.
+				$end_ts = ( $end_date > (string) $row['bookingpress_appointment_date'] )
+					? strtotime( $end_date . ' 00:00:00' )
+					: strtotime( $end_date . ' 23:59:59' ) + 1;
+			} else {
+				$end_ts = strtotime( $end_date . ' ' . $end_t );
+			}
+			if ( false === $end_ts || $end_ts <= $start_ts ) {
+				continue;
+			}
+
+			$booked_ranges[] = array(
+				'start_ts'   => (int) $start_ts,
+				'end_ts'     => (int) $end_ts,
+				'count'      => max( 1, (int) $capacity ),
+				'service_id' => (int) $service_id,
+			);
+		}
+
+		return $booked_ranges;
 	}
 }

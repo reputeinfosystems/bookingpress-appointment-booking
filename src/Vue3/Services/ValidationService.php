@@ -262,13 +262,21 @@ class ValidationService implements ValidationServiceInterface {
 	}
 
 	/**
-	 * gate.payment — selected payment method matches one of the enabled gateways.
+	 * gate.payment — no gateway is required when the server-authoritative amount
+	 * payable is zero; otherwise the selected method must match an enabled gateway.
 	 *
 	 * @param array $state
 	 *
 	 * @return bool
 	 */
 	public static function pure_gate_payment( array $state ) {
+		// SubmissionService adds this value after computing the payable from the
+		// server-side pricing pipeline. Do not infer it from the client-submitted
+		// price hint: that would let a paid booking bypass gateway validation.
+		if ( array_key_exists( 'payable_amount', $state ) && (float) $state['payable_amount'] <= 0.0 ) {
+			return true;
+		}
+
 		$selected = isset( $state['form_data']['selected_payment_method'] ) ? (string) $state['form_data']['selected_payment_method'] : '';
 		if ( '' === $selected ) {
 			return false;

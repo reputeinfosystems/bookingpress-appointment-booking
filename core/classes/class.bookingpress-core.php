@@ -416,7 +416,7 @@ if( !class_exists('BookingPress_Core') ){
             }
     
             $headers = function_exists('getallheaders') ? getallheaders() : [];
-            $auth_header = $headers[ 'X-Bookingpress-Api-Key' ];
+            $auth_header = isset($headers['X-Bookingpress-Api-Key']) ? $headers['X-Bookingpress-Api-Key']: "";
 
             if ( empty( $auth_header ) ) {
                 return new WP_Error(

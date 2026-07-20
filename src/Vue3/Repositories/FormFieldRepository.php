@@ -117,7 +117,24 @@ class FormFieldRepository extends BaseRepository {
 	public function get_visible( array $context = array() ) {
 		$all = $this->get_all( $context );
 		return array_values( array_filter( $all, static function ( $r ) {
-			return empty( $r['fieldIsHide'] );
+			if ( ! empty( $r['fieldIsHide'] ) ) {
+				return false;
+			}
+			// The Pro admin persists a field's visibility inside the
+			// `bookingpress_field_options` JSON (`visibility: 'hidden'`), NOT in
+			// the `bookingpress_field_is_hide` column — legacy maps it via
+			// `bookingpress_modify_field_data_before_prepare_func`
+			// (class.bookingpress_appointment_bookings.php:5198, Pro). The Pro
+			// custom-fields renderer reuses that legacy filter, but the plain
+			// default-fields grid renders from THIS list, so honor the same rule
+			// here (column containers '2 Col'/'3 Col'/'4 Col' are exempt in
+			// legacy; they never reach the default grid anyway).
+			if ( isset( $r['fieldOptions']['visibility'] )
+				&& 'hidden' === (string) $r['fieldOptions']['visibility']
+				&& ! in_array( $r['fieldName'], array( '2 Col', '3 Col', '4 Col' ), true ) ) {
+				return false;
+			}
+			return true;
 		} ) );
 	}
 

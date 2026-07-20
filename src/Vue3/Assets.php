@@ -374,6 +374,18 @@ class Assets {
 		// admin picks a non-default Google font we also need to fetch the
 		// webfont so it actually renders.
 		self::maybe_enqueue_google_font();
+
+		// PayPal JS SDK — port of legacy `bookingpress_paypal_scripts_add`
+		// (class.bookingpress_appointment_bookings.php:683). The legacy hook
+		// fires on `bookingpress_add_frontend_js`, gated by
+		// `bookingpress_is_front_page()`, which only regex-scans
+		// `$wp_query->posts[].post_content` for `[bookingpress_*]` — it never
+		// matches when the shortcode is rendered by a page builder template
+		// or theme widget, so the SDK silently stays absent and
+		// `renderPayPalButtons()` in booking-form.js no-ops. Enqueuing here,
+		// at shortcode render time, makes the Vue 3 form self-sufficient no
+		// matter where the shortcode lives (footer scripts print after render).
+		self::maybe_enqueue_paypal_sdk();
 	}
 
 	/**
@@ -435,6 +447,56 @@ class Assets {
 		}
 		if ( ! wp_style_is( $handle, 'enqueued' ) ) {
 			wp_enqueue_style( $handle );
+		}
+	}
+
+	/**
+	 * Enqueue the PayPal JS SDK if PayPal popup mode is enabled and the
+	 * credentials are set. Mirrors legacy `bookingpress_paypal_scripts_add`
+	 * 1:1 so popup mode behaves the same way in the Vue 3 render path.
+	 *
+	 * @return void
+	 */
+	private static function maybe_enqueue_paypal_sdk() {
+		$helper = self::get_legacy_helper();
+		if ( ! $helper || ! method_exists( $helper, 'bookingpress_get_settings' ) ) {
+			return;
+		}
+
+		$paypal_payment      = $helper->bookingpress_get_settings( 'paypal_payment', 'payment_setting' );
+		$paypal_payment_mode = $helper->bookingpress_get_settings( 'paypal_payment_method_type', 'payment_setting' );
+
+		// Treat the stored value the same way PaymentService::is_truthy does.
+		$is_paypal_on = ( 'true' === strtolower( (string) $paypal_payment ) || '1' === (string) $paypal_payment );
+		if ( ! $is_paypal_on || 'popup' !== (string) $paypal_payment_mode ) {
+			return;
+		}
+
+		$client_id     = (string) $helper->bookingpress_get_settings( 'paypal_client_id', 'payment_setting' );
+		$client_secret = (string) $helper->bookingpress_get_settings( 'paypal_client_secret', 'payment_setting' );
+		if ( '' === $client_id || '' === $client_secret ) {
+			return;
+		}
+
+		$currency_name = (string) $helper->bookingpress_get_settings( 'payment_default_currency', 'payment_setting' );
+		$currency_code = method_exists( $helper, 'bookingpress_get_currency_code' )
+			? (string) $helper->bookingpress_get_currency_code( $currency_name )
+			: ( '' !== $currency_name ? $currency_name : 'USD' );
+		if ( '' === $currency_code ) {
+			$currency_code = 'USD';
+		}
+
+		// Same handle as the legacy enqueue — when the legacy
+		// `bookingpress_is_front_page()` gate DID fire earlier in the request,
+		// this is a no-op instead of a double-load.
+		if ( ! wp_script_is( 'bookingpress-paypal-script', 'enqueued' ) && ! wp_script_is( 'bookingpress-paypal-script', 'registered' ) ) {
+			wp_enqueue_script(
+				'bookingpress-paypal-script',
+				'https://www.paypal.com/sdk/js?client-id=' . rawurlencode( $client_id ) . '&currency=' . rawurlencode( $currency_code ) . '&disable-funding=credit,card',
+				array(),
+				null,
+				true
+			);
 		}
 	}
 

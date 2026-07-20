@@ -143,14 +143,31 @@ class CustomerRepository extends BaseRepository {
 	 * @return int The customer id (existing or newly inserted).
 	 */
 	public function find_or_create_guest( array $signup_data ) {
-		$email = isset( $signup_data['userEmail'] ) ? strtolower( trim( (string) $signup_data['userEmail'] ) ) : '';
-		if ( '' === $email ) {
-			return 0;
-		}
+		$email      = isset( $signup_data['userEmail'] ) ? strtolower( trim( (string) $signup_data['userEmail'] ) ) : '';
+		$wp_user_id = isset( $signup_data['wpUserId'] ) ? (int) $signup_data['wpUserId'] : 0;
 
-		$existing = $this->find_by_email( $email );
-		if ( $existing && ! empty( $existing['customerId'] ) ) {
-			return (int) $existing['customerId'];
+		if ( '' === $email ) {
+			// Legacy parity (class.bookingpress_customers.php bookingpress_create_customer,
+			// the `$bookingpress_existing_user_id` branch): when the email arrives
+			// empty — the field is optional and was cleared, or its visibility is
+			// Hidden — a LOGGED-IN visitor still books under their own customer
+			// row, resolved by WP user id. Without this the appointment stored
+			// customer_id 0 and never appeared in the customer's My Bookings.
+			if ( $wp_user_id <= 0 ) {
+				return 0;
+			}
+			$existing_wp = $this->find_by_wp_user_id( $wp_user_id );
+			if ( $existing_wp && ! empty( $existing_wp['customerId'] ) ) {
+				return (int) $existing_wp['customerId'];
+			}
+			// No customer row yet for this WP user → create one bound to it
+			// (legacy inserts a customer row with the blank email in the same
+			// situation). Falls through to the shared insert below.
+		} else {
+			$existing = $this->find_by_email( $email );
+			if ( $existing && ! empty( $existing['customerId'] ) ) {
+				return (int) $existing['customerId'];
+			}
 		}
 
 		global $wpdb;
@@ -161,7 +178,15 @@ class CustomerRepository extends BaseRepository {
 			. (string) ( isset( $signup_data['userLastname'] ) ? $signup_data['userLastname'] : '' )
 		);
 		if ( '' === $fullname ) {
-			$fullname = isset( $signup_data['userName'] ) ? (string) $signup_data['userName'] : $email;
+			$fullname = isset( $signup_data['userName'] ) && '' !== (string) $signup_data['userName']
+				? (string) $signup_data['userName']
+				: $email;
+		}
+		if ( '' === $fullname && $wp_user_id > 0 && function_exists( 'get_userdata' ) ) {
+			$wp_user = get_userdata( $wp_user_id );
+			if ( $wp_user && ! empty( $wp_user->display_name ) ) {
+				$fullname = (string) $wp_user->display_name;
+			}
 		}
 
 		$insert = array(
@@ -187,6 +212,9 @@ class CustomerRepository extends BaseRepository {
 		}
 		$new_id = (int) $wpdb->insert_id;
 		$this->invalidate( 'by_email_' . md5( $email ) );
+		if ( $wp_user_id > 0 ) {
+			$this->invalidate( 'by_wpuser_' . $wp_user_id );
+		}
 		return $new_id;
 	}
 

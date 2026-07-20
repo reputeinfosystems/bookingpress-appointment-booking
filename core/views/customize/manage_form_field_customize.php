@@ -35,7 +35,8 @@
                                         <div class="bpa-cfs-ic--head">
                                             <div class="bpa-cfs-ic--head__type-label">
                                                 <span class="material-icons-round">drag_indicator</span>
-                                                <p>{{ field_settings_data.field_type }}</p>
+                                                <p v-if="'terms_and_conditions' == field_settings_data.field_type"><?php esc_html_e('Terms and Conditions', 'bookingpress-appointment-booking'); ?></p>
+                                                <p v-else>{{ field_settings_data.field_type }}</p>
                                             </div>
                                             <div class="bpa-cfs-ic--head__field-controls">
                                                 <div class="bpa-cfs-ic--head__fc-swtich">
@@ -92,58 +93,6 @@
                             </draggable>
                         </el-row>
                         <br/><br/>
-                        <!-- <el-row>
-                            <el-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24" v-for="field_settings_data in field_settings_fields" v-if="field_settings_data.field_name == 'note'">
-                                <div class="bpa-cfs-item-card list-group-item">
-                                    <div class="bpa-cfs-ic--head">
-                                        <div class="bpa-cfs-ic--head__type-label">
-                                            <span class="material-icons-round">drag_indicator</span>
-                                            <p>{{ field_settings_data.field_type }}</p>
-                                        </div>
-                                        <div class="bpa-cfs-ic--head__field-controls">
-                                            <div class="bpa-cfs-ic--head__fc-swtich">
-                                               <el-switch v-model="field_settings_data.is_required" class="bpa-swtich-control"></el-switch> 
-                                                <label><?php esc_html_e('Required', 'bookingpress-appointment-booking'); ?></label>
-                                            </div>
-                                            <div class="bpa-cfs-ic--head__fc-actions">
-                                                <el-popover placement="bottom" v-model="field_settings_data.is_edit">
-                                                    <el-container class="bpa-field-settings-edit-container">
-                                                        <div class="bpa-fs-item-settings-form-control-item">
-                                                            <label class="bpa-form-label"><?php esc_html_e('Label', 'bookingpress-appointment-booking'); ?></label>
-                                                            <el-input class="bpa-form-control" v-model="field_settings_data.label"></el-input>
-                                                        </div>
-                                                        <div class="bpa-fs-item-settings-form-control-item" v-if="field_settings_data.field_name != 'terms_and_conditions'">
-                                                            <label class="bpa-form-label"><?php esc_html_e('Placeholder', 'bookingpress-appointment-booking'); ?></label>
-                                                            <el-input class="bpa-form-control" v-model="field_settings_data.placeholder"></el-input>
-                                                        </div>
-                                                        <div class="bpa-fs-item-settings-form-control-item">
-                                                            <label class="bpa-form-label"><?php esc_html_e('Error Message', 'bookingpress-appointment-booking'); ?></label>
-                                                            <el-input class="bpa-form-control" v-model="field_settings_data.error_message"></el-input>
-                                                        </div>
-                                                        <div class="bpa-fs-item-settings-form-control-item">
-                                                            <label class="bpa-form-label"><?php esc_html_e('Hide field on frontend', 'bookingpress-appointment-booking'); ?></label>
-                                                            <el-switch v-model="field_settings_data.is_hide" class="bpa-swtich-control"></el-switch>
-                                                        </div>
-                                                        <div class="bpa-customize--edit-label-popover--actions">
-                                                            <el-button class="bpa-btn bpa-btn__small bpa-btn--primary" @click="closeFieldSettings(field_settings_data.field_name)"><?php esc_html_e('Save', 'bookingpress-appointment-booking'); ?></el-button>
-                                                        </div>
-                                                    </el-container>
-                                                    <el-button class="bpa-btn bpa-btn--icon-without-box" slot="reference">
-                                                        <span class="material-icons-round">settings</span>
-                                                    </el-button>
-                                                </el-popover>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="bpa-cfs-ic--body">
-                                        <div class="bpa-cfs-ic--body__field-preview">
-                                            <span class="bpa-form-label" v-text="field_settings_data.label"></span>
-                                            <el-input class="bpa-form-control" :placeholder="field_settings_data.placeholder"></el-input>
-                                        </div>
-                                    </div>
-                                </div>
-                            </el-col>
-                        </el-row> -->
                     </div>
                 </el-col>
             </el-row>            

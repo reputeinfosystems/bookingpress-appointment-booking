@@ -2241,7 +2241,7 @@ if (! class_exists('BookingPress') ) {
         {
             global $bookingpress_version;
             $bookingpress_old_version = get_option('bookingpress_version', true);
-            if (version_compare($bookingpress_old_version, '1.5.6', '<') ) {
+            if (version_compare($bookingpress_old_version, '1.5.8', '<') ) {
                 $bookingpress_load_upgrade_file = BOOKINGPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $bookingpress_load_upgrade_file;
                 $this->bookingpress_send_anonymous_data_cron();
@@ -4319,7 +4319,7 @@ if (! class_exists('BookingPress') ) {
                 $sql_table = "CREATE TABLE IF NOT EXISTS `{$tbl_bookingpress_settings}`(
 					`setting_id` int(11) NOT NULL AUTO_INCREMENT,
 					`setting_name` varchar(255) NOT NULL,
-					`setting_value` TEXT DEFAULT NULL,
+					`setting_value` LONGTEXT DEFAULT NULL,
 					`setting_type` varchar(255) DEFAULT NULL,
 					`updated_at` timestamp DEFAULT CURRENT_TIMESTAMP,
 					PRIMARY KEY (`setting_id`)

@@ -167,13 +167,13 @@
 															</div>
 														</div>
 														<div class="bpa-cfs-ic--body">
-															<template v-if="export_log_single.import_detail_record_hide == '0'">
-																<div v-for="export_log_single_data in export_log_single.import_detail"  class="bpa-cfs-ic--body__field-preview">				
+															<div v-for="export_log_single_data in export_log_single.import_detail"  class="bpa-cfs-ic--body__field-preview">
+																<template v-if="export_log_single_data.detail_import_display == '1'">
 																	<div class="export-log-row">
 																		<div class="export-log-row-single"><span class="export-log-data-type">{{export_log_single_data.label}}</span> <span class="export-log-data-total">({{export_log_single_data.detail_import_total_record}}/{{export_log_single_data.detail_import_last_record}})</span></div>
 																	</div>
-																</div>
-															</template>
+																</template>
+															</div>
 														</div>
 													</div>
 												</div>		

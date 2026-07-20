@@ -52,10 +52,12 @@ class PaymentService implements PaymentServiceInterface {
 
 		$form_context = isset( $context['context'] ) ? $context['context'] : 'booking_form';
 
+		$customize     = new CustomizeRepository();
+
 		if ( $on_site_on && $form_context !== 'complete_payment' ) {
 			$methods[] = array(
 				'id'    => 'on-site',
-				'label' => 'Pay Locally',
+				'label' => $customize->get( 'locally_text', CustomizeRepository::GROUP_BOOKING_FORM, 0 ) ?: 'Pay Locally',
 				'mode'  => 'on_site',
 				'icon'  => '',
 				'extra' => array(),
@@ -67,7 +69,7 @@ class PaymentService implements PaymentServiceInterface {
 			$mode  = ( 'popup' === $mode ) ? 'popup' : 'redirect';
 			$methods[] = array(
 				'id'    => 'paypal',
-				'label' => 'PayPal',
+				'label' => $customize->get( 'paypal_text', CustomizeRepository::GROUP_BOOKING_FORM, 0 ) ?: 'PayPal',
 				'mode'  => $mode,
 				'icon'  => '',
 				'extra' => array(

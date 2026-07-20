@@ -405,6 +405,34 @@ class Hooks {
 	const FILTER_SUBMIT_ENTRY = 'bookingpress_form_v3_submit_entry';
 
 	/**
+	 * The UNIT service price persisted with the booking — the legacy
+	 * `bookingpress_service_price` column semantics on the appointment_bookings /
+	 * payment_transactions rows: the price of ONE unit of the service itself,
+	 * EXCLUDING extras, EXCLUDING the Multiple-Quantity persons multiplication,
+	 * EXCLUDING tax, and NOT reduced by coupon / gift / deposit (the legacy
+	 * backend calculator — class.bookingpress_pro_payment.php
+	 * `bookingpress_calculate_payment_details()` — re-applies all of those from
+	 * their own columns, so a total stored here double-counts them).
+	 *
+	 * NOTE this is DIFFERENT from the stage-1 entry's `bookingpress_service_price`,
+	 * which stays the amount the gateway charges (the payable) — every gateway
+	 * add-on reads the staged entry price for its charge, so that contract is
+	 * untouched.
+	 *
+	 * Fired inside `SubmissionService::stage1_insert_entry()` while the submit
+	 * payload is still available. Lite seeds the service's catalog price; a Pro
+	 * feature whose effective unit price differs (Custom Service Duration,
+	 * location-specific pricing, happy-hours pricing, …) returns its own. The
+	 * resolved value is staged in `bookingpress_appointment_meta` (a Pro-created
+	 * table — when it does not exist, nothing is staged and the projection falls
+	 * back to the previous behaviour) and applied to the booking + payment rows
+	 * at finalize.
+	 *
+	 * Filter signature: `(float $unit_price, array $service, array $payload): float`
+	 */
+	const FILTER_SUBMIT_UNIT_PRICE = 'bookingpress_form_v3_submit_unit_price';
+
+	/**
 	 * Post-entry-insert action — the Vue3 analog of the legacy
 	 * `bookingpress_after_entry_data_insert`. Fires inside
 	 * {@see \BookingPress\Vue3\Services\SubmissionService::stage1_insert_entry()}

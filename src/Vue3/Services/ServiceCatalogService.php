@@ -59,13 +59,24 @@ class ServiceCatalogService implements ServiceCatalogServiceInterface {
 			}
 		}
 
+		if ( isset( $context['category_csv'] ) && '' !== (string) $context['category_csv'] ) {
+			$allowed = array_filter( array_map( 'intval', explode( ',', (string) $context['category_csv'] ) ) );
+			if ( ! empty( $allowed ) ) {
+				//selected_category = isset( $context['selected_category'] ) ? (int) $context['selected_category'] : 0;
+				$rows = array_values( array_filter( $rows, static function ( $row ) use ( $allowed, $selected_category ) {
+					$sid = isset( $row['categoryId'] ) ? (int) $row['categoryId'] : 0;
+					return in_array( $sid, $allowed, true );
+				} ) );
+			}
+		}
+
 		// Optional category narrowing.
-		if ( isset( $context['category_id'] ) && (int) $context['category_id'] > 0 ) {
+		/* if ( isset( $context['category_id'] ) && (int) $context['category_id'] > 0 ) {
 			$cid  = (int) $context['category_id'];
 			$rows = array_values( array_filter( $rows, static function ( $row ) use ( $cid ) {
 				return isset( $row['categoryId'] ) && (int) $row['categoryId'] === $cid;
 			} ) );
-		}
+		} */
 
 		return $rows;
 	}
@@ -144,7 +155,15 @@ class ServiceCatalogService implements ServiceCatalogServiceInterface {
 	 */
 	public function resolve_preselection( array $atts ) {
 		$service          = '';
-		$category         = isset( $atts['category'] ) ? (int) $atts['category'] : 0;
+		//$category         = isset( $atts['category'] ) ? (int) $atts['category'] : 0;
+
+		$category = '';
+		if( !empty( $atts['category'] ) ) {
+			$csv = array_filter( array_map( 'intval', explode( ',', (string) $atts['category'] ) ) );
+			if ( ! empty( $csv ) ) {
+				$category = implode( ',', $csv );
+			}
+		}
 		$selected_service = isset( $atts['selected_service'] ) ? (int) $atts['selected_service'] : 0;
 		$is_from_url      = 0;
 
@@ -182,7 +201,7 @@ class ServiceCatalogService implements ServiceCatalogServiceInterface {
 		} elseif ( ! empty( $s_id ) ) {
 			$selected_service = $s_id;
 			$service          = '';
-			$category         = 0;
+			$category         = '';
 			$is_from_url      = 1;
 		}
 

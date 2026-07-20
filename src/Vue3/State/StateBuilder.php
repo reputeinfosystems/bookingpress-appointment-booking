@@ -105,8 +105,9 @@ class StateBuilder {
 		$services_ctx = array(
 			'service_csv'      => isset( $preselection['service'] ) ? (string) $preselection['service'] : '',
 			'selected_service' => isset( $preselection['selected_service'] ) ? (int) $preselection['selected_service'] : 0,
-			'category_id'      => isset( $preselection['category'] ) ? (int) $preselection['category'] : 0,
+			'category_csv'      => isset( $preselection['category'] ) ? (string) $preselection['category'] : 0,
 		);
+		
 		$services   = $this->catalog->get_services( $services_ctx );
 
 		// Validate that a preselected service (URL `s_id`/`bpservice_id` or the

@@ -128,9 +128,19 @@ class SubmissionService implements SubmissionServiceInterface {
 		$is_order   = $item_count > 1;
 
 		// 1. Build the validation state snapshot (order-level, from the top-level payload).
-		$state = $this->build_validation_state( $payload );
+		$state   = $this->build_validation_state( $payload );
+		$result  = $this->validation->check_action( ValidationService::ACTION_SUBMIT, $state );
+		$amounts = null;
 
-		$result = $this->validation->check_action( ValidationService::ACTION_SUBMIT, $state );
+		// A zero-payable booking does not need a gateway. Compute the amount only
+		// when payment is the sole failed gate, then re-run readiness with that
+		// server-authoritative value. This keeps malformed submissions out of the
+		// pricing pipeline and never trusts the client's price hint for the bypass.
+		if ( array( ValidationService::GATE_PAYMENT ) === array_values( $result['failed_gates'] ) ) {
+			$amounts                 = $this->compute_order_amounts( $line_items );
+			$state['payable_amount'] = $amounts['payable'];
+			$result                  = $this->validation->check_action( ValidationService::ACTION_SUBMIT, $state );
+		}
 		if ( empty( $result['passed'] ) ) {
 			do_action( 'bookingpress_other_debug_log_entry', 'appointment_debug_logs', 'Booking readiness gate failed', 'bookingpress_bookingform', array( 'failed_gates' => $result['failed_gates'] ), $bookingpress_other_debug_log_id );
 			throw new ReadinessFailedException( $result['failed_gates'] );
@@ -145,7 +155,7 @@ class SubmissionService implements SubmissionServiceInterface {
 		// sends the payable as `service_price_without_currency` (mirrored through the
 		// `bookingpress_form_v3_payable_amount` JS filter), so we compare against
 		// `$payable`. Inert in Lite (single item, no callback → `$payable === $expected`).
-		$amounts    = $this->compute_order_amounts( $line_items );
+		$amounts    = is_array( $amounts ) ? $amounts : $this->compute_order_amounts( $line_items );
 		$expected   = $amounts['full'];
 		$payable    = $amounts['payable'];
 		$client_amt = isset( $payload['service_price_without_currency'] ) ? (float) $payload['service_price_without_currency'] : 0.0;
@@ -166,6 +176,12 @@ class SubmissionService implements SubmissionServiceInterface {
 				'item_index' => $i,
 				'item_count' => $item_count,
 				'is_order'   => $is_order,
+				// Order convention (same as $store_price): the PRIMARY entry
+				// carries the ORDER-level total (the single payment row is built
+				// from it); the other entries carry their own item total.
+				'item_full'  => ( $is_order && 0 === $i )
+					? (float) $expected
+					: ( isset( $amounts['items'][ $i ]['full'] ) ? (float) $amounts['items'][ $i ]['full'] : (float) $expected ),
 			) );
 			if ( $eid <= 0 ) {
 				do_action( 'bookingpress_other_debug_log_entry', 'appointment_debug_logs', 'Could not record submission entry', 'bookingpress_bookingform', $item, $bookingpress_other_debug_log_id );
@@ -763,8 +779,18 @@ class SubmissionService implements SubmissionServiceInterface {
 		$is_order   = $item_count > 1;
 
 		// 1. Gate validation.
-		$state  = $this->build_validation_state( $payload );
-		$result = $this->validation->check_action( ValidationService::ACTION_SUBMIT, $state );
+		$state   = $this->build_validation_state( $payload );
+		$result  = $this->validation->check_action( ValidationService::ACTION_SUBMIT, $state );
+		$amounts = null;
+
+		// Keep PayPal pre-flight on the same authoritative readiness contract as
+		// submit(). The explicit non-zero PayPal check below still rejects attempts
+		// to start a gateway flow when there is nothing to charge.
+		if ( array( ValidationService::GATE_PAYMENT ) === array_values( $result['failed_gates'] ) ) {
+			$amounts                 = $this->compute_order_amounts( $line_items );
+			$state['payable_amount'] = $amounts['payable'];
+			$result                  = $this->validation->check_action( ValidationService::ACTION_SUBMIT, $state );
+		}
 		if ( empty( $result['passed'] ) ) {
 			do_action( 'bookingpress_other_debug_log_entry', 'appointment_debug_logs', 'Booking readiness gate failed', 'bookingpress_bookingform', array( 'failed_gates' => $result['failed_gates'] ), $bookingpress_other_debug_log_id );
 			throw new ReadinessFailedException( $result['failed_gates'] );
@@ -773,7 +799,7 @@ class SubmissionService implements SubmissionServiceInterface {
 		// 2. Anti-tamper price check. `$payable` is the amount charged now (the
 		//    order total unless Pro Deposit reduces it via FILTER_PAYABLE_AMOUNT);
 		//    the client sends it as `service_price_without_currency`. See submit().
-		$amounts    = $this->compute_order_amounts( $line_items );
+		$amounts    = is_array( $amounts ) ? $amounts : $this->compute_order_amounts( $line_items );
 		$payable    = $amounts['payable'];
 		$client_amt = isset( $payload['service_price_without_currency'] ) ? (float) $payload['service_price_without_currency'] : 0.0;
 		if ( abs( $payable - $client_amt ) > 0.01 ) {
@@ -796,6 +822,10 @@ class SubmissionService implements SubmissionServiceInterface {
 				'item_index' => $i,
 				'item_count' => $item_count,
 				'is_order'   => $is_order,
+				// Same order convention as submit(): primary entry = ORDER total.
+				'item_full'  => ( $is_order && 0 === $i )
+					? (float) $amounts['full']
+					: ( isset( $amounts['items'][ $i ]['full'] ) ? (float) $amounts['items'][ $i ]['full'] : (float) $amounts['full'] ),
 			) );
 			if ( $eid <= 0 ) {
 				throw new \RuntimeException( 'Could not record submission.' );
@@ -1068,6 +1098,20 @@ class SubmissionService implements SubmissionServiceInterface {
 		$currency = (string) $this->settings->get( 'payment_default_currency', SettingsRepository::GROUP_PAYMENT, 'USD' );
 		$status   = $this->resolve_initial_appointment_status( $gateway, $expected_total );
 
+		// The UNIT price of the service itself (legacy `bookingpress_service_price`
+		// column semantics for the booking + payment rows): catalog price by
+		// default; a feature whose effective unit price differs (Custom Service
+		// Duration, location pricing, …) corrects it via the seam. This is NOT
+		// the entry's own price column — that stays the gateway charge below.
+		$unit_price = (float) ( isset( $service['servicePrice'] ) ? $service['servicePrice'] : 0.0 );
+		$unit_price = (float) apply_filters( Hooks::FILTER_SUBMIT_UNIT_PRICE, $unit_price, $service, $payload );
+
+		// The item's FULL total (extras/persons/coupon layered — pre-deposit).
+		// Staged on the entry so the finalize projection can write the legacy
+		// `bookingpress_total_amount` column even on the gateway-confirm path
+		// (where the payload is gone). Pro-only column — dropped on Lite tables.
+		$item_full = isset( $context['item_full'] ) ? (float) $context['item_full'] : (float) $expected_total;
+
 		$data = array(
 			'bookingpress_customer_id'           => $customer_id,
 			'bookingpress_customer_name'         => (string) ( isset( $payload['customer_name'] ) ? $payload['customer_name'] : '' ),
@@ -1087,7 +1131,11 @@ class SubmissionService implements SubmissionServiceInterface {
 			'bookingpress_service_duration_unit' => (string) ( isset( $service['serviceDurationUnit'] ) ? $service['serviceDurationUnit'] : 'm' ),
 			'bookingpress_payment_gateway'       => $gateway,
 			'bookingpress_appointment_date'      => (string) ( isset( $payload['selected_date'] ) ? $payload['selected_date'] : '' ),
-			'bookingpress_appointment_end_date'  => (string) ( isset( $payload['selected_end_date'] ) ? $payload['selected_end_date'] : ( isset( $payload['selected_date'] ) ? $payload['selected_date'] : '' ) ),
+			// Legacy-Pro parity: end date falls back to the START date, never to ''.
+			// The client sends `selected_end_date: ''` for plain (non day-service)
+			// bookings, and the column is DATE NOT NULL — an empty string would be
+			// stored as `0000-00-00`, breaking duration math downstream.
+			'bookingpress_appointment_end_date'  => (string) ( ( ! empty( $payload['selected_end_date'] ) && '0000-00-00' !== $payload['selected_end_date'] ) ? $payload['selected_end_date'] : ( isset( $payload['selected_date'] ) ? $payload['selected_date'] : '' ) ),
 			'bookingpress_appointment_time'      => (string) ( isset( $payload['selected_start_time'] ) ? $payload['selected_start_time'] : '' ),
 			'bookingpress_appointment_end_time'  => (string) ( isset( $payload['selected_end_time'] ) ? $payload['selected_end_time'] : '' ),
 			'bookingpress_appointment_internal_note' => (string) ( isset( $payload['appointment_note'] ) ? $payload['appointment_note'] : '' ),
@@ -1105,6 +1153,10 @@ class SubmissionService implements SubmissionServiceInterface {
 			// to verify the charged amount BEFORE finalize. Stage the payable amount
 			// here so that verification has a non-zero figure to compare against.
 			'bookingpress_paid_amount'           => (float) $expected_total,
+			// Legacy entries column: the item's full total (pre-deposit). The
+			// Deposit feature re-asserts the same value when a deposit applies.
+			// Pro-only column — silently dropped on a Lite-only entries table.
+			'bookingpress_total_amount'          => (float) $item_full,
 			// Customer-timezone view of the appointment. The Vue3 path doesn't
 			// do client-side TZ conversion (per §M0.4 — no client TZ math is
 			// part of the contract), so we mirror the server-side selection
@@ -1150,6 +1202,14 @@ class SubmissionService implements SubmissionServiceInterface {
 		$entry_id = $this->entries->insert_pending( $data );
 		do_action( 'bookingpress_other_debug_log_entry', 'appointment_debug_logs', 'Appointment entry created', 'bookingpress_bookingform', array( 'entry_id' => (int) $entry_id ), $bookingpress_other_debug_log_id );
 
+		// Stage the resolved UNIT price for the finalize projection (survives the
+		// gateway confirm, where the payload is gone). No-op when the meta table
+		// (Pro-created) is absent — the projection then keeps the pre-existing
+		// charge-based behaviour, so a Lite-only install is unaffected.
+		if ( $entry_id ) {
+			$this->stage_unit_price_meta( (int) $entry_id, $unit_price );
+		}
+
 		// Post-insert seam (payload still available) — add-ons persist related
 		// side-table rows keyed by the entry id that must survive the gateway
 		// confirm (where the payload is empty). Inert in Lite. See Hooks doc.
@@ -1158,6 +1218,83 @@ class SubmissionService implements SubmissionServiceInterface {
 		}
 
 		return $entry_id;
+	}
+
+	/**
+	 * Meta key for the staged unit service price (see FILTER_SUBMIT_UNIT_PRICE).
+	 *
+	 * @var string
+	 */
+	const UNIT_PRICE_META_KEY = 'bookingpress_form_v3_unit_price';
+
+	/**
+	 * Whether the (Pro-created) `bookingpress_appointment_meta` table exists.
+	 * Cached per request.
+	 *
+	 * @return bool
+	 */
+	private function appointment_meta_table_exists() {
+		static $exists = null;
+		if ( null !== $exists ) {
+			return $exists;
+		}
+		global $wpdb;
+		$table  = $wpdb->prefix . 'bookingpress_appointment_meta';
+		$found  = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+		$exists = ( $found === $table );
+		return $exists;
+	}
+
+	/**
+	 * Stage the resolved unit service price against the entry (appointment_meta).
+	 *
+	 * @param int   $entry_id
+	 * @param float $unit_price
+	 *
+	 * @return void
+	 */
+	private function stage_unit_price_meta( $entry_id, $unit_price ) {
+		if ( $entry_id <= 0 || ! $this->appointment_meta_table_exists() ) {
+			return;
+		}
+		global $wpdb;
+		$wpdb->insert( // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+			$wpdb->prefix . 'bookingpress_appointment_meta',
+			array(
+				'bookingpress_entry_id'               => (int) $entry_id,
+				'bookingpress_appointment_meta_key'   => self::UNIT_PRICE_META_KEY,
+				'bookingpress_appointment_meta_value' => (string) (float) $unit_price,
+			)
+		);
+	}
+
+	/**
+	 * Read back the staged unit service price for an entry — NULL when nothing
+	 * was staged (Lite-only install, or an entry created before this staging
+	 * existed), in which case the caller keeps the previous behaviour.
+	 *
+	 * @param int $entry_id
+	 *
+	 * @return float|null
+	 */
+	private function staged_unit_price_for_entry( $entry_id ) {
+		$entry_id = (int) $entry_id;
+		if ( $entry_id <= 0 || ! $this->appointment_meta_table_exists() ) {
+			return null;
+		}
+		global $wpdb;
+		$table = $wpdb->prefix . 'bookingpress_appointment_meta';
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- internal table name; values bound.
+		$value = $wpdb->get_var( $wpdb->prepare(
+			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			"SELECT bookingpress_appointment_meta_value FROM `{$table}` WHERE bookingpress_entry_id = %d AND bookingpress_appointment_meta_key = %s ORDER BY bookingpress_appointment_meta_id DESC LIMIT 1",
+			$entry_id,
+			self::UNIT_PRICE_META_KEY
+		) );
+		if ( null === $value || '' === $value ) {
+			return null;
+		}
+		return (float) $value;
 	}
 
 	/**
@@ -1218,9 +1355,18 @@ class SubmissionService implements SubmissionServiceInterface {
 			return $pref;
 		}
 		if ( 'on-site' === $gateway ) {
-			// On-site → use the on-site setting; legacy uses 1=Approved / 2=Pending.
-			$pref = (string) $this->settings->get( 'onsite_appointment_status', SettingsRepository::GROUP_GENERAL, 1 );
-			return $pref;
+			// On-site → the on-site setting (legacy parity:
+			// class.bookingpress_payment_gateways.php:247 reads
+			// `onsite_appointment_status`; 1=Approved / 2=Pending). When the
+			// option is absent or blank, honor the admin's configured
+			// "Default appointment status" instead of a hardcoded constant —
+			// a blank stored row would otherwise become status 0.
+			$default = (string) $this->settings->get( 'appointment_status', SettingsRepository::GROUP_GENERAL, 1 );
+			if ( '' === $default ) {
+				$default = '1';
+			}
+			$pref = (string) $this->settings->get( 'onsite_appointment_status', SettingsRepository::GROUP_GENERAL, $default );
+			return ( '' === $pref ) ? $default : $pref;
 		}
 		// Online payment (PayPal / Stripe / Square / …) → the site's default
 		// appointment status (legacy parity: class.bookingpress_payment_gateways.php:244
@@ -1248,6 +1394,26 @@ class SubmissionService implements SubmissionServiceInterface {
 		// Determine the appointment_status integer for appointment_bookings.
 		$status_int = isset( $entry['bookingpress_appointment_status'] ) ? (int) $entry['bookingpress_appointment_status'] : AppointmentRepository::STATUS_PENDING;
 
+		// Legacy column semantics: `bookingpress_service_price` on the BOOKING row
+		// is the UNIT price of the service (the legacy backend calculator re-adds
+		// extras, multiplies persons, adds tax and subtracts coupon from their own
+		// columns — storing the charged total here double-counts all of those).
+		// The staged unit price is written at stage-1 (see FILTER_SUBMIT_UNIT_PRICE);
+		// when absent (Lite-only install / legacy in-flight entry) fall back to the
+		// entry's price — the previous behaviour, which is identical whenever no
+		// price-shaping feature is active. Same rule for `bookingpress_due_amount`:
+		// legacy stores 0 unless a deposit applies (the Deposit feature stamps the
+		// entry's due and re-asserts it on the row).
+		$row_unit_price = $this->staged_unit_price_for_entry( isset( $entry['bookingpress_entry_id'] ) ? (int) $entry['bookingpress_entry_id'] : 0 );
+		$charge_price   = (float) ( isset( $entry['bookingpress_service_price'] ) ? $entry['bookingpress_service_price'] : 0.0 );
+		if ( null === $row_unit_price ) {
+			$row_service_price = $charge_price;
+			$row_due_amount    = max( 0.0, $charge_price - $paid );
+		} else {
+			$row_service_price = (float) $row_unit_price;
+			$row_due_amount    = isset( $entry['bookingpress_due_amount'] ) ? max( 0.0, (float) $entry['bookingpress_due_amount'] ) : 0.0;
+		}
+
 		$entry_data = array(
 			'bookingpress_entry_id'              => (int) $entry['bookingpress_entry_id'],
 			'bookingpress_customer_id'           => (int) ( isset( $entry['bookingpress_customer_id'] ) ? $entry['bookingpress_customer_id'] : 0 ),
@@ -1262,19 +1428,26 @@ class SubmissionService implements SubmissionServiceInterface {
 			'bookingpress_staff_member_id'       => 0,
 			'bookingpress_service_id'            => (int) $entry['bookingpress_service_id'],
 			'bookingpress_service_name'          => (string) ( isset( $entry['bookingpress_service_name'] ) ? $entry['bookingpress_service_name'] : '' ),
-			'bookingpress_service_price'         => (float) ( isset( $entry['bookingpress_service_price'] ) ? $entry['bookingpress_service_price'] : 0.0 ),
+			'bookingpress_service_price'         => $row_service_price,
 			'bookingpress_service_currency'      => $currency,
 			'bookingpress_service_duration_val'  => (int) ( isset( $entry['bookingpress_service_duration_val'] ) ? $entry['bookingpress_service_duration_val'] : 0 ),
 			'bookingpress_service_duration_unit' => (string) ( isset( $entry['bookingpress_service_duration_unit'] ) ? $entry['bookingpress_service_duration_unit'] : 'm' ),
 			'bookingpress_appointment_date'      => (string) ( isset( $entry['bookingpress_appointment_date'] ) ? $entry['bookingpress_appointment_date'] : '' ),
-			'bookingpress_appointment_end_date'  => (string) ( isset( $entry['bookingpress_appointment_end_date'] ) ? $entry['bookingpress_appointment_end_date'] : '' ),
+			// Legacy-Pro parity: an empty / zero end date on the entry projects as
+			// the START date (the column is DATE NOT NULL; '' would persist as
+			// `0000-00-00`, breaking duration math in emails and admin pages).
+			// The overnight roll-over below still upgrades the midnight case.
+			'bookingpress_appointment_end_date'  => (string) ( ( ! empty( $entry['bookingpress_appointment_end_date'] ) && '0000-00-00' !== $entry['bookingpress_appointment_end_date'] ) ? $entry['bookingpress_appointment_end_date'] : ( isset( $entry['bookingpress_appointment_date'] ) ? $entry['bookingpress_appointment_date'] : '' ) ),
 			'bookingpress_appointment_time'      => (string) ( isset( $entry['bookingpress_appointment_time'] ) ? $entry['bookingpress_appointment_time'] : '' ),
 			'bookingpress_appointment_end_time'  => (string) ( isset( $entry['bookingpress_appointment_end_time'] ) ? $entry['bookingpress_appointment_end_time'] : '' ),
 			'bookingpress_appointment_internal_note' => (string) ( isset( $entry['bookingpress_appointment_internal_note'] ) ? $entry['bookingpress_appointment_internal_note'] : '' ),
 			'bookingpress_appointment_send_notification' => 1,
 			'bookingpress_appointment_status'    => $status_int,
 			'bookingpress_paid_amount'           => $paid,
-			'bookingpress_due_amount'            => max( 0.0, (float) $entry['bookingpress_service_price'] - $paid ),
+			'bookingpress_due_amount'            => $row_due_amount,
+			// Legacy total column (full item total incl. extras/persons/coupon,
+			// pre-deposit) — staged on the entry; dropped on Lite-only tables.
+			'bookingpress_total_amount'          => (float) ( isset( $entry['bookingpress_total_amount'] ) ? $entry['bookingpress_total_amount'] : $charge_price ),
 			'bookingpress_appointment_timezone'  => (string) ( isset( $entry['bookingpress_customer_timezone'] ) ? $entry['bookingpress_customer_timezone'] : '' ),
 			'bookingpress_selected_appointment_date' => (string) ( isset( $entry['bookingpress_selected_appointment_date'] ) ? $entry['bookingpress_selected_appointment_date'] : '' ),
 			'bookingpress_selected_appointment_end_date' => (string) ( isset( $entry['bookingpress_selected_appointment_end_date'] ) ? $entry['bookingpress_selected_appointment_end_date'] : '' ),
@@ -1308,6 +1481,20 @@ class SubmissionService implements SubmissionServiceInterface {
 	 * @return array
 	 */
 	private function build_payment_row_from_entry( array $entry, array $extra ) {
+		// Same legacy column semantics as build_appointment_row_from_entry():
+		// unit service price + deposit-only due; fall back to the previous
+		// charge-based values when no unit price was staged.
+		$row_unit_price = $this->staged_unit_price_for_entry( isset( $entry['bookingpress_entry_id'] ) ? (int) $entry['bookingpress_entry_id'] : 0 );
+		$charge_price   = (float) ( isset( $entry['bookingpress_service_price'] ) ? $entry['bookingpress_service_price'] : 0.0 );
+		$extra_paid     = isset( $extra['paid_amount'] ) ? (float) $extra['paid_amount'] : 0.0;
+		if ( null === $row_unit_price ) {
+			$row_service_price = $charge_price;
+			$row_due_amount    = max( 0.0, $charge_price - $extra_paid );
+		} else {
+			$row_service_price = (float) $row_unit_price;
+			$row_due_amount    = isset( $entry['bookingpress_due_amount'] ) ? max( 0.0, (float) $entry['bookingpress_due_amount'] ) : 0.0;
+		}
+
 		$data = array(
 			'bookingpress_invoice_id'            => (int) ( isset( $extra['invoice_id'] ) ? $extra['invoice_id'] : 0 ),
 			'bookingpress_appointment_booking_ref' => (int) ( isset( $extra['booking_id'] ) ? $extra['booking_id'] : 0 ),
@@ -1322,7 +1509,7 @@ class SubmissionService implements SubmissionServiceInterface {
 			'bookingpress_customer_email'        => (string) ( isset( $entry['bookingpress_customer_email'] ) ? $entry['bookingpress_customer_email'] : '' ),
 			'bookingpress_service_id'            => (int) $entry['bookingpress_service_id'],
 			'bookingpress_service_name'          => (string) ( isset( $entry['bookingpress_service_name'] ) ? $entry['bookingpress_service_name'] : '' ),
-			'bookingpress_service_price'         => (float) ( isset( $entry['bookingpress_service_price'] ) ? $entry['bookingpress_service_price'] : 0.0 ),
+			'bookingpress_service_price'         => $row_service_price,
 			'bookingpress_service_duration_val'  => (int) ( isset( $entry['bookingpress_service_duration_val'] ) ? $entry['bookingpress_service_duration_val'] : 0 ),
 			'bookingpress_service_duration_unit' => (string) ( isset( $entry['bookingpress_service_duration_unit'] ) ? $entry['bookingpress_service_duration_unit'] : 'm' ),
 			'bookingpress_appointment_date'      => (string) ( isset( $entry['bookingpress_appointment_date'] ) ? $entry['bookingpress_appointment_date'] : '' ),
@@ -1335,7 +1522,11 @@ class SubmissionService implements SubmissionServiceInterface {
 			'bookingpress_payment_amount'        => (float) ( isset( $extra['paid_amount'] ) ? $extra['paid_amount'] : 0.0 ),
 			'bookingpress_payment_currency'      => (string) ( isset( $extra['currency'] ) ? $extra['currency'] : 'USD' ),
 			'bookingpress_paid_amount'           => (float) ( isset( $extra['paid_amount'] ) ? $extra['paid_amount'] : 0.0 ),
-			'bookingpress_due_amount'            => max( 0.0, (float) $entry['bookingpress_service_price'] - (float) $extra['paid_amount'] ),
+			'bookingpress_due_amount'            => $row_due_amount,
+			// Legacy total column — the full item/order total staged on the entry
+			// (the ORDER total for a multi-item primary entry). Dropped on
+			// Lite-only tables.
+			'bookingpress_total_amount'          => (float) ( isset( $entry['bookingpress_total_amount'] ) ? $entry['bookingpress_total_amount'] : $charge_price ),
 		);
 
 		// Shared order-grouping columns (Cart: order_id + is_cart + booking_ref=0

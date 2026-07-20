@@ -2,7 +2,7 @@
 /*
     Plugin Name: BookingPress Appointment Booking
     Description: Book appointments, create bookings, and pay online with BookingPress. Easily create appointments, manage time, and send out customized emails.
-    Version: 1.5.6
+    Version: 1.5.8
     Requires at least: 6.5
     Requires PHP:      7.4
     Plugin URI: https://www.bookingpressplugin.com/

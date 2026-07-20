@@ -910,9 +910,11 @@ export default {
                       class="bpa-front--dt__ts-body--row"
                       :data-bucket="bucket"
                       role="group"
-                      :aria-labelledby="bucketHeadingId(bucket)"
+                      :aria-labelledby="bucket !== 'all' ? bucketHeadingId(bucket) : null"
                     >
-                      <div class="bpa-front--dt-ts__sub-heading" :id="bucketHeadingId(bucket)">{{ state.strings[bucket + '_text'] }}</div>
+                      <!-- 'all' = flat list when "Hide time slot grouping" is on
+                           (config.hideTimeslotGrouping) — no Morning/…/Night heading. -->
+                      <div v-if="bucket !== 'all'" class="bpa-front--dt-ts__sub-heading" :id="bucketHeadingId(bucket)">{{ state.strings[bucket + '_text'] }}</div>
                       <div class="bpa-front--dt__ts-body--items">
                         <div
                           v-for="(slot, sIdx) in slots"

@@ -171,7 +171,7 @@ class TimeslotService implements TimeslotServiceInterface {
 					$rows = array();
 				}
 
-				if ( ! empty( $rows ) ) {
+				if ( $this->has_available_row( $rows ) ) {
 					$month_details[ $d ] = $rows;
 				}
 			}
@@ -229,6 +229,45 @@ class TimeslotService implements TimeslotServiceInterface {
 			set_transient( $cache_key, $payload, $ttl );
 		}
 		return $payload;
+	}
+
+	/**
+	 * Whether at least one row of a date's slot grid is actually bookable.
+	 *
+	 * Legacy parity: the legacy month walker
+	 * (class.bookingpress_appointment_bookings.php §1492-1503) disabled a date
+	 * outright when `bookingpress_retrieve_timeslots(..., $check_for_whole_days
+	 * = true)` (§4956-4991) found no slot with remaining capacity. When "hide
+	 * already booked slots" is OFF the Vue3 grid still RETURNS fully-booked
+	 * rows (`is_available = 0`) so partially-booked days can display them
+	 * greyed — so a non-empty rows array alone does not mean the date is
+	 * bookable. Requiring one available row here makes a fully-booked date
+	 * fall out of `working_details`, which the client paints as disabled —
+	 * exactly the legacy behaviour.
+	 *
+	 * A FULL row stamped `is_waiting_slot` (the Waiting List add-on's marker,
+	 * set via Hooks::FILTER_TIMESLOT_DATA before this gate runs; also stamped
+	 * group-aware by the Multi-Staff add-on) still counts: such a slot is
+	 * selectable as a waiting slot (client seam
+	 * `bookingpress_form_v3_slot_selectable`), so its date must stay open.
+	 * Any other consumer that must keep a full date selectable can mark its
+	 * rows `is_available` via Hooks::FILTER_TIMESLOT_DATA or re-add the date
+	 * via Hooks::FILTER_TIMESLOT_PAYLOAD.
+	 *
+	 * @param mixed $rows Slot rows for one date.
+	 *
+	 * @return bool
+	 */
+	private function has_available_row( $rows ) {
+		if ( ! is_array( $rows ) ) {
+			return false;
+		}
+		foreach ( $rows as $row ) {
+			if ( is_array( $row ) && ( ! empty( $row['is_available'] ) || ! empty( $row['is_waiting_slot'] ) ) ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -303,7 +342,7 @@ class TimeslotService implements TimeslotServiceInterface {
 			} catch ( \Throwable $e ) {
 				$rows = array();
 			}
-			if ( ! empty( $rows ) ) {
+			if ( $this->has_available_row( $rows ) ) {
 				$working_details[ $d ] = $rows;
 			}
 		}

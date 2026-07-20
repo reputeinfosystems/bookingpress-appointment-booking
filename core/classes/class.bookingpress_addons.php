@@ -167,7 +167,6 @@ if( !class_exists( 'bookingpress_addons') ){
                     $bookingpress_addon_list_css .= '.bpa-addons-container .bpa-addon-item .bpa-ai-icon{
                         background: url("https://bookingpressplugin.com/bpa_misc/icons/addon-icon-sprite.png?ver='.current_time('timestamp').'") 0 0 no-repeat var(--bpa-pt-main-green);
                     }';
-                    $bookingpress_body_res = apply_filters( 'bookingpress_addon_list_data_filter', $bookingpress_body_res );
 
                     $response['variant']         = 'success';
                     $response['title']           = esc_html__( 'Success', 'bookingpress-appointment-booking' );
