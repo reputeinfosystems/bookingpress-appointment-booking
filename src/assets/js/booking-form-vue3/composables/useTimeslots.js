@@ -258,8 +258,6 @@ export function useTimeslots(state, api, bus) {
 
   function dayCapacityLabel(ymd) {
     if (!state.config || !state.config.showSlotCapacity) return '';
-    const fd = state.appointment_step_form_data || {};
-    if (fd.is_any_staff_selected) return '';
     const rows = dayRowsForDate(ymd);
     for (const row of rows) {
       if (!row || !row.is_day_service || row.remaining_capacity == null) continue;

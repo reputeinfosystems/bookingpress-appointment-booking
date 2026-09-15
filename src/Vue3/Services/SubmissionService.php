@@ -932,7 +932,7 @@ class SubmissionService implements SubmissionServiceInterface {
 	 *
 	 * @return void
 	 */
-	private function maybe_create_wp_user_for_customer( array $entry, $customer_id ) {
+	public function maybe_create_wp_user_for_customer( array $entry, $customer_id ) {
 		$customer_id = (int) $customer_id;
 		if ( $customer_id <= 0 ) {
 			return;
@@ -1418,7 +1418,15 @@ class SubmissionService implements SubmissionServiceInterface {
 			return $payload;
 		}
 
-		$duration = DayServiceHelper::duration_days( $service );
+		$service_id = isset( $service['serviceId'] ) ? (int) $service['serviceId'] : ( isset( $payload['selected_service'] ) ? (int) $payload['selected_service'] : 0 );
+		$duration = (int) apply_filters(
+			Hooks::FILTER_DAY_SERVICE_DURATION,
+			DayServiceHelper::duration_days( $service ),
+			$service_id,
+			$date,
+			$payload
+		);
+		$duration = max( 1, $duration );
 		$end_date = DayServiceHelper::inclusive_end_date( $date, $duration );
 
 		$payload['selected_service_duration']      = (string) $duration;

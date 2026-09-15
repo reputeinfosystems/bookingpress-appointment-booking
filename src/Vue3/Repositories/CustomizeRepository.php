@@ -18,6 +18,7 @@
 namespace BookingPress\Vue3\Repositories;
 
 use BookingPress\Vue3\Cache\FrontendFormCache;
+use BookingPress\Vue3\Hooks;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -80,6 +81,8 @@ class CustomizeRepository extends BaseRepository {
 				);
 			}
 		);
+
+		$value = apply_filters( Hooks::FILTER_CUSTOMIZATION_SETTINGS, $value, $group, $name );
 
 		return ( null === $value ) ? $default : $value;
 	}

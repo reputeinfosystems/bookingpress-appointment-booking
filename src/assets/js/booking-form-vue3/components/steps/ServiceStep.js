@@ -441,6 +441,15 @@ export default {
       },
     });
 
+    function resolveDurationUnitLabel(unit){
+      switch(unit){
+        case 'm': return state.strings.service_min_label;
+        case 'h': return state.strings.service_hrs_label;
+        case 'd': return state.strings.service_day_label;
+        default: return unit;
+      }
+    }
+
     return {
       catRov,
       svcRov,
@@ -463,6 +472,7 @@ export default {
       isCategoryVisible,
       serviceItemClass,
       isServiceSelected,
+      resolveDurationUnitLabel,
       selectedServicesCount,
       multiServiceEnabled,
       selectedCountLabel,
@@ -567,7 +577,7 @@ export default {
                     <p v-if="svc.serviceDescription && state.config.displayServiceDescription" class="--bpa-is-desc" v-html="svc.serviceDescription"></p>
                     <div class="bpa-front-si-cb__specs">
                       <div v-if="state.config.displayServiceDuration" class="bpa-front-si-cb__specs-item">
-                        <p>{{ state.strings.service_duration_label }} <strong>{{ svc.serviceDurationVal }} {{ svc.serviceDurationUnitLabel || svc.serviceDurationUnit }}</strong></p>
+                        <p>{{ state.strings.service_duration_label }} <strong>{{ svc.serviceDurationVal }} {{ resolveDurationUnitLabel(svc.serviceDurationUnit) }}</strong></p>
                       </div>
                       <div v-if="serviceDisplayPrice(svc) > 0 && state.config.displayServicePrice" class="bpa-front-si-cb__specs-item">
                         <p>{{ state.strings.service_price_label }} <strong class="--is-service-price">{{ formatPrice(serviceDisplayPrice(svc)) }}</strong></p>

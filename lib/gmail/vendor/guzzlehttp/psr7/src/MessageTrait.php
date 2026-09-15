@@ -127,7 +127,7 @@ trait MessageTrait
         return $this->stream;
     }
 
-    public function withBody(StreamInterface $body): MessageInterface
+    public function withBody($body): MessageInterface
     {
         if ($body === $this->stream) {
             return $this;

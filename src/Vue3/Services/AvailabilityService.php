@@ -62,6 +62,14 @@ class AvailabilityService implements AvailabilityServiceInterface {
 		}
 
 		if ( DayServiceHelper::is_day_service( $service ) ) {
+			$duration_days = (int) apply_filters(
+				Hooks::FILTER_DAY_SERVICE_DURATION,
+				DayServiceHelper::duration_days( $service ),
+				$service_id,
+				(string) $date,
+				$context
+			);
+			$service['serviceDurationVal'] = max( 1, $duration_days );
 			return $this->get_day_timings_for_date( $service_id, (string) $date, $service, $context );
 		}
 
@@ -77,6 +85,8 @@ class AvailabilityService implements AvailabilityServiceInterface {
 		//   - window : the general weekday working hours (may be null = closed).
 		//   - breaks : the general weekday break gaps (default_workhours is_break=1).
 		$schedule = $this->get_schedule_for_date( $service_id, (string) $date, $context );
+
+		
 
 		// Off, or no usable window → no slots. The date then greys naturally: it
 		// falls out of the month walker's non-empty `working_details` set.

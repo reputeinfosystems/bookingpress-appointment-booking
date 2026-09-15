@@ -35,10 +35,25 @@ export function selectedServiceDurationValue(state) {
     return Math.max(0, parseInt(fd.multi_service_duration_days || 0, 10) || 0);
   }
   const svc = selectedService(state);
+  let duration = 0;
   if (svc && Object.prototype.hasOwnProperty.call(svc, 'serviceDurationVal')) {
-    return Math.max(0, parseInt(svc.serviceDurationVal || 0, 10) || 0);
+    duration = Math.max(0, parseInt(svc.serviceDurationVal || 0, 10) || 0);
+  } else {
+    duration = Math.max(0, parseInt(fd.selected_service_duration || 0, 10) || 0);
   }
-  return Math.max(0, parseInt(fd.selected_service_duration || 0, 10) || 0);
+
+  if (selectedServiceDurationUnit(state) === 'd') {
+    const hooks = (typeof window !== 'undefined' && window.wp && window.wp.hooks) || null;
+    if (hooks && typeof hooks.applyFilters === 'function') {
+      duration = parseInt(hooks.applyFilters(
+        'bookingpress_form_v3_day_service_duration',
+        duration,
+        { state, service: svc }
+      ), 10) || duration;
+    }
+  }
+
+  return Math.max(0, duration);
 }
 
 export function isSelectedDayService(state) {

@@ -151,6 +151,7 @@ class TimeslotService implements TimeslotServiceInterface {
 
 			$month_details = array();
 			$reached_max   = false;
+			
 			for ( $ts = strtotime( $iter_start ); $ts <= $last_day_ts; $ts += DAY_IN_SECONDS ) {
 				$d = gmdate( 'Y-m-d', $ts );
 				if ( $d > $max_date ) {
@@ -175,6 +176,7 @@ class TimeslotService implements TimeslotServiceInterface {
 					$month_details[ $d ] = $rows;
 				}
 			}
+			
 			if ( ! empty( $month_details ) ) {
 				$working_details = $month_details;
 				$blocked         = $month_blocked;
@@ -224,6 +226,7 @@ class TimeslotService implements TimeslotServiceInterface {
 		 * @param array $request
 		 */
 		$payload = apply_filters( Hooks::FILTER_TIMESLOT_PAYLOAD, $payload, $request );
+
 
 		if ( $ttl > 0 ) {
 			set_transient( $cache_key, $payload, $ttl );

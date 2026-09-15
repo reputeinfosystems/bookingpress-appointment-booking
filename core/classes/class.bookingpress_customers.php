@@ -779,9 +779,21 @@ if (! class_exists('bookingpress_customers') ) {
                 }
                 
                 $bpa_do_autologin = false;
+
+                $bookingpress_allow_customer_create = $BookingPress->bookingpress_get_settings('allow_wp_user_create', 'customer_setting');
+                $bookingpress_allow_customer_create = ! empty($bookingpress_allow_customer_create) ? $bookingpress_allow_customer_create : 'false';
+
+                $create_only_wpuser = false;
+
+                if( !empty( $bookingpress_existing_user_id ) ){
+                    $get_customer = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$tbl_bookingpress_customers} WHERE bookingpress_customer_id = %d AND bookingpress_user_type = 2", $bookingpress_existing_user_id ), ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $tbl_bookingpress_customers is a table name. false alarm
+                    if( empty( $get_customer['bookingpress_wpuser_id'] ) && !empty( $bookingpress_customer_email ) ){
+                        $create_only_wpuser = true;
+                    }
+                }
+
                 if (empty($bookingpress_existing_user_id) ) {
-                    $bookingpress_allow_customer_create = $BookingPress->bookingpress_get_settings('allow_wp_user_create', 'customer_setting');
-                    $bookingpress_allow_customer_create = ! empty($bookingpress_allow_customer_create) ? $bookingpress_allow_customer_create : 'false';
+                    
                     if ($bookingpress_allow_customer_create == 'false' || $is_front == 2 ) {
                         // If user create switch turned off then this condition executes.
                         $customer_details = array(
@@ -951,67 +963,77 @@ if (! class_exists('bookingpress_customers') ) {
                         }
                     }
                 } else {
-					$bookingpress_wpuser_id = $bookingpress_customer_id = $bookingpress_existing_user_id; 
 
-                    $bookingpress_is_wp_user_exist = get_user_by('ID', $bookingpress_wpuser_id);
-                    $bookingpress_user_pass        = ! empty($bookingpress_is_wp_user_exist->data->user_pass) ? $bookingpress_is_wp_user_exist->data->user_pass : '';
+                    if( true === $create_only_wpuser ){
+                        $bookingpress_customer_id = $bookingpress_existing_user_id;
+                        $submission_cls = new BookingPress\Vue3\Services\SubmissionService();
+                        $submission_cls->maybe_create_wp_user_for_customer( $bookingpress_customer_data, (int) $bookingpress_customer_id ); 
+                    } else {
 
-                    $bookingpress_is_customer_exist = $wpdb->get_var($wpdb->prepare("SELECT COUNT(bookingpress_customer_id) as total FROM {$tbl_bookingpress_customers} WHERE bookingpress_user_email = %s AND bookingpress_user_type = 2", $bookingpress_customer_email)); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_customers is table name defined globally. False Positive alarm
-
-                    if ($bookingpress_is_customer_exist == 0 ) {
-                        $customer_details = array(
-                         'bookingpress_wpuser_id'      => $bookingpress_wpuser_id,
-                         'bookingpress_user_login'     => $bookingpress_customer_email,
-                         'bookingpress_user_status'    => 1,
-                         'bookingpress_user_type'      => 2,
-                         'bookingpress_user_email'     => $bookingpress_customer_email,
-                         'bookingpress_user_name'   => $bookingpress_user_name,
-                         'bookingpress_customer_full_name'  => $bookingpress_customer_name,
-                         'bookingpress_user_firstname' => $bookingpress_customer_firstname,
-                         'bookingpress_user_lastname'  => $bookingpress_customer_lastname,
-                         'bookingpress_user_phone'     => $bookingpress_customer_phone,
-                         'bookingpress_user_country_phone' => $bookingpress_customer_country,
-                         'bookingpress_user_country_dial_code' => $bookingpress_customer_dial_code,
-                         'bookingpress_user_timezone' => $bookingpress_customer_timezone,
-                         'bookingpress_user_created'   => current_time('mysql'),
-                         'bookingpress_created_at'     => $is_front,
-                         'bookingpress_created_by'     => ( is_user_logged_in() ) ? get_current_user_id() : '',
-
-                        );
-                        $wpdb->insert($tbl_bookingpress_customers, $customer_details);
-                        $bookingpress_customer_id = $wpdb->insert_id;
-                        $bookingpress_is_customer_create = 1;
-                        do_action( 'bookingpress_after_create_customer', $bookingpress_customer_id );
-					}else if(($bookingpress_is_customer_exist > 0 && $is_front != 2) || $is_customer == 1 ){
-                        // Get latest customer details
-                        $bookingpress_customer_details = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$tbl_bookingpress_customers} WHERE bookingpress_user_email = %s AND bookingpress_user_type = 2 ORDER BY bookingpress_customer_id DESC", $bookingpress_customer_email), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_customers is table name defined globally. False Positive alarm
-
-                        $bookingpress_customer_id = $bookingpress_customer_details['bookingpress_customer_id'];
-
-                        $customer_update_details = array(
-                        'bookingpress_wpuser_id'   => $bookingpress_wpuser_id,
-                        'bookingpress_user_status' => 1,
-                        );
-
-                        $customer_update_where_condition = array(
-                        'bookingpress_user_email' => $bookingpress_customer_email,
-                        'bookingpress_user_type'  => 2,
-                        );
-
-                        $wpdb->update($tbl_bookingpress_customers, $customer_update_details, $customer_update_where_condition);
-
-                        // Get all customer ids with same email address and update new customer id with all customers in appointment booking table.
-                        $bookingpress_customer_details = $wpdb->get_results($wpdb->prepare("SELECT * FROM {$tbl_bookingpress_customers} WHERE bookingpress_user_email = %s AND bookingpress_user_type = 2 ORDER BY bookingpress_customer_id DESC", $bookingpress_customer_email), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_customers is table name defined globally. False Positive alarm
-                        if (! empty($bookingpress_customer_details) ) {
-                            $bookingpress_customer_ids_arr = array();
-
-                            foreach ( $bookingpress_customer_details as $customer_key => $customer_val ) {
-                                array_push($bookingpress_customer_ids_arr, $customer_val['bookingpress_customer_id']);
-                            }
-
-                            if (! empty($bookingpress_customer_ids_arr) ) {
-                                foreach ( $bookingpress_customer_ids_arr as $customer_id_key => $customer_id_val ) {
-                                    $wpdb->update($tbl_bookingpress_appointment_bookings, array( 'bookingpress_customer_id' => $bookingpress_customer_id ), array( 'bookingpress_customer_id' => $customer_id_val ));
+                        $bookingpress_wpuser_id = $bookingpress_customer_id = $bookingpress_existing_user_id; 
+    
+                        $bookingpress_is_wp_user_exist = get_user_by('ID', $bookingpress_wpuser_id);
+    
+                        
+                        $bookingpress_user_pass        = ! empty($bookingpress_is_wp_user_exist->data->user_pass) ? $bookingpress_is_wp_user_exist->data->user_pass : '';
+    
+                        $bookingpress_is_customer_exist = $wpdb->get_var($wpdb->prepare("SELECT COUNT(bookingpress_customer_id) as total FROM {$tbl_bookingpress_customers} WHERE bookingpress_user_email = %s AND bookingpress_user_type = 2", $bookingpress_customer_email)); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_customers is table name defined globally. False Positive alarm
+    
+                        if ($bookingpress_is_customer_exist == 0 ) {
+                            $customer_details = array(
+                             'bookingpress_wpuser_id'      => $bookingpress_wpuser_id,
+                             'bookingpress_user_login'     => $bookingpress_customer_email,
+                             'bookingpress_user_status'    => 1,
+                             'bookingpress_user_type'      => 2,
+                             'bookingpress_user_email'     => $bookingpress_customer_email,
+                             'bookingpress_user_name'   => $bookingpress_user_name,
+                             'bookingpress_customer_full_name'  => $bookingpress_customer_name,
+                             'bookingpress_user_firstname' => $bookingpress_customer_firstname,
+                             'bookingpress_user_lastname'  => $bookingpress_customer_lastname,
+                             'bookingpress_user_phone'     => $bookingpress_customer_phone,
+                             'bookingpress_user_country_phone' => $bookingpress_customer_country,
+                             'bookingpress_user_country_dial_code' => $bookingpress_customer_dial_code,
+                             'bookingpress_user_timezone' => $bookingpress_customer_timezone,
+                             'bookingpress_user_created'   => current_time('mysql'),
+                             'bookingpress_created_at'     => $is_front,
+                             'bookingpress_created_by'     => ( is_user_logged_in() ) ? get_current_user_id() : '',
+    
+                            );
+                            $wpdb->insert($tbl_bookingpress_customers, $customer_details);
+                            $bookingpress_customer_id = $wpdb->insert_id;
+                            $bookingpress_is_customer_create = 1;
+                            do_action( 'bookingpress_after_create_customer', $bookingpress_customer_id );
+                        }else if(($bookingpress_is_customer_exist > 0 && $is_front != 2) || $is_customer == 1 ){
+                            // Get latest customer details
+                            $bookingpress_customer_details = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$tbl_bookingpress_customers} WHERE bookingpress_user_email = %s AND bookingpress_user_type = 2 ORDER BY bookingpress_customer_id DESC", $bookingpress_customer_email), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_customers is table name defined globally. False Positive alarm
+    
+                            $bookingpress_customer_id = $bookingpress_customer_details['bookingpress_customer_id'];
+    
+                            $customer_update_details = array(
+                            'bookingpress_wpuser_id'   => $bookingpress_wpuser_id,
+                            'bookingpress_user_status' => 1,
+                            );
+    
+                            $customer_update_where_condition = array(
+                            'bookingpress_user_email' => $bookingpress_customer_email,
+                            'bookingpress_user_type'  => 2,
+                            );
+    
+                            $wpdb->update($tbl_bookingpress_customers, $customer_update_details, $customer_update_where_condition);
+    
+                            // Get all customer ids with same email address and update new customer id with all customers in appointment booking table.
+                            $bookingpress_customer_details = $wpdb->get_results($wpdb->prepare("SELECT * FROM {$tbl_bookingpress_customers} WHERE bookingpress_user_email = %s AND bookingpress_user_type = 2 ORDER BY bookingpress_customer_id DESC", $bookingpress_customer_email), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_customers is table name defined globally. False Positive alarm
+                            if (! empty($bookingpress_customer_details) ) {
+                                $bookingpress_customer_ids_arr = array();
+    
+                                foreach ( $bookingpress_customer_details as $customer_key => $customer_val ) {
+                                    array_push($bookingpress_customer_ids_arr, $customer_val['bookingpress_customer_id']);
+                                }
+    
+                                if (! empty($bookingpress_customer_ids_arr) ) {
+                                    foreach ( $bookingpress_customer_ids_arr as $customer_id_key => $customer_id_val ) {
+                                        $wpdb->update($tbl_bookingpress_appointment_bookings, array( 'bookingpress_customer_id' => $bookingpress_customer_id ), array( 'bookingpress_customer_id' => $customer_id_val ));
+                                    }
                                 }
                             }
                         }

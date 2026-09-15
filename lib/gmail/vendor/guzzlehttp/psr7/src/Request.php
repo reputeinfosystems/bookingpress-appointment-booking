@@ -106,7 +106,7 @@ class Request implements RequestInterface
         return $this->uri;
     }
 
-    public function withUri(UriInterface $uri, $preserveHost = false): RequestInterface
+    public function withUri($uri, $preserveHost = false): RequestInterface
     {
         if ($uri === $this->uri) {
             return $this;

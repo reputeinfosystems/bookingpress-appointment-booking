@@ -325,6 +325,16 @@ class Hooks {
 	const FILTER_DAY_SERVICE_BOOKING_OVERLAP = 'bookingpress_form_v3_day_service_booking_overlap';
 
 	/**
+	 * Override the selected day-service duration.
+	 *
+	 * Fired for date-range availability and again while normalizing the submit
+	 * payload. The default is the catalog duration, so Lite remains unchanged.
+	 *
+	 * Filter signature: `(int $duration_days, int $service_id, string $date, array $context): int`
+	 */
+	const FILTER_DAY_SERVICE_DURATION = 'bookingpress_form_v3_day_service_duration';
+
+	/**
 	 * Reshape the disabled-dates list before it is unioned into the timeslot payload.
 	 *
 	 * Filter signature: `(array $dates, int $service_id, array $context): array`
@@ -905,4 +915,11 @@ class Hooks {
 	 * Filter signature: `(array $data): array`
 	 */
 	const FILTER_MODULE_DATA = 'bookingpress_form_v3_module_data';
+
+	/**
+	 * Reshape the Customization Settings.
+	 *
+	 * Filter signature: `(array $customization_settings): array`
+	 */
+	const FILTER_CUSTOMIZATION_SETTINGS = 'bookingpress_form_v3_customization_settings';
 }

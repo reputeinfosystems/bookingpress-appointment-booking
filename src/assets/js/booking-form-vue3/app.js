@@ -68,7 +68,7 @@ export function mountBookingFormInstance(instanceId, initialState) {
   const submission = useSubmission(state, readiness, api, bus);
 
   // Wrap with explicit value-access for the consumer (.value on refs).
-  const handle = { instanceId, state, api, readiness, nav, timeslots, submission, bus, app: null, mountNode };
+  const handle = { instanceId, state, api, readiness, nav, timeslots, submission, bus, app: null, mountNode, initialState  };
 
   const app = createApp(App, { instanceId, state, api, readiness, nav, timeslots, submission, bus });
   app.config.errorHandler = (err, _vm, info) => {
@@ -106,3 +106,8 @@ export function mountBookingFormInstance(instanceId, initialState) {
 }
 
 export default { mountBookingFormInstance };
+
+if (typeof window !== 'undefined') {
+  if (!window.BookingPressFormV3) window.BookingPressFormV3 = { instances: {} };
+  window.BookingPressFormV3.mountBookingFormInstance_data = mountBookingFormInstance;
+}
