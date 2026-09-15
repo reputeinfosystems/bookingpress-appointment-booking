@@ -856,6 +856,23 @@ class StateBuilder {
 				&& '' !== (string) ( isset( $form_data['selected_start_time'] ) ? $form_data['selected_start_time'] : '' ),
 		);
 
+		// Evaluate gates for dynamic/injected steps (e.g. staff, location)
+		foreach ( $steps as $s ) {
+			$sid = isset( $s['id'] ) ? (string) $s['id'] : '';
+			if ( '' === $sid || isset( $gates[ $sid ] ) ) {
+				continue;
+			}
+			if ( 'staff' === $sid ) {
+				$gates[ $sid ] = ( '' !== (string) ( isset( $form_data['selected_staff_member_id'] ) ? $form_data['selected_staff_member_id'] : '' ) )
+					|| ! empty( $form_data['is_any_staff_selected'] );
+			} elseif ( ! empty( $s['gate_field'] ) ) {
+				$gf = (string) $s['gate_field'];
+				$gates[ $sid ] = '' !== (string) ( isset( $form_data[ $gf ] ) ? $form_data[ $gf ] : '' );
+			}
+		}
+
+		$gates = apply_filters( 'bookingpress_form_v3_initial_tab_gates', $gates, $form_data, $steps );
+
 		foreach ( $steps as $step ) {
 			if ( empty( $step['is_display_step'] ) ) {
 				continue;
@@ -872,6 +889,14 @@ class StateBuilder {
 				return (string) $step['id'];
 			}
 		}
+
+		// Fallback to the first displayed step (never select a hidden step as initial tab)
+		foreach ( $steps as $step ) {
+			if ( ! empty( $step['is_display_step'] ) ) {
+				return (string) $step['id'];
+			}
+		}
+
 		return isset( $steps[0]['id'] ) ? (string) $steps[0]['id'] : '';
 	}
 

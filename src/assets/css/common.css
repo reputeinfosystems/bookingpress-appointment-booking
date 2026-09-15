@@ -702,6 +702,9 @@ body:not(.__bpa-is-staff-customize-view-active).bookingpress_page_bookingpress-c
     .bpa-reschedule-footer{
         justify-content: center;
     }
+    .bpa-calendar-root .header-center .title{
+        font-size: 14px;
+    }
 }
 .bpa-staff-header-navbar__mob{
     display: none !important;

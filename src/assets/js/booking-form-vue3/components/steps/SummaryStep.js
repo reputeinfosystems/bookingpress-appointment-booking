@@ -352,6 +352,7 @@ export default {
                                 if (resp.data.paypal_success_url) state.paypal_success_url = resp.data.paypal_success_url;
                                 if (resp.data.paypal_cancel_url) state.paypal_cancel_url = resp.data.paypal_cancel_url;
                                 if (resp.data.entry_id) state.paypal_entry_id = resp.data.entry_id;
+                                if (resp.data.entry_token) state.paypal_entry_token = resp.data.entry_token;
                                 return resp.data.order_id;
                             }
                             // Surface the structured server error verbatim — the user
@@ -374,9 +375,10 @@ export default {
                         return actions.order.capture().then(async (orderData) => {
                             try {
                                 // The server identifies the entry via PayPal's verified
-                                // reference_id — only the capture body is required.
+                                // reference_id; the entry token binds that id to this staged booking.
                                 const resp = await api.paypalConfirm({
                                     bookingpress_payment_res: orderData,
+                                    entry_token: state.paypal_entry_token || '',
                                 });
                                 if (resp && resp.ok) {
                                     // finalize_booking() returns `redirect_data` (the v3
@@ -554,6 +556,7 @@ export default {
                     try {
                         const resp = await api.paypalRedirectPrepare({
                             entry_id: env.entry_id,
+                            entry_token: env.entry_token || '',
                         });
                         // Success: inject the returned auto-submit form and redirect.
                         if (resp && resp.ok && resp.data && resp.data.redirect_data) {

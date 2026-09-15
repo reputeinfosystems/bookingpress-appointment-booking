@@ -186,7 +186,7 @@ class SubmissionService implements SubmissionServiceInterface {
 		//    price. For a single item the stored price IS the payable, exactly as before.
 		$entry_ids = array();
 		foreach ( $line_items as $i => $item ) {
-			$store_price = ( $is_order && 0 === $i ) ? $payable : (float) $amounts['items'][ $i ]['payable'];
+			$store_price = ( $is_order  ) ? $payable : (float) $amounts['items'][ $i ]['payable'];
 			$eid = $this->stage1_insert_entry( $item, $store_price, array(
 				'item_index' => $i,
 				'item_count' => $item_count,
@@ -194,7 +194,7 @@ class SubmissionService implements SubmissionServiceInterface {
 				// Order convention (same as $store_price): the PRIMARY entry
 				// carries the ORDER-level total (the single payment row is built
 				// from it); the other entries carry their own item total.
-				'item_full'  => ( $is_order && 0 === $i )
+				'item_full'  => ( $is_order )
 					? (float) $expected
 					: ( isset( $amounts['items'][ $i ]['full'] ) ? (float) $amounts['items'][ $i ]['full'] : (float) $expected ),
 			) );
@@ -272,11 +272,20 @@ class SubmissionService implements SubmissionServiceInterface {
 		// call finalize_booking() after capture. Return a stub redirect so
 		// the client can pivot into the SDK / redirect form. The primary entry
 		// id resumes the whole order on confirm.
+		$entry_token = '';
+		if ( 'paypal' === $gateway ) {
+			$entry_token = $this->entries->issue_paypal_entry_token( $entry_id );
+			if ( '' === $entry_token ) {
+				return $this->error_envelope( 'bp_v3_entry_token_failed', 'Could not secure the staged booking.' );
+			}
+		}
+
 		return array(
 			'variant'       => 'pending_payment',
 			'is_redirect'   => 0,
 			'redirect_data' => '',
 			'entry_id'      => $entry_id,
+			'entry_token'   => $entry_token,
 			'gateway'       => $gateway,
 		);
 	}

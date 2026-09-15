@@ -25,6 +25,9 @@ class EntryRepository extends BaseRepository {
 	const STATUS_APPROVED  = 1;
 	const STATUS_CANCELED  = 3;
 
+	/** Entry-meta key used to bind a staged Vue3 PayPal entry to its creator. */
+	const META_V3_PAYPAL_ENTRY_TOKEN = 'bookingpress_v3_paypal_entry_token';
+
 	/**
 	 * @inheritDoc
 	 */
@@ -100,6 +103,86 @@ class EntryRepository extends BaseRepository {
 			ARRAY_A
 		);
 		return is_array( $raw ) ? $raw : null;
+	}
+
+	/**
+	 * Issue an opaque token for a staged PayPal entry and persist only its hash.
+	 *
+	 * The raw token is returned once to the browser and must accompany later
+	 * PayPal confirm / redirect-prepare calls. This prevents a sequential
+	 * `entry_id` alone from being sufficient to operate on another visitor's
+	 * staged booking.
+	 *
+	 * @param int $entry_id
+	 *
+	 * @return string Raw token, or an empty string on failure.
+	 */
+	public function issue_paypal_entry_token( $entry_id ) {
+		$entry_id = (int) $entry_id;
+		if ( $entry_id <= 0 ) {
+			return '';
+		}
+
+		global $wpdb;
+		$table = $wpdb->prefix . 'bookingpress_entries_meta';
+		$token = wp_generate_password( 64, false, false );
+		$hash  = hash_hmac( 'sha256', $token, wp_salt( 'auth' ) );
+
+		// Keep exactly one active token for the staged entry.
+		$wpdb->delete(
+			$table,
+			array(
+				'bookingpress_entry_id'       => $entry_id,
+				'bookingpress_entry_meta_key' => self::META_V3_PAYPAL_ENTRY_TOKEN,
+			),
+			array( '%d', '%s' )
+		);
+
+		$ok = $wpdb->insert(
+			$table,
+			array(
+				'bookingpress_entry_id'         => $entry_id,
+				'bookingpress_entry_meta_key'   => self::META_V3_PAYPAL_ENTRY_TOKEN,
+				'bookingpress_entry_meta_value' => $hash,
+			),
+			array( '%d', '%s', '%s' )
+		);
+
+		return false === $ok ? '' : $token;
+	}
+
+	/**
+	 * Verify that a staged PayPal entry belongs to the caller presenting $token.
+	 *
+	 * @param int    $entry_id
+	 * @param string $token
+	 *
+	 * @return bool
+	 */
+	public function verify_paypal_entry_token( $entry_id, $token ) {
+		$entry_id = (int) $entry_id;
+		$token    = (string) $token;
+		if ( $entry_id <= 0 || '' === $token ) {
+			return false;
+		}
+
+		global $wpdb;
+		$table = $wpdb->prefix . 'bookingpress_entries_meta';
+		$stored_hash = $wpdb->get_var(
+			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				"SELECT bookingpress_entry_meta_value FROM `{$table}` WHERE bookingpress_entry_id = %d AND bookingpress_entry_meta_key = %s ORDER BY bookingpress_entry_meta_id DESC LIMIT 1",
+				$entry_id,
+				self::META_V3_PAYPAL_ENTRY_TOKEN
+			)
+		);
+
+		if ( ! is_string( $stored_hash ) || '' === $stored_hash ) {
+			return false;
+		}
+
+		$submitted_hash = hash_hmac( 'sha256', $token, wp_salt( 'auth' ) );
+		return hash_equals( $stored_hash, $submitted_hash );
 	}
 
 	/**

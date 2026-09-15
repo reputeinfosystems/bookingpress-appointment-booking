@@ -116,7 +116,7 @@ if (! class_exists('bookingpress_spam_protection') ) {
                 if (( function_exists('session_status') && session_status() == PHP_SESSION_NONE && ! is_admin() ) ) {
                     @session_start(
                         array(
-                        'read_and_close' => false,
+                            'read_and_close' => false,
                         )
                     );
                 }

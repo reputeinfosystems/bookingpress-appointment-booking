@@ -25,8 +25,34 @@
  */
 export function createApiClient(cfg) {
   const root = String(cfg.restRoot || '').replace(/\/+$/, '');
+	
+	async function refreshWpNonce() {
+    try {
+		const refreshPayload = {
+      		instanceId: String(cfg.instanceId || ''),
+    	};
+		
+      const res = await fetch(`${root}/refresh-nonce`, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(refreshPayload),
+      });
+      const json = await res.json();
+      if (json && json.ok && json.data && json.data.wp_rest_nonce ) {
+        	cfg.wpRestNonce   = json.data.wp_rest_nonce;
+		  cfg.formNonce     = json.data.form_nonce;
+		  //cfg.instanceId    = json.data.instanceId;
+		  cfg.instanceToken = json.data.instanceToken;
 
-  async function post(route, body) {
+		  
+        return true;
+      }
+    } catch (_err) { /* fall through */ }
+    return false;
+  }
+	
+  async function post(route, body, _retried) {
     const payload = {
       ...(body || {}),
       bp_v3_nonce: cfg.formNonce,
@@ -56,6 +82,12 @@ export function createApiClient(cfg) {
     } catch (_err) {
       json = { ok: false, error: { code: 'bp_v3_invalid_json', message: 'Server returned non-JSON.' } };
     }
+	  
+	 if (res.status === 403 && json && (json.code === 'rest_cookie_invalid_nonce' || json.code === 'bp_v3_invalid_form_nonce' ||  json.code === 'bp_v3_invalid_instance') && !_retried) {
+      const refreshed = await refreshWpNonce();
+      if (refreshed) return post(route, body, true);
+    }
+	  
     return { status: res.status, ok: !!(json && json.ok), data: json && json.data, error: json && json.error, errors: json && json.errors, raw: json };
   }
 

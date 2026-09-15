@@ -1,9 +1,10 @@
+#@ bookingpress-appointment-booking
 msgid ""
 msgstr ""
-"Project-Id-Version: BookingPress Appointment Booking v1.6.4\n"
+"Project-Id-Version: BookingPress Appointment Booking v1.6.5\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-08-27 09:21:08+0000\n"
+"PO-Revision-Date: 2026-09-11 04:39:16+0000\n"
 "Last-Translator: admin <testrepute123@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -1952,8 +1953,8 @@ msgstr "Капча сгенерирована успешно."
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:522
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:547
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:4516
-#: src/Vue3/Services/PaymentService.php:206
-#: src/Vue3/Services/PaymentService.php:431
+#: src/Vue3/Services/PaymentService.php:210
+#: src/Vue3/Services/PaymentService.php:466
 #@ bookingpress-appointment-booking
 msgid "Appointment Booking"
 msgstr "Запись на прием"
@@ -3669,7 +3670,7 @@ msgid "PayPal Configuration Error"
 msgstr "Ошибка конфигурации PayPal"
 
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:4454
-#: src/Vue3/Services/PaymentService.php:413
+#: src/Vue3/Services/PaymentService.php:449
 #@ bookingpress-appointment-booking
 msgid "Please configure merchant email address"
 msgstr "Пожалуйста, настройте адрес электронной почты продавца"
@@ -8339,12 +8340,12 @@ msgid "Clear"
 msgstr "Очистить"
 
 #: src/Vue3/REST/PaymentController.php:86
-#: src/Vue3/Services/SubmissionService.php:480
+#: src/Vue3/Services/SubmissionService.php:489
 #@ bookingpress-appointment-booking
 msgid "This time slot is no longer available."
 msgstr "Этот временной слот больше недоступен."
 
-#: src/Vue3/Services/SubmissionService.php:732
+#: src/Vue3/Services/SubmissionService.php:741
 #@ bookingpress-appointment-booking
 msgid "The selected time slots are no longer available."
 msgstr "Выбранные временные слоты больше недоступны."
@@ -8440,12 +8441,6 @@ msgstr "Количество человек"
 msgid "Give a tip"
 msgstr "Дайте совет"
 
-#. translators: plugin header field 'Version'
-#: bookingpress-appointment-booking.php:0
-#@ bookingpress-appointment-booking
-msgid "1.6.4"
-msgstr "1.6.4"
-
 #: src/Vue3/MyBookings/MyBookings.php:644
 #@ bookingpress-appointment-booking
 msgid "Cancellation Reason"
@@ -8460,4 +8455,10 @@ msgstr "Введите причину отмены"
 #@ bookingpress-appointment-booking
 msgid "The selected currency is not supported for the chosen payment method."
 msgstr "Выбранная валюта не поддерживается выбранным способом оплаты."
+
+#. translators: plugin header field 'Version'
+#: bookingpress-appointment-booking.php:0
+#@ bookingpress-appointment-booking
+msgid "1.6.5"
+msgstr "1.6.5"
 

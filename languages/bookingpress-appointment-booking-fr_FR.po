@@ -1,9 +1,10 @@
+#@ bookingpress-appointment-booking
 msgid ""
 msgstr ""
-"Project-Id-Version: BookingPress Appointment Booking v1.6.4\n"
+"Project-Id-Version: BookingPress Appointment Booking v1.6.5\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-08-27 09:20:40+0000\n"
+"PO-Revision-Date: 2026-09-11 04:39:13+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -1929,7 +1930,7 @@ msgid "Please configure PayPal API Username"
 msgstr "Veuillez configurer le nom d'utilisateur API PayPal"
 
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:4454
-#: src/Vue3/Services/PaymentService.php:413
+#: src/Vue3/Services/PaymentService.php:449
 #@ bookingpress-appointment-booking
 msgid "Please configure merchant email address"
 msgstr "Veuillez configurer l'adresse e-mail du commerçant"
@@ -3944,8 +3945,8 @@ msgstr "Gérer les rendez-vous"
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:522
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:547
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:4516
-#: src/Vue3/Services/PaymentService.php:206
-#: src/Vue3/Services/PaymentService.php:431
+#: src/Vue3/Services/PaymentService.php:210
+#: src/Vue3/Services/PaymentService.php:466
 #@ bookingpress-appointment-booking
 msgid "Appointment Booking"
 msgstr "Prise de rendez-vous"
@@ -8339,12 +8340,12 @@ msgid "Clear"
 msgstr "Effacer"
 
 #: src/Vue3/REST/PaymentController.php:86
-#: src/Vue3/Services/SubmissionService.php:480
+#: src/Vue3/Services/SubmissionService.php:489
 #@ bookingpress-appointment-booking
 msgid "This time slot is no longer available."
 msgstr "Ce créneau horaire n'est plus disponible."
 
-#: src/Vue3/Services/SubmissionService.php:732
+#: src/Vue3/Services/SubmissionService.php:741
 #@ bookingpress-appointment-booking
 msgid "The selected time slots are no longer available."
 msgstr "Les créneaux horaires sélectionnés ne sont plus disponibles."
@@ -8440,12 +8441,6 @@ msgstr "Nb. de personnes"
 msgid "Give a tip"
 msgstr "Donner un pourboire"
 
-#. translators: plugin header field 'Version'
-#: bookingpress-appointment-booking.php:0
-#@ bookingpress-appointment-booking
-msgid "1.6.4"
-msgstr "1.6.4"
-
 #: src/Vue3/MyBookings/MyBookings.php:644
 #@ bookingpress-appointment-booking
 msgid "Cancellation Reason"
@@ -8460,4 +8455,10 @@ msgstr "Entrez la raison de l'annulation"
 #@ bookingpress-appointment-booking
 msgid "The selected currency is not supported for the chosen payment method."
 msgstr "La devise sélectionnée n'est pas prise en charge pour le mode de paiement choisi."
+
+#. translators: plugin header field 'Version'
+#: bookingpress-appointment-booking.php:0
+#@ bookingpress-appointment-booking
+msgid "1.6.5"
+msgstr "1.6.5"
 

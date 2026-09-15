@@ -74,4 +74,26 @@ class NonceGate {
 
 		return true;
 	}
+
+	public static function refresh_nonce( \WP_REST_Request $request ) {
+		nocache_headers();
+		$instance_id = (string) $request->get_param( 'instanceId' );
+		if ( '' === $instance_id  ) {
+			return new \WP_Error(
+				'bp_v3_invalid_instance',
+				'Unknown form instance.',
+				array( 'status' => 400 )
+			);
+		}
+		$nonces = new NonceService();
+		$instance_token = $nonces->issue_instance_token( $instance_id );
+		return Response::ok(
+			array(
+				'wp_rest_nonce' => wp_create_nonce( 'wp_rest' ),
+				'form_nonce'    => wp_create_nonce( NonceService::NONCE_ACTION ),
+				'instanceId'     => $instance_id,
+				'instanceToken'  => $instance_token,
+			)
+		);
+	}
 }

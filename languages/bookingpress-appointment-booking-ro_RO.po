@@ -1,9 +1,10 @@
+#@ bookingpress-appointment-booking
 msgid ""
 msgstr ""
-"Project-Id-Version: BookingPress Appointment Booking v1.6.4\n"
+"Project-Id-Version: BookingPress Appointment Booking v1.6.5\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-08-27 09:21:02+0000\n"
+"PO-Revision-Date: 2026-09-11 04:39:16+0000\n"
 "Last-Translator: admin <testrepute@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -3922,7 +3923,7 @@ msgid "PayPal Configuration Error"
 msgstr "Eroare de configurare PayPal"
 
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:4454
-#: src/Vue3/Services/PaymentService.php:413
+#: src/Vue3/Services/PaymentService.php:449
 #@ bookingpress-appointment-booking
 msgid "Please configure merchant email address"
 msgstr "Vă rugăm să configurați adresa de e-mail a comerciantului"
@@ -3945,8 +3946,8 @@ msgstr "Vă rugăm să configurați Semnătura API PayPal"
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:522
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:547
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:4516
-#: src/Vue3/Services/PaymentService.php:206
-#: src/Vue3/Services/PaymentService.php:431
+#: src/Vue3/Services/PaymentService.php:210
+#: src/Vue3/Services/PaymentService.php:466
 #@ bookingpress-appointment-booking
 msgid "Appointment Booking"
 msgstr "Rezervare programare"
@@ -8339,12 +8340,12 @@ msgid "Clear"
 msgstr "Curăță"
 
 #: src/Vue3/REST/PaymentController.php:86
-#: src/Vue3/Services/SubmissionService.php:480
+#: src/Vue3/Services/SubmissionService.php:489
 #@ bookingpress-appointment-booking
 msgid "This time slot is no longer available."
 msgstr "Acest interval orar nu mai este disponibil."
 
-#: src/Vue3/Services/SubmissionService.php:732
+#: src/Vue3/Services/SubmissionService.php:741
 #@ bookingpress-appointment-booking
 msgid "The selected time slots are no longer available."
 msgstr "Intervalele orare selectate nu mai sunt disponibile."
@@ -8440,12 +8441,6 @@ msgstr "Nr. de persoane"
 msgid "Give a tip"
 msgstr "Dă un sfat"
 
-#. translators: plugin header field 'Version'
-#: bookingpress-appointment-booking.php:0
-#@ bookingpress-appointment-booking
-msgid "1.6.4"
-msgstr "1.6.4"
-
 #: src/Vue3/MyBookings/MyBookings.php:644
 #@ bookingpress-appointment-booking
 msgid "Cancellation Reason"
@@ -8460,4 +8455,10 @@ msgstr "Introduceți motivul anulării"
 #@ bookingpress-appointment-booking
 msgid "The selected currency is not supported for the chosen payment method."
 msgstr "Moneda selectată nu este acceptată pentru metoda de plată aleasă."
+
+#. translators: plugin header field 'Version'
+#: bookingpress-appointment-booking.php:0
+#@ bookingpress-appointment-booking
+msgid "1.6.5"
+msgstr "1.6.5"
 

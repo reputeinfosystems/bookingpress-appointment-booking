@@ -5,7 +5,7 @@ Donate link: https://bookingpressplugin.com/
 Requires at least: 6.7
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.6.4
+Stable tag: 1.6.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -219,6 +219,13 @@ Please follow the steps for installation:
 13. BookingPress - General Settings
 
 == Changelog ==
+
+= 1.6.5 =
+* Improved PayPal Standard payment flow security with enhanced staged booking validation and entry binding.
+* Minor bug fixes & improvements
+
+= 1.6.4 =
+* Minor bug fixes
 
 = 1.6.3 =
 * Minor bug fixes

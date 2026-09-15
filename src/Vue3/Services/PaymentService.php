@@ -144,8 +144,12 @@ class PaymentService implements PaymentServiceInterface {
 		}
 
 		$entry_id = isset( $staged['entry_id'] ) ? (int) $staged['entry_id'] : 0;
+		$entry_token = isset( $staged['entry_token'] ) ? (string) $staged['entry_token'] : '';
 		if ( $entry_id <= 0 ) {
 			throw new \RuntimeException( 'Could not stage the booking for PayPal.' );
+		}
+		if ( '' === $entry_token ) {
+			throw new \RuntimeException( 'Could not secure the staged booking for PayPal.' );
 		}
 
 		// Read the SERVER-authoritative amount + currency off the staged entry —
@@ -207,6 +211,13 @@ class PaymentService implements PaymentServiceInterface {
 					'amount'       => array(
 						'currency_code' => $currency_code,
 						'value'         => $amount_value,
+					),
+				),
+			),
+			 'payment_source' => array(
+				'paypal' => array(
+					'experience_context' => array(
+						'shipping_preference' => 'NO_SHIPPING',
 					),
 				),
 			),
@@ -275,6 +286,7 @@ class PaymentService implements PaymentServiceInterface {
 		return array(
 			'order_id'           => $order_id,
 			'entry_id'           => $entry_id,
+			'entry_token'        => $entry_token,
 			'paypal_success_url' => $success_url,
 			'paypal_cancel_url'  => $cancel_url,
 		);
@@ -350,6 +362,17 @@ class PaymentService implements PaymentServiceInterface {
 			throw new \RuntimeException( 'Could not resolve booking entry from PayPal order.' );
 		}
 
+		// Normal booking-form entries must prove possession of the entry-specific
+		// token returned when that entry was staged. Complete Payment is a Pro-only
+		// flow with its own authorization context, so leave that path unchanged.
+		$cp_payable = $this->get_submission_service()->complete_payment_payable_for_entry( $entry_id );
+		if ( null === $cp_payable ) {
+			$entry_token = isset( $payload['entry_token'] ) ? (string) $payload['entry_token'] : '';
+			if ( ! ( new EntryRepository() )->verify_paypal_entry_token( $entry_id, $entry_token ) ) {
+				throw new \RuntimeException( 'Invalid booking reference for PayPal.' );
+			}
+		}
+
 		$payment_status_code = ( 'PENDING' === $capture_status )
 			? PaymentTransactionRepository::STATUS_PENDING
 			: PaymentTransactionRepository::STATUS_PAID;
@@ -400,10 +423,23 @@ class PaymentService implements PaymentServiceInterface {
 			throw new \RuntimeException( 'Missing booking reference for PayPal.' );
 		}
 
+		// The normal booking form supplies entry_id directly. Require the opaque
+		// token before even reading that entry so sequential ids cannot be used as
+		// an existence/data oracle. Complete Payment supplies appointment_id and
+		// keeps its existing Pro authorization flow unchanged.
+		if ( $appointment_id <= 0 ) {
+			$entry_token = isset( $payload['entry_token'] ) ? (string) $payload['entry_token'] : '';
+			if ( ! ( new EntryRepository() )->verify_paypal_entry_token( $entry_id, $entry_token ) ) {
+				throw new \RuntimeException( 'Invalid booking reference for PayPal.' );
+			}
+		}
+
 		$entry = ( new EntryRepository() )->find( $entry_id );
 		if ( null === $entry ) {
 			throw new \RuntimeException( 'Could not resolve the staged booking for PayPal.' );
 		}
+
+		$cp_payable = $submission->complete_payment_payable_for_entry( $entry_id );
 
 		$payment         = $this->settings->get_group( SettingsRepository::GROUP_PAYMENT );
 		$merchant_email  = isset( $payment['paypal_merchant_email'] ) ? trim( (string) $payment['paypal_merchant_email'] ) : '';
@@ -417,7 +453,6 @@ class PaymentService implements PaymentServiceInterface {
 		// server-authoritative remaining payable (due − coupon − gift + tip);
 		// for a booking-form entry it is the amount staged on the entry. Never
 		// trust a client-supplied total.
-		$cp_payable = $submission->complete_payment_payable_for_entry( $entry_id );
 		$is_complete_payment = ( null !== $cp_payable );
 		$amount = $is_complete_payment
 			? (float) $cp_payable
