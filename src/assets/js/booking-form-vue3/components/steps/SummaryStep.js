@@ -224,8 +224,7 @@ export default {
         });
         const showSubtotal = computed(() =>
             subtotal.value > 0
-            && (summaryModuleEnabled.value
-                || Math.round(subtotal.value * 100) !== Math.round(payableNow.value * 100))
+            && (summaryModuleEnabled.value || Math.round(subtotal.value * 100) !== Math.round(payableNow.value * 100))
         );
 
         const customerName = computed(() => {
@@ -808,6 +807,7 @@ export default {
               <div class="bpa-bs-ai__item">{{ formatPrice(subtotal) }}</div>
             </div>
           </div>
+          <div class="bp-v3-slot" data-bp-v3-slot="summary-step:subtotal" :data-bp-v3-instance="state.instanceId"></div>
 
           <div class="bp-v3-slot" data-bp-v3-slot="summary-step:discount" :data-bp-v3-instance="state.instanceId"></div>
           <!-- Tax module slot — renders the "+Tax" delta line (exclusive) or an

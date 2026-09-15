@@ -41,7 +41,10 @@ export function useReadiness(state) {
       const key = f.vModelValue;
       if (!key) continue;
       const v = state.appointment_step_form_data[key];
-      if (v == null || v === '' || (Array.isArray(v) && v.length === 0)) return false;
+      // Trim string values so entering only whitespace/spaces fails the readiness gate check for required fields
+      if (v == null || (typeof v === 'string' && v.trim() === '') || (Array.isArray(v) && v.length === 0)) return false;
+      // validate phone fields contain numeric digits so spaces or symbols do not pass gate validation
+      if (f.fieldType === 'Phone' && typeof v === 'string' && v.trim() !== '' && v.replace(/[^0-9]/g, '').length === 0) return false;
     }
     return true;
   });
@@ -82,6 +85,7 @@ export function useReadiness(state) {
       if (g === 'service') { if (!gateService.value) return false; continue; }
       if (g === 'datetime') { if (!gateDatetime.value) return false; continue; }
       if (g === 'basic_details') { if (!gateBasicDetails.value) return false; continue; }
+      if (g === 'cart' && state.summaryRecurringActive) continue;
       // Generic gate for a Pro-injected step (e.g. Staff Member): the gate
       // token equals a step id, and that step may declare a `gate_field` — an
       // `appointment_step_form_data` key that must be non-empty for the gate to

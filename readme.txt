@@ -3,9 +3,9 @@ Contributors: reputeinfosystems
 Tags: booking, appointment, booking calendar, scheduling, booking system
 Donate link: https://bookingpressplugin.com/
 Requires at least: 6.7
-Tested up to: 7.0.4
+Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.6.3
+Stable tag: 1.6.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 

@@ -71,7 +71,11 @@ export default {
 
     function isEmpty(field) {
       const v = state.appointment_step_form_data[field.vModelValue];
-      return v === undefined || v === null || v === '' || (Array.isArray(v) && v.length === 0);
+      if (v === undefined || v === null) return true;
+      // Trim string values so that entering only spaces ("   ") is properly treated as empty and fails required field validation
+      if (typeof v === 'string') return v.trim() === '';
+      if (Array.isArray(v)) return v.length === 0;
+      return false;
     }
 
     function ruleMessage(field, ruleType) {
@@ -97,8 +101,18 @@ export default {
       }
       if (field.fieldType === 'Email') {
         const v = state.appointment_step_form_data[key];
-        if (v && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(String(v))) {
+        if (v && typeof v === 'string' && v.trim() !== '' && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v.trim())) {
           return ruleMessage(field, 'email') || 'Please enter a valid email address';
+        }
+      }
+      if (field.fieldType === 'Phone') {
+        const v = state.appointment_step_form_data[key];
+        // Ensure empty phone contains actual numeric digits to prevent bypassing validation with only spaces
+        if (v && typeof v === 'string' && v.trim() !== '') {
+          const digits = v.replace(/[^0-9]/g, '');
+          if (digits.length === 0) {
+            return ruleMessage(field, 'phone') || field.fieldErrorMessage || 'Please enter a valid phone number';
+          }
         }
       }
       return '';

@@ -25,8 +25,26 @@ class TimeRoutes extends Base {
 
     public function get_dates( $request ){
 
+        $service_id = $request->get_param( 'service_id' );
+
+        if( empty( $service_id ) ){
+            return new \WP_REST_Response( [
+                'success' => true,
+                'data' => [
+                    'variant' => 'success',
+                    'days_off_disabled_dates' => '',
+                    'front_timings' => [
+                        'morning_time' => [],
+                        'afternoon_time' => [],
+                        'evening_time' => [],
+                        'night_time' => []
+                    ]
+                ]
+            ], 200 );
+        }
+
         $_POST['appointment_data_obj'] = wp_json_encode( $request->get_param( 'appointment_data_obj' ) );
-        $_POST['service_id'] = $request->get_param( 'service_id' );
+        $_POST['service_id'] = $service_id;
         $_POST['selected_date'] = $request->get_param( 'selected_date' );
         $_REQUEST['_wpnonce'] = wp_create_nonce( 'bpa_wp_nonce' );
 

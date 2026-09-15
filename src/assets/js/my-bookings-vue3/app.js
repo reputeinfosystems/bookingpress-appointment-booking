@@ -201,15 +201,41 @@ function createMyBookingsComponent(cfg) {
                               @click="openRefundPreview(scope.row)">{{ strings.cancel_appointment_title || 'Cancel Appointment' }}</bp-ui-button>
                             <!-- Standard cancel confirmation -->
                             <bp-ui-popconfirm v-else
+                              width="260"
                               :title="strings.cancel_appointment_confirmation_message"
                               :confirm-button-text="strings.cancel_appointment_yes_btn_text || 'Yes'"
                               :cancel-button-text="strings.cancel_appointment_no_btn_text || 'No'"
                               confirm-button-type="bpa-front-btn bpa-front-btn__small bpa-front-btn--danger"
                               cancel-button-type="bpa-front-btn bpa-front-btn__small"
+                              popper-class="booking-cancel-confirm-wrapper"
+                              placement="bottom-end"
                               :teleported="false"
                               :icon="false"
                               data-class="bp-ui-popconfirm--ma-cancel"
                               @confirm="confirmCancel(scope.row)">
+                              <template #content>
+                                  <div class="bp-popconfirm bp-ui-popconfirm__content">
+                                      <div class="bp-popconfirm__main bp-ui-popconfirm__main">
+                                          {{ strings.cancel_appointment_confirmation_message }}
+                                          <div class="bpa-front-rcr__item bpa-front-rcrm-cancel-title bpa-front-rcrm__cancellation_note">
+                                              <label class="bpa-front-rcr__item-label bpa-cancel-reason">
+                                                  {{ strings.cancellation_reason_title || 'Cancellation Reason' }}
+                                              </label>
+                                              <bp-ui-input v-model="cancellation_reason" class="bpa-front-form-control bpa-front-rcrm__cancellation_note" type="textarea" :rows="3" :placeholder="strings.enter_cancellation_reason"></bp-ui-input>
+                                          </div>
+                                      </div>
+
+                                      <div class="bp-popconfirm__action bp-ui-popconfirm__action bpa-front-popconfirm-actions">
+                                          <bp-ui-button size="small" class="bp-ui-popconfirm__cancel bpa-front-btn bpa-front-btn__small bpa-front-popconfirm__btn-cancel" @click="closeCancelPopconfirm($event)">
+                                              {{ strings.cancel_appointment_no_btn_text || 'No' }}
+                                          </bp-ui-button>
+
+                                          <bp-ui-button size="small" class="bp-ui-popconfirm__confirm bpa-front-btn bpa-front-btn__small bpa-front-btn--danger bpa-front-popconfirm__btn-confirm" @click="confirmCancel(scope.row)">
+                                              {{ strings.cancel_appointment_yes_btn_text || 'Yes' }}
+                                          </bp-ui-button>
+                                      </div>
+                                  </div>
+                              </template>
                               <template #reference>
                                 <bp-ui-button class="bpa-front-btn bpa-front-btn__small bpa_focusable"
                                   :disabled="cancelingId !== null" :aria-label="strings.cancel_appointment_title">
@@ -374,6 +400,7 @@ function createMyBookingsComponent(cfg) {
           email: '',
           avatarUrl: '',
           usePlaceholder: true,
+          avatar_list: []
         },
         currentScreenSize: detectScreenSize(),
         strings,
@@ -447,6 +474,7 @@ function createMyBookingsComponent(cfg) {
           notifySuccess: (msg) => this.notifySuccess(msg),
           switchTab: (id) => this.switchTab(id),
           setCustomerName: (name) => this.setCustomerName(name),
+          setCustomerAvatar: (avatarUrl) => this.setCustomerAvatar(avatarUrl),
           onAuthenticated: (payload) => this.onAuthenticated(payload),
         };
       },
@@ -585,6 +613,9 @@ function createMyBookingsComponent(cfg) {
       // Total: Pro provides `total_amt_with_currency` (with tax/extras/
       // discount applied); Lite only has `bookingpress_paid_price_with_currency`.
       totalLabel(row) {
+          if (this.isMultiService(row) && row.bookingpress_total_amount) {
+           return row.bookingpress_total_amount_with_currency || row.total_amt_with_currency || row.bookingpress_paid_price_with_currency || row.bookingpress_total_amount;
+          }
         return row.total_amt_with_currency || row.bookingpress_paid_price_with_currency || '';
       },
       staffName(row) {
@@ -830,6 +861,15 @@ function createMyBookingsComponent(cfg) {
       setCustomerName(name) {
         if (typeof name === 'string') this.customer.fullname = name;
       },
+
+        setCustomerAvatar(avatarUrl) {
+          if (typeof avatarUrl === 'string') {
+              this.customer.avatarUrl = avatarUrl;
+
+              // If avatar exists, always show uploaded image.
+              this.customer.usePlaceholder = avatarUrl === '';
+          }
+      },
       // Show the inline success banner above the list (auto-clears).
       notifySuccess(msg) {
         this.successMessage = msg || '';
@@ -847,6 +887,20 @@ function createMyBookingsComponent(cfg) {
         this.cancelConfirmId = null;
         this.cancelError = '';
         this.cancellation_reason = '';
+      },
+      closeCancelPopconfirm(evt) {
+        this.cancelConfirmId = null;
+        this.cancelError = '';
+        this.cancellation_reason = '';
+        if (evt && typeof evt.stopPropagation === 'function') {
+          evt.stopPropagation();
+        }
+        setTimeout(() => {
+          if (typeof document !== 'undefined') {
+            document.body.click();
+            document.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+          }
+        }, 10);
       },
       // Open the refund preview dialog for a refundable row (Pro). No AJAX here —
       // just shows the amounts; the actual cancel/refund happens on Apply.
@@ -1040,11 +1094,12 @@ function createMyBookingsComponent(cfg) {
             this.items = Array.isArray(data && data.items) ? data.items : [];
             this.totalRecords = parseInt((data && data.total_records) || 0, 10) || 0;
             const cd = (data && data.customer_details) || {};
+            const serverAvatarUrl = cd.bookingpress_avatar_url || '';
             this.customer = {
-              fullname: cd.bookingpress_user_fullname || '',
-              email: cd.bookingpress_user_email || '',
-              avatarUrl: cd.bookingpress_avatar_url || '',
-              usePlaceholder: !!cd.bookingpress_use_placeholder,
+                fullname: cd.bookingpress_user_fullname || '',
+                email: cd.bookingpress_user_email || '',
+                avatarUrl: serverAvatarUrl || this.customer.avatarUrl || '',
+                usePlaceholder: !(serverAvatarUrl || this.customer.avatarUrl),
             };
           })
           .catch((err) => {
@@ -1412,13 +1467,12 @@ function createMyBookingsComponent(cfg) {
                                           </div>
                                       </div>
 
-                                      <div class="bp-popconfirm__action bp-ui-popconfirm__action">
-
-                                          <bp-ui-button size="small" class="bp-ui-popconfirm__cancel bpa-front-btn bpa-front-btn__small" @click="document.body.click()" >
+                                      <div class="bp-popconfirm__action bp-ui-popconfirm__action bpa-front-popconfirm-actions">
+                                          <bp-ui-button size="small" class="bp-ui-popconfirm__cancel bpa-front-btn bpa-front-btn__small bpa-front-popconfirm__btn-cancel" @click="closeCancelPopconfirm($event)">
                                               {{ strings.cancel_appointment_no_btn_text || 'No' }}
                                           </bp-ui-button>
 
-                                          <bp-ui-button size="small" class="bp-ui-popconfirm__confirm bpa-front-btn bpa-front-btn__small bpa-front-btn--danger" @click="confirmCancel(scope.row)" >
+                                          <bp-ui-button size="small" class="bp-ui-popconfirm__confirm bpa-front-btn bpa-front-btn__small bpa-front-btn--danger bpa-front-popconfirm__btn-confirm" @click="confirmCancel(scope.row)">
                                               {{ strings.cancel_appointment_yes_btn_text || 'Yes' }}
                                           </bp-ui-button>
                                       </div>

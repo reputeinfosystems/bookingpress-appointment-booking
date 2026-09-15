@@ -152,7 +152,7 @@ class StepSchemaService {
 				'previous_step'   => self::STEP_BASIC_DETAILS,
 				'next_step'       => '',
 				'is_allow_navigate' => 0,
-				'entry_gates'     => array( self::STEP_SERVICE, self::STEP_DATETIME ),
+				'entry_gates'     => array( self::STEP_SERVICE, self::STEP_DATETIME, self::STEP_BASIC_DETAILS ),
 				'meta'            => array(),
 			),
 		);

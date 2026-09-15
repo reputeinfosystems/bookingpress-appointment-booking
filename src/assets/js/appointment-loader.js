@@ -251,12 +251,14 @@ const initAppointmentLoader = () => {
             }
         },
         handleSelectionChange(val) {
-            const appointment_items_obj = val
+            const appointment_items_obj = val;
             this.multipleSelection = [];
-            Object.values(appointment_items_obj).forEach(val => {
-                this.multipleSelection.push({ appointment_id: val.appointment_id })
-                this.bulk_action = 'bulk_action';
-            });
+            if (appointment_items_obj && Object.keys(appointment_items_obj).length > 0) {
+                Object.values(appointment_items_obj).forEach(val => {
+                    this.multipleSelection.push({ appointment_id: val.appointment_id });
+                });
+            }
+            this.bulk_action = 'bulk_action';
         },
         bpa_get_target_parent(elem, selector) {
             if (!Element.prototype.matches) {
@@ -809,6 +811,7 @@ const initAppointmentLoader = () => {
                 CirclePlusFilled,
                 RemoveFilled,
                 bookingpress_previous_row_id: '',
+                bulk_action: 'bulk_action',
                 bulk_options:[
                     {
                         'value': 'bulk_action',

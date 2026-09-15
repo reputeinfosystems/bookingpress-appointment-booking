@@ -23,6 +23,7 @@ export function useSubmission(state, readiness, api, bus) {
 
     if (!readiness.canSubmit.value) {
       submitError.value = 'Please complete every required step before submitting.';
+      clearSubmissionError();
       return false;
     }
 
@@ -55,6 +56,7 @@ export function useSubmission(state, readiness, api, bus) {
       });
       if (cancelled) {
         submitError.value = 'Submission was cancelled by an add-on.';
+        clearSubmissionError();
         return false;
       }
 
@@ -93,6 +95,7 @@ export function useSubmission(state, readiness, api, bus) {
       // Error envelope.
       const err = resp.error || { code: 'bp_v3_unknown', message: 'Submission failed.' };
       submitError.value = err.message || err.code || 'Submission failed.';
+      clearSubmissionError();
       state.submitError  = submitError.value;
       if (resp.data && Array.isArray(resp.data.failed_gates)) {
         failedGates.value = resp.data.failed_gates;
@@ -106,12 +109,21 @@ export function useSubmission(state, readiness, api, bus) {
     } catch (e) {
       submitError.value = e.message || 'Network error.';
       state.submitError  = submitError.value;
+      clearSubmissionError();
       return false;
     } finally {
       isSubmitting.value = false;
       state.isSubmitting = false;
     }
   }
+
+  function clearSubmissionError() {
+    setTimeout(() => {
+      submitError.value = '';
+      state.submitError = '';
+    }, 3000);
+  }
+
 
   return { isSubmitting, submitError, submitOk, redirectUrl, failedGates, submit };
 }

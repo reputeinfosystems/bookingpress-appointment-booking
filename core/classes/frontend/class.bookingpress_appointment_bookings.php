@@ -2065,6 +2065,24 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
             if(empty($bookingpress_selected_service)){
                 $bookingpress_selected_service = !empty( $bookingpress_appointment_data['selected_service'] ) ? $bookingpress_appointment_data['selected_service'] : ( !empty( $bookingpress_appointment_data['appointment_selected_service'] ) ? $bookingpress_appointment_data['appointment_selected_service'] : '' );
             }
+
+            if( empty( $bookingpress_selected_service ) ){
+                $response['variant'] = 'success';
+                $response['title'] = 'Success';
+                $response['msg'] = '';
+                $response['days_off_disabled_dates'] = '';
+                $response['front_timings'] = array(
+                    'morning_time' => array(),
+                    'afternoon_time' => array(),
+                    'evening_time' => array(),
+                    'night_time' => array()
+                );
+                if( $return_data ){
+                    return $response;
+                }
+                wp_send_json( $response );
+                die();
+            }
         
             if(empty($bookingpress_appointment_data['selected_service_duration_unit']) || empty($bookingpress_appointment_data['selected_service_duration']) ){
                 $bookingpress_service_data = $BookingPress->get_service_by_id($bookingpress_selected_service);
@@ -7354,15 +7372,13 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
 				// $appointment_id = base64_decode( $_REQUEST['appointment_id'] );
 				$bookingpress_entry_details = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$tbl_bookingpress_entries} WHERE bookingpress_entry_id = %d", $appointment_id ), ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $tbl_bookingpress_entries is a table name. false alarm
 
-                
-
 				if ( ! empty( $bookingpress_entry_details ) ) {
                     $bookingpress_service_id         = $bookingpress_entry_details['bookingpress_service_id'];
 					$bookingpress_appointment_date   = $bookingpress_entry_details['bookingpress_appointment_date'];
 					$bookingpress_appointment_time   = $bookingpress_entry_details['bookingpress_appointment_time'];
 					$bookingpress_appointment_status = $bookingpress_entry_details['bookingpress_appointment_status'];
                     
-					$appointment_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$tbl_bookingpress_appointment_bookings} WHERE bookingpress_service_id = %d AND bookingpress_appointment_date = %s AND bookingpress_appointment_time = %s AND bookingpress_appointment_status = %s", $bookingpress_service_id, $bookingpress_appointment_date, $bookingpress_appointment_time, $bookingpress_appointment_status ), ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $tbl_bookingpress_appointment_bookings is a table name. false alarm
+					$appointment_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$tbl_bookingpress_appointment_bookings} WHERE bookingpress_service_id = %d AND bookingpress_appointment_date = %s AND bookingpress_appointment_time = %s", $bookingpress_service_id, $bookingpress_appointment_date, $bookingpress_appointment_time), ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $tbl_bookingpress_appointment_bookings is a table name. false alarm
                     
 					if ( ! empty( $appointment_data ) ) {
 						$service_id              = intval( $appointment_data['bookingpress_service_id'] );

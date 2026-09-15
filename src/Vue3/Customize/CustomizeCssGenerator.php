@@ -223,6 +223,7 @@ class CustomizeCssGenerator {
 			. $scope . ' .bpa-front-form-control.--bpa-country-dropdown .vti__dropdown,'
 			. $scope . ' .bpa-front-form-control.--bpa-country-dropdown .vti__dropdown-list,'
 			. $scope . ' .bpa-front-thankyou-module-container,'
+			. $scope . ' .bpa-fm--service__advance-options,'
 			. $scope . ' .bpa-front--dt__calendar .vc-nav-popover-container'
 			. ' { background-color: ' . $bg . ' !important; }';
 
@@ -243,7 +244,13 @@ class CustomizeCssGenerator {
 			. ' --bp-fill-color-light: ' . $primary_fill_light . ' !important;'
 			. ' }';
 
-			// Select dropdown selected / active item 
+		// Select dropdown unselected option items (text color + font family)
+		$css .= '.bp-select-dropdown__item {'
+			. ' color: ' . $content . ' !important;'
+			. ' font-family: ' . $title_font . ' !important;'
+			. ' }';
+
+		// Select dropdown selected / active item 
 		$css .= '.bp-select-dropdown__item.is-selected,'
 			. '.bp-select-dropdown__item.selected'
 			. ' { color: ' . $primary . ' !important;'
@@ -358,6 +365,7 @@ class CustomizeCssGenerator {
 			. $scope . ' .bpa-front--dt__time-slots .bpa-front--dt__ts-body .bpa-front--dt__ts-body--row .bpa-front--dt__ts-body--items .bpa-front--dt__ts-body--item,'
 			. $scope . ' .bpa-front-module--category .bpa-front-cat-items .bpa-front-ci-pill.el-tag,'
 			. $scope . ' .bpa-front-tabs--foot,'
+			. $scope . ' .bpa-sao--footer,'
 			. $scope . ' .bpa-front--dt__calendar .vc-container,'
 			. $scope . ' .bpa-front--dt__calendar .vc-header,'
 			. $scope . ' .bpa-front--dt__calendar .vc-day,'
@@ -483,6 +491,9 @@ class CustomizeCssGenerator {
 			. $scope . ' .bpa-front-tabs .bpa-front-form-control .el-textarea__inner,'
 			. $scope . ' .bp-input__inner,'
 			. $scope . ' .bp-textarea__inner,'
+			. $scope . ' .bp-select__selected-item,'
+			. $scope . ' .bp-select__placeholder,'
+			. $scope . ' .bpa-front-form-control .bp-select__selected-item,'
 			. $scope . ' .bpa-front-tabs .bpa-front-module-heading,'
 			. $scope . ' .bpa-front-module--bs-amount-details .bpa-fm--bs-amount-item .bpa-front-total-payment-amount-label,'
 			. $scope . ' .bpa-front-tmc__head .bpa-front-tmc__title,'
@@ -495,6 +506,7 @@ class CustomizeCssGenerator {
 		// `.bpa-front-tabs--foot .bpa-front-btn--borderless` added to cover the
 		// "Go Back" navigation link (Issue 12 — was missing from this selector list).
 		$css .= $scope . ' .bpa-front-tabs .bpa-front-module--service-item .bpa-front-si-card .bpa-front-si__card-body .bpa-front-si-cb__specs .bpa-front-si-cb__specs-item p strong,'
+			. $scope . ' .bpa-front-sec--sub-heading,'
 			. $scope . ' .bpa-front-tabs .bpa-front--dt__time-slots .bpa-front--dt__ts-body .bpa-front--dt__ts-body--row .bpa-front--dt-ts__sub-heading,'
 			. $scope . ' .bpa-front-tabs .bpa-front--dt__calendar .vc-title,'
 			. $scope . ' .bpa-front-tabs .bpa-front-module--service-item .bpa-front-si-card .bpa-front-si__card-body .bpa-front-si__card-body--heading,'
@@ -506,7 +518,10 @@ class CustomizeCssGenerator {
 			. $scope . ' .bpa-front-tabs--vertical-left .bpa-front-tab-menu a,'
 			. $scope . ' .bpa-front-tabs .bpa-front--dt__calendar .vc-weeks .vc-weekday,'
 			. $scope . ' .bpa-front-tmc__summary-content .bpa-front-tmc__sc-item .bpa-front-sc-item__label,'
-			. $scope . ' .bpa-front-tabs--foot .bpa-front-btn--borderless'
+			. $scope . ' .bpa-front-tabs--foot .bpa-front-btn--borderless,'
+			. $scope . ' .bpa-sao--footer .bpa-front-btn--borderless,'
+			. $scope . ' .bpa-fm--service__advance-options .bpa-front-btn--borderless,'
+			. $scope . ' .bpa-front-btn--borderless'
 			. ' { color: ' . $sub_title . ' !important; }';
 
 		// Primary button text color. Emitted AFTER the sub_title block on
@@ -598,6 +613,9 @@ class CustomizeCssGenerator {
 			. $scope . ' .bpa-front-tabs .bpa-front-form-control .el-textarea__inner,'
 			. $scope . ' .bp-input__inner,'
 			. $scope . ' .bp-textarea__inner,'
+			. $scope . ' .bp-select__selected-item,'
+			. $scope . ' .bp-select__placeholder,'
+			. $scope . ' .bpa-front-sec--sub-heading,'
 			. $scope . ' .bpa-front-tabs .bpa-front-module--booking-summary .bpa-front-module--bs-summary-content .bpa-front-module--bs-summary-content-item .bpa-front-bs-sm__item-val,'
 			. $scope . ' .bpa-front-tabs .bpa-front-module--booking-summary .bpa-front-module--bs-head p,'
 			. $scope . ' .bpa-front-module--service-item .bpa-front-si-card .bpa-front-si__card-body .bpa-front-si-cb__specs .bpa-front-si-cb__specs-item p,'

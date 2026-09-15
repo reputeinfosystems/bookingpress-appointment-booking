@@ -370,6 +370,8 @@ const initNewAppointmentDialog = () => {
                                     };
 
                                     BookingPressCalendarApp.appendData(new_appointment_details);
+                                } else if( typeof window.AppointmentLoader !== 'undefined' && typeof window.AppointmentLoader.loadAppointments === 'function' ){
+                                    window.AppointmentLoader.loadAppointments();
                                 }
 
                                 this.$notify({
@@ -540,6 +542,12 @@ const initNewAppointmentDialog = () => {
             let bookingpress_appointment_form_data = vm.appointment_formdata;
             if (true == reset_timeslot_field) {
                 vm.appointment_formdata.appointment_booked_time = "";
+            }
+
+            if (!vm.appointment_formdata.appointment_selected_service) {
+                vm.appointment_time_slot = [];
+                vm.disabledDates = [];
+                return;
             }
 
             var bookingpress_appointment_date = vm.appointment_formdata.appointment_booked_date;

@@ -84,6 +84,7 @@ class SubmissionService implements SubmissionServiceInterface {
 	 * @inheritDoc
 	 */
 	public function submit( array $payload ) {
+
 		/**
 		 * Reshape the submit payload server-side before any validation runs.
 		 *
@@ -129,6 +130,7 @@ class SubmissionService implements SubmissionServiceInterface {
 
 		// 1. Build the validation state snapshot (order-level, from the top-level payload).
 		$state   = $this->build_validation_state( $payload );
+	
 		$result  = $this->validation->check_action( ValidationService::ACTION_SUBMIT, $state );
 		$amounts = null;
 
@@ -171,6 +173,7 @@ class SubmissionService implements SubmissionServiceInterface {
 		// can never underpay. Accept the full total in addition to the payable, and
 		// reject only a value that matches NEITHER (a genuine tamper / config drift).
 		$client_matches = ( abs( $payable - $client_amt ) <= 0.01 ) || ( abs( $expected - $client_amt ) <= 0.01 );
+		
 		if ( ! $client_matches ) {
 			do_action( 'bookingpress_other_debug_log_entry', 'appointment_debug_logs', 'Booking price mismatch', 'bookingpress_bookingform', array( 'server_total' => $payable, 'server_full' => $expected, 'client_total' => $client_amt ), $bookingpress_other_debug_log_id );
 			return $this->error_envelope( 'bp_v3_price_mismatch', sprintf( 'Server total %s does not match client %s.', $payable, $client_amt ) );
@@ -208,6 +211,22 @@ class SubmissionService implements SubmissionServiceInterface {
 		//    keys off the full order total (a deposit never applies to on-site, and
 		//    a free service stays free).
 		$gateway = isset( $payload['selected_payment_method'] ) ? (string) $payload['selected_payment_method'] : '';
+
+		// Validated Supported Currency based on the Selected Payment Method.
+		$is_currency_supported = true;
+		if( 'paypal' != $gateway && 'on-site' != $gateway ) {
+			$currency_code = $this->settings->get( 'payment_default_currency', SettingsRepository::GROUP_PAYMENT, 'USD' );
+
+			$unsupported_currency_msg = $this->settings->get( 'unsupported_currecy_selected_for_the_payment', SettingsRepository::GROUP_MESSAGE, esc_html__( 'The selected currency is not supported for the chosen payment method.', 'bookingpress-appointment-booking') );
+
+			$is_currency_supported = apply_filters( 'bookingpress_pro_validate_currency_before_book_appointment', $is_currency_supported, $gateway, $currency_code );
+
+			if( ! $is_currency_supported ) {
+				return $this->error_envelope( 'bp_v3_currency_not_supported', $unsupported_currency_msg );
+			}
+
+		}
+
 		// Finalize inline (no gateway round-trip) for on-site, a free order
 		// (full total 0), OR when there is nothing to charge NOW. The last case
 		// is the prepaid-tender path: a feature (e.g. a redeemed Gift Card) can
@@ -391,6 +410,22 @@ class SubmissionService implements SubmissionServiceInterface {
 		$paid     = isset( $payment_payload['paid_amount'] ) ? (float) $payment_payload['paid_amount'] : 0.0;
 		$currency = isset( $payment_payload['currency'] ) ? (string) $payment_payload['currency'] : 'USD';
 		$txn_id   = isset( $payment_payload['transaction_id'] ) ? (string) $payment_payload['transaction_id'] : '';
+
+		// Place a guard to validate the paid amount vs entries paid amount
+		$entry_paid_amount = isset( $entry['bookingpress_paid_amount'] ) ? (float) $entry['bookingpress_paid_amount'] : 0.0;
+		if ( $paid <= 0.0 && $entry_paid_amount > 0.0 ) {
+			throw new \RuntimeException( sprintf( 'Finalize failed: paid amount %s is not positive.', $paid ) );
+		} else {
+			if ( abs( $paid - $entry_paid_amount ) > 0.01 ) {
+				throw new \RuntimeException( sprintf( 'Finalize failed: paid amount %s does not match entry %d paid amount %s.', $paid, $entry_id, $entry_paid_amount ) );
+			}
+		}
+
+		// place a guard to validate the currency vs entries currency
+		$entry_currency = isset( $entry['bookingpress_service_currency'] ) ? (string) $entry['bookingpress_service_currency'] : '';
+		if( $currency !== $entry_currency ) {
+			throw new \RuntimeException( sprintf( 'Finalize failed: currency %s does not match entry %d currency %s.', $currency, $entry_id, $entry_currency ) );
+		}
 
 		// Single booking + single payment (Lite default), or one shared payment
 		// covering every booking of a multi-appointment ORDER (Cart). Inert in

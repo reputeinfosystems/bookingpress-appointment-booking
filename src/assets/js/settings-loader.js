@@ -1210,7 +1210,7 @@ const initSettingsWrapper = () => {
             vm.open_add_break_modal = true
             vm.break_selected_day = day_name
 
-            vm.bpa_adjust_popup_position( currentElement, 'div#breaks_add_modal .bp-dialog.bpa-dialog--add-break', 'bpa-bh__item' );
+            vm.bpa_adjust_popup_position( currentElement, 'div#breaks_add_modal.bp-dialog.bpa-dialog--add-break', 'bpa-bh__item' );
         },
         reset_edit_break_form(){
             const vm = this
