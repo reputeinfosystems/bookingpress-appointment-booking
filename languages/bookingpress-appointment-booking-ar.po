@@ -1,10 +1,9 @@
-#@ bookingpress-appointment-booking
 msgid ""
 msgstr ""
-"Project-Id-Version: BookingPress Appointment Booking v1.6.2\n"
+"Project-Id-Version: BookingPress Appointment Booking v1.6.3\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-08-03 05:02:28+0000\n"
+"PO-Revision-Date: 2026-08-17 07:24:15+0000\n"
 "Last-Translator: admin <testrepute123@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -398,14 +397,14 @@ msgstr "عميل"
 #: src/api/CustomerPageRoutes.php:129
 #: src/api/CustomerRoutes.php:233
 #: src/api/DashboardRoutes.php:412
-#: src/api/SettingsRoutes.php:335
-#: src/api/SettingsRoutes.php:438
-#: src/api/SettingsRoutes.php:524
-#: src/api/SettingsRoutes.php:558
-#: src/api/SettingsRoutes.php:602
-#: src/api/SettingsRoutes.php:655
-#: src/api/SettingsRoutes.php:705
-#: src/api/SettingsRoutes.php:771
+#: src/api/SettingsRoutes.php:336
+#: src/api/SettingsRoutes.php:439
+#: src/api/SettingsRoutes.php:525
+#: src/api/SettingsRoutes.php:559
+#: src/api/SettingsRoutes.php:603
+#: src/api/SettingsRoutes.php:656
+#: src/api/SettingsRoutes.php:706
+#: src/api/SettingsRoutes.php:772
 #@ bookingpress-appointment-booking
 msgid "Error"
 msgstr "خطأ"
@@ -483,7 +482,7 @@ msgstr "هذا البريد الإلكتروني مسجل بالفعل ، يرج
 #: core/views/upgrade_latest_data.php:914
 #: core/views/upgrade_latest_data.php:1130
 #: core/views/wizard/manage_wizard.php:280
-#: src/Vue3/MyBookings/MyBookings.php:646
+#: src/Vue3/MyBookings/MyBookings.php:663
 #: src/frontend/BookingForm.php:488
 #: src/frontend/BookingForm.php:505
 #: src/frontend/BookingForm.php:1213
@@ -614,7 +613,7 @@ msgstr "اختار طريقة الدفع"
 #: core/views/wizard/manage_wizard.php:270
 #: core/views/wizard/manage_wizard.php:342
 #: core/views/wizard/manage_wizard.php:428
-#: src/Vue3/MyBookings/MyBookings.php:610
+#: src/Vue3/MyBookings/MyBookings.php:627
 #: src/frontend/BookingForm.php:483
 #@ bookingpress-appointment-booking
 msgid "Next"
@@ -632,7 +631,7 @@ msgstr "موعد الكتاب"
 #: core/classes/class.bookingpress.php:8806
 #: core/classes/class.bookingpress_customize.php:284
 #: core/classes/class.bookingpress_customize.php:1541
-#: src/Vue3/MyBookings/MyBookings.php:639
+#: src/Vue3/MyBookings/MyBookings.php:656
 #@ bookingpress-appointment-booking
 msgid "My Bookings"
 msgstr "حجوزاتي"
@@ -817,13 +816,13 @@ msgstr "لقد أرسلنا إشعارًا بالبريد الإلكتروني �
 #: core/classes/class.bookingpress_settings.php:1510
 #: core/classes/class.bookingpress_settings.php:2311
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:8883
-#: src/api/SettingsRoutes.php:336
-#: src/api/SettingsRoutes.php:525
-#: src/api/SettingsRoutes.php:559
-#: src/api/SettingsRoutes.php:603
-#: src/api/SettingsRoutes.php:656
-#: src/api/SettingsRoutes.php:706
-#: src/api/SettingsRoutes.php:772
+#: src/api/SettingsRoutes.php:337
+#: src/api/SettingsRoutes.php:526
+#: src/api/SettingsRoutes.php:560
+#: src/api/SettingsRoutes.php:604
+#: src/api/SettingsRoutes.php:657
+#: src/api/SettingsRoutes.php:707
+#: src/api/SettingsRoutes.php:773
 #@ bookingpress-appointment-booking
 msgid "Something went wrong"
 msgstr "هناك خطأ ما"
@@ -933,19 +932,19 @@ msgstr "هناك خطأ ما"
 #: src/api/GrowthToolsRoutes.php:163
 #: src/api/GrowthToolsRoutes.php:232
 #: src/api/GrowthToolsRoutes.php:300
-#: src/api/SettingsRoutes.php:310
-#: src/api/SettingsRoutes.php:325
-#: src/api/SettingsRoutes.php:427
-#: src/api/SettingsRoutes.php:459
-#: src/api/SettingsRoutes.php:644
-#: src/api/SettingsRoutes.php:758
-#: src/api/SettingsRoutes.php:783
+#: src/api/SettingsRoutes.php:311
+#: src/api/SettingsRoutes.php:326
+#: src/api/SettingsRoutes.php:428
+#: src/api/SettingsRoutes.php:460
+#: src/api/SettingsRoutes.php:645
+#: src/api/SettingsRoutes.php:759
+#: src/api/SettingsRoutes.php:784
 #@ bookingpress-appointment-booking
 msgid "Success"
 msgstr "النجاح"
 
 #: core/classes/class.bookingpress.php:9424
-#: src/api/SettingsRoutes.php:784
+#: src/api/SettingsRoutes.php:785
 #@ bookingpress-appointment-booking
 msgid "Debug Logs Cleared Successfully."
 msgstr "تم مسح سجلات التصحيح بنجاح."
@@ -974,7 +973,7 @@ msgstr "الرجاء تحديد واحد أو أكثر من السجلات."
 #: core/classes/class.bookingpress.php:7985
 #: core/classes/class.bookingpress.php:8051
 #: core/classes/class.bookingpress.php:8102
-#: core/classes/class.bookingpress.php:10962
+#: core/classes/class.bookingpress.php:10992
 #: core/classes/class.bookingpress_appointment.php:2156
 #: core/classes/class.bookingpress_services.php:1168
 #: core/views/services/manage_services.php:501
@@ -986,7 +985,7 @@ msgstr "دقيقة"
 #: core/classes/class.bookingpress.php:7991
 #: core/classes/class.bookingpress.php:8057
 #: core/classes/class.bookingpress.php:8108
-#: core/classes/class.bookingpress.php:10966
+#: core/classes/class.bookingpress.php:10996
 #: core/classes/class.bookingpress_appointment.php:2165
 #: core/classes/class.bookingpress_appointment.php:2170
 #: core/classes/class.bookingpress_services.php:1175
@@ -1047,7 +1046,7 @@ msgstr "العمل الجماعي"
 #: core/views/settings/daysoff_setting_tab.php:153
 #: core/views/settings/debug_log_settings.php:93
 #: core/views/settings/debug_log_settings.php:167
-#: src/Vue3/MyBookings/MyBookings.php:637
+#: src/Vue3/MyBookings/MyBookings.php:654
 #: src/admin/Appointments.php:60
 #: src/admin/Calendar.php:219
 #: src/admin/Customer.php:248
@@ -1598,19 +1597,19 @@ msgid "Please enter price"
 msgstr "الرجاء إدخال السعر"
 
 #: core/classes/class.bookingpress_settings.php:1134
-#: src/api/SettingsRoutes.php:326
+#: src/api/SettingsRoutes.php:327
 #@ bookingpress-appointment-booking
 msgid "DaysOff deleted successfully"
 msgstr "تم حذف DaysOff بنجاح"
 
 #: core/classes/class.bookingpress_settings.php:1213
-#: src/api/SettingsRoutes.php:311
+#: src/api/SettingsRoutes.php:312
 #@ bookingpress-appointment-booking
 msgid "DaysOff data retrieved successfully"
 msgstr "تم استرداد بيانات DaysOff بنجاح"
 
 #: core/classes/class.bookingpress_settings.php:1344
-#: src/api/SettingsRoutes.php:357
+#: src/api/SettingsRoutes.php:358
 #@ bookingpress-appointment-booking
 msgid "Please fill Break Title"
 msgstr "يرجى ملء عنوان الاستراحة"
@@ -1930,7 +1929,7 @@ msgid "PayPal payment gateway is not active"
 msgstr "بوابة الدفع PayPal غير نشطة"
 
 #: core/views/frontend/appointment_my_appointments.php:128
-#: src/Vue3/MyBookings/MyBookings.php:598
+#: src/Vue3/MyBookings/MyBookings.php:614
 #@ bookingpress-appointment-booking
 msgid "Please login to your account to view bookings!"
 msgstr "الرجاء تسجيل الدخول إلى حسابك لعرض الحجوزات!"
@@ -1959,8 +1958,8 @@ msgstr "تم إنشاء كلمة التحقق بنجاح."
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:522
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:547
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:4498
-#: src/Vue3/Services/PaymentService.php:199
-#: src/Vue3/Services/PaymentService.php:424
+#: src/Vue3/Services/PaymentService.php:206
+#: src/Vue3/Services/PaymentService.php:431
 #@ bookingpress-appointment-booking
 msgid "Appointment Booking"
 msgstr "حجز موعد"
@@ -2012,7 +2011,7 @@ msgstr "طلبات مخصصة"
 #: core/views/payment/manage_payment.php:329
 #: core/views/payment/manage_payment.php:365
 #: core/views/upgrade_latest_data.php:915
-#: src/Vue3/MyBookings/MyBookings.php:647
+#: src/Vue3/MyBookings/MyBookings.php:664
 #: src/views/Appointments.php:155
 #: src/views/Appointments.php:257
 #: src/views/Appointments.php:371
@@ -2061,7 +2060,7 @@ msgstr "حدد العميل"
 #: core/views/payment/manage_payment.php:317
 #: core/views/payment/manage_payment.php:367
 #: core/views/upgrade_latest_data.php:916
-#: src/Vue3/MyBookings/MyBookings.php:648
+#: src/Vue3/MyBookings/MyBookings.php:665
 #: src/views/Appointments.php:57
 #: src/views/Appointments.php:236
 #: src/views/Appointments.php:265
@@ -2119,8 +2118,8 @@ msgstr "إعادة ضبط"
 #: core/views/payment/manage_payment.php:52
 #: core/views/services/manage_services.php:51
 #: core/views/upgrade_latest_data.php:415
-#: src/Vue3/MyBookings/MyBookings.php:626
 #: src/Vue3/MyBookings/MyBookings.php:643
+#: src/Vue3/MyBookings/MyBookings.php:660
 #: src/admin/Calendar.php:107
 #: src/views/Appointments.php:79
 #: src/views/Customer.php:66
@@ -2152,7 +2151,7 @@ msgstr "لا يوجد سجلات!"
 #: core/views/frontend/appointment_my_appointments.php:543
 #: core/views/services/manage_services.php:99
 #: core/views/upgrade_latest_data.php:888
-#: src/Vue3/MyBookings/MyBookings.php:600
+#: src/Vue3/MyBookings/MyBookings.php:616
 #: src/views/Appointments.php:264
 #: src/views/Dashboard.php:262
 #@ bookingpress-appointment-booking
@@ -2176,7 +2175,7 @@ msgstr "تاريخ الموعد"
 #: core/views/customize/manage_form_customize.php:1061
 #: core/views/dashboard/manage_dashboard.php:263
 #: core/views/upgrade_latest_data.php:917
-#: src/Vue3/MyBookings/MyBookings.php:631
+#: src/Vue3/MyBookings/MyBookings.php:648
 #: src/views/Appointments.php:283
 #: src/views/Dashboard.php:281
 #@ bookingpress-appointment-booking
@@ -2245,8 +2244,8 @@ msgstr "تغيير الوضع"
 #: core/views/settings/debug_log_settings.php:94
 #: core/views/settings/debug_log_settings.php:168
 #: core/views/settings/workhours_setting_tab.php:144
-#: src/Vue3/MyBookings/MyBookings.php:625
-#: src/Vue3/MyBookings/MyBookings.php:636
+#: src/Vue3/MyBookings/MyBookings.php:642
+#: src/Vue3/MyBookings/MyBookings.php:653
 #: src/views/Appointments.php:129
 #: src/views/Appointments.php:140
 #: src/views/Appointments.php:312
@@ -2675,7 +2674,7 @@ msgstr "استمارة الحجز"
 #: core/classes/class.bookingpress.php:8526
 #: core/views/customize/manage_form_customize.php:102
 #: core/views/upgrade_latest_data.php:726
-#: src/Vue3/MyBookings/MyBookings.php:614
+#: src/Vue3/MyBookings/MyBookings.php:631
 #@ bookingpress-appointment-booking
 msgid "Yes"
 msgstr "نعم"
@@ -2683,7 +2682,7 @@ msgstr "نعم"
 #: core/classes/class.bookingpress.php:8525
 #: core/views/customize/manage_form_customize.php:103
 #: core/views/upgrade_latest_data.php:725
-#: src/Vue3/MyBookings/MyBookings.php:615
+#: src/Vue3/MyBookings/MyBookings.php:632
 #@ bookingpress-appointment-booking
 msgid "No"
 msgstr "لا"
@@ -2898,7 +2897,7 @@ msgid "No categories and services added!"
 msgstr "لا فئات والخدمات المضافة!"
 
 #: core/views/frontend/appointment_my_appointments.php:296
-#: src/Vue3/MyBookings/MyBookings.php:597
+#: src/Vue3/MyBookings/MyBookings.php:613
 #@ bookingpress-appointment-booking
 msgid "No Appointments found!"
 msgstr "لم يتم العثور على مواعيد!"
@@ -2977,7 +2976,7 @@ msgid "Payment Gateway"
 msgstr "بوابة الدفع"
 
 #: core/views/payment/manage_payment.php:644
-#: src/Vue3/MyBookings/MyBookings.php:623
+#: src/Vue3/MyBookings/MyBookings.php:640
 #@ bookingpress-appointment-booking
 msgid "Paid Amount"
 msgstr "المبلغ المدفوع"
@@ -3035,7 +3034,7 @@ msgstr "لذلك لن تتمكن من حذفه"
 #: core/views/services/manage_services.php:128
 #: core/views/services/manage_services.php:281
 #: core/views/upgrade_latest_data.php:913
-#: src/Vue3/MyBookings/MyBookings.php:632
+#: src/Vue3/MyBookings/MyBookings.php:649
 #: src/views/Appointments.php:252
 #: src/views/Appointments.php:468
 #: src/views/Dashboard.php:245
@@ -3558,7 +3557,7 @@ msgstr "آسف! هناك خطأ ما. لقد فشلت عملية الدفع ال
 #: core/views/payment/manage_payment.php:19
 #: core/views/settings/debug_log_settings.php:72
 #: core/views/settings/debug_log_settings.php:146
-#: src/Vue3/MyBookings/MyBookings.php:641
+#: src/Vue3/MyBookings/MyBookings.php:658
 #: src/views/Appointments.php:37
 #: src/views/Dashboard.php:22
 #: src/views/components/settings/debug_log_settings.php:72
@@ -3574,7 +3573,7 @@ msgstr "تاريخ البدء"
 #: core/views/appointment/manage_appointment.php:36
 #: core/views/settings/debug_log_settings.php:72
 #: core/views/settings/debug_log_settings.php:146
-#: src/Vue3/MyBookings/MyBookings.php:642
+#: src/Vue3/MyBookings/MyBookings.php:659
 #: src/views/Appointments.php:37
 #: src/views/components/settings/debug_log_settings.php:72
 #: src/views/components/settings/debug_log_settings.php:142
@@ -3676,7 +3675,7 @@ msgid "PayPal Configuration Error"
 msgstr "خطأ في تكوين PayPal"
 
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:4436
-#: src/Vue3/Services/PaymentService.php:406
+#: src/Vue3/Services/PaymentService.php:413
 #@ bookingpress-appointment-booking
 msgid "Please configure merchant email address"
 msgstr "يرجى تكوين عنوان البريد الإلكتروني للتاجر"
@@ -4035,7 +4034,7 @@ msgstr "بوابة الدفع في الموقع غير نشطة"
 #: core/views/payment/manage_payment.php:132
 #: core/views/payment/manage_payment.php:332
 #: core/views/upgrade_latest_data.php:919
-#: src/Vue3/MyBookings/MyBookings.php:649
+#: src/Vue3/MyBookings/MyBookings.php:666
 #: src/views/Appointments.php:163
 #: src/views/Appointments.php:379
 #: src/views/Appointments.php:580
@@ -4073,7 +4072,7 @@ msgstr "تفاصيل العميل"
 #: core/views/payment/manage_payment.php:287
 #: core/views/payment/manage_payment.php:433
 #: core/views/upgrade_latest_data.php:920
-#: src/Vue3/MyBookings/MyBookings.php:607
+#: src/Vue3/MyBookings/MyBookings.php:624
 #: src/views/Appointments.php:229
 #: src/views/Appointments.php:445
 #: src/views/Appointments.php:646
@@ -4093,7 +4092,7 @@ msgstr "بيانات الدفع"
 #: core/views/dashboard/manage_dashboard.php:591
 #: core/views/settings/payment_setting_tab.php:157
 #: core/views/upgrade_latest_data.php:921
-#: src/Vue3/MyBookings/MyBookings.php:608
+#: src/Vue3/MyBookings/MyBookings.php:625
 #: src/views/Appointments.php:232
 #: src/views/Appointments.php:448
 #: src/views/Appointments.php:649
@@ -4113,7 +4112,7 @@ msgstr "طريقة الدفع او السداد"
 #: core/views/dashboard/manage_dashboard.php:416
 #: core/views/dashboard/manage_dashboard.php:599
 #: core/views/upgrade_latest_data.php:922
-#: src/Vue3/MyBookings/MyBookings.php:650
+#: src/Vue3/MyBookings/MyBookings.php:667
 #: src/views/Appointments.php:240
 #: src/views/Appointments.php:456
 #: src/views/Appointments.php:657
@@ -4787,7 +4786,7 @@ msgstr "تعطيل"
 #: core/views/dashboard/manage_dashboard.php:481
 #: core/views/upgrade_latest_data.php:918
 #: core/views/upgrade_latest_data.php:1129
-#: src/Vue3/MyBookings/MyBookings.php:645
+#: src/Vue3/MyBookings/MyBookings.php:662
 #: src/views/Appointments.php:120
 #: src/views/Appointments.php:338
 #: src/views/Appointments.php:539
@@ -4838,7 +4837,7 @@ msgid "Something went wrong while fetching settings..."
 msgstr "حدث خطأ أثناء إحضار الإعدادات ..."
 
 #: core/classes/class.bookingpress_settings.php:3822
-#: src/api/SettingsRoutes.php:456
+#: src/api/SettingsRoutes.php:457
 #@ bookingpress-appointment-booking
 msgid "This currency is not supported by"
 msgstr "هذه العملة لا يدعمها"
@@ -4891,7 +4890,7 @@ msgstr "حذف محتوى الحساب"
 #: core/classes/class.bookingpress_customize.php:290
 #: core/classes/class.bookingpress_customize.php:1547
 #: core/views/upgrade_latest_data.php:689
-#: src/Vue3/MyBookings/MyBookings.php:618
+#: src/Vue3/MyBookings/MyBookings.php:635
 #@ bookingpress-appointment-booking
 msgid "My Appointments"
 msgstr "المواعيد الخاصة بي"
@@ -4900,9 +4899,9 @@ msgstr "المواعيد الخاصة بي"
 #: core/classes/class.bookingpress_customize.php:291
 #: core/classes/class.bookingpress_customize.php:1548
 #: core/views/upgrade_latest_data.php:690
-#: src/Vue3/MyBookings/MyBookings.php:619
-#: src/Vue3/MyBookings/MyBookings.php:633
-#: src/Vue3/MyBookings/MyBookings.php:635
+#: src/Vue3/MyBookings/MyBookings.php:636
+#: src/Vue3/MyBookings/MyBookings.php:650
+#: src/Vue3/MyBookings/MyBookings.php:652
 #@ bookingpress-appointment-booking
 msgid "Delete Account"
 msgstr "حذف الحساب"
@@ -4910,7 +4909,7 @@ msgstr "حذف الحساب"
 #: core/classes/class.bookingpress.php:8523
 #: core/views/customize/manage_form_customize.php:1091
 #: core/views/upgrade_latest_data.php:724
-#: src/Vue3/MyBookings/MyBookings.php:612
+#: src/Vue3/MyBookings/MyBookings.php:629
 #@ bookingpress-appointment-booking
 msgid "Cancel Appointment"
 msgstr "إلغاء التعيين"
@@ -4919,7 +4918,7 @@ msgstr "إلغاء التعيين"
 #: core/views/wizard/manage_wizard.php:267
 #: core/views/wizard/manage_wizard.php:339
 #: core/views/wizard/manage_wizard.php:425
-#: src/Vue3/MyBookings/MyBookings.php:609
+#: src/Vue3/MyBookings/MyBookings.php:626
 #@ bookingpress-appointment-booking
 msgid "Prev"
 msgstr "السابق"
@@ -4988,7 +4987,7 @@ msgid "Please enter cancel redirection url"
 msgstr "الرجاء إدخال عنوان URL لإلغاء إعادة التوجيه"
 
 #: core/classes/class.bookingpress_settings.php:1342
-#: src/api/SettingsRoutes.php:428
+#: src/api/SettingsRoutes.php:429
 #@ bookingpress-appointment-booking
 msgid "Holiday has been saved successfully."
 msgstr "تم حفظ العطلة بنجاح."
@@ -5054,7 +5053,7 @@ msgstr "البحث عن العملاء والخدمات ..."
 #: core/views/dashboard/manage_dashboard.php:109
 #: core/views/dashboard/manage_dashboard.php:309
 #: core/views/dashboard/manage_dashboard.php:492
-#: src/Vue3/MyBookings/MyBookings.php:613
+#: src/Vue3/MyBookings/MyBookings.php:630
 #: src/views/Appointments.php:133
 #: src/views/Appointments.php:349
 #: src/views/Appointments.php:550
@@ -5322,7 +5321,7 @@ msgstr "تم حفظ المعلومات بنجاح"
 
 #: core/classes/class.bookingpress.php:7954
 #: core/classes/class.bookingpress.php:8080
-#: core/classes/class.bookingpress.php:10991
+#: core/classes/class.bookingpress.php:11021
 #: core/classes/class.bookingpress_services.php:1158
 #: src/admin/Calendar.php:70
 #@ bookingpress-appointment-booking
@@ -5736,11 +5735,11 @@ msgstr "عذرًا ، لا يمكن معالجة طلبك لأسباب أمني�
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:4318
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:11302
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:11370
-#: src/Vue3/MyBookings/MyBookings.php:596
+#: src/Vue3/MyBookings/MyBookings.php:612
 #: src/api/AppointmentRoutes.php:76
 #: src/api/AppointmentRoutes.php:202
 #: src/api/CustomerPageRoutes.php:110
-#: src/api/SettingsRoutes.php:439
+#: src/api/SettingsRoutes.php:440
 #@ bookingpress-appointment-booking
 msgid "Something went wrong.."
 msgstr "هناك خطأ ما.."
@@ -5755,7 +5754,7 @@ msgstr "التطور للاحترافية"
 #: core/classes/class.bookingpress.php:7997
 #: core/classes/class.bookingpress.php:8063
 #: core/classes/class.bookingpress.php:8114
-#: core/classes/class.bookingpress.php:10964
+#: core/classes/class.bookingpress.php:10994
 #: core/classes/class.bookingpress_appointment.php:1960
 #: core/classes/class.bookingpress_appointment.php:2173
 #: core/classes/class.bookingpress_dashboard.php:532
@@ -5823,7 +5822,7 @@ msgid "Add-ons"
 msgstr "الإضافات"
 
 #: core/classes/class.bookingpress.php:9511
-#: src/api/SettingsRoutes.php:759
+#: src/api/SettingsRoutes.php:760
 #@ bookingpress-appointment-booking
 msgid "log download successfully"
 msgstr "سجل التحميل بنجاح"
@@ -6529,7 +6528,7 @@ msgid "BookingPress Gmail Test Email Notification"
 msgstr "BookingPress اختبار بريد Gmail إخطار البريد الإلكتروني"
 
 #: core/classes/class.bookingpress_settings.php:175
-#: src/api/SettingsRoutes.php:645
+#: src/api/SettingsRoutes.php:646
 #@ bookingpress-appointment-booking
 msgid "Sign out successfully."
 msgstr "تسجيل الخروج بنجاح."
@@ -6844,7 +6843,7 @@ msgid "Search for Page"
 msgstr "البحث عن الصفحة"
 
 #: core/classes/class.bookingpress_settings.php:1335
-#: src/api/SettingsRoutes.php:402
+#: src/api/SettingsRoutes.php:403
 #@ bookingpress-appointment-booking
 msgid "Holiday already added."
 msgstr "تمت إضافة العطلة بالفعل."
@@ -7168,6 +7167,7 @@ msgid "Advanced Discount"
 msgstr "الخصم المتقدم"
 
 #: core/classes/class.bookingpress_import_export.php:3318
+#: src/Vue3/MyBookings/MyBookings.php:622
 #@ bookingpress-appointment-booking
 msgid "Coupon"
 msgstr "قسيمة"
@@ -7776,7 +7776,7 @@ msgstr "حدث خطأ غير معروف"
 #: core/views/frontend/appointment_my_appointments.php:331
 #: core/views/frontend/appointment_my_appointments.php:443
 #: core/views/frontend/appointment_my_appointments.php:553
-#: src/Vue3/MyBookings/MyBookings.php:599
+#: src/Vue3/MyBookings/MyBookings.php:615
 #@ bookingpress-appointment-booking
 msgid "Manual ( Booked By Admin )"
 msgstr "دليل (تم حجزه بواسطة المسؤول)"
@@ -8282,79 +8282,69 @@ msgstr "تخفيضات الصيف"
 msgid "Loading my bookings"
 msgstr "جارٍ تحميل حجوزاتي"
 
-#: src/Vue3/MyBookings/MyBookings.php:595
+#: src/Vue3/MyBookings/MyBookings.php:611
 #@ bookingpress-appointment-booking
 msgid "Loading…"
 msgstr "تحميل…"
 
-#: src/Vue3/MyBookings/MyBookings.php:601
-#: src/Vue3/MyBookings/MyBookings.php:630
+#: src/Vue3/MyBookings/MyBookings.php:617
+#: src/Vue3/MyBookings/MyBookings.php:647
 #@ bookingpress-appointment-booking
 msgid "Staff"
 msgstr "طاقم عمل"
 
-#: src/Vue3/MyBookings/MyBookings.php:602
-#@ bookingpress-appointment-booking
-msgid "Members"
-msgstr "أعضاء"
-
-#: src/Vue3/MyBookings/MyBookings.php:603
+#: src/Vue3/MyBookings/MyBookings.php:619
 #@ bookingpress-appointment-booking
 msgid "Service Extras"
 msgstr "خدمات إضافية"
 
-#: src/Vue3/MyBookings/MyBookings.php:604
+#: src/Vue3/MyBookings/MyBookings.php:620
 #@ bookingpress-appointment-booking
 msgid "Deposit"
 msgstr "إيداع"
 
-#: src/Vue3/MyBookings/MyBookings.php:605
-#@ bookingpress-appointment-booking
-msgid "Discount"
-msgstr "تخفيض"
-
-#: src/Vue3/MyBookings/MyBookings.php:606
+#: src/Vue3/MyBookings/MyBookings.php:623
 #@ bookingpress-appointment-booking
 msgid "Tax"
 msgstr "ضريبة"
 
-#: src/Vue3/MyBookings/MyBookings.php:616
+#: src/Vue3/MyBookings/MyBookings.php:633
 #@ bookingpress-appointment-booking
 msgid "Book Again"
 msgstr "حجز مجدد"
 
-#: src/Vue3/MyBookings/MyBookings.php:620
+#: src/Vue3/MyBookings/MyBookings.php:637
 #@ bookingpress-appointment-booking
 msgid "Logout"
 msgstr "خروج"
 
-#: src/Vue3/MyBookings/MyBookings.php:624
+#: src/Vue3/MyBookings/MyBookings.php:641
 #@ bookingpress-appointment-booking
 msgid "Refund Amount"
 msgstr "مبلغ إرتجاع"
 
-#: src/Vue3/MyBookings/MyBookings.php:634
+#: src/Vue3/MyBookings/MyBookings.php:651
 #@ bookingpress-appointment-booking
 msgid "Permanently delete your account and all related booking data. This action cannot be undone."
 msgstr "احذف حسابك وجميع بيانات الحجز المرتبطة به نهائياً. لا يمكن التراجع عن هذا الإجراء."
 
-#: src/Vue3/MyBookings/MyBookings.php:640
+#: src/Vue3/MyBookings/MyBookings.php:657
 #@ bookingpress-appointment-booking
 msgid "Search appointment"
 msgstr "البحث عن موعد"
 
-#: src/Vue3/MyBookings/MyBookings.php:644
+#: src/Vue3/MyBookings/MyBookings.php:661
 #@ bookingpress-appointment-booking
 msgid "Clear"
 msgstr "واضح"
 
 #: src/Vue3/REST/PaymentController.php:86
-#: src/Vue3/Services/SubmissionService.php:441
+#: src/Vue3/Services/SubmissionService.php:445
 #@ bookingpress-appointment-booking
 msgid "This time slot is no longer available."
 msgstr "هذا الوقت لم يعد متاحاً."
 
-#: src/Vue3/Services/SubmissionService.php:693
+#: src/Vue3/Services/SubmissionService.php:697
 #@ bookingpress-appointment-booking
 msgid "The selected time slots are no longer available."
 msgstr "الفترات الزمنية المحددة لم تعد متاحة."
@@ -8405,12 +8395,12 @@ msgstr "تم تحميل الصورة الرمزية بنجاح"
 msgid "No file provided."
 msgstr "لم يتم توفير أي ملف."
 
-#: src/api/SettingsRoutes.php:535
+#: src/api/SettingsRoutes.php:536
 #@ bookingpress-appointment-booking
 msgid "Test BookingPress WordPress default mail"
 msgstr "اختبار البريد الافتراضي لإضافة BookingPress في ووردبريس"
 
-#: src/api/SettingsRoutes.php:545
+#: src/api/SettingsRoutes.php:546
 #@ bookingpress-appointment-booking
 msgid "Mail could not be sent. Please check your mail configuration."
 msgstr "تعذر إرسال البريد. يرجى التحقق من إعدادات البريد."
@@ -8443,6 +8433,16 @@ msgstr "م"
 #. translators: plugin header field 'Version'
 #: bookingpress-appointment-booking.php:0
 #@ bookingpress-appointment-booking
-msgid "1.6.2"
-msgstr "1.6.2"
+msgid "1.6.3"
+msgstr "1.6.3"
+
+#: src/Vue3/MyBookings/MyBookings.php:618
+#@ bookingpress-appointment-booking
+msgid "No. of Person"
+msgstr "عدد الأشخاص"
+
+#: src/Vue3/MyBookings/MyBookings.php:621
+#@ bookingpress-appointment-booking
+msgid "Give a tip"
+msgstr "قدّم نصيحة"
 

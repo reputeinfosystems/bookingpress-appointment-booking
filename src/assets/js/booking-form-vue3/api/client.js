@@ -33,6 +33,14 @@ export function createApiClient(cfg) {
       bp_v3_instance_token: cfg.instanceToken,
       instanceId: cfg.instanceId,
     };
+    if( 'submit' == route ){
+      if( "undefined" != typeof BookingPressFormV3 ){
+        var formState = BookingPressFormV3.instances[ cfg.instanceId ].state;
+        if( "undefined" != typeof formState.config.current_locale && formState.config.current_locale ){
+          payload.locale = formState.config.current_locale;
+        }
+      }
+    }
     const res = await fetch(`${root}/${route}`, {
       method: 'POST',
       credentials: 'same-origin',

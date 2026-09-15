@@ -964,7 +964,6 @@ if (! class_exists('bookingpress_customers') ) {
                     }
                 } else {
 
-
                     if( true === $create_only_wpuser && 1 == $is_front ){
                         $bookingpress_customer_id = $bookingpress_existing_user_id;
                         $submission_cls = new BookingPress\Vue3\Services\SubmissionService();
@@ -1009,10 +1008,16 @@ if (! class_exists('bookingpress_customers') ) {
                             $bookingpress_customer_details = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$tbl_bookingpress_customers} WHERE bookingpress_user_email = %s AND bookingpress_user_type = 2 ORDER BY bookingpress_customer_id DESC", $bookingpress_customer_email), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_customers is table name defined globally. False Positive alarm
     
                             $bookingpress_customer_id = $bookingpress_customer_details['bookingpress_customer_id'];
+
+                            $existing_customer_mapped_wpuser_id = $bookingpress_customer_details['bookingpress_wpuser_id'];
+
+                            if( ! empty( $existing_customer_mapped_wpuser_id ) && get_user_by( 'ID', $existing_customer_mapped_wpuser_id ) ){
+                                $bookingpress_wpuser_id = $existing_customer_mapped_wpuser_id;
+                            }
     
                             $customer_update_details = array(
-                            'bookingpress_wpuser_id'   => $bookingpress_wpuser_id,
-                            'bookingpress_user_status' => 1,
+                                'bookingpress_wpuser_id'   => $bookingpress_wpuser_id,
+                                'bookingpress_user_status' => 1,
                             );
     
                             $customer_update_where_condition = array(

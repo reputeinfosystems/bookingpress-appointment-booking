@@ -2241,7 +2241,7 @@ if (! class_exists('BookingPress') ) {
         {
             global $bookingpress_version;
             $bookingpress_old_version = get_option('bookingpress_version', true);
-            if (version_compare($bookingpress_old_version, '1.6.2', '<') ) {
+            if (version_compare($bookingpress_old_version, '1.6.3', '<') ) {
                 $bookingpress_load_upgrade_file = BOOKINGPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $bookingpress_load_upgrade_file;
                 $this->bookingpress_send_anonymous_data_cron();
@@ -9925,7 +9925,8 @@ if (! class_exists('BookingPress') ) {
                         .bpa-front-ma-view-appointment-card,
                         .bpa-vac-pd__item.__bpa-pd-is-total-item,
                         .bpa-front-cp-cancel-mob-drawer,
-                        .bpa-frontend-my-bookings-vue3 .bp-table {
+                        .bpa-frontend-my-bookings-vue3 .bp-table, 
+                        .bp-ui-root .bpa-popover.bp-popover, .bp-popper.bpa-popover{
                             background-color:'.$shortcode_background_color.' !important;
                         }
                         .bpa-front-data-empty-view--my-bookings .bpa-front-dev__form-bg{
@@ -10125,7 +10126,8 @@ if (! class_exists('BookingPress') ) {
                         .bp-year-table td .cell,
                         .bp-month-table td .cell,
                         .bpa-front-ma--pagination-wrapper .btn-prev span,
-                        .bpa-front-ma--pagination-wrapper .btn-next span{ 
+                        .bpa-front-ma--pagination-wrapper .btn-next span,
+                        .bpa-front-cp-reschedule-dialog .bpa-pro-mb-resche__label{ 
                         font-family: ' . $title_font_family . ' !important;   
                         }';
 
@@ -10133,6 +10135,7 @@ if (! class_exists('BookingPress') ) {
                         .bpa-front-module-heading,
                         .bpa-cp-pd__title,
                         .bpa-cp-ma-table.el-table .el-table__header-wrapper tr th.el-table__cell,
+                        .bpa-cp-ma-table.bp-table .bp-table__header-wrapper tr th.bp-table__cell,
                         .bpa-left__service-detail .bpa-sd__appointment-title,
                         .bpa-bd__item .bpa-item--val,
                         .bpa-ma-vac-sec-title,  
@@ -10147,15 +10150,41 @@ if (! class_exists('BookingPress') ) {
                         .bpa-custom-datepicker .el-year-table td .cell,
                         .bpa-custom-datepicker .el-month-table td .cell,
                         .el-year-table td .cell,
-                        .el-month-table td .cell
+                        .el-month-table td .cell,
+                        .bp-ui-root .bpa-frontend-my-bookings-vue3 .bpa-form-control.bp-input .bp-input__inner
                         {
                             color: ' . $label_title_color . ' !important;
-                        }';                    
+                        }';   
+                        $bookingpress_customize_css_content .= '
+                         .bp-ui-root .bpa-frontend-my-bookings-vue3 .bpa-form-control.bp-input .bp-input__wrapper, .bp-ui-root .bpa-form-control.bp-date-editor .bp-input__wrapper,
+                         .bpa-frontend-my-bookings-vue3 .bpa-cp-ma-table.bp-table .bp-table__header-wrapper tr th.bp-table__cell,
+                         .bpa-front-ma-view-appointment-card,
+                         .bpa-frontend-my-bookings-vue3 .bpa-ma-vac--head__right .bpa-front-pill,
+                         .bpa-frontend-my-bookings-vue3 .bpa-ma-vac-sec-title,
+                         .bpa-frontend-my-bookings-vue3 .bpa-vac-pd__item.__bpa-pd-is-total-item,
+                         .bpa-frontend-my-bookings-vue3 .bpa-front-btn__small,
+                         .bpa-front-ma-table-actions-wrap .bpa-front-ma-taw__card,
+                         .bp-ui-root .bpa-form-control.bp-textarea .bp-textarea__inner,
+                        .bp-ui-root .bpa-frontend-my-bookings-vue3 .bpa-checkbox.bp-checkbox .bp-checkbox__inner,
+                        .bp-ui-root .bpa-frontend-my-bookings-vue3 .bp-radio__inner,
+                        .bp-ui-root .bpa-frontend-my-bookings-vue3 .bpa-form-control.bp-select .bp-select__wrapper,
+                        .bp-ui-root .bp-select-dropdown,
+                        .bp-ui-root .bpa-front-cp-reschedule-dialog.bpa-dialog.bp-dialog .bp-dialog__footer, .bpa-front-cp-reschedule-dialog.bp-dialog.bpa-dialog .bp-dialog__footer,
+                        .bp-ui-root .bpa-form-control.bp-select .bp-select__wrapper{
+                                border-color: ' . $border_color . ' !important;
+                        }';
+                                         
                         $bookingpress_customize_css_content .= '
                         .bpa-left__service-detail .bpa-sd__appointment-id,
                         .bpa-tn__dropdown-menu .bpa-tn__dropdown-item span,
                         .bpa-cp-ma-table.el-table .el-table__expand-icon .el-icon-arrow-right::before,
-                        .bpa-front-data-empty-view--my-bookings .bpa-front-dev__title
+                        .bpa-front-data-empty-view--my-bookings .bpa-front-dev__title,
+                        .bpa-front-customer-panel-container .bp-icon,
+                        .bp-ui-root .bpa-frontend-my-bookings-vue3 .bpa-checkbox.bp-checkbox .bp-checkbox__label,
+                        .bp-ui-root .bpa-frontend-my-bookings-vue3 .bp-radio__label,
+                        .bp-ui-root .bpa-frontend-my-bookings-vue3 .bp-textarea__inner::placeholder,
+                        .bpa-frontend-my-bookings-vue3 .bpa-form-control.bp-input .bp-input__inner::placeholder,
+                        .bp-ui-root .bpa-form-control.bp-select .bp-select__placeholder
                         {
                             color: ' . $content_color . ' !important;
                         }';
@@ -10209,7 +10238,8 @@ if (! class_exists('BookingPress') ) {
                         .bpa-front-ma--pagination-wrapper .btn-next::after,
                         .el-picker-panel__content .el-date-table th,
                         .el-popconfirm .el-popconfirm__main,
-                        .el-popconfirm .el-popconfirm__action .el-button--bpa-front-btn:not(.bpa-front-btn--danger) 
+                        .el-popconfirm .el-popconfirm__action .el-button--bpa-front-btn:not(.bpa-front-btn--danger),
+                        .bpa-front-cp-reschedule-dialog .bpa-pro-mb-resche__label
                         {
                             color: ' . $sub_title_color . ' !important;
                         }';       

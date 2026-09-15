@@ -142,6 +142,9 @@ const initSettingsWrapper = () => {
                     saveFormData = Object.assign({}, rawFormData);
                 }
                 saveFormData = wp.hooks.applyFilters('bookingpress_add_settings_more_postdata', saveFormData, form_name, vm)
+                if (saveFormData === false) {
+                    return;
+                }
                 saveFormData.settingType = setting_type;
                 fetch(BookingPressConfig.rest_url + '/settings/save', {
                     method: 'POST',
@@ -2107,6 +2110,9 @@ const initSettingsWrapper = () => {
                         });
                         vm.workhours_timings = response.selected_workhours;
                         vm.default_break_timings = response.default_break_times;
+                        if( typeof response.working_times != 'undefined' && typeof response.working_times.worktimes != 'undefined' ){
+                            vm.worktimings = response.working_times.worktimes;
+                        }
                         wp.hooks.doAction( 'bookingpress_after_fetch_default_work_hours', this );
                     })
                     .catch((error) => {
@@ -2173,6 +2179,9 @@ const initSettingsWrapper = () => {
                         });
                         vm.workhours_timings = response.selected_workhours;
                         vm.default_break_timings = response.default_break_times;
+                        if( typeof response.working_times != 'undefined' && typeof response.working_times.worktimes != 'undefined' ){
+                            vm.worktimings = response.working_times.worktimes;
+                        }
                         wp.hooks.doAction( 'bookingpress_after_fetch_default_work_hours', this );
                     })
                     .catch((error) => {

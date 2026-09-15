@@ -845,6 +845,28 @@ class AvailabilityService implements AvailabilityServiceInterface {
 			$drop_crossed = false;
 			foreach ( $booked_ranges as $br ) {
 				if ( $ts < $br['end_ts'] && $slot_end_ts > $br['start_ts'] ) {
+					$booked_service = isset( $br['service_id'] ) ? (int) $br['service_id'] : (int) $service_id;
+					$has_staff      = ! empty( $context['selected_staff'] ) || ! empty( $context['selected_staff_member_id'] );
+
+					// BufferTimeFeature expands a booked range for collision checks but
+					// preserves the appointment's real start/end. An exact booking of the
+					// same service is the same group session, so it must consume capacity
+					// rather than become a crossed-slot conflict merely because its buffer
+					// extends beyond the visible slot. Different starts/ends remain crossed.
+					$booked_start = isset( $br['unbuffered_start_ts'] ) ? (int) $br['unbuffered_start_ts'] : (int) $br['start_ts'];
+					$booked_end   = isset( $br['unbuffered_end_ts'] ) ? (int) $br['unbuffered_end_ts'] : (int) $br['end_ts'];
+					$same_session = (int) $service_id === $booked_service
+						&& $ts === $booked_start
+						&& $slot_end_ts === $booked_end;
+
+					// A concrete staff member cannot provide two different services at
+					// the same time. Keep this a hard conflict regardless of either shared
+					// capacity setting; only an exact SAME-service session may share seats.
+					if ( $has_staff && (int) $service_id !== $booked_service ) {
+						$drop_crossed = true;
+						break;
+					}
+
 					// Legacy parity (Lite class.bookingpress_appointment_bookings.php
 					// §4915-4932 + the Pro `bookingpress_is_slot_booked_with_share_timeslot`
 					// callback §497-532): when "Share timeslot between all services"
@@ -859,17 +881,16 @@ class AvailabilityService implements AvailabilityServiceInterface {
 					// Lite-only note: $share_capacity is seeded true and $capacity
 					// is 1, so a foreign booking still zeroes the slot — identical
 					// to legacy Lite's unconditional block.
-					$booked_service = isset( $br['service_id'] ) ? (int) $br['service_id'] : (int) $service_id;
 					if ( $share_timeslots && (int) $service_id !== $booked_service && ! $share_capacity ) {
 						$drop_crossed = true;
 						break;
 					}
 					if ( $share_capacity
-						|| ( $ts === (int) $br['start_ts'] && $slot_end_ts === (int) $br['end_ts'] )
+						|| $same_session
 					) {
 						// Capacity is shared across crossed slots (ON), OR this
-						// slot's window EXACTLY matches the booking — either way
-						// the booking counts against this slot's capacity.
+						// slot is the exact same-service session (using its unbuffered
+						// window) — either way the booking counts against capacity.
 						$booked_here += $br['count'];
 					} else {
 						// Share Capacity is OFF and the slot only CROSSES the

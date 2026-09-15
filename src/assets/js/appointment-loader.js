@@ -738,9 +738,60 @@ const initAppointmentLoader = () => {
                 }
             }
         },
+
         closeBulkAction(){
             this.$refs.multipleTable.clearSelection();
             this.bulk_action = 'bulk_action';
+        },
+        deleteAppointment(index, row) {
+            const vm = this;
+            let delete_id = row.appointment_id;
+
+            let postData = {
+                appointment_ids: [delete_id],
+                _wpnonce: BookingPressConfig._wpnonce
+            };
+
+            fetch( rest_url + '/appointment/bulk-delete', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-WP-Nonce': BookingPressConfig.rest_nonce
+                },
+                body: JSON.stringify(postData)
+            })
+            .then(response => response.json())
+            .then(response => {
+                if( response.success ){
+                    vm.$notify({
+                        title: 'Success',
+                        message: response.data.msg,
+                        type: 'success',
+                        customClass: 'success_notification',
+                        duration: BookingPressConfig.notification_timeout
+                    });
+                    vm.loadAppointments();
+                } else {
+                    vm.$notify({
+                        title: (response.data && response.data.title) ? response.data.title : 'Error',
+                        message: (response.data && response.data.msg) ? response.data.msg : 'Something went wrong..',
+                        type: 'error',
+                        customClass: 'error_notification',
+                        duration: BookingPressConfig.notification_timeout
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error deleting appointment:', error);
+                vm.$notify({
+                    title: 'Error',
+                    message: 'Something went wrong..',
+                    type: 'error',
+                    customClass: 'error_notification',
+                    duration: BookingPressConfig.notification_timeout
+                });
+            });
         }
     });
 

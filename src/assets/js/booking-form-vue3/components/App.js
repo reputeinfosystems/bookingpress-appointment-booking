@@ -154,6 +154,24 @@ export default {
       return Array.isArray(arr) ? arr : [];
     });
 
+    const isBookAgain = new URLSearchParams(window.location.search).get('book_again') === '1';
+
+    if (isBookAgain) {
+      const params = new URLSearchParams(window.location.search);
+      const staffId = params.get('sm_id');
+      nextTick(() => {
+        if (staffId) { props.state.appointment_step_form_data.selected_staff_member_id = String(staffId); }
+        setTimeout(() => {
+          const datetimeStep = visibleSteps.value.find(
+            (step) => step && step.id === 'datetime'
+          );
+
+          if (!datetimeStep) return;
+          props.nav.goTo('datetime');
+        }, 100);
+      });
+    }
+
     function panelClass(stepId) {
       const cls = ['bpa-front-tabs--panel-body'];
       if (stepId === currentTab.value) cls.push('__bpa-is-active');

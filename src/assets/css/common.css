@@ -67,7 +67,7 @@ body.folded .bpa-dialog--fullscreen.is-fullscreen {
 .bpa-display-settings-popper .filter-item{ padding: 10px; }
 .bpa-display-settings-popper .filter-item .bp-checkbox__label .field-label{ font-size: 16px; font-weight: 400;}
 .bpa-display-settings-popper .filter-item .bp-checkbox__inner{ width: 20px !important; height: 20px !important; }
-.bpa-display-settings-popper .filter-item .bp-checkbox__inner::after{ font-size: 13px }
+.bpa-display-settings-popper .filter-item .bp-checkbox__inner::after{ font-size: 13px; line-height: 18px; left: 2px; }
 
 .bookingpress-appointment-dialog-container:has(.--bpa-active) {
     position: fixed;

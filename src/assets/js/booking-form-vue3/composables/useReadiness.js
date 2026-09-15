@@ -76,6 +76,8 @@ export function useReadiness(state) {
   // Step-level: can the user navigate INTO this step right now?
   function canEnterStep(stepDescriptor) {
     if (!stepDescriptor || !Array.isArray(stepDescriptor.entry_gates)) return true;
+    const isBookAgain = new URLSearchParams(window.location.search).get('book_again') === '1';
+    if (isBookAgain) { return true;}
     for (const g of stepDescriptor.entry_gates) {
       if (g === 'service') { if (!gateService.value) return false; continue; }
       if (g === 'datetime') { if (!gateDatetime.value) return false; continue; }

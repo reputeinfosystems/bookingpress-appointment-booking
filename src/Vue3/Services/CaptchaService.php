@@ -40,6 +40,23 @@ class CaptchaService implements CaptchaServiceInterface {
 	 * @inheritDoc
 	 */
 	public function is_enabled() {
+		// Google captcha related change
+		global $BookingPress;
+		if ( is_object( $BookingPress ) && method_exists( $BookingPress, 'bookingpress_get_customize_settings' ) ) {
+			if ( ! function_exists( 'is_plugin_active' ) ) {
+				include_once ABSPATH . 'wp-admin/includes/plugin.php';
+			}
+
+			$gcaptcha = $BookingPress->bookingpress_get_customize_settings( 'enable_google_captcha', 'booking_form' );
+			if ( ( 'true' === (string) $gcaptcha || '1' === (string) $gcaptcha ) && is_plugin_active( 'bookingpress-google-captcha/bookingpress-google-captcha.php' ) ) {
+				return true;
+			}
+
+			$tcaptcha = $BookingPress->bookingpress_get_customize_settings( 'enable_turnstile_captcha', 'booking_form' );
+			if ( ( 'true' === (string) $tcaptcha || '1' === (string) $tcaptcha ) && is_plugin_active( 'bookingpress-turnstile-captcha/bookingpress-turnstile-captcha.php' ) ) {
+				return true;
+			}
+		}
 		$value = (string) $this->settings->get(
 			'enable_spam_protection',
 			SettingsRepository::GROUP_GENERAL,
@@ -70,6 +87,15 @@ class CaptchaService implements CaptchaServiceInterface {
 	 */
 	public function verify( $token, $answer ) {
 		$token = (string) $token;
+
+		/**
+		 * Allow external captcha services (Google reCAPTCHA, Turnstile, hCaptcha) to verify first.
+		 */
+		$filtered_ok = apply_filters( Hooks::FILTER_CAPTCHA, null, $token, $answer );
+		if ( null !== $filtered_ok ) {
+			return (bool) $filtered_ok;
+		}
+
 		if ( '' === $token ) {
 			return false;
 		}
@@ -78,17 +104,6 @@ class CaptchaService implements CaptchaServiceInterface {
 			return false;
 		}
 		$ok = ( (string) $expected === trim( (string) $answer ) );
-
-		/**
-		 * Final say on captcha verification. Pro hCaptcha/reCAPTCHA may want
-		 * to delegate the actual verify to their service and use this filter
-		 * to short-circuit Lite's transient lookup.
-		 *
-		 * @param bool   $ok       Result of Lite's verification.
-		 * @param string $token
-		 * @param string $answer
-		 */
-		$ok = (bool) apply_filters( Hooks::FILTER_CAPTCHA, $ok, $token, $answer );
 
 		if ( $ok ) {
 			// Single-use: invalidate token after a successful verify.

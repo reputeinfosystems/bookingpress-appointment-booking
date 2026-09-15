@@ -255,12 +255,12 @@ export default {
         }
       }
       // Overnight (Pro): a slot whose window runs into the next day carries its
-      // real start date in `store_service_date` (e.g. a 01:00–02:00 slot picked
-      // under 15 Jun is really 16 Jun). Persist it so the Summary shows the day
-      // the appointment actually falls on; cleared for plain slots so they fall
-      // back to the calendar date. Inert for Lite (slots have no
-      // `store_service_date`). The backend re-derives this independently.
-      state.appointment_step_form_data.selected_actual_date = String(slot.store_service_date || '');
+      // real start date in `store_service_date`. Client-timezone rows also carry
+      // that field, but there it is the canonical WP date; Summary must continue
+      // to show the client calendar date instead.
+      state.appointment_step_form_data.selected_actual_date = slot.is_client_timezone_converted
+        ? ''
+        : String(slot.store_service_date || '');
 
       // Released-form parity: clicking a slot auto-advances to the next
       // step (Basic Details), mirroring the auto-advance on service

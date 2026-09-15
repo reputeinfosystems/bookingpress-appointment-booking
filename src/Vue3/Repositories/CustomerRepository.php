@@ -215,6 +215,9 @@ class CustomerRepository extends BaseRepository {
 		if ( $wp_user_id > 0 ) {
 			$this->invalidate( 'by_wpuser_' . $wp_user_id );
 		}
+		// Fix(Zap, Make, n8n) New Customer" Trigger Not Firing for Frontend Appointment Bookings
+		do_action( 'bookingpress_after_create_customer', $new_id );
+		do_action( 'bookingpress_after_create_new_customer', $new_id );
 		return $new_id;
 	}
 

@@ -182,9 +182,16 @@ class PaymentService implements PaymentServiceInterface {
 		// on the float guarantees this regardless of the site's display locale
 		// (e.g. a comma-dot "1,000.00" or dot-comma "1.000,00" display never
 		// leaks into the payload). Zero-decimal currencies carry no fraction.
-		$decimals = intval( $this->settings->get( 'price_number_of_decimals', SettingsRepository::GROUP_PAYMENT, 2 ) );
+		$setting_decimals = (int) $this->settings->get( 'price_number_of_decimals', SettingsRepository::GROUP_PAYMENT, 2);
+
+		// Default: PayPal supports a maximum of 2 decimals
+		$decimals = min( $setting_decimals, 2 );
+
 		if ( in_array( $currency_code, array( 'HUF', 'JPY', 'TWD' ), true ) ) {
 			$decimals = 0;
+		}
+		elseif ( in_array( $currency_code, array( 'BHD', 'IQD', 'JOD', 'KWD', 'LYD', 'OMR', 'TND' ), true ) ) {
+			$decimals = min( $setting_decimals, 3 );
 		}
 		$amount_value = number_format( (float) $total, $decimals, '.', '' );
 

@@ -70,7 +70,7 @@ class SubmissionService implements SubmissionServiceInterface {
 		?ServiceRepository $services = null,
 		?SettingsRepository $settings = null
 	) {
-		$this->validation   = $validation ?: new ValidationService();
+		$this->validation   = $validation ?: new ValidationService( new CaptchaService() );
 		$this->pricing      = $pricing ?: new PricingService();
 		$this->entries      = $entries ?: new EntryRepository();
 		$this->appointments = $appointments ?: new AppointmentRepository();
@@ -780,16 +780,18 @@ class SubmissionService implements SubmissionServiceInterface {
 	 */
 	private function notification_type_from_status( array $appt_data ) {
 		$status = isset( $appt_data['bookingpress_appointment_status'] ) ? (string) $appt_data['bookingpress_appointment_status'] : '';
+		// Waiting List related change to notification not sent properly
+		$type   = '';
 		if ( '2' === $status ) {
-			return 'Appointment Pending';
+			$type = 'Appointment Pending';
 		} elseif ( '1' === $status ) {
-			return 'Appointment Approved';
+			$type = 'Appointment Approved';
 		} elseif ( '3' === $status ) {
-			return 'Appointment Canceled';
+			$type = 'Appointment Canceled';
 		} elseif ( '4' === $status ) {
-			return 'Appointment Rejected';
+			$type = 'Appointment Rejected';
 		}
-		return '';
+		return (string) apply_filters( 'bookingpress_modify_send_email_notification_type', $type, $status );
 	}
 
 	/**
@@ -984,12 +986,35 @@ class SubmissionService implements SubmissionServiceInterface {
 		if ( $existing_wp_user && ! empty( $existing_wp_user->ID ) ) {
 			$wp_user_id = (int) $existing_wp_user->ID;
 		} else {
-			$password = (string) apply_filters( 'bookingpress_user_password_change_filter', '', array(
+			$filter_data = array_merge( $entry, array(
 				'bookingpress_customer_email' => $email,
 				'bookingpress_entry_id'       => (int) ( isset( $entry['bookingpress_entry_id'] ) ? $entry['bookingpress_entry_id'] : 0 ),
 			) );
+			$password = (string) apply_filters( 'bookingpress_user_password_change_filter', '', $filter_data );
+
 			$send_notification = false;
-			if ( '' === $password ) {
+			if ( '' !== $password && ! empty( $entry['bookingpress_entry_id'] ) ) {
+				global $wpdb;
+				$entry_id        = (int) $entry['bookingpress_entry_id'];
+				$cypherMethod    = 'AES-256-CBC';
+				$entry_token_key = $password;
+
+				$tbl_entries_meta = $wpdb->prefix . 'bookingpress_entries_meta';
+				$get_db_token     = $wpdb->get_var( $wpdb->prepare( "SELECT bookingpress_entry_meta_value FROM {$tbl_entries_meta} WHERE bookingpress_entry_id = %d AND bookingpress_entry_meta_key = %s", $entry_id, 'bookingpress_customer_token' ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
+				if ( ! empty( $get_db_token ) ) {
+					$customer_token_data = explode( '|BPA|', $get_db_token );
+					if ( count( $customer_token_data ) >= 2 ) {
+						$encrypted_data = $customer_token_data[0];
+						$iv             = $customer_token_data[1];
+
+						$decrypted_pass = openssl_decrypt( $encrypted_data, $cypherMethod, $entry_token_key, 0, $iv );
+						if ( false !== $decrypted_pass && '' !== $decrypted_pass ) {
+							$password = $decrypted_pass;
+						}
+					}
+				}
+			} else {
 				$password          = wp_generate_password( 12, false );
 				$send_notification = true;
 			}
@@ -1168,10 +1193,17 @@ class SubmissionService implements SubmissionServiceInterface {
 
 		$selected_service_name = (isset( $payload['selected_service_name'] ) && $payload['selected_service_name'] ) ? (string) $payload['selected_service_name'] : ( (string) ( isset( $service['serviceName'] ) ? $service['serviceName'] : '' ) );
 
+		$customer_password = '';
+		if ( ! empty( $payload['customer_password'] ) ) {
+			$customer_password = (string) $payload['customer_password'];
+		} elseif ( isset( $payload['form_fields']['customer_password'] ) && ! empty( $payload['form_fields']['customer_password'] ) ) {
+			$customer_password = (string) $payload['form_fields']['customer_password'];
+		}
 		$data = array(
 			'bookingpress_customer_id'           => $customer_id,
 			'bookingpress_customer_name'         => (string) ( isset( $payload['customer_name'] ) ? $payload['customer_name'] : '' ),
 			'bookingpress_username'              => (string) ( isset( $payload['customer_username'] ) ? $payload['customer_username'] : '' ),
+			'bookingpress_password'              => ! empty( $customer_password ) ? wp_hash_password( $customer_password ) : '',
 			'bookingpress_customer_phone'        => (string) ( isset( $payload['customer_phone'] ) ? $payload['customer_phone'] : '' ),
 			'bookingpress_customer_firstname'    => (string) ( isset( $payload['customer_firstname'] ) ? $payload['customer_firstname'] : '' ),
 			'bookingpress_customer_lastname'     => (string) ( isset( $payload['customer_lastname'] ) ? $payload['customer_lastname'] : '' ),
@@ -1257,6 +1289,26 @@ class SubmissionService implements SubmissionServiceInterface {
 
 		$entry_id = $this->entries->insert_pending( $data );
 		do_action( 'bookingpress_other_debug_log_entry', 'appointment_debug_logs', 'Appointment entry created', 'bookingpress_bookingform', array( 'entry_id' => (int) $entry_id ), $bookingpress_other_debug_log_id );
+
+		if ( $entry_id && ! empty( $customer_password ) ) {
+			global $wpdb;
+			$cypherMethod    = 'AES-256-CBC';
+			$entry_token_key = ! empty( $data['bookingpress_password'] ) ? $data['bookingpress_password'] : wp_hash_password( $customer_password );
+			$iv              = wp_generate_password( 16, false );
+
+			$entry_token = openssl_encrypt( $customer_password, $cypherMethod, $entry_token_key, 0, $iv );
+			if ( false !== $entry_token ) {
+				$tbl_entries_meta = $wpdb->prefix . 'bookingpress_entries_meta';
+				$wpdb->insert(
+					$tbl_entries_meta,
+					array(
+						'bookingpress_entry_id'        => (int) $entry_id,
+						'bookingpress_entry_meta_key'   => 'bookingpress_customer_token',
+						'bookingpress_entry_meta_value' => $entry_token . '|BPA|' . $iv,
+					)
+				);
+			}
+		}
 
 		// Stage the resolved UNIT price for the finalize projection (survives the
 		// gateway confirm, where the payload is gone). No-op when the meta table

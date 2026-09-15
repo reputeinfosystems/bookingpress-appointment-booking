@@ -75,6 +75,12 @@ class Routing {
 		// page using this shortcode gets the new form for free.
 		add_shortcode( 'bookingpress_form_vue3', array( BookingForm::class, 'render_shortcode' ) );
 
+		// Modify the rest router API with locale data
+		add_filter( 'rest_request_before_callbacks', array( RouteRegistrar::class, 'add_locale_to_rest_request' ), 10, 3 );
+
+		// Revert to the locale once the API request is completed
+		add_filter( 'rest_request_after_callbacks', array( RouteRegistrar::class, 'revert_locale_after_rest_request' ), 10, 3 );
+
 		// M4: register the eight `/form-v3/*` REST routes on `rest_api_init`.
 		add_action( 'rest_api_init', array( RouteRegistrar::class, 'register' ) );
 
@@ -90,7 +96,7 @@ class Routing {
 		// rendering, but keep it before classic footer scripts at priority 20
 		// (including WordPress's inline emoji module). Deferred to `init` so
 		// core's `after_setup_theme` hook registration has already run.
-		add_action( 'init', array( self::class, 'relocate_script_modules_for_block_theme' ) );
+		add_action( 'wp', array( self::class, 'relocate_script_modules_for_block_theme' ) );
 
 		// M5: register the customize-CSS lifecycle listeners
 		// (invalidate-cache action + on-render fallback). Cache invalidation

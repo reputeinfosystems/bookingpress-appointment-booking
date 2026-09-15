@@ -107,11 +107,11 @@ function createMyBookingsComponent(cfg) {
                               <div class="bpa-item--label">{{ strings.staff || 'Staff' }}:</div>
                               <div class="bpa-item--val">
                                 <img v-if="scope.row.staff_avatar_url" :src="scope.row.staff_avatar_url" :alt="staffName(scope.row)" class="bpa-front-mb-v3-staff__avatar">
-                                {{ staffName(scope.row) }}
+                                {{ expandedStaffName(scope.row) }}
                               </div>
                             </div>
                             <div class="bpa-bd__item" v-if="scope.row.selected_extra_members && scope.row.selected_extra_members > 0">
-                              <div class="bpa-item--label">{{ strings.members || 'Members' }}:</div>
+                              <div class="bpa-item--label">{{ strings.members || 'No. of Person' }}:</div>
                               <div class="bpa-item--val">{{ scope.row.selected_extra_members }}</div>
                             </div>
                           </div>
@@ -156,15 +156,22 @@ function createMyBookingsComponent(cfg) {
                             <div class="bpa-vac-pd__label">{{ strings.status_main_heading || 'Status' }}:</div>
                             <div class="bpa-vac-pd__val" :class="paymentStatusValClass(scope.row)">{{ scope.row.bookingpress_payment_status_label }}</div>
                           </div>
+
                           <div class="bpa-vac-pd__item" v-if="scope.row.deposit_amt_with_currency && scope.row.is_deposit">
                             <div class="bpa-vac-pd__label">{{ strings.deposit || 'Deposit' }}:</div>
                             <div class="bpa-vac-pd__val">{{ scope.row.deposit_amt_with_currency }}</div>
                           </div>
                           <div class="bpa-vac-pd__item" v-if="scope.row.coupon_discount_amt && scope.row.coupon_discount_amt > 0">
-                            <div class="bpa-vac-pd__label">{{ strings.discount || 'Discount' }}:</div>
-                            <div class="bpa-vac-pd__val">{{ scope.row.coupon_discount_amt_with_currency }}</div>
+                            <div class="bpa-vac-pd__label">{{ strings.discount || 'Coupon' }}:</div>
+                            <div class="bpa-vac-pd__val bpa-front-text--danger-color">-{{ scope.row.coupon_discount_amt_with_currency }}</div>
                           </div>
+                          
+                       
                           <component v-for="d in paymentBeforeTotalRowDetails" :key="d.id" :is="d.component" :row="scope.row" :ctx="extensionCtx" placement="payment_before_total"></component>
+                            <div class="bpa-vac-pd__item" v-if="scope.row.bookingpress_tip_amount && scope.row.bookingpress_tip_amount != '0'">
+                              <div class="bpa-vac-pd__label">{{ strings.give_a_tip || 'Give a tip' }}:</div>
+                              <div class="bpa-vac-pd__val">+{{ scope.row.bookingpress_tip_amount_currency }}</div>
+                          </div>
                           <div class="bpa-vac-pd__item" v-if="scope.row.tax_amt && scope.row.tax_amt > 0">
                             <div class="bpa-vac-pd__label">{{ strings.tax || 'Tax' }}:</div>
                             <div class="bpa-vac-pd__val">+{{ scope.row.tax_amt_with_currency }}</div>
@@ -350,6 +357,7 @@ function createMyBookingsComponent(cfg) {
         cancelConfirmId: null, // row whose inline confirm is open
         cancelingId: null, // row whose cancel request is in flight
         cancelError: '', // inline error message for the open confirm
+        cancellation_reason: '',
         // Refund preview dialog (MB-7D): shown before cancel when a Pro row is
         // refundable (appointment_refund_status == 1). The Apply button reuses
         // the SAME bookingpress_cancel_appointment action (server does the refund).
@@ -483,6 +491,7 @@ function createMyBookingsComponent(cfg) {
       }
     },
     mounted() {
+
       // Parity with the legacy on_load gate: guests have nothing to load.
       if (this.isLoggedIn) {
         // Logged-in: the boot loader stays up until the first appointment load
@@ -579,9 +588,36 @@ function createMyBookingsComponent(cfg) {
         return row.total_amt_with_currency || row.bookingpress_paid_price_with_currency || '';
       },
       staffName(row) {
+        if (!row) { return '';}
+        if (String(row.bookingpress_is_multistaff) === '1') {
+          return row.multi_staff_display_name || row.bookingpress_multistaff_name || ''; 
+        }
         const first = row.staff_first_name || '';
         const last = row.staff_last_name || '';
         return (first + ' ' + last).trim();
+      },
+      expandedStaffName(row) {
+          if (!row) { return ''; }
+          if (String(row.bookingpress_is_multistaff) === '1') {
+              return row.all_multi_staff_member_name || row.multi_staff_display_name || row.bookingpress_multistaff_name || '';
+          }
+          const first = row.staff_first_name || '';
+          const last = row.staff_last_name || '';
+          return (first + ' ' + last).trim();
+      },
+      multiStaffCount(row) {
+          if (!row) {
+              return 0;
+          }
+          const count = parseInt(row.total_multistaff, 10);
+          return Number.isNaN(count) ? 0 : count;
+      },
+
+      multiStaffExtraNames(row) {
+          if (!row) {
+            return '';
+          }
+          return row.multi_staff_extra_staff_name || '';
       },
       hasExtras(row) {
         return Array.isArray(row.extras_details) && row.extras_details.length > 0;
@@ -803,11 +839,14 @@ function createMyBookingsComponent(cfg) {
       },
       openCancelConfirm(row) {
         this.cancelError = '';
+        this.cancellation_reason = '';
         this.cancelConfirmId = this.rowId(row);
+        
       },
       closeCancelConfirm() {
         this.cancelConfirmId = null;
         this.cancelError = '';
+        this.cancellation_reason = '';
       },
       // Open the refund preview dialog for a refundable row (Pro). No AJAX here —
       // just shows the amounts; the actual cancel/refund happens on Apply.
@@ -846,7 +885,7 @@ function createMyBookingsComponent(cfg) {
         const body = new URLSearchParams();
         body.append('action', 'bookingpress_cancel_appointment');
         body.append('cancel_id', String(row.bookingpress_appointment_booking_id || id));
-        body.append('cancel_reason', ''); // core does not collect a reason here
+        body.append( 'cancel_reason', this.cancellation_reason ? this.cancellation_reason.trim() : ''); // core does not collect a reason here
         body.append('_wpnonce', cfg.nonce || '');
 
         fetch(cfg.ajaxUrl, {
@@ -893,14 +932,19 @@ function createMyBookingsComponent(cfg) {
       },
       switchTab(tab) {
         if (this.deleting) return; 
-        if (tab === 'delete_account' && !this.showDeleteAccount) return;
-        if (tab !== 'my_appointment' && tab !== 'delete_account'
-          && !this.extensionTabs.some((t) => t.id === tab)) return;
+        if ( tab !== 'my_appointment' && tab !== 'delete_account' && !this.extensionTabs.some((t) => t.id === tab) ) {
+            return;
+        }
         this.currentTab = tab;
         this.resetDeleteState();
-
-        // ADD THIS NEW LINE BELOW:
-        if (tab === 'delete_account') { this.$nextTick(() => { this.deleteAccountSlotReady = !!document.getElementById(this.deleteAccountSlotId); }); }
+        if (tab === 'delete_account') {
+            this.$nextTick(() => {
+                this.deleteAccountSlotReady = !!(
+                    this.deleteAccountSlotId &&
+                    document.getElementById(this.deleteAccountSlotId)
+                );
+            });
+        }
       },
       cancelDelete() {
         // Mirror legacy: Cancel returns to My Appointments (Edit Account is not
@@ -912,7 +956,7 @@ function createMyBookingsComponent(cfg) {
       // re-checks nonce + login + customer ownership; this just blocks duplicate
       // submits. The panel content itself is the confirmation (legacy parity).
       canDeleteAccount() {
-        return !this.deleting && this.isLoggedIn && this.showDeleteAccount;
+        return !this.deleting && this.isLoggedIn;
       },
       deleteAccount() {
         // Legacy parity: Delete fires immediately (the backend-configured panel
@@ -1110,7 +1154,7 @@ function createMyBookingsComponent(cfg) {
         <div class="bpa-front-customer-panel-container" v-else>
           <!-- Top navbar (Mobile & Tablet) -->
           <div v-if="currentScreenSize !== 'desktop' && !hideCustomerDetails && currentTab !== 'delete_account'" class="bpa-front-cp-top-navbar">
-            <div class="bpa-cp-tn__left">
+            <div class="bpa-cp-tn__left" >
               <div class="bpa-front-module-heading" :aria-label="strings.mybooking_title_text">{{ strings.mybooking_title_text }}</div>	
             </div>
           
@@ -1128,8 +1172,8 @@ function createMyBookingsComponent(cfg) {
                  below renders Lite's current dropdown, byte-identical. -->
             <component v-if="navComponent && currentScreenSize === 'desktop'" :is="navComponent" :nav="navModel"></component>
             <!-- Left sidebar (Desktop) -->
-            <div v-else-if="currentScreenSize === 'desktop' && !hideCustomerDetails && currentTab !== 'delete_account'" class="bpa-front-cp-left-sidebar">
-              <div class="bpa-cp-tn__left">
+            <div v-else-if="currentScreenSize === 'desktop' && !hideCustomerDetails && currentTab !== 'delete_account'" class="bpa-front-cp-top-navbar">
+              <div class="bpa-cp-tn__left" >
                 <div class="bpa-front-module-heading" :aria-label="strings.mybooking_title_text">{{ strings.mybooking_title_text }}</div>	
               </div>
             
@@ -1143,7 +1187,7 @@ function createMyBookingsComponent(cfg) {
 
               <!-- Success banner (api.notifySuccess) -->
               <div class="bpa-front-mb-v3-success" role="status" v-if="successMessage">{{ successMessage }}</div>
-               <div class="bpa-cp-tn__left">
+               <div class="bpa-cp-tn__left" v-if="navComponent">
                 <div class="bpa-front-module-heading" :aria-label="strings.mybooking_title_text">{{ strings.mybooking_title_text }}</div>	
               </div>
               <!-- Filter bar -->
@@ -1151,7 +1195,7 @@ function createMyBookingsComponent(cfg) {
                 <div class="bpa-front-cp--fw__row">
                   <div class="bpa-front-cp--fw__col bpa-front-cp--fw__date-picker-col">
                     <bp-ui-date-picker class="bpa-front-form-control bpa-front-form-control--date-picker" type="date"
-                      :placeholder="strings.search_date_title" v-model="dateRange[0]" value-format="YYYY-MM-DD" :clearable="false"></bp-ui-date-picker>
+                      :placeholder="strings.search_date_title" v-model="dateRange[0]" value-format="YYYY-MM-DD"></bp-ui-date-picker>
                     <bp-ui-date-picker class="bpa-front-form-control bpa-front-form-control--date-picker" type="date"
                       :placeholder="strings.search_end_date_title" v-model="dateRange[1]" value-format="YYYY-MM-DD"></bp-ui-date-picker>
                   </div>
@@ -1260,12 +1304,27 @@ function createMyBookingsComponent(cfg) {
                       </bp-ui-tooltip>
                     </template>
                   </bp-ui-table-column>
-                  <bp-ui-table-column v-if="currentScreenSize === 'desktop' && hasStaffColumn" :label="strings.staff_main_heading || 'Staff'" min-width="120">
+
+                  <bp-ui-table-column v-if="currentScreenSize === 'desktop' && hasStaffColumn" :label="strings.staff_main_heading || 'Staff'" min-width="120" >
                     <template #default="scope">
-                      <span class="bpa-cp-ma-cell-val">{{ staffName(scope.row) }}</span>
-                      <span class="bpa-front-pill bpa-front-mb-v3-members-pill" v-if="scope.row.selected_extra_members && scope.row.selected_extra_members > 1">+{{ scope.row.selected_extra_members - 1 }}</span>
+                        <div class="bpa-multi-staff-users">
+                            <span class="bpa-cp-ma-cell-val"> {{ staffName(scope.row) }} </span>
+                            <bp-ui-popover v-if="String(scope.row.bookingpress_is_multistaff) === '1' && multiStaffCount(scope.row) > 0" placement="bottom-start" :title="strings.other || 'Other'" width="280" trigger="hover" popper-class="bpa-card-item-extra-popover bpa-card-item-multi-staff-popover">
+                                <div class="bpa-card-item-multi-staff-content">
+                                    {{ multiStaffExtraNames(scope.row) }}
+                                </div>
+                                <template #reference>
+                                    <span class="bpa-card__item-extra-tooltip">
+                                        <bp-ui-link class="bpa-iet__label">
+                                            +{{ multiStaffCount(scope.row) }}
+                                        </bp-ui-link>
+                                    </span>
+                                </template>
+                            </bp-ui-popover>
+                        </div>
                     </template>
-                  </bp-ui-table-column>
+                </bp-ui-table-column>         
+
                   <bp-ui-table-column v-if="currentScreenSize === 'desktop'" :label="strings.payment_main_heading || 'Payment'" min-width="100">
                     <template #default="scope">
                       <!-- Amount + indicator-icon strip (legacy Pro parity:
@@ -1307,7 +1366,7 @@ function createMyBookingsComponent(cfg) {
                            bookingpress_full_row_clickable guards on, so clicks in here
                            never toggle the expand row. -->
                       <div class="bpa-front-ma-table-actions-wrap bpa-ma--action-btn-wrapper" v-if="canCancel(scope.row) || hoverRowActions.length > 0">
-                        <div class="bpa-front-ma-taw__card">
+                        <div class="bpa-front-ma-taw__card" v-if="!scope.row.hide_action_wrapper">
                           <!-- Extension row actions (Pro / add-ons) render first to
                                preserve the legacy order (Reschedule, Book Again, Cancel). -->
                           <component v-for="act in hoverRowActions" :key="act.id" :is="act.component" :row="scope.row" :ctx="extensionCtx" placement="hover"></component>
@@ -1339,7 +1398,33 @@ function createMyBookingsComponent(cfg) {
                                    auto-shift into the viewport. placement bottom-end opens it
                                    inward from the edge. The hover title is kept via the button's
                                    native title attribute. -->
-                              <bp-ui-popconfirm v-if="(!isRefundable(scope.row) && canCancel(scope.row))" :title="strings.cancel_appointment_confirmation_message" :confirm-button-text="strings.cancel_appointment_yes_btn_text || 'Yes'" :cancel-button-text="strings.cancel_appointment_no_btn_text || 'No'" confirm-button-type="bpa-front-btn bpa-front-btn__small bpa-front-btn--danger" cancel-button-type="bpa-front-btn bpa-front-btn__small" popper-class="booking-cancel-confirm-wrapper" placement="bottom-end" :icon="false" @confirm="confirmCancel(scope.row)">
+                              <bp-ui-popconfirm v-if="(!isRefundable(scope.row) && canCancel(scope.row))"  width="260" :title="strings.cancel_appointment_confirmation_message" :confirm-button-text="strings.cancel_appointment_yes_btn_text || 'Yes'" :cancel-button-text="strings.cancel_appointment_no_btn_text || 'No'" confirm-button-type="bpa-front-btn bpa-front-btn__small bpa-front-btn--danger" cancel-button-type="bpa-front-btn bpa-front-btn__small" popper-class="booking-cancel-confirm-wrapper" placement="bottom-end" :icon="false" @confirm="confirmCancel(scope.row)">
+                              <template #content>
+                                  <div class="bp-popconfirm bp-ui-popconfirm__content">
+                                      <div class="bp-popconfirm__main bp-ui-popconfirm__main">
+                                          {{ strings.cancel_appointment_confirmation_message }}
+                                          <!-- ADD CANCELLATION REASON HERE -->
+                                          <div class="bpa-front-rcr__item bpa-front-rcrm-cancel-title bpa-front-rcrm__cancellation_note">
+                                              <label class="bpa-front-rcr__item-label bpa-cancel-reason">
+                                                  {{ strings.cancellation_reason_title || 'Cancellation Reason' }}
+                                              </label>
+                                              <bp-ui-input v-model="cancellation_reason" class="bpa-front-form-control bpa-front-rcrm__cancellation_note" type="textarea" :rows="3" :placeholder="strings.enter_cancellation_reason"></bp-ui-input>
+                                          </div>
+                                      </div>
+
+                                      <div class="bp-popconfirm__action bp-ui-popconfirm__action">
+
+                                          <bp-ui-button size="small" class="bp-ui-popconfirm__cancel bpa-front-btn bpa-front-btn__small" @click="document.body.click()" >
+                                              {{ strings.cancel_appointment_no_btn_text || 'No' }}
+                                          </bp-ui-button>
+
+                                          <bp-ui-button size="small" class="bp-ui-popconfirm__confirm bpa-front-btn bpa-front-btn__small bpa-front-btn--danger" @click="confirmCancel(scope.row)" >
+                                              {{ strings.cancel_appointment_yes_btn_text || 'Yes' }}
+                                          </bp-ui-button>
+                                      </div>
+                                  </div>
+                              </template>
+
                                 <template #reference>
                                   <bp-ui-button class="bpa-front-btn bpa-front-btn--icon-without-box bpa_focusable"
                                     :disabled="cancelingId !== null" :title="strings.cancel_appointment_title || 'Cancel Appointment'" :aria-label="strings.cancel_appointment_title || 'Cancel Appointment'">
@@ -1378,7 +1463,7 @@ function createMyBookingsComponent(cfg) {
                  buttons render exactly where the admin placed the shortcode.
                  Fallback (no content configured): translated heading +
                  description with an inline slot. -->
-            <div class="bpa-front-cp-body bpa-front-mb-v3-delete-account" :class="currentTab === 'delete_account' ? '__bpa-is-active' : ''" v-show="currentTab === 'delete_account'" v-if="showDeleteAccount">
+            <div class="bpa-front-cp-body bpa-front-mb-v3-delete-account" :class="currentTab === 'delete_account' ? '__bpa-is-active' : ''" v-show="currentTab === 'delete_account'" v-if="currentTab === 'delete_account'">
               <div class="bpa-front-mb-v3-da-content" v-if="deleteAccountHtml" v-html="deleteAccountHtml"></div>
               <template v-else>
                 <div class="bpa-front-dab__left">

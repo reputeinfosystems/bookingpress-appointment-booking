@@ -825,7 +825,10 @@ class Hooks {
 	 * wp.hooks filter so the submitted price hint matches the server.
 	 *
 	 * Filter signature: `(float $payable, array $context): float`
-	 * where `$context = ['service_id'=>int,'form_data'=>array]`.
+	 * where `$context` always contains `service_id` and `form_data`. During an
+	 * expanded order calculation it also contains `item_index`, `item_count`, and
+	 * `is_order`, allowing an order-level adjustment to run only once.
+	 * Cart's per-item persistence pass additionally sets `is_cart_snapshot`.
 	 */
 	const FILTER_PAYABLE_AMOUNT = 'bookingpress_form_v3_payable_amount';
 

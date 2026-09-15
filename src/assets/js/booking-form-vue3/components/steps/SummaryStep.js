@@ -38,23 +38,23 @@ import { dayServiceEndDate, isSelectedDayService, selectedServiceDurationValue }
 
 /** Filled check-circle painted on the selected payment-method card. */
 const ICON_CHECKMARK =
-  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">' +
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">' +
     '<path d="M0 0h24v24H0V0z" fill="none"/>' +
     '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zM9.29 16.29 5.7 12.7c-.39-.39-.39-1.02 0-1.41.39-.39 1.02-.39 1.41 0L10 14.17l6.88-6.88c.39-.39 1.02-.39 1.41 0 .39.39.39 1.02 0 1.41l-7.59 7.59c-.38.39-1.02.39-1.41 0z"/>' +
-  '</svg>';
+    '</svg>';
 
 /** Left-arrow on the "Go Back" footer button. */
 const ICON_ARROW_LEFT =
-  '<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" viewBox="0 0 24 24">' +
+    '<svg xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" viewBox="0 0 24 24">' +
     '<rect fill="none" height="24" width="24"/>' +
     '<path d="M9.71,18.29L9.71,18.29c0.39-0.39,0.39-1.02,0-1.41L5.83,13H21c0.55,0,1-0.45,1-1v0c0-0.55-0.45-1-1-1H5.83l3.88-3.88 c0.39-0.39,0.39-1.02,0-1.41l0,0c-0.39-0.39-1.02-0.39-1.41,0L2.71,11.3c-0.39,0.39-0.39,1.02,0,1.41l5.59,5.59 C8.68,18.68,9.32,18.68,9.71,18.29z"/>' +
-  '</svg>';
+    '</svg>';
 
 /** Info-circle painted into the validation toast banner. */
 const ICON_ERROR =
-  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">' +
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">' +
     '<path d="M12 7c.55 0 1 .45 1 1v4c0 .55-.45 1-1 1s-1-.45-1-1V8c0-.55.45-1 1-1zm-.01-5C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm1-3h-2v-2h2v2z"/>' +
-  '</svg>';
+    '</svg>';
 
 
 /**
@@ -65,7 +65,7 @@ const ICON_ERROR =
  * fills to its inner shapes.
  */
 const ICON_SUMMARY_HEAD_VECTOR =
-  '<svg width="137" height="99" viewBox="0 0 137 99" fill="none" xmlns="http://www.w3.org/2000/svg" class="bpa-head__vector">' +
+    '<svg width="137" height="99" viewBox="0 0 137 99" fill="none" xmlns="http://www.w3.org/2000/svg" class="bpa-head__vector">' +
     // --- Top calendar card --------------------------------------------------
     '<path d="M15.8625 62.0651H97.6116C98.7623 62.0661 99.8656 62.5237 100.679 63.3374C101.493 64.1511 101.951 65.2543 101.952 66.4051V79.6535C101.951 80.8042 101.493 81.9075 100.679 82.7212C99.8656 83.5349 98.7623 83.9924 97.6116 83.9935H15.8625C14.7117 83.9924 13.6085 83.5349 12.7948 82.7212C11.9811 81.9075 11.5235 80.8042 11.5225 79.6535V66.4051C11.5235 65.2543 11.9811 64.1511 12.7948 63.3374C13.6085 62.5237 14.7117 62.0661 15.8625 62.0651Z" fill="#E9EDF5"/>' +
     '<path d="M15.7854 30.7217H97.5345C98.6852 30.7227 99.7885 31.1803 100.602 31.994C101.416 32.8077 101.873 33.911 101.875 35.0617V48.3101C101.873 49.4608 101.416 50.5641 100.602 51.3778C99.7885 52.1915 98.6852 52.6491 97.5345 52.6501H15.7854C14.6346 52.6491 13.5313 52.1915 12.7177 51.3778C11.904 50.5641 11.4464 49.4608 11.4454 48.3101V35.0617C11.4464 33.911 11.904 32.8077 12.7177 31.994C13.5313 31.1803 14.6346 30.7227 15.7854 30.7217ZM11.9022 48.3101C11.9037 49.3395 12.3133 50.3264 13.0412 51.0543C13.7691 51.7822 14.7559 52.1918 15.7854 52.1933H97.5345C98.5639 52.1918 99.5508 51.7822 100.279 51.0543C101.007 50.3264 101.416 49.3395 101.418 48.3101V35.0617C101.416 34.0322 101.007 33.0454 100.279 32.3175C99.5508 31.5896 98.5639 31.18 97.5345 31.1785H15.7854C14.7559 31.18 13.7691 31.5896 13.0412 32.3175C12.3133 33.0454 11.9037 34.0322 11.9022 35.0617V48.3101Z" fill="#535D71"/>' +
@@ -98,588 +98,595 @@ const ICON_SUMMARY_HEAD_VECTOR =
     '<path class="bpa-head__vector-item" d="M27.5531 18.3085C27.4963 18.3086 27.4409 18.2902 27.3954 18.256L27.3926 18.2539L26.7984 17.7994C26.7709 17.7783 26.7478 17.752 26.7304 17.722C26.7131 17.6919 26.7018 17.6588 26.6973 17.6244C26.6927 17.5901 26.695 17.5551 26.704 17.5216C26.7129 17.4881 26.7284 17.4567 26.7495 17.4292C26.7706 17.4017 26.7969 17.3786 26.8269 17.3612C26.857 17.3439 26.8901 17.3326 26.9245 17.3281C26.9589 17.3235 26.9938 17.3258 27.0273 17.3348C27.0608 17.3437 27.0922 17.3592 27.1197 17.3803L27.5045 17.6754L28.414 16.489C28.4351 16.4615 28.4614 16.4384 28.4914 16.421C28.5214 16.4037 28.5545 16.3924 28.5889 16.3879C28.6232 16.3834 28.6582 16.3856 28.6916 16.3946C28.7251 16.4035 28.7565 16.419 28.784 16.4401L28.7841 16.4402L28.7784 16.448L28.7842 16.4402C28.8397 16.4828 28.876 16.5457 28.8852 16.6151C28.8943 16.6845 28.8756 16.7547 28.8331 16.8103L27.7634 18.2052C27.7386 18.2373 27.7068 18.2633 27.6704 18.2812C27.634 18.299 27.5939 18.3082 27.5534 18.3081L27.5531 18.3085Z" />' +
     '<path d="M25.5268 30.6751C25.1983 30.5362 24.8433 30.471 24.4869 30.4841C24.1305 30.4972 23.7812 30.5882 23.4638 30.7509C23.1464 30.9136 22.8685 31.1438 22.6497 31.4255C22.4309 31.7072 22.2765 32.0334 22.1974 32.3812L16.7021 33.3226L16.4597 36.8016L24.2014 35.3632C24.7945 35.4573 25.4015 35.3306 25.9074 35.0071C26.4133 34.6836 26.783 34.1857 26.9464 33.6079C27.1098 33.03 27.0555 32.4123 26.7938 31.8718C26.5322 31.3312 26.0814 30.9055 25.5268 30.6751L25.5268 30.6751Z" fill="#FFB8B8"/>' +
     '<path d="M16.0873 20.6895C16.8836 21.0473 17.5116 21.6978 17.8411 22.5061C18.1706 23.3144 18.1764 24.2186 17.8572 25.031L14.6718 33.139L18.6708 32.404C18.9205 32.3581 19.1784 32.4051 19.3959 32.5361C19.6134 32.667 19.7755 32.873 19.8517 33.1152L20.6489 35.6486C20.6905 35.781 20.7053 35.9203 20.6923 36.0585C20.6793 36.1966 20.6388 36.3308 20.5732 36.453C20.5076 36.5753 20.4182 36.6832 20.3103 36.7705C20.2024 36.8577 20.0781 36.9224 19.9448 36.9609L14.7471 38.4617C14.0896 38.6515 13.397 38.6864 12.7238 38.5635C12.0505 38.4407 11.4149 38.1635 10.8668 37.7536C10.3188 37.3438 9.87314 36.8125 9.56495 36.2015C9.25676 35.5905 9.09439 34.9163 9.09058 34.232C9.0888 33.9122 9.12167 33.5931 9.18861 33.2804L11.3726 23.0775C11.4787 22.582 11.6942 22.1166 12.0034 21.7152C12.3127 21.3138 12.7077 20.9867 13.1597 20.7577C13.6118 20.5288 14.1093 20.4038 14.6158 20.392C15.1224 20.3802 15.6251 20.4819 16.0873 20.6895Z" fill="#CFD6E6"/>' +
-  '</svg>';
+    '</svg>';
 
 export default {
-  name: 'SummaryStep',
-  setup() {
-    const state      = inject('state');
-    const nav        = inject('nav');
-    const submission = inject('submission');
-    const readiness  = inject('readiness');
+    name: 'SummaryStep',
+    setup() {
+        const state = inject('state');
+        const nav = inject('nav');
+        const submission = inject('submission');
+        const readiness = inject('readiness');
 
-    const selectedService = computed(() => {
-      const id = parseInt(state.appointment_step_form_data.selected_service || 0, 10);
-      return state.services.find(s => parseInt(s.serviceId, 10) === id) || null;
-    });
-
-    // Generic multi-select names — inert in Lite (`selected_services` empty → just
-    // the single service). When a multi-select add-on (Multi Service Booking)
-    // populates it, the Summary "Service" row lists every selected service name
-    // (legacy multi-service parity).
-    const summaryServiceNames = computed(() => {
-      const fd = state.appointment_step_form_data || {};
-      const ids = Array.isArray(fd.selected_services)
-        ? fd.selected_services.map((x) => parseInt(x, 10)).filter((n) => n > 0)
-        : [];
-      if (ids.length >= 2) {
-        const svcs = Array.isArray(state.services) ? state.services : [];
-        return ids.map((id) => {
-          const s = svcs.find((x) => parseInt(x.serviceId, 10) === id);
-          return s ? s.serviceName : ('#' + id);
+        const selectedService = computed(() => {
+            const id = parseInt(state.appointment_step_form_data.selected_service || 0, 10);
+            return state.services.find(s => parseInt(s.serviceId, 10) === id) || null;
         });
-      }
-      return selectedService.value ? [selectedService.value.serviceName] : [];
-    });
 
-    // `selected_date` is stored as the canonical "YYYY-MM-DD" used for backend
-    // queries; format it for display per the admin "Date format" setting
-    // (`state.config.dateFormat`). Released-form parity with the vue2
-    // `| bookingpress_format_date` filter. Empty when no date is picked yet so
-    // the template's `|| '—'` fallback still applies.
-    const selectedDateLabel = computed(() => {
-      // Overnight (Pro): when the picked slot's window runs into the next day,
-      // `selected_actual_date` holds the day the appointment really falls on
-      // (e.g. 16 Jun for a 01:00–02:00 slot picked under 15 Jun), so the Summary
-      // matches what the backend stores. Falls back to the calendar
-      // `selected_date` for plain slots (and for Lite, where it is never set).
-      const ymd = state.appointment_step_form_data.selected_actual_date
-        || state.appointment_step_form_data.selected_date;
-      return ymd ? formatDateUtil(state.config, ymd) : '';
-    });
-
-    const appointmentDateTimeLabel = computed(() => {
-      const fd = state.appointment_step_form_data || {};
-      if (isSelectedDayService(state)) {
-        const start = String(fd.selected_date || '');
-        if (!start) return '';
-        const duration = Math.max(1, selectedServiceDurationValue(state) || 1);
-        if (duration <= 1) return formatDateUtil(state.config, start);
-        const end = fd.selected_end_date || dayServiceEndDate(start, duration);
-        return end
-          ? `${formatDateUtil(state.config, start)} - ${formatDateUtil(state.config, end)}`
-          : formatDateUtil(state.config, start);
-      }
-      // `selected_start_time` / `selected_end_time` hold the raw 24-hour
-      // "HH:MM" the backend parses; re-apply the admin time format
-      // (`config.phpTimeFormat`) for display so the Summary matches the
-      // slot label the user picked (12h/24h/WP-inherit).
-      const startLabel = fd.selected_start_time ? formatTimeUtil(state, fd.selected_start_time) : '—';
-      const endLabel   = fd.selected_end_time   ? formatTimeUtil(state, fd.selected_end_time)   : '—';
-      return `${selectedDateLabel.value || '—'}, ${startLabel} - ${endLabel}`;
-    });
-
-    function formatPrice(p) {
-      return formatPriceUtil(state.config, p);
-    }
-
-    const total = computed(() => {
-      if (!selectedService.value) return 0;
-      // Generic recompute dependency: a Pro price filter (e.g. staff pricing)
-      // keys off the selected staff, which lives outside this computed's natural
-      // deps — read it so the total re-evaluates when it changes. Inert in Lite.
-      // eslint-disable-next-line no-unused-expressions
-      state.appointment_step_form_data.selected_staff_member_id;
-      const base = Number(selectedService.value.servicePrice) || 0;
-      return effectivePrice(state, base, selectedService.value.serviceId);
-    });
-
-    // The amount actually charged NOW (order total minus any prepaid tender /
-    // partial-payment feature: deposit, coupon-to-zero, redeemed gift card / package).
-    // Runs the generic `bookingpress_form_v3_payable_amount` seam. When this is 0
-    // there is nothing to pay, so the whole payment-gateway area is suppressed.
-    const payableNow = computed(() => {
-      if (!selectedService.value) return 0;
-      return payableAmount(state, total.value, selectedService.value.serviceId);
-    });
-
-    // The order cost BEFORE any discount — service (+ staff price override,
-    // Service Extras, Multiple Quantity) but WITHOUT coupon / package / points /
-    // offer-discount. Resolved via the dedicated `'subtotal'` price context: the
-    // discount-type effective_price consumers opt out of it, so this yields the
-    // single "Subtotal" row at the top of the amount block (#4). Lite alone
-    // returns the plain service price (no consumers), so subtotal === total.
-    const subtotal = computed(() => {
-      if (!selectedService.value) return 0;
-      // eslint-disable-next-line no-unused-expressions
-      state.appointment_step_form_data.selected_staff_member_id;
-      const base = Number(selectedService.value.servicePrice) || 0;
-      return effectivePrice(state, base, selectedService.value.serviceId, 'subtotal');
-    });
-
-    // Show the Subtotal row only when the amount block will carry a breakdown:
-    // either the running payable already differs from the pre-discount subtotal
-    // (a discount / tax / tip / deposit is in effect) OR an amount-modifier
-    // module is enabled (so its box/line renders even before a value applies —
-    // legacy shows the Subtotal whenever such a module is present). Otherwise the
-    // block shows the Total row alone (Lite: plain service price).
-    const summaryModuleEnabled = computed(() => {
-      const c = state.config || {};
-      return !!(
-        c.bookingpress_coupon_enabled || c.bookingpress_package_enabled
-        || c.bookingpress_deposit_enabled || c.bookingpress_tax_enabled
-        || c.bookingpress_tip_enabled || c.bookingpress_gift_card_enabled
-        || c.bookingpress_discount_enabled || c.bookingpress_mycred_enabled
-      );
-    });
-    const showSubtotal = computed(() =>
-      subtotal.value > 0
-      && (summaryModuleEnabled.value
-        || Math.round(subtotal.value * 100) !== Math.round(payableNow.value * 100))
-    );
-
-    const customerName = computed(() => {
-      const f = state.appointment_step_form_data;
-      const full = (f.customer_name || `${f.customer_firstname || ''} ${f.customer_lastname || ''}`).trim();
-      return full || '—';
-    });
-
-    const customerEmail = computed(() => state.appointment_step_form_data.customer_email || '—');
-    const customerPhone = computed(() => state.appointment_step_form_data.customer_phone || '');
-
-    const bus = inject('bus', null);
-    const selectedPaymentMethod = computed({
-      get() { return String(state.appointment_step_form_data.selected_payment_method || ''); },
-      set(v) {
-        state.appointment_step_form_data.selected_payment_method = String(v);
-        // Per plan §3.3.
-        bus && bus.emit('bp-v3:payment-method-selected', {
-          instanceId: state.instanceId,
-          method: String(v),
-        });
-      },
-    });
-
-    function next() { /* Summary has Book, not Next. */ }
-    function prev() { nav.goPrev(); }
-
-    const api = inject('api');
-
-    /** True when the selected gateway is PayPal — drives the alternate
-     *  button area and the PayPal-specific click flow. */
-    const isPayPalSelected = computed(
-      () => 'paypal' === String(selectedPaymentMethod.value)
-    );
-
-    /** Resolved payment-method object for the current selection. The
-     *  released PaymentService emits each method with a `mode` field
-     *  (`'popup'` | `'redirect'` for PayPal, `'on_site'` for on-site).
-     *  Lookup is by id against `state.config.payment_methods`. */
-    const selectedMethodObj = computed(() => {
-      const methods = (state.config && state.config.payment_methods) || [];
-      return methods.find(m => String(m.id) === String(selectedPaymentMethod.value)) || null;
-    });
-
-    /** True only when PayPal is selected AND the configured mode is
-     *  `popup`. Drives the empty `#paypal-button-container` (SDK render
-     *  target) and hides the normal Book button. PayPal-redirect mode
-     *  keeps the normal Book button (legacy parity — clicking it runs
-     *  the validate → redirect_url flow in `book()`). */
-    const isPayPalPopupSelected = computed(
-      () => isPayPalSelected.value
-        && selectedMethodObj.value
-        && 'popup' === String(selectedMethodObj.value.mode)
-        // Nothing to pay → no PayPal button; the normal Book button finalises the
-        // free booking inline.
-        && payableNow.value > 0
-    );
-
-    /**
-     * True while the PayPal JS SDK is initializing (popup mode only).
-     * Starts false in M3 (stub). M4 flips this to true on mount when
-     * popup mode is configured, then back to false once SDK is ready
-     * and has rendered into #paypal-button-container.
-     */
-    const paypalButtonLoading = ref(false);
-
-    /**
-     * Render the PayPal JS SDK buttons into `#paypal-button-container` —
-     * port of legacy `bookingpress_after_selecting_payment_method_data`
-     * (booking-form.js:1772-1850). Invoked only when PayPal popup mode
-     * is the active selection. The SDK script is enqueued server-side
-     * by `bookingpress_paypal_scripts_add` when popup mode is on, so
-     * `window.paypal` is expected to exist by the time this runs.
-     *
-     * Defensive: no-ops if the SDK is missing, the container has not
-     * mounted yet, or `paypal.Buttons` throws during init.
-     */
-    function renderPayPalButtons() {
-      if (typeof window === 'undefined' || !window.paypal || typeof window.paypal.Buttons !== 'function') {
-        return;
-      }
-      const container = document.getElementById('paypal-button-container');
-      if (!container) return;
-      // Wipe any previous render before re-mounting — re-entrant safe.
-      container.innerHTML = '';
-      try {
-        window.paypal.Buttons({
-          createOrder: async () => {
-            // Clear any prior error before a fresh attempt.
-            submission.submitError.value = '';
-            try {
-              // Mirror useSubmission.js — send the full appointment_step_form_data
-              // bucket plus the resolved service price hint so the server's
-              // anti-tamper price check matches the picked service.
-              const selectedId = parseInt(state.appointment_step_form_data.selected_service || 0, 10);
-              const svc        = state.services.find(s => parseInt(s.serviceId, 10) === selectedId);
-              const full       = svc ? effectivePrice(state, svc.servicePrice, svc.serviceId) : 0;
-              // Charge the amount payable now (deposit when active; full otherwise).
-              const price      = payableAmount(state, full, selectedId);
-              const payload = {
-                ...state.appointment_step_form_data,
-                service_price_without_currency: price,
-              };
-
-
-              let cancelled = false;
-              bus && bus.emit('bp-v3:before-submit', {
-                instanceId: state.instanceId,
-                payload,
-                cancel() { cancelled = true; },
-              });
-              if (cancelled) {
-                submission.submitError.value = 'Submission was cancelled by an add-on.';
-                return 0;
-              }
-
-              const resp = await api.paypalValidate(payload);
-              if (resp && resp.ok && resp.data && resp.data.order_id) {
-                if (resp.data.paypal_success_url) state.paypal_success_url = resp.data.paypal_success_url;
-                if (resp.data.paypal_cancel_url)  state.paypal_cancel_url  = resp.data.paypal_cancel_url;
-                if (resp.data.entry_id)           state.paypal_entry_id    = resp.data.entry_id;
-                return resp.data.order_id;
-              }
-              // Surface the structured server error verbatim — the user
-              // needs to see why the booking did NOT get staged.
-              const msg = (resp && resp.error && resp.error.message) || 'Failed to create PayPal order';
-              submission.submitError.value = msg;
-              return 0;
-            } catch (e) {
-              submission.submitError.value = (e && e.message) || 'Failed to create PayPal order';
-              return 0;
-            }
-          },
-          onCancel: function () {
-            // Legacy parity: PayPal popup cancel is a soft no-op — the
-            // stage-1 entry stays as pending_payment and the user can
-            // retry. We surface a hint so they're not confused.
-            submission.submitError.value = 'PayPal payment was cancelled. You can retry below.';
-          },
-          onApprove: (data, actions) => {
-            return actions.order.capture().then(async (orderData) => {
-              try {
-                // The server identifies the entry via PayPal's verified
-                // reference_id — only the capture body is required.
-                const resp = await api.paypalConfirm({
-                  bookingpress_payment_res: orderData,
+        // Generic multi-select names — inert in Lite (`selected_services` empty → just
+        // the single service). When a multi-select add-on (Multi Service Booking)
+        // populates it, the Summary "Service" row lists every selected service name
+        // (legacy multi-service parity).
+        const summaryServiceNames = computed(() => {
+            const fd = state.appointment_step_form_data || {};
+            const ids = Array.isArray(fd.selected_services)
+                ? fd.selected_services.map((x) => parseInt(x, 10)).filter((n) => n > 0)
+                : [];
+            if (ids.length >= 2) {
+                const svcs = Array.isArray(state.services) ? state.services : [];
+                return ids.map((id) => {
+                    const s = svcs.find((x) => parseInt(x.serviceId, 10) === id);
+                    return s ? s.serviceName : ('#' + id);
                 });
-                if (resp && resp.ok) {
-                  // finalize_booking() returns `redirect_data` (the v3
-                  // envelope key) alongside the legacy `redirect_url`
-                  // fallback. Prefer the server-issued URL — the entry
-                  // is now a real booking. Fall back to the validate
-                  // success_url only if finalize did not provide one.
-                  const url = (resp.data && (resp.data.redirect_data || resp.data.redirect_url)) || state.paypal_success_url || '';
-                  if (url) {
-                    submission.redirectUrl.value = url;
-                    submission.submitOk.value    = true;
-                    state.submitOk    = true;
-                    state.redirectUrl = url;
-                    window.location.href = url;
-                  } else {
-                    // Booking finalised but no redirect URL — surface a
-                    // non-error message so the user knows the payment
-                    // succeeded.
-                    submission.submitOk.value = true;
-                    state.submitOk = true;
-                  }
-                } else {
-                  // Server REFUSED to finalize — strict mode: no booking
-                  // is treated as successful. Show the server's message
-                  // so the user knows the payment did not finalize.
-                  submission.submitError.value =
-                    (resp && resp.error && resp.error.message)
-                    || 'Payment could not be confirmed. Please contact the site owner.';
-                }
-              } catch (e) {
-                submission.submitError.value = (e && e.message) || 'Payment failed';
-              }
-            });
-          },
-          style: { layout: 'vertical', color: 'gold', shape: 'pill', label: 'paypal', fundingicons: false },
-        }).render('#paypal-button-container');
-      } catch (e) {
-        // SDK threw during init — leave container empty; the user can
-        // re-select to retry. We do NOT silently fall back to a fake
-        // "Book" button (that was the v5 bug).
-        console.warn('[bp-v3 SummaryStep] paypal.Buttons render threw:', e);
-      }
-    }
-
-    /** Inject the PayPal Standard ("Legacy") auto-submit form returned by
-     *  `paypal-redirect-prepare` and hand the browser off to paypal.com.
-     *  The server markup includes a trailing <script> that self-submits, but
-     *  HTML assigned via innerHTML never executes its <script>, so we locate
-     *  the form and submit it explicitly. */
-    function submitPayPalRedirectForm(html) {
-      if (typeof document === 'undefined' || !html) return false;
-      const holder = document.createElement('div');
-      holder.style.display = 'none';
-      holder.innerHTML = String(html);
-      document.body.appendChild(holder);
-      const form = holder.querySelector('form')
-        || document.getElementById('bookingpress_paypal_form');
-      if (form && typeof form.submit === 'function') {
-        form.submit();
-        return true;
-      }
-      return false;
-    }
-
-    /** Clear any previously-rendered SDK content from the container.
-     *  Used when the user switches away from PayPal popup mode. */
-    function clearPayPalContainer() {
-      if (typeof document === 'undefined') return;
-      const c = document.getElementById('paypal-button-container');
-      if (c) c.innerHTML = '';
-    }
-
-    // Trigger SDK render after Vue has updated the DOM (the container
-    // is gated by `isPayPalPopupSelected` in the template, so it does
-    // not exist until the watcher fires).
-    watch(isPayPalPopupSelected, (val) => {
-      if (val) {
-        nextTick(() => { renderPayPalButtons(); });
-      } else {
-        clearPayPalContainer();
-      }
-    });
-    onMounted(() => {
-      if (isPayPalPopupSelected.value) {
-        nextTick(() => { renderPayPalButtons(); });
-      }
-    });
-
-    // Toast error surfaced when the user clicks "Book Appointment"
-    // without satisfying a readiness gate — released-form parity with
-    // the Service / Date-Time / Basic-Details steps. Auto-dismisses
-    // after 5s to match the other steps' UX.
-    const errorMsg = ref('');
-    let errorTimer = 0;
-
-    function setError(msg) {
-      errorMsg.value = String(msg || '');
-      if (errorTimer) clearTimeout(errorTimer);
-      errorTimer = 0;
-      if (errorMsg.value) {
-        errorTimer = setTimeout(() => { errorMsg.value = ''; errorTimer = 0; }, 5000);
-      }
-    }
-
-    function clearError() {
-      if (errorTimer) clearTimeout(errorTimer);
-      errorTimer = 0;
-      errorMsg.value = '';
-    }
-
-    /**
-     * Resolve the configured terms-and-conditions error message from
-     * `state.customer_details_rule`. The terms field's rule is built by
-     * `StateBuilder::build_field_rules()` with the field's
-     * `fieldErrorMessage` (or its label as fallback) — matching the
-     * released form. Returns '' when no terms field is required.
-     */
-    function termsErrorMessage() {
-      const termsField = (state.customer_form_fields || [])
-        .find(f => f.fieldName === 'terms_and_conditions');
-      if (!termsField || !termsField.fieldRequired) return '';
-      const rules = (state.customer_details_rule || {})[termsField.vModelValue] || [];
-      const required = rules.find(r => r.required);
-      return (required && required.message) || '';
-    }
-
-    async function book() {
-      if (submission.isSubmitting.value) return;
-
-      // Client-side validation — surface the configured admin message on
-      // the top-of-card toast instead of a silent no-op (legacy form
-      // parity). The server re-runs every gate; this is purely UX.
-      if (!readiness.gateService.value) {
-        setError(state.strings.no_service_selected_error);
-        return;
-      }
-      if (!readiness.gateDatetime.value) {
-        setError(
-          state.appointment_step_form_data.selected_date
-            ? state.strings.no_appointment_time_error
-            : state.strings.no_appointment_date_error
-        );
-        return;
-      }
-      if (!readiness.gateBasicDetails.value) {
-        // Defensive — Basic Details' own next() should prevent this, but
-        // surface a hint if the user navigated back and cleared a field.
-        setError(state.strings.basic_details_step_name
-          ? ('Please complete ' + state.strings.basic_details_step_name + '.')
-          : 'Please complete the required details.');
-        return;
-      }
-      if (!readiness.gatePayment.value) {
-        setError(state.strings.no_payment_method_picked);
-        return;
-      }
-      if (!readiness.gateTerms.value) {
-        setError(termsErrorMessage() || 'Please accept the terms and conditions.');
-        return;
-      }
-
-      clearError();
-
-      // PayPal REDIRECT ("Legacy") branch: the server stages the booking as
-      // `pending_payment`, then we ask it to build the PayPal Standard
-      // auto-submit form and hand the browser off to paypal.com. The booking
-      // is finalized asynchronously by the IPN listener once PayPal confirms
-      // the payment. (Popup mode never reaches book() — its SDK smart button
-      // in #paypal-button-container drives createOrder/onApprove instead.)
-      if (isPayPalSelected.value) {
-        const env = await submission.submit();
-        // submission.submit() returns the raw envelope for the
-        // pending_payment variant (and `false` / `true` for the others).
-        if (env && typeof env === 'object' && 'entry_id' in env) {
-          try {
-            const resp = await api.paypalRedirectPrepare({
-              entry_id: env.entry_id,
-            });
-            // Success: inject the returned auto-submit form and redirect.
-            if (resp && resp.ok && resp.data && resp.data.redirect_data) {
-              if (submitPayPalRedirectForm(resp.data.redirect_data)) {
-                submission.submitOk.value = true;
-                state.submitOk = true;
-                return;
-              }
-              submission.submitError.value =
-                'Could not open PayPal. Please try again or contact the site owner.';
-              return;
             }
-            // Non-OK — surface the server error in the page toast so the
-            // user knows the booking is not yet paid for.
-            const msg = (resp && resp.error && resp.error.message)
-              || 'PayPal payment is not available right now. Please contact the site owner.';
-            submission.submitError.value = msg;
-          } catch (e) {
-            submission.submitError.value =
-              (e && e.message) || 'PayPal request failed.';
-          }
-        } else if (env && typeof env === 'object') {
-          // pending_payment envelope arrived without entry_id — surface it
-          // so the user is not silently stuck with a non-advancing form.
-          submission.submitError.value = 'Booking could not be staged. Please try again.';
+            return selectedService.value ? [selectedService.value.serviceName] : [];
+        });
+
+        // `selected_date` is stored as the canonical "YYYY-MM-DD" used for backend
+        // queries; format it for display per the admin "Date format" setting
+        // (`state.config.dateFormat`). Released-form parity with the vue2
+        // `| bookingpress_format_date` filter. Empty when no date is picked yet so
+        // the template's `|| '—'` fallback still applies.
+        const selectedDateLabel = computed(() => {
+            // Overnight (Pro): when the picked slot's window runs into the next day,
+            // `selected_actual_date` holds the day the appointment really falls on
+            // (e.g. 16 Jun for a 01:00–02:00 slot picked under 15 Jun), so the Summary
+            // matches what the backend stores. Falls back to the calendar
+            // `selected_date` for plain slots (and for Lite, where it is never set).
+            const ymd = state.appointment_step_form_data.selected_actual_date
+                || state.appointment_step_form_data.selected_date;
+            return ymd ? formatDateUtil(state.config, ymd) : '';
+        });
+
+        const appointmentDateTimeLabel = computed(() => {
+            const fd = state.appointment_step_form_data || {};
+            if (isSelectedDayService(state)) {
+                const start = String(fd.selected_date || '');
+                if (!start) return '';
+                const duration = Math.max(1, selectedServiceDurationValue(state) || 1);
+                if (duration <= 1) return formatDateUtil(state.config, start);
+                const end = fd.selected_end_date || dayServiceEndDate(start, duration);
+                return end
+                    ? `${formatDateUtil(state.config, start)} - ${formatDateUtil(state.config, end)}`
+                    : formatDateUtil(state.config, start);
+            }
+            // `selected_start_time` / `selected_end_time` hold the raw 24-hour
+            // "HH:MM" the backend parses; re-apply the admin time format
+            // (`config.phpTimeFormat`) for display so the Summary matches the
+            // slot label the user picked (12h/24h/WP-inherit).
+            const startLabel = fd.selected_start_time ? formatTimeUtil(state, fd.selected_start_time) : '—';
+            const endLabel = fd.selected_end_time ? formatTimeUtil(state, fd.selected_end_time) : '—';
+            return `${selectedDateLabel.value || '—'}, ${startLabel} - ${endLabel}`;
+        });
+
+        function formatPrice(p) {
+            return formatPriceUtil(state.config, p);
         }
-        return;
-      }
 
-      // Default flow (on-site / zero-price): the server finalises inline.
-      await submission.submit();
-    }
+        const total = computed(() => {
+            if (!selectedService.value) return 0;
+            // Generic recompute dependency: a Pro price filter (e.g. staff pricing)
+            // keys off the selected staff, which lives outside this computed's natural
+            // deps — read it so the total re-evaluates when it changes. Inert in Lite.
+            // eslint-disable-next-line no-unused-expressions
+            state.appointment_step_form_data.selected_staff_member_id;
+            const base = Number(selectedService.value.servicePrice) || 0;
+            return effectivePrice(state, base, selectedService.value.serviceId);
+        });
 
-    // --- Tiny template helpers ------------------------------------------
+        // The amount actually charged NOW (order total minus any prepaid tender /
+        // partial-payment feature: deposit, coupon-to-zero, redeemed gift card / package).
+        // Runs the generic `bookingpress_form_v3_payable_amount` seam. When this is 0
+        // there is nothing to pay, so the whole payment-gateway area is suppressed.
+        const payableNow = computed(() => {
+            if (!selectedService.value) return 0;
+            return payableAmount(state, total.value, selectedService.value.serviceId);
+        });
 
-    /**
-     * Mirrors the released gate
-     *   `service_price_without_currency != '0' && is_only_onsite_enabled != '1'`
-     * via primitives we already have. Hides the payment-methods block when
-     * the service is free OR when only a single gateway is enabled
-     * (released parity: with one method there's nothing to choose, so the
-     * picker is suppressed and the only method is pre-selected silently
-     * by the auto-select effect below).
-     */
-    const showPaymentBlock = computed(() => {
-      const methods = (state.config && state.config.payment_methods) || [];
-      // Gate on the amount payable NOW, not the order total: a prepaid-tender
-      // feature (e.g. a redeemed Gift Card) can drop the payable to 0 while the
-      // total stays > 0 — there is then nothing to pay, so the gateways hide
-      // (mirrors the readiness gate's own payable-based zero bypass). Lite has no
-      // such feature (payable === total), so this is unchanged for Lite; deposit
-      // keeps payable > 0 (gateways still shown); coupon-zero / free services drop
-      // the total to 0 too, so they behave exactly as before.
-      return payableNow.value > 0 && methods.length > 1;
-    });
+        // The order cost BEFORE any discount — service (+ staff price override,
+        // Service Extras, Multiple Quantity) but WITHOUT coupon / package / points /
+        // offer-discount. Resolved via the dedicated `'subtotal'` price context: the
+        // discount-type effective_price consumers opt out of it, so this yields the
+        // single "Subtotal" row at the top of the amount block (#4). Lite alone
+        // returns the plain service price (no consumers), so subtotal === total.
+        const subtotal = computed(() => {
+            if (!selectedService.value) return 0;
+            // eslint-disable-next-line no-unused-expressions
+            state.appointment_step_form_data.selected_staff_member_id;
+            const base = Number(selectedService.value.servicePrice) || 0;
+            return effectivePrice(state, base, selectedService.value.serviceId, 'subtotal');
+        });
 
-    /**
-     * Auto-select the only enabled payment method (released parity:
-     * when only on-site OR only paypal is enabled the form sets
-     * `selected_payment_method` silently so the readiness gate passes
-     * and Book is clickable without the user ever seeing a picker).
-     *
-     * Runs once at setup time — payment_methods is delivered via the
-     * JSON island and does not change after mount.
-     */
-    {
-      const _methods = (state.config && state.config.payment_methods) || [];
-      if (
-        _methods.length === 1 &&
-        !state.appointment_step_form_data.selected_payment_method
-      ) {
-        state.appointment_step_form_data.selected_payment_method = String(_methods[0].id);
-      }
-    }
+        // Show the Subtotal row only when the amount block will carry a breakdown:
+        // either the running payable already differs from the pre-discount subtotal
+        // (a discount / tax / tip / deposit is in effect) OR an amount-modifier
+        // module is enabled (so its box/line renders even before a value applies —
+        // legacy shows the Subtotal whenever such a module is present). Otherwise the
+        // block shows the Total row alone (Lite: plain service price).
+        const summaryModuleEnabled = computed(() => {
+            const c = state.config || {};
+            return !!(
+                c.bookingpress_coupon_enabled || c.bookingpress_package_enabled
+                || c.bookingpress_deposit_enabled || c.bookingpress_tax_enabled
+                || c.bookingpress_tip_enabled || c.bookingpress_gift_card_enabled
+                || c.bookingpress_discount_enabled || c.bookingpress_mycred_enabled
+            );
+        });
+        const showSubtotal = computed(() =>
+            subtotal.value > 0
+            && (summaryModuleEnabled.value
+                || Math.round(subtotal.value * 100) !== Math.round(payableNow.value * 100))
+        );
 
-    // --- Keyboard navigation (APG radio-group pattern) ----------------------
-    //
-    // Payment methods behave as true radios: Tab enters the group on the
-    // selected (or first) method, arrow keys move focus AND selection
-    // (selection-follows-focus — picking a gateway is non-destructive),
-    // Enter/Space also select for consistency with the other steps.
-    const paymentMethods = computed(() => (state.config && state.config.payment_methods) || []);
-    const pmRov = useRovingTabindex({
-      count: () => paymentMethods.value.length,
-      selectedIndex: () =>
-        paymentMethods.value.findIndex((m) => String(m.id) === String(selectedPaymentMethod.value)),
-      onActivate: (i) => {
-        const m = paymentMethods.value[i];
-        if (m) selectedPaymentMethod.value = m.id;
-      },
-      onMove: (i) => {
-        const m = paymentMethods.value[i];
-        if (m) selectedPaymentMethod.value = m.id;
-      },
-    });
-    const pmHeadingId = 'bp-v3-pm-heading-' + state.instanceId;
+        const customerName = computed(() => {
+            const f = state.appointment_step_form_data;
+            const full = (f.customer_name || `${f.customer_firstname || ''} ${f.customer_lastname || ''}`).trim();
+            return full || '—';
+        });
 
-    return {
-      state,
-      selectedService,
-      summaryServiceNames,
-      selectedDateLabel,
-      appointmentDateTimeLabel,
-      total,
-      payableNow,
-      subtotal,
-      showSubtotal,
-      formatPrice,
-      customerName,
-      customerEmail,
-      customerPhone,
-      selectedPaymentMethod,
-      prev,
-      book,
-      submission,
-      readiness,
-      // Template-only helpers (kept minimal per the safe-patch policy).
-      pmRov,
-      pmHeadingId,
-      showPaymentBlock,
-      isPayPalSelected,
-      isPayPalPopupSelected,
-      paypalButtonLoading,
-      errorMsg,
-      ICON_CHECKMARK,
-      ICON_ARROW_LEFT,
-      ICON_ERROR,
-      ICON_SUMMARY_HEAD_VECTOR,
-    };
-  },
-  template: `
+        const customerEmail = computed(() => state.appointment_step_form_data.customer_email || '—');
+        const customerPhone = computed(() => state.appointment_step_form_data.customer_phone || '');
+
+        const isClubbedService = computed(() => {
+            const fd = state.appointment_step_form_data || {};
+            const v = fd.is_clubbed_service;
+            return !!(state.summaryMultiserviceActive || v === true || v === 'true' || v === 1 || v === '1');
+        });
+
+        const bus = inject('bus', null);
+        const selectedPaymentMethod = computed({
+            get() { return String(state.appointment_step_form_data.selected_payment_method || ''); },
+            set(v) {
+                state.appointment_step_form_data.selected_payment_method = String(v);
+                // Per plan §3.3.
+                bus && bus.emit('bp-v3:payment-method-selected', {
+                    instanceId: state.instanceId,
+                    method: String(v),
+                });
+            },
+        });
+
+        function next() { /* Summary has Book, not Next. */ }
+        function prev() { nav.goPrev(); }
+
+        const api = inject('api');
+
+        /** True when the selected gateway is PayPal — drives the alternate
+         *  button area and the PayPal-specific click flow. */
+        const isPayPalSelected = computed(
+            () => 'paypal' === String(selectedPaymentMethod.value)
+        );
+
+        /** Resolved payment-method object for the current selection. The
+         *  released PaymentService emits each method with a `mode` field
+         *  (`'popup'` | `'redirect'` for PayPal, `'on_site'` for on-site).
+         *  Lookup is by id against `state.config.payment_methods`. */
+        const selectedMethodObj = computed(() => {
+            const methods = (state.config && state.config.payment_methods) || [];
+            return methods.find(m => String(m.id) === String(selectedPaymentMethod.value)) || null;
+        });
+
+        /** True only when PayPal is selected AND the configured mode is
+         *  `popup`. Drives the empty `#paypal-button-container` (SDK render
+         *  target) and hides the normal Book button. PayPal-redirect mode
+         *  keeps the normal Book button (legacy parity — clicking it runs
+         *  the validate → redirect_url flow in `book()`). */
+        const isPayPalPopupSelected = computed(
+            () => isPayPalSelected.value
+                && selectedMethodObj.value
+                && 'popup' === String(selectedMethodObj.value.mode)
+                // Nothing to pay → no PayPal button; the normal Book button finalises the
+                // free booking inline.
+                && payableNow.value > 0
+        );
+
+        /**
+         * True while the PayPal JS SDK is initializing (popup mode only).
+         * Starts false in M3 (stub). M4 flips this to true on mount when
+         * popup mode is configured, then back to false once SDK is ready
+         * and has rendered into #paypal-button-container.
+         */
+        const paypalButtonLoading = ref(false);
+
+        /**
+         * Render the PayPal JS SDK buttons into `#paypal-button-container` —
+         * port of legacy `bookingpress_after_selecting_payment_method_data`
+         * (booking-form.js:1772-1850). Invoked only when PayPal popup mode
+         * is the active selection. The SDK script is enqueued server-side
+         * by `bookingpress_paypal_scripts_add` when popup mode is on, so
+         * `window.paypal` is expected to exist by the time this runs.
+         *
+         * Defensive: no-ops if the SDK is missing, the container has not
+         * mounted yet, or `paypal.Buttons` throws during init.
+         */
+        function renderPayPalButtons() {
+            if (typeof window === 'undefined' || !window.paypal || typeof window.paypal.Buttons !== 'function') {
+                return;
+            }
+            const container = document.getElementById('paypal-button-container');
+            if (!container) return;
+            // Wipe any previous render before re-mounting — re-entrant safe.
+            container.innerHTML = '';
+            try {
+                window.paypal.Buttons({
+                    createOrder: async () => {
+                        // Clear any prior error before a fresh attempt.
+                        submission.submitError.value = '';
+                        try {
+                            // Mirror useSubmission.js — send the full appointment_step_form_data
+                            // bucket plus the resolved service price hint so the server's
+                            // anti-tamper price check matches the picked service.
+                            const selectedId = parseInt(state.appointment_step_form_data.selected_service || 0, 10);
+                            const svc = state.services.find(s => parseInt(s.serviceId, 10) === selectedId);
+                            const full = svc ? effectivePrice(state, svc.servicePrice, svc.serviceId) : 0;
+                            // Charge the amount payable now (deposit when active; full otherwise).
+                            const price = payableAmount(state, full, selectedId);
+                            const payload = {
+                                ...state.appointment_step_form_data,
+                                service_price_without_currency: price,
+                            };
+
+
+                            let cancelled = false;
+                            bus && bus.emit('bp-v3:before-submit', {
+                                instanceId: state.instanceId,
+                                payload,
+                                cancel() { cancelled = true; },
+                            });
+                            if (cancelled) {
+                                submission.submitError.value = 'Submission was cancelled by an add-on.';
+                                return 0;
+                            }
+
+                            const resp = await api.paypalValidate(payload);
+                            if (resp && resp.ok && resp.data && resp.data.order_id) {
+                                if (resp.data.paypal_success_url) state.paypal_success_url = resp.data.paypal_success_url;
+                                if (resp.data.paypal_cancel_url) state.paypal_cancel_url = resp.data.paypal_cancel_url;
+                                if (resp.data.entry_id) state.paypal_entry_id = resp.data.entry_id;
+                                return resp.data.order_id;
+                            }
+                            // Surface the structured server error verbatim — the user
+                            // needs to see why the booking did NOT get staged.
+                            const msg = (resp && resp.error && resp.error.message) || 'Failed to create PayPal order';
+                            submission.submitError.value = msg;
+                            return 0;
+                        } catch (e) {
+                            submission.submitError.value = (e && e.message) || 'Failed to create PayPal order';
+                            return 0;
+                        }
+                    },
+                    onCancel: function () {
+                        // Legacy parity: PayPal popup cancel is a soft no-op — the
+                        // stage-1 entry stays as pending_payment and the user can
+                        // retry. We surface a hint so they're not confused.
+                        submission.submitError.value = 'PayPal payment was cancelled. You can retry below.';
+                    },
+                    onApprove: (data, actions) => {
+                        return actions.order.capture().then(async (orderData) => {
+                            try {
+                                // The server identifies the entry via PayPal's verified
+                                // reference_id — only the capture body is required.
+                                const resp = await api.paypalConfirm({
+                                    bookingpress_payment_res: orderData,
+                                });
+                                if (resp && resp.ok) {
+                                    // finalize_booking() returns `redirect_data` (the v3
+                                    // envelope key) alongside the legacy `redirect_url`
+                                    // fallback. Prefer the server-issued URL — the entry
+                                    // is now a real booking. Fall back to the validate
+                                    // success_url only if finalize did not provide one.
+                                    const url = (resp.data && (resp.data.redirect_data || resp.data.redirect_url)) || state.paypal_success_url || '';
+                                    if (url) {
+                                        submission.redirectUrl.value = url;
+                                        submission.submitOk.value = true;
+                                        state.submitOk = true;
+                                        state.redirectUrl = url;
+                                        window.location.href = url;
+                                    } else {
+                                        // Booking finalised but no redirect URL — surface a
+                                        // non-error message so the user knows the payment
+                                        // succeeded.
+                                        submission.submitOk.value = true;
+                                        state.submitOk = true;
+                                    }
+                                } else {
+                                    // Server REFUSED to finalize — strict mode: no booking
+                                    // is treated as successful. Show the server's message
+                                    // so the user knows the payment did not finalize.
+                                    submission.submitError.value =
+                                        (resp && resp.error && resp.error.message)
+                                        || 'Payment could not be confirmed. Please contact the site owner.';
+                                }
+                            } catch (e) {
+                                submission.submitError.value = (e && e.message) || 'Payment failed';
+                            }
+                        });
+                    },
+                    style: { layout: 'vertical', color: 'gold', shape: 'pill', label: 'paypal', fundingicons: false },
+                }).render('#paypal-button-container');
+            } catch (e) {
+                // SDK threw during init — leave container empty; the user can
+                // re-select to retry. We do NOT silently fall back to a fake
+                // "Book" button (that was the v5 bug).
+                console.warn('[bp-v3 SummaryStep] paypal.Buttons render threw:', e);
+            }
+        }
+
+        /** Inject the PayPal Standard ("Legacy") auto-submit form returned by
+         *  `paypal-redirect-prepare` and hand the browser off to paypal.com.
+         *  The server markup includes a trailing <script> that self-submits, but
+         *  HTML assigned via innerHTML never executes its <script>, so we locate
+         *  the form and submit it explicitly. */
+        function submitPayPalRedirectForm(html) {
+            if (typeof document === 'undefined' || !html) return false;
+            const holder = document.createElement('div');
+            holder.style.display = 'none';
+            holder.innerHTML = String(html);
+            document.body.appendChild(holder);
+            const form = holder.querySelector('form')
+                || document.getElementById('bookingpress_paypal_form');
+            if (form && typeof form.submit === 'function') {
+                form.submit();
+                return true;
+            }
+            return false;
+        }
+
+        /** Clear any previously-rendered SDK content from the container.
+         *  Used when the user switches away from PayPal popup mode. */
+        function clearPayPalContainer() {
+            if (typeof document === 'undefined') return;
+            const c = document.getElementById('paypal-button-container');
+            if (c) c.innerHTML = '';
+        }
+
+        // Trigger SDK render after Vue has updated the DOM (the container
+        // is gated by `isPayPalPopupSelected` in the template, so it does
+        // not exist until the watcher fires).
+        watch(isPayPalPopupSelected, (val) => {
+            if (val) {
+                nextTick(() => { renderPayPalButtons(); });
+            } else {
+                clearPayPalContainer();
+            }
+        });
+        onMounted(() => {
+            if (isPayPalPopupSelected.value) {
+                nextTick(() => { renderPayPalButtons(); });
+            }
+        });
+
+        // Toast error surfaced when the user clicks "Book Appointment"
+        // without satisfying a readiness gate — released-form parity with
+        // the Service / Date-Time / Basic-Details steps. Auto-dismisses
+        // after 5s to match the other steps' UX.
+        const errorMsg = ref('');
+        let errorTimer = 0;
+
+        function setError(msg) {
+            errorMsg.value = String(msg || '');
+            if (errorTimer) clearTimeout(errorTimer);
+            errorTimer = 0;
+            if (errorMsg.value) {
+                errorTimer = setTimeout(() => { errorMsg.value = ''; errorTimer = 0; }, 5000);
+            }
+        }
+
+        function clearError() {
+            if (errorTimer) clearTimeout(errorTimer);
+            errorTimer = 0;
+            errorMsg.value = '';
+        }
+
+        /**
+         * Resolve the configured terms-and-conditions error message from
+         * `state.customer_details_rule`. The terms field's rule is built by
+         * `StateBuilder::build_field_rules()` with the field's
+         * `fieldErrorMessage` (or its label as fallback) — matching the
+         * released form. Returns '' when no terms field is required.
+         */
+        function termsErrorMessage() {
+            const termsField = (state.customer_form_fields || [])
+                .find(f => f.fieldName === 'terms_and_conditions');
+            if (!termsField || !termsField.fieldRequired) return '';
+            const rules = (state.customer_details_rule || {})[termsField.vModelValue] || [];
+            const required = rules.find(r => r.required);
+            return (required && required.message) || '';
+        }
+
+        async function book() {
+            if (submission.isSubmitting.value) return;
+
+            // Client-side validation — surface the configured admin message on
+            // the top-of-card toast instead of a silent no-op (legacy form
+            // parity). The server re-runs every gate; this is purely UX.
+            if (!readiness.gateService.value) {
+                setError(state.strings.no_service_selected_error);
+                return;
+            }
+            if (!readiness.gateDatetime.value) {
+                setError(
+                    state.appointment_step_form_data.selected_date
+                        ? state.strings.no_appointment_time_error
+                        : state.strings.no_appointment_date_error
+                );
+                return;
+            }
+            if (!readiness.gateBasicDetails.value) {
+                // Defensive — Basic Details' own next() should prevent this, but
+                // surface a hint if the user navigated back and cleared a field.
+                setError(state.strings.basic_details_step_name
+                    ? ('Please complete ' + state.strings.basic_details_step_name + '.')
+                    : 'Please complete the required details.');
+                return;
+            }
+            if (!readiness.gatePayment.value) {
+                setError(state.strings.no_payment_method_picked);
+                return;
+            }
+            if (!readiness.gateTerms.value) {
+                setError(termsErrorMessage() || 'Please accept the terms and conditions.');
+                return;
+            }
+
+            clearError();
+
+            // PayPal REDIRECT ("Legacy") branch: the server stages the booking as
+            // `pending_payment`, then we ask it to build the PayPal Standard
+            // auto-submit form and hand the browser off to paypal.com. The booking
+            // is finalized asynchronously by the IPN listener once PayPal confirms
+            // the payment. (Popup mode never reaches book() — its SDK smart button
+            // in #paypal-button-container drives createOrder/onApprove instead.)
+            if (isPayPalSelected.value) {
+                const env = await submission.submit();
+                // submission.submit() returns the raw envelope for the
+                // pending_payment variant (and `false` / `true` for the others).
+                if (env && typeof env === 'object' && 'entry_id' in env) {
+                    try {
+                        const resp = await api.paypalRedirectPrepare({
+                            entry_id: env.entry_id,
+                        });
+                        // Success: inject the returned auto-submit form and redirect.
+                        if (resp && resp.ok && resp.data && resp.data.redirect_data) {
+                            if (submitPayPalRedirectForm(resp.data.redirect_data)) {
+                                submission.submitOk.value = true;
+                                state.submitOk = true;
+                                return;
+                            }
+                            submission.submitError.value =
+                                'Could not open PayPal. Please try again or contact the site owner.';
+                            return;
+                        }
+                        // Non-OK — surface the server error in the page toast so the
+                        // user knows the booking is not yet paid for.
+                        const msg = (resp && resp.error && resp.error.message)
+                            || 'PayPal payment is not available right now. Please contact the site owner.';
+                        submission.submitError.value = msg;
+                    } catch (e) {
+                        submission.submitError.value =
+                            (e && e.message) || 'PayPal request failed.';
+                    }
+                } else if (env && typeof env === 'object') {
+                    // pending_payment envelope arrived without entry_id — surface it
+                    // so the user is not silently stuck with a non-advancing form.
+                    submission.submitError.value = 'Booking could not be staged. Please try again.';
+                }
+                return;
+            }
+
+            // Default flow (on-site / zero-price): the server finalises inline.
+            await submission.submit();
+        }
+
+        // --- Tiny template helpers ------------------------------------------
+
+        /**
+         * Mirrors the released gate
+         *   `service_price_without_currency != '0' && is_only_onsite_enabled != '1'`
+         * via primitives we already have. Hides the payment-methods block when
+         * the service is free OR when only a single gateway is enabled
+         * (released parity: with one method there's nothing to choose, so the
+         * picker is suppressed and the only method is pre-selected silently
+         * by the auto-select effect below).
+         */
+        const showPaymentBlock = computed(() => {
+            const methods = (state.config && state.config.payment_methods) || [];
+            // Gate on the amount payable NOW, not the order total: a prepaid-tender
+            // feature (e.g. a redeemed Gift Card) can drop the payable to 0 while the
+            // total stays > 0 — there is then nothing to pay, so the gateways hide
+            // (mirrors the readiness gate's own payable-based zero bypass). Lite has no
+            // such feature (payable === total), so this is unchanged for Lite; deposit
+            // keeps payable > 0 (gateways still shown); coupon-zero / free services drop
+            // the total to 0 too, so they behave exactly as before.
+            return payableNow.value > 0 && methods.length > 1;
+        });
+
+        /**
+         * Auto-select the only enabled payment method (released parity:
+         * when only on-site OR only paypal is enabled the form sets
+         * `selected_payment_method` silently so the readiness gate passes
+         * and Book is clickable without the user ever seeing a picker).
+         *
+         * Runs once at setup time — payment_methods is delivered via the
+         * JSON island and does not change after mount.
+         */
+        {
+            const _methods = (state.config && state.config.payment_methods) || [];
+            if (
+                _methods.length === 1 &&
+                !state.appointment_step_form_data.selected_payment_method
+            ) {
+                state.appointment_step_form_data.selected_payment_method = String(_methods[0].id);
+            }
+        }
+
+        // --- Keyboard navigation (APG radio-group pattern) ----------------------
+        //
+        // Payment methods behave as true radios: Tab enters the group on the
+        // selected (or first) method, arrow keys move focus AND selection
+        // (selection-follows-focus — picking a gateway is non-destructive),
+        // Enter/Space also select for consistency with the other steps.
+        const paymentMethods = computed(() => (state.config && state.config.payment_methods) || []);
+        const pmRov = useRovingTabindex({
+            count: () => paymentMethods.value.length,
+            selectedIndex: () =>
+                paymentMethods.value.findIndex((m) => String(m.id) === String(selectedPaymentMethod.value)),
+            onActivate: (i) => {
+                const m = paymentMethods.value[i];
+                if (m) selectedPaymentMethod.value = m.id;
+            },
+            onMove: (i) => {
+                const m = paymentMethods.value[i];
+                if (m) selectedPaymentMethod.value = m.id;
+            },
+        });
+        const pmHeadingId = 'bp-v3-pm-heading-' + state.instanceId;
+
+        return {
+            state,
+            selectedService,
+            summaryServiceNames,
+            selectedDateLabel,
+            appointmentDateTimeLabel,
+            total,
+            payableNow,
+            subtotal,
+            showSubtotal,
+            formatPrice,
+            customerName,
+            customerEmail,
+            customerPhone,
+            isClubbedService,
+            selectedPaymentMethod,
+            prev,
+            book,
+            submission,
+            readiness,
+            // Template-only helpers (kept minimal per the safe-patch policy).
+            pmRov,
+            pmHeadingId,
+            showPaymentBlock,
+            isPayPalSelected,
+            isPayPalPopupSelected,
+            paypalButtonLoading,
+            errorMsg,
+            ICON_CHECKMARK,
+            ICON_ARROW_LEFT,
+            ICON_ERROR,
+            ICON_SUMMARY_HEAD_VECTOR,
+        };
+    },
+    template: `
     <div class="bpa-front-default-card">
       <!-- Top-of-card error toast — surfaces client-side validation
            (e.g. "Please select a payment method to proceed with the
@@ -708,7 +715,7 @@ export default {
 
           <!-- Customer block — released uses a 3-way v-if/v-else-if/v-else fallback
                (customer_name → firstname+lastname → email). Reproduced verbatim. -->
-          <div class="bpa-front-module--bs-summary-content bpa-front-module--bs-customer-detail">
+          <div v-if="!isClubbedService" class="bpa-front-module--bs-summary-content bpa-front-module--bs-customer-detail">
             <div class="bpa-front-module--bs-summary-content-item">
               <span role="heading" aria-level="3">{{ state.strings.customer_text }}</span>
               <div
@@ -736,7 +743,7 @@ export default {
           <!-- Desktop variant — service + date/time as a two-item row. Hidden
                when a multi-appointment cart is active (the cart add-on injects its
                own per-item list into the summary slots). Inert in Lite. -->
-          <div v-if="!state.summaryCartActive && !state.summaryRecurringActive" class="bpa-front-module--bs-summary-content bpa-front-summary-content__lg">
+          <div v-if="!state.summaryCartActive && !state.summaryRecurringActive && !isClubbedService" class="bpa-front-module--bs-summary-content bpa-front-summary-content__lg">
             <div class="bpa-front-module--bs-summary-content-item">
               <span role="heading" aria-level="3">{{ state.strings.service_text }}</span>
               <div class="bpa-front-bs-sm__item-val">
@@ -757,7 +764,7 @@ export default {
           <!-- Mobile variant — same data stacked under a single label.
                Visibility is controlled by the released stylesheet's
                .bpa-front-summary-content__sm / __lg media queries. -->
-          <div v-if="!state.summaryCartActive && !state.summaryRecurringActive" class="bpa-front-module--bs-summary-content bpa-front-summary-content__sm">
+          <div v-if="!state.summaryCartActive && !state.summaryRecurringActive && !isClubbedService" class="bpa-front-module--bs-summary-content bpa-front-summary-content__sm">
             <div class="bpa-front-module--bs-summary-content-item">
               <span role="heading" aria-level="3">{{ state.strings.appointment_details_title }}</span>
               <div class="bpa-front-bs-sm__item-vals">
@@ -829,7 +836,7 @@ export default {
           <div v-if="(subtotal > 0 || payableNow > 0) && !state.summaryDepositActive && !state.summaryCartActive && !state.summaryRecurringActive && !state.summaryOnlineDiscountActive" class="bpa-front-module--bs-amount-details">
             <div class="bpa-fm--bs-amount-item bpa-is-total-row">
               <div class="bpa-bs-ai__item">
-                <span :aria-label="state.strings.total_amount_label">{{ state.strings.total_amount_label }}</span> <span v-if="state.summaryTotalTaxLabel" class="bpa-fm-tr__tax-included-label" :aria-label="state.summaryTotalTaxLabel">{{ state.summaryTotalTaxLabel }}</span>
+                <span :aria-label="state.strings.total_amount_label" class="bpa-front-total-payment-amount-label">{{ state.strings.total_amount_label }}</span> <span v-if="state.summaryTotalTaxLabel" class="bpa-fm-tr__tax-included-label" :aria-label="state.summaryTotalTaxLabel">{{ state.summaryTotalTaxLabel }}</span>
               </div>
               <div class="bpa-front-module--bs-ad--price">{{ formatPrice(payableNow) }}</div>
             </div>

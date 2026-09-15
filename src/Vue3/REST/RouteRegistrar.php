@@ -144,4 +144,48 @@ class RouteRegistrar {
 			)
 		);
 	}
+
+	public static function add_locale_to_rest_request( $response, $server, $request ) {
+		
+		$route = $request->get_route();
+
+		if ( 0 !== strpos( $route, '/bookingpress-app/v1/' ) ) {
+			return $response;
+		}
+
+		$requested_locale = sanitize_locale_name(
+			(string) $request->get_param( 'locale' )
+		);
+
+		if ( empty( $requested_locale ) ) {
+			return $response;
+		}
+
+		$available_locales = array_unique(
+			array_merge(
+				array( get_locale() ),
+				get_available_languages()
+			)
+		);
+
+		if ( in_array( $requested_locale, $available_locales, true ) ) {
+			switch_to_locale( $requested_locale );
+		}
+
+		return $response;
+
+	}
+
+	public static function revert_locale_after_rest_request( $response, $handler, \WP_REST_Request $request ) {
+		$route = $request->get_route();
+
+		if (
+			0 === strpos( $route, '/bookingpress-app/v1/' ) &&
+			is_locale_switched()
+		) {
+			restore_previous_locale();
+		}
+
+		return $response;
+	}
 }

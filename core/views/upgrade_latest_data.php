@@ -1367,9 +1367,6 @@ if( version_compare($bookingpress_old_version, '1.0.62' , '<')){
     $bookingpress_custom_data_arr['booking_form'] = $booking_form;
     $bookingpress_custom_data_arr['my_booking_form'] = $my_booking_form;
     $BookingPress->bookingpress_generate_customize_css_func($bookingpress_custom_data_arr);
-
-    
-
 }
 
 
@@ -1838,7 +1835,7 @@ if (version_compare($bookingpress_old_version, '1.5.7', '<') ) {
 }
 
 $BookingPress->bookingpress_cleanup_transient_data_hook_callback();
-$bookingpress_new_version = '1.6.2';
+$bookingpress_new_version = '1.6.3';
 update_option('bookingpress_new_version_installed', 1);
 update_option('bookingpress_version', $bookingpress_new_version);
 update_option('bookingpress_updated_date_' . $bookingpress_new_version, current_time('mysql'));

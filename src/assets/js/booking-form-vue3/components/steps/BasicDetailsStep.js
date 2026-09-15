@@ -476,6 +476,9 @@ export default {
                         />
                       </div>
                     </div>
+                    <bp-ui-checkbox v-if="state && state.is_display_whatsapp_consent_field === true && state.whatsapp_notification_selected_field && state.whatsapp_notification_selected_field === field.vModelValue" class="bpa-front-form-control--checkbox" :model-value="!!state.appointment_step_form_data.form_fields.send_whatsapp_notification" @update:modelValue="value => state.appointment_step_form_data.form_fields.send_whatsapp_notification = value">
+                      {{ state.send_whatsapp_notification_label }}
+                    </bp-ui-checkbox>
                   </template>
 
                   <p v-if="errorFor(field)" class="bp-form-item__error bpa-front-form-error" :id="errorId(field)" role="alert">{{ errorFor(field) }}</p>

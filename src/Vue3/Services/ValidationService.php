@@ -69,6 +69,14 @@ class ValidationService implements ValidationServiceInterface {
 					return true; // Captcha disabled → gate passes trivially.
 				}
 				$token  = isset( $state['form_data']['captcha_token'] ) ? (string) $state['form_data']['captcha_token'] : '';
+				if ( '' === $token && isset( $state['form_data'] ) && is_array( $state['form_data'] ) ) {
+					foreach ( $state['form_data'] as $k => $v ) {
+						if ( str_starts_with( $k, 'bookingpress_captcha_' ) && ! empty( $v ) ) {
+							$token = (string) $v;
+							break;
+						}
+					}
+				}
 				$answer = isset( $state['form_data']['captcha_answer'] ) ? (string) $state['form_data']['captcha_answer'] : '';
 				return $this->captcha->verify( $token, $answer );
 

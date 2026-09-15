@@ -334,6 +334,33 @@ class MyBookings {
 		if ( ! wp_style_is( self::STYLE_HANDLE, 'enqueued' ) ) {
 			wp_enqueue_style( self::STYLE_HANDLE );
 		}
+
+		// Dynamically apply My Booking customize background colors to bp-table cells.
+		if ( null !== $helper && method_exists( $helper, 'bookingpress_get_customize_settings' ) ) {
+			$mb_primary = $helper->bookingpress_get_customize_settings( 'primary_color', 'booking_my_booking' );
+			$mb_bg      = $helper->bookingpress_get_customize_settings( 'background_color', 'booking_my_booking' );
+			$mb_row     = $helper->bookingpress_get_customize_settings( 'row_background_color', 'booking_my_booking' );
+
+			$inline_css = '';
+			// Override --bpa-pt-main-green so the mask-based boot loader
+			if ( ! empty( $mb_primary ) ) {
+				$inline_css .= '.bpa-frontend-my-bookings-vue3{';
+				$inline_css .= '--bpa-pt-main-green:' . esc_attr( $mb_primary ) . ';';
+				$inline_css .= '--bpa-pt-main-green-darker:' . esc_attr( $mb_primary ) . ';';
+				$inline_css .= '}';
+			}
+
+			if ( ! empty( $mb_bg ) ) {
+				$inline_css .= '.bpa-frontend-my-bookings-vue3 .bpa-cp-ma-table.bp-table td.bp-table__cell,';
+				$inline_css .= '.bpa-frontend-my-bookings-vue3 .bpa-cp-ma-table.bp-table .bp-table__header-wrapper tr th.bp-table__cell';
+				$inline_css .= '{background-color:' . esc_attr( $mb_bg ) . ' !important;}';
+				if ( ! empty( $mb_row ) ) {
+					$inline_css .= '.bpa-frontend-my-bookings-vue3 .bpa-cp-ma-table.bp-table--striped .bp-table__body tr.bp-table__row--striped td.bp-table__cell';
+					$inline_css .= '{background-color:' . esc_attr( $mb_row ) . ' !important;}';
+				}
+				wp_add_inline_style( self::STYLE_HANDLE, $inline_css );
+			}
+		}
 	}
 
 	/**
@@ -599,10 +626,11 @@ class MyBookings {
 			'manual_booked_by_admin'  => esc_html__( 'Manual ( Booked By Admin )', 'bookingpress-appointment-booking' ),
 			'duration'                => esc_html__( 'Duration', 'bookingpress-appointment-booking' ),
 			'staff'                   => esc_html__( 'Staff', 'bookingpress-appointment-booking' ),
-			'members'                 => esc_html__( 'Members', 'bookingpress-appointment-booking' ),
+			'members'                 => esc_html__( 'No. of Person', 'bookingpress-appointment-booking' ),
 			'extras'                  => esc_html__( 'Service Extras', 'bookingpress-appointment-booking' ),
 			'deposit'                 => esc_html__( 'Deposit', 'bookingpress-appointment-booking' ),
-			'discount'                => esc_html__( 'Discount', 'bookingpress-appointment-booking' ),
+			'give_a_tip'                 => esc_html__( 'Give a tip', 'bookingpress-appointment-booking' ),
+			'discount'                => esc_html__( 'Coupon', 'bookingpress-appointment-booking' ),
 			'tax'                     => esc_html__( 'Tax', 'bookingpress-appointment-booking' ),
 			'payment_details_title'   => esc_html__( 'Payment Details', 'bookingpress-appointment-booking' ),
 			'payment_method_title'    => esc_html__( 'Payment Method', 'bookingpress-appointment-booking' ),
@@ -613,6 +641,8 @@ class MyBookings {
 			'cancel_appointment_confirmation_message' => esc_html__( 'Are you sure you want to cancel this appointment?', 'bookingpress-appointment-booking' ),
 			'cancel_appointment_yes_btn_text'         => esc_html__( 'Yes', 'bookingpress-appointment-booking' ),
 			'cancel_appointment_no_btn_text'          => esc_html__( 'No', 'bookingpress-appointment-booking' ),
+			'cancellation_reason_title'          => esc_html__( 'Cancellation Reason', 'bookingpress-appointment-booking' ),
+			'enter_cancellation_reason'          => esc_html__( 'Enter cancellation reason', 'bookingpress-appointment-booking' ),
 			'book_again_button_title'                 => esc_html__( 'Book Again', 'bookingpress-appointment-booking' ),
 			// Delete Account tab (customizable where noted; overridden below).
 			'my_appointment_menu_title'               => esc_html__( 'My Appointments', 'bookingpress-appointment-booking' ),

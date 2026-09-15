@@ -238,18 +238,19 @@ class SettingsRoutes extends Base {
                 array( 'status' => 400 )
             );
         }
-        return new \WP_REST_Response(
-            array(
-                'success' => true,
-                'data'    => $response['data'],
-                'variant' => $response['variant'],
-                'title'   => $response['title'],
-                'msg'     => $response['msg'],
-                'default_break_times' => $response['default_break_times'],
-                'selected_workhours' => $response['selected_workhours'],
-            ),
-            200
+        $response_data = array(
+            'success' => true,
+            'data'    => $response['data'],
+            'variant' => $response['variant'],
+            'title'   => $response['title'],
+            'msg'     => $response['msg'],
+            'default_break_times' => $response['default_break_times'],
+            'selected_workhours' => $response['selected_workhours'],
         );
+        if ( isset( $response['working_times'] ) ) {
+            $response_data['working_times'] = $response['working_times'];
+        }
+        return new \WP_REST_Response( $response_data, 200 );
     }
 
     function bpa_load_daysoff_details($request){

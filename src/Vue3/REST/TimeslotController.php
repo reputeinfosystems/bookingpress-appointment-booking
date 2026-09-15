@@ -31,7 +31,7 @@ class TimeslotController {
 		if ( $check instanceof \WP_Error ) {
 			return Response::from_wp_error( $check );
 		}
-
+		
 		$request_body = array(
 			'service_id'        => (int) $request->get_param( 'service_id' ),
 			'category_id'       => (int) $request->get_param( 'category_id' ),
@@ -84,6 +84,7 @@ class TimeslotController {
 			// The Multi Service add-on sends the chosen service ids so its
 			// FILTER_SLOT_DURATION consumer builds the grid at the SUMMED duration.
 			'multi_service_ids'              => (string) $request->get_param( 'multi_service_ids' ),
+			'multi_service_extra_details'    => (string) $request->get_param( 'multi_service_extra_details' ),
 		);
 
 		try {
