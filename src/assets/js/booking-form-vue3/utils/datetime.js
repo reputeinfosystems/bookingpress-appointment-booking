@@ -76,10 +76,33 @@ function parseYmd(ymd) {
  * @returns {string} The formatted date, or the raw input when it can't be
  *                   parsed (so a malformed value is never silently blanked).
  */
+function getLocalizedMonth(d, style, locale) {
+  if (locale) {
+    try {
+      return new Intl.DateTimeFormat(locale, { month: style }).format(d);
+    } catch (_e) {}
+  }
+  return style === 'short' ? MONTHS_SHORT[d.getMonth()] : MONTHS_FULL[d.getMonth()];
+}
+
+function getLocalizedDay(d, style, locale) {
+  if (locale) {
+    try {
+      return new Intl.DateTimeFormat(locale, { weekday: style }).format(d);
+    } catch (_e) {}
+  }
+  return style === 'short' ? DAYS_SHORT[d.getDay()] : DAYS_FULL[d.getDay()];
+}
+
 export function formatDate(configOrFormat, ymd) {
   const fmt = (configOrFormat && typeof configOrFormat === 'object')
     ? String(configOrFormat.dateFormat || 'F j, Y')
     : String(configOrFormat || 'F j, Y');
+
+  const rawLocale = (configOrFormat && typeof configOrFormat === 'object' && (configOrFormat.locale || configOrFormat.site_locale))
+    || (typeof window !== 'undefined' && window.BookingPressFormV3Instance && window.BookingPressFormV3Instance.state && (window.BookingPressFormV3Instance.state.locale || window.BookingPressFormV3Instance.state.site_locale || (window.BookingPressFormV3Instance.state.config && window.BookingPressFormV3Instance.state.config.locale)))
+    || undefined;
+  const locale = rawLocale ? String(rawLocale).replace(/_/g, '-').trim() : undefined;
 
   const d = parseYmd(ymd);
   if (!d) return String(ymd == null ? '' : ymd);
@@ -101,14 +124,14 @@ export function formatDate(configOrFormat, ymd) {
       case 'd': out += pad2(day); break;            // 01-31
       case 'j': out += day; break;                  // 1-31
       case 'S': out += ordinalSuffix(day); break;   // st/nd/rd/th
-      case 'D': out += DAYS_SHORT[dow]; break;      // Mon
-      case 'l': out += DAYS_FULL[dow]; break;       // Monday
+      case 'D': out += getLocalizedDay(d, 'short', locale); break;      // Mon
+      case 'l': out += getLocalizedDay(d, 'long', locale); break;       // Monday
       case 'N': out += (dow === 0 ? 7 : dow); break; // 1 (Mon) - 7 (Sun)
       case 'w': out += dow; break;                  // 0 (Sun) - 6 (Sat)
       case 'm': out += pad2(month + 1); break;      // 01-12
       case 'n': out += (month + 1); break;          // 1-12
-      case 'M': out += MONTHS_SHORT[month]; break;  // Jan
-      case 'F': out += MONTHS_FULL[month]; break;   // January
+      case 'M': out += getLocalizedMonth(d, 'short', locale); break;  // Jan
+      case 'F': out += getLocalizedMonth(d, 'long', locale); break;   // January
       case 'y': out += pad2(year % 100); break;     // 26
       case 'Y': out += year; break;                 // 2026
       default:  out += ch; break;                   // literal separator/char
@@ -144,12 +167,32 @@ export function formatDate(configOrFormat, ymd) {
  *                   parsed (so a malformed value is never silently blanked).
  */
 export function formatTime(configOrFormat, hhmm) {
-  const fmt = (configOrFormat && typeof configOrFormat === 'object')
-    ? String(
-        configOrFormat.phpTimeFormat
-        || (String(configOrFormat.timeFormat) === '24' ? 'H:i' : 'g:i a')
-      )
-    : String(configOrFormat || 'g:i a');
+  let fmt = 'g:i a';
+  let strings = {};
+
+  if (configOrFormat && typeof configOrFormat === 'object') {
+    if (configOrFormat.strings) {
+      strings = configOrFormat.strings;
+    }
+    if (configOrFormat.config && configOrFormat.config.strings) {
+      strings = configOrFormat.config.strings;
+    }
+    if (configOrFormat.phpTimeFormat) {
+      fmt = String(configOrFormat.phpTimeFormat);
+    } else if (configOrFormat.config && configOrFormat.config.phpTimeFormat) {
+      fmt = String(configOrFormat.config.phpTimeFormat);
+    } else if (String(configOrFormat.timeFormat || (configOrFormat.config && configOrFormat.config.timeFormat)) === '24') {
+      fmt = 'H:i';
+    }
+  } else if (typeof configOrFormat === 'string' && configOrFormat) {
+    fmt = configOrFormat;
+  }
+
+  if (typeof window !== 'undefined' && window.BookingPressFormV3Instance && window.BookingPressFormV3Instance.state) {
+    if (!strings || !Object.keys(strings).length) {
+      strings = window.BookingPressFormV3Instance.state.strings || {};
+    }
+  }
 
   const raw = String(hhmm == null ? '' : hhmm);
   const m = /^(\d{1,2}):(\d{2})(?::(\d{2}))?$/.exec(raw.trim());
@@ -160,7 +203,14 @@ export function formatTime(configOrFormat, hhmm) {
   if (hour24 > 23 || minute > 59 || second > 59) return raw;
 
   const hour12 = (hour24 % 12) === 0 ? 12 : hour24 % 12;
-  const ampm   = hour24 < 12 ? 'am' : 'pm';
+
+  const amStr = strings.am_text || 'am';
+  const pmStr = strings.pm_text || 'pm';
+  const AMStr = strings.AM_text || amStr.toUpperCase();
+  const PMStr = strings.PM_text || pmStr.toUpperCase();
+
+  const ampmLower = hour24 < 12 ? amStr : pmStr;
+  const ampmUpper = hour24 < 12 ? AMStr : PMStr;
 
   let out = '';
   for (let i = 0; i < fmt.length; i++) {
@@ -177,8 +227,8 @@ export function formatTime(configOrFormat, hhmm) {
       case 'H': out += pad2(hour24); break;         // 00-23
       case 'i': out += pad2(minute); break;         // 00-59
       case 's': out += pad2(second); break;         // 00-59
-      case 'a': out += ampm; break;                 // am/pm
-      case 'A': out += ampm.toUpperCase(); break;   // AM/PM
+      case 'a': out += ampmLower; break;            // am/pm
+      case 'A': out += ampmUpper; break;            // AM/PM
       default:  out += ch; break;                   // literal separator/char
     }
   }

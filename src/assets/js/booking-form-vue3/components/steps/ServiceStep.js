@@ -19,7 +19,7 @@
  * `selected_category`. Triggers `useTimeslots.invalidateForService()` so
  * cached timeslots from a previous service don't leak in.
  */
-import { computed, inject, ref } from 'vue';
+import { computed, inject, ref, watch } from 'vue';
 import { formatPrice as formatPriceUtil } from '../../utils/currency.js';
 import { effectivePrice } from '../../utils/pricing.js?v=2';
 import { syncSelectedServiceDuration } from '../../utils/service.js';
@@ -134,6 +134,23 @@ export default {
       return state.services.filter(s => parseInt(s.categoryId, 10) === cid);
     });
 
+    function applyVisibleServicesFilter(input, purpose = 'service-grid') {
+      // Recompute when location, staff, or another add-on bumps the tick.
+      state.serviceListFilterTick;
+      let list = Array.isArray(input) ? input.slice() : [];
+      const hooks = (typeof window !== 'undefined' && window.wp && window.wp.hooks) || null;
+      if (hooks && typeof hooks.applyFilters === 'function') {
+        const out = hooks.applyFilters('bookingpress_form_v3_visible_services', list,{
+          state,
+          instanceId: state.instanceId,
+          purpose,
+        });
+        if (Array.isArray(out)) list = out;
+      }
+
+      return list;
+    }
+
     // The list the grid actually renders. Generic, reusable extension seam:
     // add-ons may further narrow/transform the visible services through the
     // `bookingpress_form_v3_visible_services` JS filter (the client-side
@@ -147,19 +164,59 @@ export default {
     // that bump a tracked dependency. No REST/AJAX is involved — purely a
     // client-side transform of the already-loaded list.
     const filteredServices = computed(() => {
-      // eslint-disable-next-line no-unused-expressions
-      state.serviceListFilterTick; // tracked recompute signal for add-on filters
-      let list = categoryServices.value;
-      const hooks = (typeof window !== 'undefined' && window.wp && window.wp.hooks) || null;
-      if (hooks && typeof hooks.applyFilters === 'function') {
-        const out = hooks.applyFilters('bookingpress_form_v3_visible_services', list, {
-          state,
-          instanceId: state.instanceId,
-        });
-        if (Array.isArray(out)) list = out;
-      }
-      return list;
+      return applyVisibleServicesFilter(categoryServices.value, 'service-grid');
     });
+
+    // Apply location/staff filters before grouping services by category.
+    const servicesAvailableAcrossCategories = computed(() => {
+      return applyVisibleServicesFilter(
+        state.services,
+        'category-visibility'
+      );
+    });
+
+    const visibleCategories = computed(() => {
+      const visibleCategoryIds = new Set(
+        servicesAvailableAcrossCategories.value.map((service) =>
+          parseInt(service.categoryId || 0, 10)
+        )
+      );
+
+      return state.categories.filter((category) => {
+        const categoryId = parseInt(category.categoryId || 0, 10);
+
+        // Preserve the "All" pseudo-category.
+        if (categoryId === 0) {
+          return true;
+        }
+
+        return visibleCategoryIds.has(categoryId);
+      });
+    });
+
+    watch(
+      visibleCategories,
+      (categories) => {
+        if (!categories.length) return;
+
+        const currentIsVisible = categories.some(
+          (category) =>
+            String(category.categoryId) === selectedCategory.value
+        );
+
+        if (currentIsVisible) return;
+
+        const fallback =
+          categories.find(
+            (category) => parseInt(category.categoryId || 0, 10) > 0
+          ) || categories[0];
+
+        selectedCategory.value = String(fallback.categoryId || 0);
+        state.appointment_step_form_data.selected_cat_name =
+          fallback.categoryName || '';
+      },
+      { immediate: true }
+    );
 
     // Tab name of the step that comes after `service` — composes the
     // "Next: <Date & Time>" label on the primary button. Sourced from
@@ -235,6 +292,51 @@ export default {
         (String(catId) === selectedCategory.value ? ' __bpa-is-active' : '')
       );
     }
+
+    function isCategoryVisible(cat) {
+      if( !cat || !cat.categoryId ) return true; // "All" pseudo-row always shows
+      state.serviceListFilterTick
+      let list = state.services.filter((service) => parseInt(service.categoryId, 10) === parseInt(cat.categoryId, 10));
+      const hooks = (typeof window !== 'undefined' && window.wp && window.wp.hooks) || null;
+      if (hooks && typeof hooks.applyFilters === 'function') {
+        const out = hooks.applyFilters('bookingpress_form_v3_visible_services', list, {
+          state,
+          instanceId: state.instanceId,
+        });
+        if (Array.isArray(out)) list = out;
+      }
+      return list.length > 0;
+    }
+    /* function isCategoryVisible(cat) {
+      const categoryId = parseInt(cat && cat.categoryId, 10);
+
+      // Keep the "All" pseudo-category.
+      if (!categoryId) return true;
+
+      state.serviceListFilterTick;
+
+      let list = state.services.filter(
+        (service) => parseInt(service.categoryId, 10) === categoryId
+      );
+
+      const hooks =
+        (typeof window !== 'undefined' && window.wp && window.wp.hooks) || null;
+
+      if (hooks && typeof hooks.applyFilters === 'function') {
+        const out = hooks.applyFilters(
+          'bookingpress_form_v3_visible_services',
+          list,
+          {
+            state,
+            instanceId: state.instanceId,
+          }
+        );
+
+        if (Array.isArray(out)) list = out;
+      }
+
+      return list.length > 0;
+    } */
 
     // Generic multi-select awareness — inert in Lite (`selected_services` is empty
     // unless a multi-select add-on, e.g. Multi Service Booking, populates it). When
@@ -316,11 +418,11 @@ export default {
     // Enter/Space activates (explicit activation — selecting re-filters the
     // grid, so selection deliberately does NOT follow focus while browsing).
     const catRov = useRovingTabindex({
-      count: () => state.categories.length,
+      count: () => visibleCategories.value.length,
       selectedIndex: () =>
-        state.categories.findIndex((c) => String(c.categoryId) === selectedCategory.value),
+        visibleCategories.value.findIndex((c) => String(c.categoryId) === selectedCategory.value),
       onActivate: (i) => {
-        const cat = state.categories[i];
+        const cat = visibleCategories.value[i];
         if (cat) selectCategory(cat.categoryId);
       },
     });
@@ -346,7 +448,11 @@ export default {
       selectedCategory,
       selectedService,
       categoryServices,
+      applyVisibleServicesFilter,
       filteredServices,
+      servicesAvailableAcrossCategories,
+      visibleCategories,
+      catRov,
       nextStepName,
       hasPrev,
       selectService,
@@ -354,6 +460,7 @@ export default {
       formatPrice,
       serviceDisplayPrice,
       categoryClass,
+      isCategoryVisible,
       serviceItemClass,
       isServiceSelected,
       selectedServicesCount,
@@ -393,21 +500,23 @@ export default {
           <div class="bpa-front-module-heading" role="heading" aria-level="2" tabindex="-1" data-bp-step-heading :id="'bp-v3-cat-heading-' + state.instanceId">{{ state.strings.category_heading }}</div>
           <div class="bpa-front-cat-items-wrapper">
             <div class="bpa-front-cat-items" role="listbox" aria-orientation="horizontal" :aria-labelledby="'bp-v3-cat-heading-' + state.instanceId">
-              <span
-                v-for="(cat, ci) in state.categories"
-                :key="cat.categoryId"
-                :class="categoryClass(cat.categoryId)"
-                role="option"
-                :aria-selected="String(cat.categoryId) === selectedCategory ? 'true' : 'false'"
-                :tabindex="catRov.tabindexFor(ci)"
-                :ref="(el) => catRov.setItemRef(el, ci)"
-                @focus="catRov.onItemFocus(ci)"
-                @keydown="catRov.onKeydown($event, ci)"
-                @click="selectCategory(cat.categoryId)"
-              >
-                <div class="bpa-front-ci-item-title">{{ cat.categoryName }}</div>
-                <span v-if="String(cat.categoryId) === selectedCategory" aria-hidden="true" v-html="ICON_CHECKMARK"></span>
-              </span>
+              <template v-for="(cat, ci) in visibleCategories" :key="cat.categoryId">
+                <span
+                  :key="cat.categoryId"
+                  :class="categoryClass(cat.categoryId)"
+                  role="option"
+                  v-if="isCategoryVisible(cat)"
+                  :aria-selected="String(cat.categoryId) === selectedCategory ? 'true' : 'false'"
+                  :tabindex="catRov.tabindexFor(ci)"
+                  :ref="(el) => catRov.setItemRef(el, ci)"
+                  @focus="catRov.onItemFocus(ci)"
+                  @keydown="catRov.onKeydown($event, ci)"
+                  @click="selectCategory(cat.categoryId)"
+                >
+                  <div class="bpa-front-ci-item-title">{{ cat.categoryName }}</div>
+                  <span v-if="String(cat.categoryId) === selectedCategory" aria-hidden="true" v-html="ICON_CHECKMARK"></span>
+                </span>
+              </template>
             </div>
           </div>
         </div>

@@ -590,7 +590,7 @@ export default {
         // by the same rule. The onUpdate gate is the final fence.
         disabledDates:  timeslots.disabledDatesForCalendar.value.slice(),
         firstDayOfWeek: parseInt((state.config && state.config.firstDayOfWeek) || 1, 10) || 1,
-        locale:         (state.config && state.config.locale) || undefined,
+        locale:         (state.config && state.config.locale) || (state.locale ? String(state.locale).replace(/_/g, '-').trim() : undefined) || (state.site_locale ? String(state.site_locale).replace(/_/g, '-').trim() : undefined) || 'en',
         isRequired:     true,
         masks: {
           // Match released parity: 3-letter weekdays, "Month YYYY" title.

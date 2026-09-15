@@ -150,6 +150,18 @@ class Hooks {
 	const FILTER_TIMESLOT_REQUEST_CONTEXT = 'bookingpress_form_v3_timeslot_request_context';
 
 	/**
+	 * Narrow a service's active staff candidates for the current booking context.
+	 *
+	 * The incoming ids have already passed the owning feature's base checks
+	 * (active staff + service assignment). Add-ons may only narrow that set; for
+	 * example, Location keeps staff assigned to the selected service/location
+	 * pair. With no applicable contextual selection, return the ids unchanged.
+	 *
+	 * Filter signature: `(array $staff_ids, int $service_id, array $context): array`
+	 */
+	const FILTER_ELIGIBLE_STAFF = 'bookingpress_form_v3_eligible_staff';
+
+	/**
 	 * Resolve the maximum bookable date — the calendar's upper selectable bound
 	 * and the month-walker's stop date.
 	 *

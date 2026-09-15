@@ -164,8 +164,8 @@ export default {
       // "HH:MM" the backend parses; re-apply the admin time format
       // (`config.phpTimeFormat`) for display so the Summary matches the
       // slot label the user picked (12h/24h/WP-inherit).
-      const startLabel = fd.selected_start_time ? formatTimeUtil(state.config, fd.selected_start_time) : '—';
-      const endLabel   = fd.selected_end_time   ? formatTimeUtil(state.config, fd.selected_end_time)   : '—';
+      const startLabel = fd.selected_start_time ? formatTimeUtil(state, fd.selected_start_time) : '—';
+      const endLabel   = fd.selected_end_time   ? formatTimeUtil(state, fd.selected_end_time)   : '—';
       return `${selectedDateLabel.value || '—'}, ${startLabel} - ${endLabel}`;
     });
 

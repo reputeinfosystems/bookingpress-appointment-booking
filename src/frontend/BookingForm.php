@@ -568,10 +568,10 @@ class BookingForm extends Base {
 				if ( ! empty( $settings_map['service_price_label'] ) ) {
 					$strings['service_price_text'] = stripslashes_deep( $settings_map['service_price_label'] );
 				}
-				if ( ! empty( $settings_map['next_button_text'] ) ) {
+				if ( isset( $settings_map['next_button_text'] ) ) {
 					$strings['next_btn_text'] = stripslashes_deep( $settings_map['next_button_text'] );
 				}
-				if ( ! empty( $settings_map['goback_button_text'] ) ) {
+				if ( isset( $settings_map['goback_button_text'] ) ) {
 					$strings['goback_btn_text'] = stripslashes_deep( $settings_map['goback_button_text'] );
 				}
 				if ( ! empty( $settings_map['service_title'] ) ) {

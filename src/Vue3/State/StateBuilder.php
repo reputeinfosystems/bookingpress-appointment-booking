@@ -324,6 +324,8 @@ class StateBuilder {
 				'maxDate'             => $max_date,
 				'today'               => $today,
 				'firstDayOfWeek'      => $first_dow,
+				'locale'              => str_replace( '_', '-', determine_locale() ),
+				'site_locale'         => determine_locale(),
 				'dateFormat'          => $this->dates->date_format(),
 				'timeFormat'          => $this->dates->time_format(),
 				// Exact PHP date() format for time display (e.g. 'H:i',
@@ -765,7 +767,7 @@ class StateBuilder {
 	 */
 	private function compose_strings( array $bf, array $messages = array() ) {
 		$d = function ( $key, $default ) use ( $bf ) {
-			return isset( $bf[ $key ] ) && '' !== $bf[ $key ] ? (string) $bf[ $key ] : $default;
+			return isset( $bf[ $key ] ) ? (string) $bf[ $key ] : $default;
 		};
 		$m = function ( $key, $default ) use ( $messages ) {
 			return isset( $messages[ $key ] ) && '' !== $messages[ $key ] ? (string) $messages[ $key ] : $default;
@@ -789,6 +791,10 @@ class StateBuilder {
 			'afternoon_text'          => $d( 'afternoon_text', 'Afternoon' ),
 			'evening_text'            => $d( 'evening_text', 'Evening' ),
 			'night_text'              => $d( 'night_text', 'Night' ),
+			'am_text'                 => ( 'am' !== ( $_am_i18n = date_i18n( 'a', strtotime( '2022-01-01 09:00:00' ) ) ) ) ? $_am_i18n : __( 'am', 'bookingpress-appointment-booking' ),
+			'pm_text'                 => ( 'pm' !== ( $_pm_i18n = date_i18n( 'a', strtotime( '2022-01-01 21:00:00' ) ) ) ) ? $_pm_i18n : __( 'pm', 'bookingpress-appointment-booking' ),
+			'AM_text'                 => ( 'AM' !== ( $_AM_i18n = date_i18n( 'A', strtotime( '2022-01-01 09:00:00' ) ) ) ) ? $_AM_i18n : __( 'AM', 'bookingpress-appointment-booking' ),
+			'PM_text'                 => ( 'PM' !== ( $_PM_i18n = date_i18n( 'A', strtotime( '2022-01-01 21:00:00' ) ) ) ) ? $_PM_i18n : __( 'PM', 'bookingpress-appointment-booking' ),
 			'service_step_name'       => $d( 'service_title', 'Service' ),
 			'datetime_step_name'      => $d( 'datetime_title', 'Date & Time' ),
 			'basic_details_step_name' => $d( 'basic_details_title', 'Your Details' ),

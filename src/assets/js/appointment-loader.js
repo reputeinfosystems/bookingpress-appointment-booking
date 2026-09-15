@@ -379,11 +379,8 @@ const initAppointmentLoader = () => {
                 })
                 .then(response => response.json())
                 .then(rest_response => {
-                    console.log(rest_response);
                     vm.bookingpress_loading = false;
-                    console.log(vm.bookingpress_loading);
                     if (rest_response.success) {
-                        console.log("INSIDE");
                         vm.search_customer_list = rest_response.data;
                     } else {
                         vm.$notify({
@@ -485,7 +482,6 @@ const initAppointmentLoader = () => {
                     });
 
                     const updateLabel = this.appointment_status.find(status => String(status.value) === String(new_status))?.text || '';
-                    console.log( updateLabel );
                     this.updateAppointmentRow(appointment_id, { appointment_status_label: updateLabel, appointment_status: new_status });
 
                     //this.loadAppointments();
@@ -657,7 +653,6 @@ const initAppointmentLoader = () => {
                 })
                 .then(response => response.json())
                 .then(response => {
-                    console.log( response );
                     vm.bookingpress_loading = false;
                     vm.all_share_pages_list = response.data.all_page_list;
                 })

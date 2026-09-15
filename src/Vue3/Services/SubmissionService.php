@@ -231,9 +231,7 @@ class SubmissionService implements SubmissionServiceInterface {
 				$inline_payment_status = PaymentTransactionRepository::STATUS_PAID;
 			} else {
 				$onsite_pref           = (string) $this->settings->get( 'onsite_appointment_status', SettingsRepository::GROUP_GENERAL, 2 );
-				$inline_payment_status = ( '1' === $onsite_pref )
-					? PaymentTransactionRepository::STATUS_PAID
-					: PaymentTransactionRepository::STATUS_PENDING;
+				$inline_payment_status = PaymentTransactionRepository::STATUS_PENDING;
 			}
 			try {
 				$out = $this->finalize_booking( $entry_id, array(
@@ -403,6 +401,31 @@ class SubmissionService implements SubmissionServiceInterface {
 
 		global $bookingpress_debug_payment_log_id, $bookingpress_other_debug_log_id, $bookingpress_email_notifications;
 
+		// Idempotency — a prior finalize already materialised this entry's booking
+		// (gateway retry, a return-URL + webhook both firing, or a customer
+		// refresh/back). Re-running would make the double-booking guard find the
+		// row we already inserted, treat the booking as a conflict WITH ITSELF, and
+		// wrongly record a duplicate + refund + email the customer. Return the
+		// existing booking as success instead. Mirrors the PayPal-IPN idempotency
+		// (PaymentService::paypal_ipn) and reuses the same Pro refinement filter, so
+		// a PENDING Complete Payment row (token still set) still falls through to be
+		// completed by the standard path below.
+		$existing_booking = $this->appointments->find_by_entry( $entry_id );
+		if ( is_array( $existing_booking ) && ! empty( $existing_booking['bookingpress_appointment_booking_id'] ) ) {
+			$existing_booking_id = (int) $existing_booking['bookingpress_appointment_booking_id'];
+			if ( (bool) apply_filters( Hooks::FILTER_PAYPAL_IPN_ENTRY_FINALIZED, true, (int) $entry_id, $existing_booking_id ) ) {
+				do_action( 'bookingpress_other_debug_log_entry', 'appointment_debug_logs', 'Finalize skipped — entry already booked (idempotent)', 'bookingpress_complete_appointment', array( 'entry_id' => (int) $entry_id, 'appointment_id' => $existing_booking_id ), $bookingpress_other_debug_log_id );
+				return array(
+					'variant'       => 'redirect_url',
+					'is_redirect'   => 1,
+					'redirect_data' => $this->build_redirect_url( $entry_id ),
+					'entry_id'      => (int) $entry_id,
+					'booking_id'    => $existing_booking_id,
+					'payment_id'    => isset( $existing_booking['bookingpress_payment_id'] ) ? (int) $existing_booking['bookingpress_payment_id'] : 0,
+				);
+			}
+		}
+
 		// Write the single appointment_bookings row.
 		$written    = $this->write_one_booking_from_entry( $entry, $gateway, $paid, $currency, $payload, array( 'transaction_id' => $txn_id ) );
 
@@ -476,29 +499,34 @@ class SubmissionService implements SubmissionServiceInterface {
 		// Build the redirect URL using base64(entry_id) per §M0.10 redirect convention.
 		$redirect_url = $this->build_redirect_url( $entry_id );
 
-		/**
-		 * Post-write action — add-ons persist custom-field values here.
-		 *
-		 * @param int   $booking_id
-		 * @param int   $entry_id
-		 * @param array $payload
-		 */
-		do_action( Hooks::ACTION_AFTER_BOOKING, $booking_id, $entry_id, $payload );
 
-		// Notification (gated by the plan — Lite default sends one).
-		$plan = (array) apply_filters( Hooks::FILTER_SUBMIT_NOTIFICATION_PLAN, array( 'send' => true, 'booking_id' => $booking_id ), array(
-			'booking_id' => $booking_id,
-			'entry'      => $entry,
-			'is_first'   => true,
-			'order_id'   => 0,
-		) );
-		if ( ! empty( $plan['send'] ) ) {
-			$send_booking_id = isset( $plan['booking_id'] ) ? (int) $plan['booking_id'] : $booking_id;
-			$bookingpress_email_notifications->bookingpress_send_after_payment_log_entry_email_notification(
-				$this->notification_type_from_status( $appt_data ),
-				$send_booking_id,
-				isset( $entry['bookingpress_customer_email'] ) ? (string) $entry['bookingpress_customer_email'] : ''
-			);
+		try {
+			/**
+			 * Post-write action — add-ons persist custom-field values here.
+			 *
+			 * @param int   $booking_id
+			 * @param int   $entry_id
+			 * @param array $payload
+			 */
+			do_action( Hooks::ACTION_AFTER_BOOKING, $booking_id, $entry_id, $payload );
+
+			// Notification (gated by the plan — Lite default sends one).
+			$plan = (array) apply_filters( Hooks::FILTER_SUBMIT_NOTIFICATION_PLAN, array( 'send' => true, 'booking_id' => $booking_id ), array(
+				'booking_id' => $booking_id,
+				'entry'      => $entry,
+				'is_first'   => true,
+				'order_id'   => 0,
+			) );
+			if ( ! empty( $plan['send'] ) ) {
+				$send_booking_id = isset( $plan['booking_id'] ) ? (int) $plan['booking_id'] : $booking_id;
+				$bookingpress_email_notifications->bookingpress_send_after_payment_log_entry_email_notification(
+					$this->notification_type_from_status( $appt_data ),
+					$send_booking_id,
+					isset( $entry['bookingpress_customer_email'] ) ? (string) $entry['bookingpress_customer_email'] : ''
+				);
+			}
+		} catch ( \Throwable $e ) {
+			do_action( 'bookingpress_other_debug_log_entry', 'appointment_debug_logs', 'Post-booking side-effect failed after commit (booking still succeeded)', 'bookingpress_complete_appointment', array( 'entry_id' => (int) $entry_id, 'appointment_id' => (int) $booking_id, 'error' => $e->getMessage() ), $bookingpress_other_debug_log_id );
 		}
 
 		return array(
@@ -704,21 +732,25 @@ class SubmissionService implements SubmissionServiceInterface {
 			$e_id      = isset( $e['bookingpress_entry_id'] ) ? (int) $e['bookingpress_entry_id'] : 0;
 			$appt_data = isset( $appt_datas[ $idx ] ) ? $appt_datas[ $idx ] : array();
 
-			do_action( Hooks::ACTION_AFTER_BOOKING, $bid, $e_id, $payload );
+			try {
+				do_action( Hooks::ACTION_AFTER_BOOKING, $bid, $e_id, $payload );
 
-			$plan = (array) apply_filters( Hooks::FILTER_SUBMIT_NOTIFICATION_PLAN, array( 'send' => true, 'booking_id' => $bid ), array(
-				'booking_id' => $bid,
-				'entry'      => $e,
-				'is_first'   => ( 0 === $idx ),
-				'order_id'   => $order_id,
-			) );
-			if ( ! empty( $plan['send'] ) ) {
-				$send_booking_id = isset( $plan['booking_id'] ) ? (int) $plan['booking_id'] : $bid;
-				$bookingpress_email_notifications->bookingpress_send_after_payment_log_entry_email_notification(
-					$this->notification_type_from_status( $appt_data ),
-					$send_booking_id,
-					$customer_email
-				);
+				$plan = (array) apply_filters( Hooks::FILTER_SUBMIT_NOTIFICATION_PLAN, array( 'send' => true, 'booking_id' => $bid ), array(
+					'booking_id' => $bid,
+					'entry'      => $e,
+					'is_first'   => ( 0 === $idx ),
+					'order_id'   => $order_id,
+				) );
+				if ( ! empty( $plan['send'] ) ) {
+					$send_booking_id = isset( $plan['booking_id'] ) ? (int) $plan['booking_id'] : $bid;
+					$bookingpress_email_notifications->bookingpress_send_after_payment_log_entry_email_notification(
+						$this->notification_type_from_status( $appt_data ),
+						$send_booking_id,
+						$customer_email
+					);
+				}
+			} catch ( \Throwable $ex ) {
+				do_action( 'bookingpress_other_debug_log_entry', 'appointment_debug_logs', 'Post-booking side-effect failed after commit (order booking still succeeded)', 'bookingpress_complete_appointment', array( 'entry_id' => (int) $e_id, 'appointment_id' => (int) $bid, 'order_id' => (int) $order_id, 'error' => $ex->getMessage() ), $bookingpress_debug_payment_log_id );
 			}
 		}
 

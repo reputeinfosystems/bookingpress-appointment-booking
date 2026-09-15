@@ -3944,7 +3944,7 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
 
                         $bookingpress_default_date_time_format = apply_filters( 'bookingpress_modify_default_date_time_format', $bookingpress_default_date_time_format, $appointment_data_val );
                         
-                        $booked_appointment_date = date($bookingpress_default_date_time_format, strtotime($booked_appointment_datetime));
+                        $booked_appointment_date = date_i18n($bookingpress_default_date_time_format, strtotime($booked_appointment_datetime));
                         
                         $content .= "<span class='bookingpress_appointment_datetime' aria-label='".$booked_appointment_date."'>" . $booked_appointment_date . '</span>';
                         $content .= '</div><br/>';

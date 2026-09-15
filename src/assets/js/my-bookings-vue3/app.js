@@ -74,6 +74,215 @@ function createMyBookingsComponent(cfg) {
   const strings = (cfg && cfg.strings) || {};
   const config = (cfg && cfg.config) || {};
 
+  const expandCardTemplate = `
+                      <div class="bpa-front-ma-view-appointment-card">
+                        <div class="bpa-ma-vac--head">
+                          <div class="bpa-ma-vac--head__left">
+                            <div class="bpa-left__service-detail">
+                              <div class="bpa-sd__appointment-id">{{ strings.booking_id_heading || 'Booking ID' }} : #{{ scope.row.booking_id }}</div>
+                              <!-- Show extras only for single-service bookings. -->
+                              <div class="bpa-sd__appointment-title" v-if="!isMultiService(scope.row)">{{ scope.row.bookingpress_service_name }}</div>
+                            </div>
+                          </div>
+                          <div class="bpa-ma-vac--head__right">
+                            <bp-ui-tag class="bpa-front-pill" :class="statusPillClass(scope.row)">{{ scope.row.bookingpress_appointment_status_label }}</bp-ui-tag>
+                          </div>
+                        </div>
+                        <!-- Extension content after header. -->
+                        <component v-for="d in connectRowDetails" :key="d.id" :is="d.component" :row="scope.row" :ctx="extensionCtx" placement="connect"></component>
+                        <div class="bpa-ma-vac--basic-details">
+                          <div class="bpa-vac-bd__row">
+                            <div class="bpa-bd__item">                            
+                              <div class="bpa-item--label">{{ strings.date_main_heading || 'Date' }}:</div>
+                              <div class="bpa-item--val" v-if="scope.row.bookingpress_service_duration_unit === 'd' && scope.row.bookingpress_appointment_formatted_end_date">{{ scope.row.bookingpress_appointment_formatted_date }} - {{ scope.row.bookingpress_appointment_formatted_end_date }}</div>
+                              <div class="bpa-item--val" v-else>{{ scope.row.bookingpress_appointment_formatted_date }}</div>
+                            </div>
+                            <div class="bpa-bd__item">
+                              <div class="bpa-item--label">{{ strings.booking_time_title || 'Time' }}:</div>
+                              <div class="bpa-item--val">{{ scope.row.bookingpress_appointment_formatted_start_time }} - {{ scope.row.bookingpress_appointment_formatted_end_time }}</div>
+                            </div>
+                          </div>
+                          <div class="bpa-vac-bd__row">
+                            <div class="bpa-bd__item bpa-front-mb-v3-staff" v-if="staffName(scope.row)">
+                              <div class="bpa-item--label">{{ strings.staff || 'Staff' }}:</div>
+                              <div class="bpa-item--val">
+                                <img v-if="scope.row.staff_avatar_url" :src="scope.row.staff_avatar_url" :alt="staffName(scope.row)" class="bpa-front-mb-v3-staff__avatar">
+                                {{ staffName(scope.row) }}
+                              </div>
+                            </div>
+                            <div class="bpa-bd__item" v-if="scope.row.selected_extra_members && scope.row.selected_extra_members > 0">
+                              <div class="bpa-item--label">{{ strings.members || 'Members' }}:</div>
+                              <div class="bpa-item--val">{{ scope.row.selected_extra_members }}</div>
+                            </div>
+                          </div>
+                          <!-- Show extras for single-service bookings only. -->
+                          <div class="bpa-vac-bd__extras bpa-front-mb-v3-extras" v-if="hasExtras(scope.row) && !isMultiService(scope.row)">
+                            <div class="bpa-ma-vac-sec-title">{{ strings.extras || 'Service Extras' }}:</div>
+                            <div class="bpa-vac-pd__item" v-for="(ex, exi) in scope.row.extras_details" :key="exi">
+                              <div class="bpa-vac-pd__label">{{ ex.extra_service_name }} <span v-if="ex.extra_service_selected_qty">x {{ ex.extra_service_selected_qty }}</span></div>
+                              <div class="bpa-vac-pd__val">{{ ex.extra_service_total_price_with_currency }}</div>
+                            </div>
+                          </div>
+                        </div>
+                        <!-- Extension content after booking details. -->
+                        <component v-for="d in detailsRowDetails" :key="d.id" :is="d.component" :row="scope.row" :ctx="extensionCtx" placement="details"></component>
+                        <!-- Multi-service booking details. -->
+                        <div class="bpa-ma-vac--payment-details bpa-ma-vac--multiservice-section" v-if="isMultiService(scope.row) && msServices(scope.row).length">
+                          <div class="bpa-ma-vac-sec-title">{{ strings.multiservice_service_details_title || 'Service Details' }}:</div>
+                          <div class="bpa-vac-pd__item" v-for="(service, si) in msServices(scope.row)" :key="si">
+                            <div class="bpa-vac-pd__val bpa-vac-multiservice">
+                              <p>{{ service.bookingpress_service_name }}</p>
+                              <div class="bpa-vac-pd__val bpa-ap__service-extras" v-if="service.extra_service_details && service.extra_service_details.length">
+                                <p class="bpa-vac-pd__val bpa-ap__multiservice-extra-label" v-for="(msx, msxi) in service.extra_service_details" :key="msxi">
+                                  {{ msx.extra_name }} x {{ msx.selected_qty }}
+                                  <span v-show="0 != msx.extra_service_duration">({{ msx.extra_service_duration }}{{ msx.extra_service_duration_unit }})</span>
+                                </p>
+                              </div>
+                            </div>
+                            <div class="bpa-vac-pd__val bpa-vac-multiservice">{{ service.bookingpress_service_price_with_currency }}
+                              <div class="bpa-vac-pd__val bpa-ap__service-extras" v-if="service.extra_service_details && service.extra_service_details.length">
+                                <p class="bpa-vac-pd__val" v-for="(msx, msxi) in service.extra_service_details" :key="msxi">{{ msx.extra_service_price_with_currency }}</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="bpa-ma-vac--payment-details">
+                          <div class="bpa-ma-vac-sec-title">{{ strings.payment_details_title || 'Payment Details' }}:</div>
+                          <div class="bpa-vac-pd__item">
+                            <div class="bpa-vac-pd__label">{{ strings.payment_method_title || 'Payment Method' }}:</div>
+                            <div class="bpa-vac-pd__val">{{ paymentMethodLabel(scope.row) }}</div>
+                          </div>
+                          <div class="bpa-vac-pd__item">
+                            <div class="bpa-vac-pd__label">{{ strings.status_main_heading || 'Status' }}:</div>
+                            <div class="bpa-vac-pd__val" :class="paymentStatusValClass(scope.row)">{{ scope.row.bookingpress_payment_status_label }}</div>
+                          </div>
+                          <div class="bpa-vac-pd__item" v-if="scope.row.deposit_amt_with_currency && scope.row.is_deposit">
+                            <div class="bpa-vac-pd__label">{{ strings.deposit || 'Deposit' }}:</div>
+                            <div class="bpa-vac-pd__val">{{ scope.row.deposit_amt_with_currency }}</div>
+                          </div>
+                          <div class="bpa-vac-pd__item" v-if="scope.row.coupon_discount_amt && scope.row.coupon_discount_amt > 0">
+                            <div class="bpa-vac-pd__label">{{ strings.discount || 'Discount' }}:</div>
+                            <div class="bpa-vac-pd__val">{{ scope.row.coupon_discount_amt_with_currency }}</div>
+                          </div>
+                          <component v-for="d in paymentBeforeTotalRowDetails" :key="d.id" :is="d.component" :row="scope.row" :ctx="extensionCtx" placement="payment_before_total"></component>
+                          <div class="bpa-vac-pd__item" v-if="scope.row.tax_amt && scope.row.tax_amt > 0">
+                            <div class="bpa-vac-pd__label">{{ strings.tax || 'Tax' }}:</div>
+                            <div class="bpa-vac-pd__val">+{{ scope.row.tax_amt_with_currency }}</div>
+                          </div>
+                          <div class="bpa-vac-pd__item __bpa-pd-is-total-item">
+                            <div class="bpa-vac-pd__label">{{ strings.total_amount_title || 'Total Amount' }}<span v-if="scope.row.bookingpress_price_display_setting === 'include_taxes' && scope.row.bookingpress_included_tax_label" :aria-label="scope.row.bookingpress_included_tax_label">{{ ' ' + scope.row.bookingpress_included_tax_label }}</span>:</div>
+                            <div class="bpa-vac-pd__val bpa-front-text-primary-color">{{ totalLabel(scope.row) }}</div>
+                          </div>
+                          <!-- Extension content after payment details. -->
+                          <component v-for="d in paymentRowDetails" :key="d.id" :is="d.component" :row="scope.row" :ctx="extensionCtx" placement="payment"></component>
+                        </div>
+
+                        <!-- Booking actions -->
+                        <div class="bpa-ma-vac--action-btn-group" v-if="hasActions(scope.row)">
+                          <!--  Render add-on actions first (Reschedule, Book Again, Cancel). -->
+                          <component v-for="act in expandRowActions" :key="act.id" :is="act.component" :row="scope.row" :ctx="extensionCtx" placement="expand"></component>
+                          <bp-ui-button v-if="canBookAgain(scope.row)" @click="open_book_again_page_func($event, scope.row.bookingpress_appointment_booking_id,scope.row.book_again_page_url)" :underline="false" class="bpa-front-btn bpa-front-btn__small bpa_focusable" :aria-label="strings.book_again_button_title">
+                          <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_2344_779)">
+                          <g clip-path="url(#clip1_2344_779)"><path class="bpa-my-booking-front-icon" d="M3.13636 17.3636C2.68636 17.3636 2.30114 17.2034 1.98068 16.883C1.66023 16.5625 1.5 16.1773 1.5 15.7273V4.27273C1.5 3.82273 1.66023 3.4375 1.98068 3.11705C2.30114 2.79659 2.68636 2.63636 3.13636 2.63636H3.95455V1H5.59091V2.63636H12.1364V1H13.7727V2.63636H14.5909C15.0409 2.63636 15.4261 2.79659 15.7466 3.11705C16.067 3.4375 16.2273 3.82273 16.2273 4.27273V9.18182H14.5909V7.54545H3.13636V15.7273H8.86364V17.3636H3.13636ZM14.5909 19C13.5955 19 12.7261 18.6898 11.983 18.0693C11.2398 17.4489 10.7727 16.6682 10.5818 15.7273H11.85C12.0273 16.3273 12.3648 16.8182 12.8625 17.2C13.3602 17.5818 13.9364 17.7727 14.5909 17.7727C15.3818 17.7727 16.0568 17.4932 16.6159 16.9341C17.175 16.375 17.4545 15.7 17.4545 14.9091C17.4545 14.1182 17.175 13.4432 16.6159 12.8841C16.0568 12.325 15.3818 12.0455 14.5909 12.0455C14.1955 12.0455 13.8273 12.117 13.4864 12.2602C13.1455 12.4034 12.8455 12.6045 12.5864 12.8636H13.7727V14.0909H10.5V10.8182H11.7273V11.9841C12.0955 11.6295 12.525 11.3466 13.0159 11.1352C13.5068 10.9239 14.0318 10.8182 14.5909 10.8182C15.7227 10.8182 16.6875 11.217 17.4852 12.0148C18.283 12.8125 18.6818 13.7773 18.6818 14.9091C18.6818 16.0409 18.283 17.0057 17.4852 17.8034C16.6875 18.6011 15.7227 19 14.5909 19ZM3.13636 5.90909H14.5909V4.27273H3.13636V5.90909Z" fill="#727E95" stroke="#727E95" stroke-width="0.2"/></g></g><defs><clipPath id="clip0_2344_779">
+                          <rect width="20" height="20" fill="white"/></clipPath><clipPath id="clip1_2344_779"><rect width="20" height="20" fill="white"/></clipPath></defs>
+                          </svg>	{{ strings.book_again_button_title || 'Book Again' }}</bp-ui-button>
+                          <template v-if="canCancel(scope.row)">
+                            <!-- Show refund preview before cancel -->
+                            <bp-ui-button v-if="isRefundable(scope.row)"
+                              class="bpa-front-btn bpa-front-btn__small bpa-front-btn__ma-refund bpa_focusable"
+                              :disabled="cancelingId !== null" :aria-label="strings.cancel_appointment_title"
+                              @click="openRefundPreview(scope.row)">{{ strings.cancel_appointment_title || 'Cancel Appointment' }}</bp-ui-button>
+                            <!-- Standard cancel confirmation -->
+                            <bp-ui-popconfirm v-else
+                              :title="strings.cancel_appointment_confirmation_message"
+                              :confirm-button-text="strings.cancel_appointment_yes_btn_text || 'Yes'"
+                              :cancel-button-text="strings.cancel_appointment_no_btn_text || 'No'"
+                              confirm-button-type="bpa-front-btn bpa-front-btn__small bpa-front-btn--danger"
+                              cancel-button-type="bpa-front-btn bpa-front-btn__small"
+                              :teleported="false"
+                              :icon="false"
+                              data-class="bp-ui-popconfirm--ma-cancel"
+                              @confirm="confirmCancel(scope.row)">
+                              <template #reference>
+                                <bp-ui-button class="bpa-front-btn bpa-front-btn__small bpa_focusable"
+                                  :disabled="cancelingId !== null" :aria-label="strings.cancel_appointment_title">
+                                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M14.0397 3.49904H14.7892C15.6137 3.49904 16.2882 4.17361 16.2882 4.99808V9.8203C15.8477 9.42598 15.3419 9.10298 14.7892 8.86944V7.24664H4.29592V14.7418C4.29592 15.1541 4.6332 15.4914 5.04544 15.4914H7.55047C7.72418 16.0334 7.98125 16.5381 8.30658 16.9904H4.29592C3.46395 16.9904 2.79688 16.3158 2.79688 15.4914L2.80437 4.99808C2.80437 4.17361 3.46395 3.49904 4.29592 3.49904H5.04544V2.74952C5.04544 2.33728 5.38272 2 5.79496 2C6.20719 2 6.54448 2.33728 6.54448 2.74952V3.49904H12.5406V2.74952C12.5406 2.33728 12.8779 2 13.2902 2C13.7024 2 14.0397 2.33728 14.0397 2.74952V3.49904Z" />
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M8.27344 13.8431C8.27344 16.2817 10.2502 18.2584 12.6888 18.2584C15.1274 18.2584 17.1041 16.2817 17.1041 13.8431C17.1041 11.4045 15.1274 9.42773 12.6888 9.42773C10.2502 9.42773 8.27344 11.4045 8.27344 13.8431ZM13.3151 13.8411L14.5622 12.5944L14.5603 12.5925L14.5617 12.5912L13.9372 11.9668L12.689 13.215L11.4408 11.9668L10.8164 12.5912L10.8175 12.5923L10.8154 12.5944L12.0627 13.8413L10.8189 15.0851L10.8204 15.0867L10.8154 15.0918L11.4401 15.7165L12.6888 14.4674L13.9375 15.7165L14.5622 15.0918L14.5574 15.0869L14.5592 15.0851L13.3151 13.8411Z" />
+                                  </svg> {{ strings.cancel_appointment_title || 'Cancel Appointment' }}</bp-ui-button>
+                              </template>
+                            </bp-ui-popconfirm>
+                          </template>
+                        </div>
+                      </div>`;
+
+  const userNavDropdownTemplate = `
+              <bp-ui-dropdown trigger="click" placement="top" tabindex="0">
+                <div class="bpa-tn__dropdown-head bpa_focusable">
+                  <div class="bpa-tn__default-img" v-if="!customer.usePlaceholder && customer.avatarUrl">
+                    <img :src="customer.avatarUrl" :alt="customer.fullname" class="bpa-cp-pd__avatar">					
+                  </div>
+                  <div class="bpa-cp-avatar__default-img" v-else>
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v1c0 .55.45 1 1 1h14c.55 0 1-.45 1-1v-1c0-2.66-5.33-4-8-4z"/></svg>
+                  </div>
+                  <div class="bpa-cp-pd__title" v-if="currentScreenSize !== 'mobile'" :aria-label="customer.fullname">{{ customer.fullname }}</div>						
+                  <span class="bpa-tn__chevron"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.12 9.29L12 13.17l3.88-3.88c.39-.39 1.02-.39 1.41 0 .39.39.39 1.02 0 1.41l-4.59 4.59c-.39.39-1.02.39-1.41 0L6.7 10.7c-.39-.39-.39-1.02 0-1.41.39-.38 1.03-.39 1.42 0z"/></svg></span>
+                </div>                  
+                <template #dropdown>
+                  <bp-ui-dropdown-menu class="bpa-tn__dropdown-menu" slot="dropdown" role="dropdown">
+                    <bp-ui-dropdown-item class="bpa-tn__dropdown-item" ref="menuitem" tabindex="-1">
+                      <a href="javascript:void(0)" class="bpa-tm__item bpa_focusable" :class="(currentTab == 'my_appointment') ? ' __bpa-is-active' : ''"  @click="switchTab('my_appointment')" :aria-label="strings.my_appointment_menu_title">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm1 14H8c-.55 0-1-.45-1-1s.45-1 1-1h5c.55 0 1 .45 1 1s-.45 1-1 1zm3-4H8c-.55 0-1-.45-1-1s.45-1 1-1h8c.55 0 1 .45 1 1s-.45 1-1 1zm0-4H8c-.55 0-1-.45-1-1s.45-1 1-1h8c.55 0 1 .45 1 1s-.45 1-1 1z"/></svg>
+                          {{ strings.my_appointment_menu_title || 'My Appointments' }}
+                      </a>
+                    </bp-ui-dropdown-item>
+                    <!-- Render add-on navigation tabs. -->
+                    <bp-ui-dropdown-item class="bpa-tn__dropdown-item" v-for="tab in extensionTabs" :key="tab.id" tabindex="-1">
+                      <a href="javascript:void(0)" class="bpa-tm__item bpa_focusable" :class="(currentTab === tab.id) ? ' __bpa-is-active' : ''" @click="switchTab(tab.id)" :aria-label="tab.title">
+                        <span v-if="tab.icon" v-html="tab.icon"></span>
+                          {{ tab.title }}
+                      </a>
+                    </bp-ui-dropdown-item>
+                    <bp-ui-dropdown-item class="bpa-tn__dropdown-item" ref="menuitem" tabindex="-1">
+                      <a href="javascript:void(0)" class="bpa-tm__item bpa_focusable" :class="currentTab === 'delete_account' ? '__bpa-is-active' : ''" @click="switchTab('delete_account')" :aria-label="strings.delete_appointment_menu_title">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v10zM18 4h-2.5l-.71-.71c-.18-.18-.44-.29-.7-.29H9.91c-.26 0-.52.11-.7.29L8.5 4H6c-.55 0-1 .45-1 1s.45 1 1 1h12c.55 0 1-.45 1-1s-.45-1-1-1z"/></svg>
+                          {{ strings.delete_appointment_menu_title || 'Delete Account' }}
+                      </a>
+                    </bp-ui-dropdown-item>
+                  </bp-ui-dropdown-menu>
+                </template>
+              </bp-ui-dropdown>`;
+
+  const customerPanelTemplate = `
+        <!-- Logged-in customer panel -->
+        <div class="bpa-front-customer-panel-container">
+          <!-- Top navbar (Mobile & Tablet) -->
+          <div v-if="currentScreenSize !== 'desktop' && !hideCustomerDetails && currentTab !== 'delete_account'" class="bpa-front-cp-top-navbar">
+            <div class="bpa-cp-tn__left">
+              <div class="bpa-front-module-heading" :aria-label="strings.mybooking_title_text">{{ strings.mybooking_title_text }}</div>	
+            </div>
+          
+            <div class="bpa-cp-tn__right">
+              ${userNavDropdownTemplate}
+            </div>
+          </div>
+
+          <div class="bpa-front-cp-card">
+            <!-- Render custom navigation if available. -->
+            <component v-if="navComponent" :is="navComponent" :nav="navModel"></component>
+            <!-- Left sidebar (Desktop) -->
+            <div v-else-if="currentScreenSize === 'desktop' && !hideCustomerDetails && currentTab !== 'delete_account'" class="bpa-front-cp-left-sidebar">
+              <div class="bpa-cp-tn__left">
+                <div class="bpa-front-module-heading" :aria-label="strings.mybooking_title_text">{{ strings.mybooking_title_text }}</div>	
+              </div>
+            
+              <div class="bpa-cp-ls__tab-menu">
+                ${userNavDropdownTemplate}
+              </div>
+            </div>
+          </div>
+        </div>`;
+
   return {
     name: 'BookingPressMyBookings',
     data() {
@@ -225,6 +434,7 @@ function createMyBookingsComponent(cfg) {
           perPage: this.perPage,
           isLoggedIn: this.isLoggedIn,
           currentTab: this.currentTab,
+          currentScreenSize: this.currentScreenSize,
           reloadAppointments: (page) => this.loadAppointments(page || this.currentPage),
           notifySuccess: (msg) => this.notifySuccess(msg),
           switchTab: (id) => this.switchTab(id),
@@ -262,6 +472,15 @@ function createMyBookingsComponent(cfg) {
       hasStaffColumn() {
         return this.items.some((r) => this.staffName(r) !== '');
       },
+    },
+    watch: {
+      currentTab(newTab) {
+        if (newTab === 'delete_account') {
+          this.$nextTick(() => {
+            this.deleteAccountSlotReady = !!(this.deleteAccountSlotId && document.getElementById(this.deleteAccountSlotId));
+          });
+        }
+      }
     },
     mounted() {
       // Parity with the legacy on_load gate: guests have nothing to load.
@@ -673,13 +892,15 @@ function createMyBookingsComponent(cfg) {
         this.deleteError = '';
       },
       switchTab(tab) {
-        if (this.deleting) return; // never leave mid-write (race guard)
+        if (this.deleting) return; 
         if (tab === 'delete_account' && !this.showDeleteAccount) return;
-        // Besides the built-in tabs, only registered extension tabs are valid.
         if (tab !== 'my_appointment' && tab !== 'delete_account'
           && !this.extensionTabs.some((t) => t.id === tab)) return;
         this.currentTab = tab;
         this.resetDeleteState();
+
+        // ADD THIS NEW LINE BELOW:
+        if (tab === 'delete_account') { this.$nextTick(() => { this.deleteAccountSlotReady = !!document.getElementById(this.deleteAccountSlotId); }); }
       },
       cancelDelete() {
         // Mirror legacy: Cancel returns to My Appointments (Edit Account is not
@@ -887,60 +1108,33 @@ function createMyBookingsComponent(cfg) {
 
         <!-- Logged-in customer panel -->
         <div class="bpa-front-customer-panel-container" v-else>
-          <div class="bpa-front-cp-card">
+          <!-- Top navbar (Mobile & Tablet) -->
+          <div v-if="currentScreenSize !== 'desktop' && !hideCustomerDetails && currentTab !== 'delete_account'" class="bpa-front-cp-top-navbar">
+            <div class="bpa-cp-tn__left">
+              <div class="bpa-front-module-heading" :aria-label="strings.mybooking_title_text">{{ strings.mybooking_title_text }}</div>	
+            </div>
+          
+            <div class="bpa-cp-tn__right">
+              ${userNavDropdownTemplate}
+            </div>
+          </div>
 
+          <div class="bpa-front-cp-card">
             <!-- Nav presenter slot (PR-b1). A registered presenter (e.g. the Pro
                  left-sidebar + mobile nav module) replaces Lite's built-in
                  dropdown nav and receives :nav set to navModel; it owns its own
                  visibility (mobile variant, delete-account hiding, etc.). With
                  nothing registered, navComponent is null and the v-else-if
                  below renders Lite's current dropdown, byte-identical. -->
-            <component v-if="navComponent" :is="navComponent" :nav="navModel"></component>
-            <!-- Left sidebar (avatar / name / email / nav) -->
-            <div v-else-if="!hideCustomerDetails && currentTab !== 'delete_account'" class="bpa-front-cp-left-sidebar">
+            <component v-if="navComponent && currentScreenSize === 'desktop'" :is="navComponent" :nav="navModel"></component>
+            <!-- Left sidebar (Desktop) -->
+            <div v-else-if="currentScreenSize === 'desktop' && !hideCustomerDetails && currentTab !== 'delete_account'" class="bpa-front-cp-left-sidebar">
               <div class="bpa-cp-tn__left">
                 <div class="bpa-front-module-heading" :aria-label="strings.mybooking_title_text">{{ strings.mybooking_title_text }}</div>	
               </div>
             
               <div class="bpa-cp-ls__tab-menu">
-                <bp-ui-dropdown trigger="click" placement="top" tabindex="0">
-                  <div class="bpa-tn__dropdown-head bpa_focusable">
-                    <div class="bpa-tn__default-img" v-if="!customer.usePlaceholder && customer.avatarUrl">
-                      <img :src="customer.avatarUrl" :alt="customer.fullname" class="bpa-cp-pd__avatar">					
-                    </div>
-                    <div class="bpa-cp-avatar__default-img" v-else>
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v1c0 .55.45 1 1 1h14c.55 0 1-.45 1-1v-1c0-2.66-5.33-4-8-4z"/></svg>
-                    </div>
-                    <div class="bpa-cp-pd__title" :aria-label="customer.fullname">{{ customer.fullname }}</div>						
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.12 9.29L12 13.17l3.88-3.88c.39-.39 1.02-.39 1.41 0 .39.39.39 1.02 0 1.41l-4.59 4.59c-.39.39-1.02.39-1.41 0L6.7 10.7c-.39-.39-.39-1.02 0-1.41.39-.38 1.03-.39 1.42 0z"/></svg>
-                  </div>                  
-                  <template #dropdown>
-                    <bp-ui-dropdown-menu class="bpa-tn__dropdown-menu" slot="dropdown" role="dropdown">
-                      <bp-ui-dropdown-item class="bpa-tn__dropdown-item" ref="menuitem" tabindex="-1">
-                        <a href="javascript:void(0)" class="bpa-tm__item bpa_focusable" :class="(currentTab == 'my_appointment') ? ' __bpa-is-active' : ''"  @click="switchTab('my_appointment')" :aria-label="strings.my_appointment_menu_title">
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1s-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm1 14H8c-.55 0-1-.45-1-1s.45-1 1-1h5c.55 0 1 .45 1 1s-.45 1-1 1zm3-4H8c-.55 0-1-.45-1-1s.45-1 1-1h8c.55 0 1 .45 1 1s-.45 1-1 1zm0-4H8c-.55 0-1-.45-1-1s.45-1 1-1h8c.55 0 1 .45 1 1s-.45 1-1 1z"/></svg>
-                            {{ strings.my_appointment_menu_title || 'My Appointments' }}
-                        </a>
-                      </bp-ui-dropdown-item>
-                      <!-- Extension tabs (Pro / add-ons, via api.registerTab). The
-                           icon is trusted SVG markup supplied by the registering
-                           plugin (same trust level as the legacy icon actions). -->
-                      <bp-ui-dropdown-item class="bpa-tn__dropdown-item" v-for="tab in extensionTabs" :key="tab.id" tabindex="-1">
-                        <a href="javascript:void(0)" class="bpa-tm__item bpa_focusable" :class="(currentTab === tab.id) ? ' __bpa-is-active' : ''" @click="switchTab(tab.id)" :aria-label="tab.title">
-                          <span v-if="tab.icon" v-html="tab.icon"></span>
-                            {{ tab.title }}
-                        </a>
-                      </bp-ui-dropdown-item>
-                      <bp-ui-dropdown-item class="bpa-tn__dropdown-item" ref="menuitem" tabindex="-1">
-                        <a href="javascript:void(0)" class="bpa-tm__item bpa_focusable" :class="currentTab === 'delete_account' ? '__bpa-is-active' : ''" @click="switchTab('delete_account')" :aria-label="strings.delete_appointment_menu_title">
-                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V9c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v10zM18 4h-2.5l-.71-.71c-.18-.18-.44-.29-.7-.29H9.91c-.26 0-.52.11-.7.29L8.5 4H6c-.55 0-1 .45-1 1s.45 1 1 1h12c.55 0 1-.45 1-1s-.45-1-1-1z"/></svg>
-                            {{ strings.delete_appointment_menu_title || 'Delete Account' }}
-                        </a>
-                      </bp-ui-dropdown-item>
-                    </bp-ui-dropdown-menu>
-                  </template>
-                </bp-ui-dropdown>                  
-                              
+                ${userNavDropdownTemplate}
               </div>
             </div>
 
@@ -991,169 +1185,46 @@ function createMyBookingsComponent(cfg) {
               <!-- Appointments table (Element Plus / bp-ui) -->
               <div class="bpa-front-cp-my-appointment" v-else>
                 <bp-ui-table ref="multipleTable" class="bpa-cp-ma-table bpa-cp-ma-table--wrapper" :data="items" stripe fit @row-click="bookingpress_full_row_clickable"  @expand-change="bookingpress_expand_change">
-                  <!-- Expandable detail row -->
-                  <bp-ui-table-column type="expand" :expand-icon="CirclePlus" :collapse-icon="Remove">
+                  <!-- Expandable detail row (Desktop/Tablet) -->
+                  <bp-ui-table-column type="expand" v-if="currentScreenSize !== 'mobile'" :expand-icon="CirclePlus" :collapse-icon="Remove">
                     <template #default="scope">
-                      <div class="bpa-front-ma-view-appointment-card">
-                        <div class="bpa-ma-vac--head">
-                          <div class="bpa-ma-vac--head__left">
-                            <div class="bpa-left__service-detail">
-                              <div class="bpa-sd__appointment-id">{{ strings.booking_id_heading || 'Booking ID' }} : #{{ scope.row.booking_id }}</div>
-                              <!-- Multi Service rows list their services in the
-                                   "Service Details" section instead (legacy parity). -->
-                              <div class="bpa-sd__appointment-title" v-if="!isMultiService(scope.row)">{{ scope.row.bookingpress_service_name }}</div>
-                            </div>
-                          </div>
-                          <div class="bpa-ma-vac--head__right">
-                            <bp-ui-tag class="bpa-front-pill" :class="statusPillClass(scope.row)">{{ scope.row.bookingpress_appointment_status_label }}</bp-ui-tag>
-                          </div>
-                        </div>
-                        <!-- Row detail extensions, 'connect' placement (PR-e1):
-                             head/connect-link area (legacy
-                             bookingpress_integration_connect_extra_link — e.g. the
-                             Google Meet join link). Each receives { row, ctx }. -->
-                        <component v-for="d in connectRowDetails" :key="d.id" :is="d.component" :row="scope.row" :ctx="extensionCtx" placement="connect"></component>
-                        <div class="bpa-ma-vac--basic-details">
-                          <div class="bpa-vac-bd__row">
-                            <div class="bpa-bd__item">                            
-                              <div class="bpa-item--label">{{ strings.date_main_heading || 'Date' }}:</div>
-                              <div class="bpa-item--val" v-if="scope.row.bookingpress_service_duration_unit === 'd' && scope.row.bookingpress_appointment_formatted_end_date">{{ scope.row.bookingpress_appointment_formatted_date }} - {{ scope.row.bookingpress_appointment_formatted_end_date }}</div>
-                              <div class="bpa-item--val" v-else>{{ scope.row.bookingpress_appointment_formatted_date }}</div>
-                            </div>
-                            <div class="bpa-bd__item">
-                              <div class="bpa-item--label">{{ strings.booking_time_title || 'Time' }}:</div>
-                              <div class="bpa-item--val">{{ scope.row.bookingpress_appointment_formatted_start_time }} - {{ scope.row.bookingpress_appointment_formatted_end_time }}</div>
-                            </div>
-                          </div>
-                          <div class="bpa-vac-bd__row">
-                            <div class="bpa-bd__item bpa-front-mb-v3-staff" v-if="staffName(scope.row)">
-                              <div class="bpa-item--label">{{ strings.staff || 'Staff' }}:</div>
-                              <div class="bpa-item--val">
-                                <img v-if="scope.row.staff_avatar_url" :src="scope.row.staff_avatar_url" :alt="staffName(scope.row)" class="bpa-front-mb-v3-staff__avatar">
-                                {{ staffName(scope.row) }}
-                              </div>
-                            </div>
-                            <div class="bpa-bd__item" v-if="scope.row.selected_extra_members && scope.row.selected_extra_members > 0">
-                              <div class="bpa-item--label">{{ strings.members || 'Members' }}:</div>
-                              <div class="bpa-item--val">{{ scope.row.selected_extra_members }}</div>
-                            </div>
-                          </div>
-                          <!-- Single-service extras; Multi Service rows show extras
-                               per-service in the "Service Details" section instead. -->
-                          <div class="bpa-vac-bd__extras bpa-front-mb-v3-extras" v-if="hasExtras(scope.row) && !isMultiService(scope.row)">
-                            <div class="bpa-ma-vac-sec-title">{{ strings.extras || 'Service Extras' }}:</div>
-                            <div class="bpa-vac-pd__item" v-for="(ex, exi) in scope.row.extras_details" :key="exi">
-                              <div class="bpa-vac-pd__label">{{ ex.extra_service_name }} <span v-if="ex.extra_service_selected_qty">x {{ ex.extra_service_selected_qty }}</span></div>
-                              <div class="bpa-vac-pd__val">{{ ex.extra_service_total_price_with_currency }}</div>
-                            </div>
-                          </div>
-                        </div>
-                        <!-- Row detail extensions, 'details' placement (PR-e1):
-                             after the basic-details section (legacy additional-info /
-                             guest-data hooks). Each receives { row, ctx }. -->
-                        <component v-for="d in detailsRowDetails" :key="d.id" :is="d.component" :row="scope.row" :ctx="extensionCtx" placement="details"></component>
-                        <!-- Multi Service (add-on): per-service breakdown. Mirrors the
-                             legacy bookingpress_my_booking_display_guest_data hook output
-                             (name + extras left, per-service price right, one row each). -->
-                        <div class="bpa-ma-vac--payment-details bpa-ma-vac--multiservice-section" v-if="isMultiService(scope.row) && msServices(scope.row).length">
-                          <div class="bpa-ma-vac-sec-title">{{ strings.multiservice_service_details_title || 'Service Details' }}:</div>
-                          <div class="bpa-vac-pd__item" v-for="(service, si) in msServices(scope.row)" :key="si">
-                            <div class="bpa-vac-pd__val bpa-vac-multiservice">
-                              <p>{{ service.bookingpress_service_name }}</p>
-                              <div class="bpa-vac-pd__val bpa-ap__service-extras" v-if="service.extra_service_details && service.extra_service_details.length">
-                                <p class="bpa-vac-pd__val bpa-ap__multiservice-extra-label" v-for="(msx, msxi) in service.extra_service_details" :key="msxi">
-                                  {{ msx.extra_name }} x {{ msx.selected_qty }}
-                                  <span v-show="0 != msx.extra_service_duration">({{ msx.extra_service_duration }}{{ msx.extra_service_duration_unit }})</span>
-                                </p>
-                              </div>
-                            </div>
-                            <div class="bpa-vac-pd__val bpa-vac-multiservice">{{ service.bookingpress_service_price_with_currency }}
-                              <div class="bpa-vac-pd__val bpa-ap__service-extras" v-if="service.extra_service_details && service.extra_service_details.length">
-                                <p class="bpa-vac-pd__val" v-for="(msx, msxi) in service.extra_service_details" :key="msxi">{{ msx.extra_service_price_with_currency }}</p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="bpa-ma-vac--payment-details">
-                          <div class="bpa-ma-vac-sec-title">{{ strings.payment_details_title || 'Payment Details' }}:</div>
-                          <div class="bpa-vac-pd__item">
-                            <div class="bpa-vac-pd__label">{{ strings.payment_method_title || 'Payment Method' }}:</div>
-                            <div class="bpa-vac-pd__val">{{ paymentMethodLabel(scope.row) }}</div>
-                          </div>
-                          <div class="bpa-vac-pd__item">
-                            <div class="bpa-vac-pd__label">{{ strings.status_main_heading || 'Status' }}:</div>
-                            <div class="bpa-vac-pd__val" :class="paymentStatusValClass(scope.row)">{{ scope.row.bookingpress_payment_status_label }}</div>
-                          </div>
-                          <div class="bpa-vac-pd__item" v-if="scope.row.deposit_amt_with_currency && scope.row.is_deposit">
-                            <div class="bpa-vac-pd__label">{{ strings.deposit || 'Deposit' }}:</div>
-                            <div class="bpa-vac-pd__val">{{ scope.row.deposit_amt_with_currency }}</div>
-                          </div>
-                          <div class="bpa-vac-pd__item" v-if="scope.row.coupon_discount_amt && scope.row.coupon_discount_amt > 0">
-                            <div class="bpa-vac-pd__label">{{ strings.discount || 'Discount' }}:</div>
-                            <div class="bpa-vac-pd__val">{{ scope.row.coupon_discount_amt_with_currency }}</div>
-                          </div>
-                          <component v-for="d in paymentBeforeTotalRowDetails" :key="d.id" :is="d.component" :row="scope.row" :ctx="extensionCtx" placement="payment_before_total"></component>
-                          <div class="bpa-vac-pd__item" v-if="scope.row.tax_amt && scope.row.tax_amt > 0">
-                            <div class="bpa-vac-pd__label">{{ strings.tax || 'Tax' }}:</div>
-                            <div class="bpa-vac-pd__val">+{{ scope.row.tax_amt_with_currency }}</div>
-                          </div>
-                          <div class="bpa-vac-pd__item __bpa-pd-is-total-item">
-                            <div class="bpa-vac-pd__label">{{ strings.total_amount_title || 'Total Amount' }}<span v-if="scope.row.bookingpress_price_display_setting === 'include_taxes' && scope.row.bookingpress_included_tax_label" :aria-label="scope.row.bookingpress_included_tax_label">{{ ' ' + scope.row.bookingpress_included_tax_label }}</span>:</div>
-                            <div class="bpa-vac-pd__val bpa-front-text-primary-color">{{ totalLabel(scope.row) }}</div>
-                          </div>
-                          <!-- Row detail extensions, 'payment' placement (PR-e1):
-                               inside the payment-details section, after the total
-                               (legacy payment after-subtotal / modified hooks — e.g.
-                               tip / gift-card lines). Each receives { row, ctx }. -->
-                          <component v-for="d in paymentRowDetails" :key="d.id" :is="d.component" :row="scope.row" :ctx="extensionCtx" placement="payment"></component>
-                        </div>
+                      ${expandCardTemplate}
+                    </template>
+                  </bp-ui-table-column>
 
-                        <!-- Action area -->
-                        <div class="bpa-ma-vac--action-btn-group" v-if="hasActions(scope.row)">
-                          <!-- Extension row actions (Pro / add-ons) render first to
-                               preserve the legacy order (Reschedule, Book Again, Cancel). -->
-                          <component v-for="act in expandRowActions" :key="act.id" :is="act.component" :row="scope.row" :ctx="extensionCtx" placement="expand"></component>
-                          <bp-ui-button v-if="canBookAgain(scope.row)" @click="open_book_again_page_func($event, scope.row.bookingpress_appointment_booking_id,scope.row.book_again_page_url)" :underline="false" class="bpa-front-btn bpa-front-btn__small bpa_focusable" :aria-label="strings.book_again_button_title">
-                          <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_2344_779)">
-                          <g clip-path="url(#clip1_2344_779)"><path class="bpa-my-booking-front-icon" d="M3.13636 17.3636C2.68636 17.3636 2.30114 17.2034 1.98068 16.883C1.66023 16.5625 1.5 16.1773 1.5 15.7273V4.27273C1.5 3.82273 1.66023 3.4375 1.98068 3.11705C2.30114 2.79659 2.68636 2.63636 3.13636 2.63636H3.95455V1H5.59091V2.63636H12.1364V1H13.7727V2.63636H14.5909C15.0409 2.63636 15.4261 2.79659 15.7466 3.11705C16.067 3.4375 16.2273 3.82273 16.2273 4.27273V9.18182H14.5909V7.54545H3.13636V15.7273H8.86364V17.3636H3.13636ZM14.5909 19C13.5955 19 12.7261 18.6898 11.983 18.0693C11.2398 17.4489 10.7727 16.6682 10.5818 15.7273H11.85C12.0273 16.3273 12.3648 16.8182 12.8625 17.2C13.3602 17.5818 13.9364 17.7727 14.5909 17.7727C15.3818 17.7727 16.0568 17.4932 16.6159 16.9341C17.175 16.375 17.4545 15.7 17.4545 14.9091C17.4545 14.1182 17.175 13.4432 16.6159 12.8841C16.0568 12.325 15.3818 12.0455 14.5909 12.0455C14.1955 12.0455 13.8273 12.117 13.4864 12.2602C13.1455 12.4034 12.8455 12.6045 12.5864 12.8636H13.7727V14.0909H10.5V10.8182H11.7273V11.9841C12.0955 11.6295 12.525 11.3466 13.0159 11.1352C13.5068 10.9239 14.0318 10.8182 14.5909 10.8182C15.7227 10.8182 16.6875 11.217 17.4852 12.0148C18.283 12.8125 18.6818 13.7773 18.6818 14.9091C18.6818 16.0409 18.283 17.0057 17.4852 17.8034C16.6875 18.6011 15.7227 19 14.5909 19ZM3.13636 5.90909H14.5909V4.27273H3.13636V5.90909Z" fill="#727E95" stroke="#727E95" stroke-width="0.2"/></g></g><defs><clipPath id="clip0_2344_779">
-                          <rect width="20" height="20" fill="white"/></clipPath><clipPath id="clip1_2344_779"><rect width="20" height="20" fill="white"/></clipPath></defs>
-                          </svg>	{{ strings.book_again_button_title || 'Book Again' }}</bp-ui-button>
-                          <template v-if="canCancel(scope.row)">
-                            <!-- Refundable (Pro): open the refund-amount preview before cancelling -->
-                            <bp-ui-button v-if="isRefundable(scope.row)"
-                              class="bpa-front-btn bpa-front-btn__small bpa-front-btn__ma-refund bpa_focusable"
-                              :disabled="cancelingId !== null" :aria-label="strings.cancel_appointment_title"
-                              @click="openRefundPreview(scope.row)">{{ strings.cancel_appointment_title || 'Cancel Appointment' }}</bp-ui-button>
-                            <!-- Non-refundable: existing plain cancel popconfirm -->
-                            <bp-ui-popconfirm v-else
-                              :title="strings.cancel_appointment_confirmation_message"
-                              :confirm-button-text="strings.cancel_appointment_yes_btn_text || 'Yes'"
-                              :cancel-button-text="strings.cancel_appointment_no_btn_text || 'No'"
-                              confirm-button-type="bpa-front-btn bpa-front-btn__small bpa-front-btn--danger"
-                              cancel-button-type="bpa-front-btn bpa-front-btn__small"
-                              :teleported="false"
-                              :icon="false"
-                              data-class="bp-ui-popconfirm--ma-cancel"
-                              @confirm="confirmCancel(scope.row)">
-                              <template #reference>
-                                <bp-ui-button class="bpa-front-btn bpa-front-btn__small bpa_focusable"
-                                  :disabled="cancelingId !== null" :aria-label="strings.cancel_appointment_title">
-                                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M14.0397 3.49904H14.7892C15.6137 3.49904 16.2882 4.17361 16.2882 4.99808V9.8203C15.8477 9.42598 15.3419 9.10298 14.7892 8.86944V7.24664H4.29592V14.7418C4.29592 15.1541 4.6332 15.4914 5.04544 15.4914H7.55047C7.72418 16.0334 7.98125 16.5381 8.30658 16.9904H4.29592C3.46395 16.9904 2.79688 16.3158 2.79688 15.4914L2.80437 4.99808C2.80437 4.17361 3.46395 3.49904 4.29592 3.49904H5.04544V2.74952C5.04544 2.33728 5.38272 2 5.79496 2C6.20719 2 6.54448 2.33728 6.54448 2.74952V3.49904H12.5406V2.74952C12.5406 2.33728 12.8779 2 13.2902 2C13.7024 2 14.0397 2.33728 14.0397 2.74952V3.49904Z" />
-                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M8.27344 13.8431C8.27344 16.2817 10.2502 18.2584 12.6888 18.2584C15.1274 18.2584 17.1041 16.2817 17.1041 13.8431C17.1041 11.4045 15.1274 9.42773 12.6888 9.42773C10.2502 9.42773 8.27344 11.4045 8.27344 13.8431ZM13.3151 13.8411L14.5622 12.5944L14.5603 12.5925L14.5617 12.5912L13.9372 11.9668L12.689 13.215L11.4408 11.9668L10.8164 12.5912L10.8175 12.5923L10.8154 12.5944L12.0627 13.8413L10.8189 15.0851L10.8204 15.0867L10.8154 15.0918L11.4401 15.7165L12.6888 14.4674L13.9375 15.7165L14.5622 15.0918L14.5574 15.0869L14.5592 15.0851L13.3151 13.8411Z" />
-                                  </svg> {{ strings.cancel_appointment_title || 'Cancel Appointment' }}</bp-ui-button>
-                              </template>
-                            </bp-ui-popconfirm>
-                          </template>
+                  <!-- Mobile column layout -->
+                  <bp-ui-table-column v-if="currentScreenSize === 'mobile'" prop="bookingpress_appointment_date">
+                    <template #default="scope">
+                      <div class="bpa-front-cp-ma__mob-col">
+                        <div class="bpa-mob-col__status">
+                          <bp-ui-tooltip :content="scope.row.bookingpress_appointment_status_label" placement="top" :open-delay="300">
+                            <div class="bpa-ma-status-box bpa_focusable" :class="statusBoxClass(scope.row)">
+                              <div class="bpa-sb__circle"></div>
+                            </div>
+                          </bp-ui-tooltip>
+                        </div>
+                        <div class="bpa-mob-col__body">
+                          <div class="bpa-mob--service-title">{{ isMultiService(scope.row) && scope.row.bookingpress_multiple_service_name ? scope.row.bookingpress_multiple_service_name : scope.row.bookingpress_service_name }}</div>
+                          <div class="bpa-mob--date-time-details">
+                            <div class="bpa-mob-dtd__date-val">{{ scope.row.bookingpress_appointment_formatted_date }} {{ scope.row.bookingpress_appointment_formatted_start_time }}</div>
+                            <div class="bpa-mob-dtd__time-val"><bp-ui-icon class="bp-icon-clock"></bp-ui-icon> {{ scope.row.bookingpress_service_duration_val }} {{ scope.row.bookingpress_service_duration_label }}</div>
+                          </div>
                         </div>
                       </div>
                     </template>
                   </bp-ui-table-column>
 
-                  <bp-ui-table-column :label="strings.id_main_heading || 'ID'" min-width="60">
+                  <!-- Expandable detail row (Mobile) - placed after so caret is on the right -->
+                  <bp-ui-table-column type="expand" v-if="currentScreenSize === 'mobile'" :expand-icon="CirclePlus" :collapse-icon="Remove">
+                    <template #default="scope">
+                      ${expandCardTemplate}
+                    </template>
+                  </bp-ui-table-column>
+
+                  <bp-ui-table-column v-if="currentScreenSize !== 'mobile'" :label="strings.id_main_heading || 'ID'" min-width="60">
                     <template #default="scope"><span class="bpa-cp-ma-cell-val">#{{ scope.row.booking_id }}</span></template>
                   </bp-ui-table-column>
-                  <bp-ui-table-column prop="bookingpress_service_name" :label="strings.service_main_heading || 'Service'" sortable min-width="120">
+                  <bp-ui-table-column v-if="currentScreenSize !== 'mobile'" prop="bookingpress_service_name" :label="strings.service_main_heading || 'Service'" sortable min-width="120">
                     <template #default="scope">
                       <!-- Multi Service (add-on): first service name + "+N" hover popover
                            listing the remaining services (legacy parity:
@@ -1170,7 +1241,7 @@ function createMyBookingsComponent(cfg) {
                       <span v-else>{{ scope.row.bookingpress_service_name }}</span>
                     </template>
                   </bp-ui-table-column>
-                  <bp-ui-table-column prop="bookingpress_appointment_date" :label="strings.date_main_heading || 'Date'" sortable min-width="150">
+                  <bp-ui-table-column v-if="currentScreenSize !== 'mobile'" prop="bookingpress_appointment_date" :label="strings.date_main_heading || 'Date'" sortable min-width="150">
                     <template #default="scope">
                       <div class="bpa-ma-date-time-details">
                         <div class="bpa-ma-dt__date-val">{{ scope.row.bookingpress_appointment_formatted_date }} {{ scope.row.bookingpress_appointment_formatted_start_time }}</div>
@@ -1178,7 +1249,7 @@ function createMyBookingsComponent(cfg) {
                       </div>
                     </template>
                   </bp-ui-table-column>
-                  <bp-ui-table-column :label="strings.status_main_heading || 'Status'" min-width="80" align="center" >
+                  <bp-ui-table-column v-if="currentScreenSize === 'desktop'" :label="strings.status_main_heading || 'Status'" min-width="80" align="center" >
                     <template #default="scope">
                       <bp-ui-tooltip :content="scope.row.bookingpress_appointment_status_label" placement="top" :open-delay="300" >
                         <div class="bpa-ma-status-box bpa_focusable" :class="statusBoxClass(scope.row)" >
@@ -1187,13 +1258,13 @@ function createMyBookingsComponent(cfg) {
                       </bp-ui-tooltip>
                     </template>
                   </bp-ui-table-column>
-                  <bp-ui-table-column v-if="hasStaffColumn" :label="strings.staff_main_heading || 'Staff'" min-width="120">
+                  <bp-ui-table-column v-if="currentScreenSize === 'desktop' && hasStaffColumn" :label="strings.staff_main_heading || 'Staff'" min-width="120">
                     <template #default="scope">
                       <span class="bpa-cp-ma-cell-val">{{ staffName(scope.row) }}</span>
                       <span class="bpa-front-pill bpa-front-mb-v3-members-pill" v-if="scope.row.selected_extra_members && scope.row.selected_extra_members > 1">+{{ scope.row.selected_extra_members - 1 }}</span>
                     </template>
                   </bp-ui-table-column>
-                  <bp-ui-table-column :label="strings.payment_main_heading || 'Payment'" min-width="100">
+                  <bp-ui-table-column v-if="currentScreenSize === 'desktop'" :label="strings.payment_main_heading || 'Payment'" min-width="100">
                     <template #default="scope">
                       <!-- Amount + indicator-icon strip (legacy Pro parity:
                            appointment_my_appointments.php:467-486). The amount sits in

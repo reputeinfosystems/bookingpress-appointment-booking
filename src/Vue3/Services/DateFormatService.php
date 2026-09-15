@@ -117,7 +117,7 @@ class DateFormatService {
 		if ( false === $ts ) {
 			return (string) $hhmm;
 		}
-		return gmdate( $this->php_time_format(), $ts );
+		return date_i18n( $this->php_time_format(), $ts );
 	}
 
 	/**
@@ -132,6 +132,6 @@ class DateFormatService {
 		if ( false === $ts ) {
 			return (string) $ymd;
 		}
-		return gmdate( $this->date_format(), $ts );
+		return date_i18n( $this->date_format(), $ts );
 	}
 }

@@ -1,10 +1,10 @@
 #@ bookingpress-appointment-booking
 msgid ""
 msgstr ""
-"Project-Id-Version: BookingPress Appointment Booking v1.5.9\n"
+"Project-Id-Version: BookingPress Appointment Booking v1.6.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-07-22 10:25:34+0000\n"
+"PO-Revision-Date: 2026-07-24 11:01:30+0000\n"
 "Last-Translator: admin <testrepute@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -8349,12 +8349,12 @@ msgid "Clear"
 msgstr "Curăță"
 
 #: src/Vue3/REST/PaymentController.php:86
-#: src/Vue3/Services/SubmissionService.php:418
+#: src/Vue3/Services/SubmissionService.php:441
 #@ bookingpress-appointment-booking
 msgid "This time slot is no longer available."
 msgstr "Acest interval orar nu mai este disponibil."
 
-#: src/Vue3/Services/SubmissionService.php:665
+#: src/Vue3/Services/SubmissionService.php:688
 #@ bookingpress-appointment-booking
 msgid "The selected time slots are no longer available."
 msgstr "Intervalele orare selectate nu mai sunt disponibile."
@@ -8423,6 +8423,6 @@ msgstr "Termeni și condiții"
 #. translators: plugin header field 'Version'
 #: bookingpress-appointment-booking.php:0
 #@ bookingpress-appointment-booking
-msgid "1.5.9"
-msgstr "1.5.9"
+msgid "1.6.0"
+msgstr "1.6.0"
 

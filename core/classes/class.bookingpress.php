@@ -2241,7 +2241,7 @@ if (! class_exists('BookingPress') ) {
         {
             global $bookingpress_version;
             $bookingpress_old_version = get_option('bookingpress_version', true);
-            if (version_compare($bookingpress_old_version, '1.5.9', '<') ) {
+            if (version_compare($bookingpress_old_version, '1.6.0', '<') ) {
                 $bookingpress_load_upgrade_file = BOOKINGPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $bookingpress_load_upgrade_file;
                 $this->bookingpress_send_anonymous_data_cron();
@@ -5309,9 +5309,6 @@ if (! class_exists('BookingPress') ) {
                 $prevent_legacy_js = true;
             }
 
-            if( true == $prevent_legacy_js ){
-                return;
-            }
 
             $bookingress_load_js_css_all_pages = $this->bookingpress_get_settings('load_js_css_all_pages', 'general_setting');
 

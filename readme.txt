@@ -5,7 +5,7 @@ Donate link: https://bookingpressplugin.com/
 Requires at least: 6.5
 Tested up to: 7.0.2
 Requires PHP: 7.4
-Stable tag: 1.5.9
+Stable tag: 1.6.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -219,6 +219,9 @@ Please follow the steps for installation:
 13. BookingPress - General Settings
 
 == Changelog ==
+
+= 1.6.0 =
+* Minor bug fixes
 
 = 1.5.9 =
 * Fixed: Hide booked timeslot not working
