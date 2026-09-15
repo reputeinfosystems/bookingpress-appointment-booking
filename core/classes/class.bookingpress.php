@@ -2241,7 +2241,7 @@ if (! class_exists('BookingPress') ) {
         {
             global $bookingpress_version;
             $bookingpress_old_version = get_option('bookingpress_version', true);
-            if (version_compare($bookingpress_old_version, '1.5.8', '<') ) {
+            if (version_compare($bookingpress_old_version, '1.5.9', '<') ) {
                 $bookingpress_load_upgrade_file = BOOKINGPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $bookingpress_load_upgrade_file;
                 $this->bookingpress_send_anonymous_data_cron();
@@ -5293,6 +5293,7 @@ if (! class_exists('BookingPress') ) {
             }
 
             $load_calendar_js = false;
+            $prevent_legacy_js = false;
             if( is_plugin_active( 'bookingpress-appointment-booking-pro/bookingpress-appointment-booking-pro.php') ){
                 $bpa_pro_version = $this->bpa_pro_plugin_version();
 
@@ -5300,6 +5301,16 @@ if (! class_exists('BookingPress') ) {
                     $load_calendar_js = true;
                     wp_register_script('bookingpress_calendar_js', BOOKINGPRESS_URL . '/js/bookingpress_vue_calendar.js', array(), BOOKINGPRESS_VERSION, true);
                 }
+
+                if( version_compare( $bpa_pro_version, '6.0', '>=') ){
+                    $prevent_legacy_js = true;
+                }
+            } else {
+                $prevent_legacy_js = true;
+            }
+
+            if( true == $prevent_legacy_js ){
+                return;
             }
 
             $bookingress_load_js_css_all_pages = $this->bookingpress_get_settings('load_js_css_all_pages', 'general_setting');

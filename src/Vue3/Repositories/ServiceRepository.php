@@ -14,6 +14,7 @@
 namespace BookingPress\Vue3\Repositories;
 
 use BookingPress\Vue3\Hooks;
+use BookingPress\Vue3\Repositories\CustomizeRepository;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -191,6 +192,7 @@ class ServiceRepository extends BaseRepository {
 			'servicePrice'        => (float) $this->pluck( $row, 'bookingpress_service_price', 0 ),
 			'serviceDurationVal'  => (int) $this->pluck( $row, 'bookingpress_service_duration_val', 0 ),
 			'serviceDurationUnit' => (string) $this->pluck( $row, 'bookingpress_service_duration_unit', 'm' ),
+			'serviceDurationUnitLabel' => self::normalize_duration_unit( (string) $this->pluck( $row, 'bookingpress_service_duration_unit', 'm' ) ),
 			'serviceDescription'  => $this->pluck_text( $row, 'bookingpress_service_description', '' ),
 			'servicePosition'     => (int) $this->pluck( $row, 'bookingpress_service_position', 0 ),
 			'colorMode'           => (string) $this->pluck( $row, 'bookingpress_color_mode', 'preset' ),
@@ -198,6 +200,30 @@ class ServiceRepository extends BaseRepository {
 			'avatarUrl'           => '',
 			'meta'                => array(),
 		);
+	}
+	
+	/**
+	 * Normalize a duration unit to the user-facing string from CustomizeRepository.
+	 *
+	 * @param  mixed $unit
+	 * @return string
+	 */
+	private static function normalize_duration_unit( string $unit ): string {
+		$customizeRepo = new CustomizeRepository();
+
+		if( 'm' == $unit ){
+			$unit_key = 'book_appointment_min_text';
+		} else if( 'h' == $unit ){
+			$unit_key = 'book_appointment_hours_text';
+		} else if( 'd' == $unit ){
+			$unit_key = 'book_appointment_day_text';
+		} else {
+			$unit_key = 'book_appointment_min_text';
+		}
+
+		$unitData = $customizeRepo->get( $unit_key, CustomizeRepository::GROUP_BOOKING_FORM );
+
+		return $unitData ? $unitData : $unit;
 	}
 
 	/**

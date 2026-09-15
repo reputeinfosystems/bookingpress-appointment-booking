@@ -11,6 +11,7 @@
 import { mountBookingFormInstance } from 'bookingpress-form-v3';
 import { installSlotApi } from './utils/slots.js?v=3';
 import { formatPrice } from './utils/currency.js';
+import { formatDate, formatTime } from './utils/datetime.js?v=2';
 
 // Side-effect import: `bp-vcalendar.js` is an IIFE bundle that populates
 // `window.BpVCalendar` (the DatePicker mount bridge used by DateTimeStep).
@@ -46,6 +47,21 @@ import 'bookingpress-ui';
   //   window.BookingPressFormV3.formatPrice(state.config, amount)
   if (typeof window.BookingPressFormV3.formatPrice !== 'function') {
     window.BookingPressFormV3.formatPrice = formatPrice;
+  }
+
+  // Same pattern for the canonical date / time label formatters. Add-ons
+  // (e.g. the Cart step) render date/time labels from the raw canonical
+  // "YYYY-MM-DD" / "HH:MM" values stored in the working selection and must
+  // re-apply the admin Date format + 12/24-hour time format — exactly what the
+  // Summary step does via these utils. Exposing them here keeps Lite the single
+  // source of truth for the formatting rules. Mirrors the util signatures:
+  //   window.BookingPressFormV3.formatDate(state.config, ymd)
+  //   window.BookingPressFormV3.formatTime(state.config, hhmm)
+  if (typeof window.BookingPressFormV3.formatDate !== 'function') {
+    window.BookingPressFormV3.formatDate = formatDate;
+  }
+  if (typeof window.BookingPressFormV3.formatTime !== 'function') {
+    window.BookingPressFormV3.formatTime = formatTime;
   }
 
   // Tiny global event bus shared across instances. Per-instance buses live

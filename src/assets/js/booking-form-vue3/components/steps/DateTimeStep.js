@@ -674,7 +674,13 @@ export default {
       // watcher below mounts the V-Calendar bridge onto the now-visible
       // host. Mounting earlier breaks because V-Calendar v3 bails out
       // on `display: none` containers.
-      timeslots.fetchInitial();
+      const hooks = window.wp && window.wp.hooks;
+      const proFilterReady = hooks && typeof hooks.hasFilter === 'function'
+        && hooks.hasFilter('bookingpress_form_v3_timeslot_request');
+      // Defer to Pro ONLY at the racing first-mount (filter not registered yet).
+      if (proFilterReady || !state.config || !state.config.staffHidden) {
+        timeslots.fetchInitial();
+      }
     });
 
     // When the initial fetch resolves, the wrapper is rendered and the

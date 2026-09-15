@@ -84,6 +84,9 @@ class FormFieldRepository extends BaseRepository {
 				ARRAY_A
 			);
 
+			/** Preserve the legacy addon hook. */
+			$raw = apply_filters( 'bookingpress_modify_field_data_before_prepare', $raw );
+
 			$out = array();
 			if ( is_array( $raw ) ) {
 				foreach ( $raw as $r ) {

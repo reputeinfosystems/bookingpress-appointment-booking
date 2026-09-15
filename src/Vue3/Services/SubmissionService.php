@@ -159,8 +159,20 @@ class SubmissionService implements SubmissionServiceInterface {
 		$expected   = $amounts['full'];
 		$payable    = $amounts['payable'];
 		$client_amt = isset( $payload['service_price_without_currency'] ) ? (float) $payload['service_price_without_currency'] : 0.0;
-		if ( abs( $payable - $client_amt ) > 0.01 ) {
-			do_action( 'bookingpress_other_debug_log_entry', 'appointment_debug_logs', 'Booking price mismatch', 'bookingpress_bookingform', array( 'server_total' => $payable, 'client_total' => $client_amt ), $bookingpress_other_debug_log_id );
+		// The client normally sends the PAYABLE (the amount charged now). A
+		// partial-payment feature (Pro Deposit) reduces the payable below the full
+		// order total, mirrored client-side through the `bookingpress_form_v3_payable_amount`
+		// JS filter. When that add-on module is late or absent in the browser — e.g.
+		// a JS-optimization / defer / combine layer that breaks the deposit ES module
+		// for logged-out visitors (it works for logged-in users, who bypass such
+		// optimizations) — the client falls back to the FULL total. That disagreement
+		// is BENIGN: the charge is always the SERVER-computed `$payable` (the staged
+		// entry price), never the client hint, so a client reporting the full total
+		// can never underpay. Accept the full total in addition to the payable, and
+		// reject only a value that matches NEITHER (a genuine tamper / config drift).
+		$client_matches = ( abs( $payable - $client_amt ) <= 0.01 ) || ( abs( $expected - $client_amt ) <= 0.01 );
+		if ( ! $client_matches ) {
+			do_action( 'bookingpress_other_debug_log_entry', 'appointment_debug_logs', 'Booking price mismatch', 'bookingpress_bookingform', array( 'server_total' => $payable, 'server_full' => $expected, 'client_total' => $client_amt ), $bookingpress_other_debug_log_id );
 			return $this->error_envelope( 'bp_v3_price_mismatch', sprintf( 'Server total %s does not match client %s.', $payable, $client_amt ) );
 		}
 
@@ -800,9 +812,15 @@ class SubmissionService implements SubmissionServiceInterface {
 		//    order total unless Pro Deposit reduces it via FILTER_PAYABLE_AMOUNT);
 		//    the client sends it as `service_price_without_currency`. See submit().
 		$amounts    = is_array( $amounts ) ? $amounts : $this->compute_order_amounts( $line_items );
+		$expected   = $amounts['full'];
 		$payable    = $amounts['payable'];
 		$client_amt = isset( $payload['service_price_without_currency'] ) ? (float) $payload['service_price_without_currency'] : 0.0;
-		if ( abs( $payable - $client_amt ) > 0.01 ) {
+		// Accept the full total as well as the payable — see the identical guard in
+		// submit(): the charge is always the server-computed $payable, so a client
+		// that did not apply a partial-payment (Deposit) reduction and sent the full
+		// total is benign. Reject only a value matching neither.
+		$client_matches = ( abs( $payable - $client_amt ) <= 0.01 ) || ( abs( $expected - $client_amt ) <= 0.01 );
+		if ( ! $client_matches ) {
 			throw new \RuntimeException( sprintf( 'Server total %s does not match client %s.', $payable, $client_amt ) );
 		}
 
@@ -1269,6 +1287,59 @@ class SubmissionService implements SubmissionServiceInterface {
 	}
 
 	/**
+	 * Resolve the row's `bookingpress_service_price` + `bookingpress_due_amount`
+	 * when NO unit price was staged (Lite-only entries table, or an install whose
+	 * `bookingpress_appointment_meta` table predates the `bookingpress_entry_id`
+	 * column — `CREATE TABLE IF NOT EXISTS` never adds it — so the staging
+	 * INSERT/SELECT silently no-op).
+	 *
+	 * For a plain booking the entry's own `bookingpress_service_price` IS the full
+	 * charge, so it stays the row price (the pre-staging behaviour). But for a
+	 * DEPOSIT booking that column holds the REDUCED deposit charge (e.g. 10 of a
+	 * 100 service); using it as the row's service price makes the legacy backend
+	 * recompute the order total from it and render "$10 of $10". So when the entry
+	 * carries a deposit, fall back to the full item total Lite stages on the entry
+	 * (`bookingpress_total_amount`) and the deposit's remaining balance.
+	 *
+	 * @param array $entry        Stage-1 entries row.
+	 * @param float $charge_price The entry's own service price (the amount charged).
+	 * @param float $paid         The amount paid now.
+	 *
+	 * @return array{0:float,1:float} [service_price, due_amount]
+	 */
+	private function fallback_row_price_and_due( array $entry, $charge_price, $paid ) {
+		$charge_price = (float) $charge_price;
+
+		// Non-deposit booking: the entry's own service_price IS the full charge,
+		// so it stays the row price (the pre-staging behaviour).
+		if ( empty( $entry['bookingpress_deposit_payment_details'] ) ) {
+			return array( $charge_price, max( 0.0, $charge_price - (float) $paid ) );
+		}
+
+		// Deposit booking: the entry's service_price is the REDUCED deposit charge
+		// (e.g. 10 of a 100 service) — it must NEVER become the row's service price,
+		// or the legacy backend recomputes the order total from it and renders
+		// "$10 of $10". Recover the base (per-unit) service price the calculator
+		// expects (it re-multiplies persons + re-adds extras on top of this column):
+		//   1. the full item total Lite stages on the entry (bookingpress_total_amount);
+		//   2. when that column is absent (an upgraded Pro entries table whose
+		//      CREATE TABLE IF NOT EXISTS never added it), the service catalog price
+		//      — a core table, always present.
+		$service_price = isset( $entry['bookingpress_total_amount'] ) ? (float) $entry['bookingpress_total_amount'] : 0.0;
+		if ( $service_price <= 0 ) {
+			$sid = isset( $entry['bookingpress_service_id'] ) ? (int) $entry['bookingpress_service_id'] : 0;
+			$svc = $sid > 0 ? $this->services->find( $sid ) : null;
+			$service_price = ( is_array( $svc ) && isset( $svc['servicePrice'] ) && (float) $svc['servicePrice'] > 0 )
+				? (float) $svc['servicePrice']
+				: $charge_price;
+		}
+		$due_amount = isset( $entry['bookingpress_due_amount'] )
+			? max( 0.0, (float) $entry['bookingpress_due_amount'] )
+			: max( 0.0, $service_price - (float) $paid );
+		return array( $service_price, $due_amount );
+	}
+
+	/**
 	 * Read back the staged unit service price for an entry — NULL when nothing
 	 * was staged (Lite-only install, or an entry created before this staging
 	 * existed), in which case the caller keeps the previous behaviour.
@@ -1407,8 +1478,7 @@ class SubmissionService implements SubmissionServiceInterface {
 		$row_unit_price = $this->staged_unit_price_for_entry( isset( $entry['bookingpress_entry_id'] ) ? (int) $entry['bookingpress_entry_id'] : 0 );
 		$charge_price   = (float) ( isset( $entry['bookingpress_service_price'] ) ? $entry['bookingpress_service_price'] : 0.0 );
 		if ( null === $row_unit_price ) {
-			$row_service_price = $charge_price;
-			$row_due_amount    = max( 0.0, $charge_price - $paid );
+			list( $row_service_price, $row_due_amount ) = $this->fallback_row_price_and_due( $entry, $charge_price, $paid );
 		} else {
 			$row_service_price = (float) $row_unit_price;
 			$row_due_amount    = isset( $entry['bookingpress_due_amount'] ) ? max( 0.0, (float) $entry['bookingpress_due_amount'] ) : 0.0;
@@ -1488,8 +1558,7 @@ class SubmissionService implements SubmissionServiceInterface {
 		$charge_price   = (float) ( isset( $entry['bookingpress_service_price'] ) ? $entry['bookingpress_service_price'] : 0.0 );
 		$extra_paid     = isset( $extra['paid_amount'] ) ? (float) $extra['paid_amount'] : 0.0;
 		if ( null === $row_unit_price ) {
-			$row_service_price = $charge_price;
-			$row_due_amount    = max( 0.0, $charge_price - $extra_paid );
+			list( $row_service_price, $row_due_amount ) = $this->fallback_row_price_and_due( $entry, $charge_price, $extra_paid );
 		} else {
 			$row_service_price = (float) $row_unit_price;
 			$row_due_amount    = isset( $entry['bookingpress_due_amount'] ) ? max( 0.0, (float) $entry['bookingpress_due_amount'] ) : 0.0;

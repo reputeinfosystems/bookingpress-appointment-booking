@@ -195,7 +195,7 @@ class AvailabilityService implements AvailabilityServiceInterface {
 
 		$rows = $wpdb->get_results(
 			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				"SELECT bookingpress_dayoff_date, bookingpress_dayoff_enddate, bookingpress_repeat, bookingpress_dayoff_repeat_frequency, bookingpress_dayoff_repeat_times, bookingpress_dayoff_parent FROM `{$table}`", ARRAY_A
+				"SELECT * FROM `{$table}`", ARRAY_A
 		);
 		$dates = array();
 		$today = current_time( 'Y-m-d' );
