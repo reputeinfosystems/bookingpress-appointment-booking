@@ -78,16 +78,18 @@ class Routing {
 		// M4: register the eight `/form-v3/*` REST routes on `rest_api_init`.
 		add_action( 'rest_api_init', array( RouteRegistrar::class, 'register' ) );
 
-		// Block-theme (FSE) import-map fix. On block themes WordPress prints
-		// the script-module import map in `wp_head`, but the Vue 3 form is
-		// enqueued at shortcode-render time in the body (page builders like
-		// Elementor, content shortcodes) — long after `wp_head` fired. The
-		// head import map is therefore printed without our specifier, and the
-		// module `<script>` core still emits in the footer throws
-		// "Failed to resolve module specifier bookingpress-form-v3".
-		// Relocating the import map to the footer (as classic themes already
-		// do) fixes it. Deferred to `init` so core's `after_setup_theme`
-		// hook registration has already run; guarded to block themes only.
+		// Late-render import-map fix. WordPress prints script modules at the
+		// default wp_footer priority (10), while page builders such as
+		// Elementor also render popup templates at priority 10. Core's module
+		// callbacks were registered first, so a BookingPress shortcode inside
+		// a popup is discovered only after the import map, module data and
+		// module scripts have already printed. Block themes have the same
+		// problem even earlier because the map normally prints in wp_head.
+		//
+		// Move the complete module-print sequence just past late template
+		// rendering, but keep it before classic footer scripts at priority 20
+		// (including WordPress's inline emoji module). Deferred to `init` so
+		// core's `after_setup_theme` hook registration has already run.
 		add_action( 'init', array( self::class, 'relocate_script_modules_for_block_theme' ) );
 
 		// M5: register the customize-CSS lifecycle listeners
@@ -156,105 +158,75 @@ class Routing {
 	}
 
 	/**
-	 * Relocate WordPress's script-module import-map printing from `wp_head`
-	 * to `wp_footer` on block (FSE) themes.
+	 * Print WordPress script modules after late-rendered footer templates.
 	 *
 	 * Since WP 6.5, {@see \WP_Script_Modules::add_hooks()} prints the import
-	 * map (and, on 6.9+, the head-enqueued module scripts) in `wp_head` for
-	 * block themes, but in `wp_footer` for classic themes. The head position
-	 * assumes every script module is discoverable while the block template
-	 * renders during `wp_head`.
+	 * map, preloads, module data and enqueued modules at the default hook
+	 * priority (10). Elementor Pro also renders popup templates from a
+	 * `wp_footer` callback at priority 10. Because WordPress registered its
+	 * callbacks first, a BookingPress shortcode inside a popup is discovered
+	 * only after core has already attempted to print the module graph.
 	 *
-	 * The Vue 3 booking form is enqueued at shortcode-render time, deep in the
-	 * page body — which is exactly where page builders (Elementor) and content
-	 * shortcodes run, long AFTER `wp_head` has fired. On a block theme the
-	 * import map is therefore printed WITHOUT the `bookingpress-form-v3`
-	 * specifier, yet core still prints the form's `<script type="module">` in
-	 * the footer (`print_enqueued_script_modules`, always on `wp_footer`). The
-	 * browser then resolves the bare specifier against a map that lacks it:
+	 * Move the complete module sequence to priorities 11-14. This lets
+	 * default-priority footer templates finish first and preserves the strict
+	 * browser ordering that requires an import map before every modulepreload
+	 * and module script. Priority 14 remains ahead of WordPress's classic
+	 * footer-script printer at priority 20, which may emit inline module tags
+	 * after which a newly encountered import map would be ignored.
 	 *
-	 *   Failed to resolve module specifier "bookingpress-form-v3".
-	 *   Relative references must start with either "/", "./", or "../".
-	 *
-	 * Classic themes never hit this because the import map is already printed
-	 * in the footer, after the body (and thus our enqueue) has run.
-	 *
-	 * Fix: on block themes, move the import-map printing to `wp_footer`
-	 * priority 1 — ahead of core's enqueued-module printing at the default
-	 * priority 10 — so the footer contains one fully-populated import map
-	 * before every module script. This reproduces the classic-theme ordering
-	 * and is safe: `type="module"` scripts are deferred, so emitting them (and
-	 * the map) in the footer instead of the head does not change execution
-	 * timing, and `print_script_module()`'s shared `done` guard prevents any
-	 * double-print. `modulepreload` links are left in the head untouched (they
-	 * carry resolved URLs, not bare specifiers, so they need no import map).
-	 *
-	 * Registered on `init` (fires after core's `after_setup_theme` hook
-	 * registration, before `wp_head`) so the `remove_action()` calls target
-	 * the hooks core has already added.
+	 * The method name is retained for backward compatibility with code that
+	 * may already call the original block-theme workaround directly.
 	 *
 	 * @since 1.1
 	 *
 	 * @return void
 	 */
 	public static function relocate_script_modules_for_block_theme() {
-		if ( ! function_exists( 'wp_script_modules' ) || ! function_exists( 'wp_is_block_theme' ) || ! wp_is_block_theme() ) {
-			// Classic themes already print the import map in the footer; no WP
-			// Script Modules API means nothing to relocate.
+		if ( ! function_exists( 'wp_script_modules' ) ) {
 			return;
 		}
 
 		$modules = wp_script_modules();
 
-		// Import map: relocate head → footer, ahead of the module scripts.
-		if ( false !== has_action( 'wp_head', array( $modules, 'print_import_map' ) ) ) {
-			remove_action( 'wp_head', array( $modules, 'print_import_map' ) );
-			add_action( 'wp_footer', array( $modules, 'print_import_map' ), 1 );
+		// Remove a callback at whichever priority it was registered. This
+		// covers both core's head/footer theme variants and avoids duplicates
+		// when another compatibility layer already moved a callback.
+		$remove_callback = static function ( $hook, $callback ) {
+			$priority = has_action( $hook, $callback );
+			while ( false !== $priority ) {
+				if ( ! remove_action( $hook, $callback, $priority ) ) {
+					break;
+				}
+				$priority = has_action( $hook, $callback );
+			}
+		};
+
+		$import_map_callback = array( $modules, 'print_import_map' );
+		$preloads_callback   = array( $modules, 'print_script_module_preloads' );
+		$modules_callback    = array( $modules, 'print_enqueued_script_modules' );
+
+		foreach ( array( 'wp_head', 'wp_footer' ) as $hook ) {
+			$remove_callback( $hook, $import_map_callback );
+			$remove_callback( $hook, $preloads_callback );
+			$remove_callback( $hook, $modules_callback );
 		}
 
-		// WP 6.9+: head-enqueued module scripts must not print in the head now
-		// that the import map is gone from it, or they resolve specifiers
-		// against a missing map. Core's footer printer
-		// (`print_enqueued_script_modules`, wp_footer @10) re-emits them after
-		// the relocated map, and its shared `done` guard stops double-printing.
 		if ( method_exists( $modules, 'print_head_enqueued_script_modules' ) ) {
-			remove_action( 'wp_head', array( $modules, 'print_head_enqueued_script_modules' ) );
+			$remove_callback( 'wp_head', array( $modules, 'print_head_enqueued_script_modules' ) );
 		}
 
-		// WP 6.5–6.8 printed ALL enqueued modules at the head position on block
-		// themes. If that hook is present, relocate it to the footer too so it
-		// still follows the (now-footer) import map.
-		if ( false !== has_action( 'wp_head', array( $modules, 'print_enqueued_script_modules' ) ) ) {
-			remove_action( 'wp_head', array( $modules, 'print_enqueued_script_modules' ) );
-			add_action( 'wp_footer', array( $modules, 'print_enqueued_script_modules' ), 10 );
+		add_action( 'wp_footer', $import_map_callback, 11 );
+		add_action( 'wp_footer', $preloads_callback, 12 );
+
+		// Script-module data was introduced in WordPress 6.7. Guard the
+		// callback so this remains compatible with WordPress 6.5-6.6.
+		if ( method_exists( $modules, 'print_script_module_data' ) ) {
+			$data_callback = array( $modules, 'print_script_module_data' );
+			$remove_callback( 'wp_footer', $data_callback );
+			add_action( 'wp_footer', $data_callback, 13 );
 		}
 
-		// Module preloads MUST follow the import map too. On block themes core
-		// prints `<link rel="modulepreload">` in `wp_head` (via
-		// `print_script_module_preloads`). A modulepreload begins fetching the
-		// module graph, which — per the HTML spec — locks the document's
-		// "import maps allowed" flag. Any import map encountered AFTER that
-		// point (our relocated footer map) is then silently ignored by the
-		// browser, so every bare specifier fails to resolve:
-		//
-		//   The specifier "@wordpress/interactivity" was a bare specifier, but
-		//   was not remapped to anything.
-		//   The specifier "bookingpress-form-v3" was a bare specifier, but was
-		//   not remapped to anything.
-		//
-		// Note both core AND our specifiers fail — the tell-tale sign the map
-		// was rejected wholesale, not merely under-populated. This is invisible
-		// to a static "view source" check because the map is still textually
-		// before the module <script> tags; only the earlier head modulepreloads
-		// break it. Relocating the preloads to the footer (priority 2, after the
-		// import map at 1, before the module scripts at 10) leaves nothing
-		// module-related in the head, so the footer import map is the first
-		// module token the browser sees and is honored. This reproduces the
-		// classic-theme ordering, where preloads already print in the footer.
-		if ( false !== has_action( 'wp_head', array( $modules, 'print_script_module_preloads' ) ) ) {
-			remove_action( 'wp_head', array( $modules, 'print_script_module_preloads' ) );
-			add_action( 'wp_footer', array( $modules, 'print_script_module_preloads' ), 2 );
-		}
+		add_action( 'wp_footer', $modules_callback, 14 );
 	}
 
 	/**

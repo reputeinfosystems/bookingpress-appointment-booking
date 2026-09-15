@@ -3385,6 +3385,12 @@ if (! class_exists('bookingpress_settings') ) {
                         $break_start_time = date('H:i:s', strtotime($days_break_vals['start_time']));
                         $break_end_time   = date('H:i:s', strtotime($days_break_vals['end_time']));
 
+                        $bookingpress_normalized_break_times = apply_filters( 'bookingpress_save_default_workhour_times', array( 'start_time' => $break_start_time, 'end_time' => $break_end_time ), $days_break_vals, $dayname );
+                        if ( is_array( $bookingpress_normalized_break_times ) ) {
+                            $break_start_time = isset( $bookingpress_normalized_break_times['start_time'] ) ? $bookingpress_normalized_break_times['start_time'] : $break_start_time;
+                            $break_end_time   = isset( $bookingpress_normalized_break_times['end_time'] ) ? $bookingpress_normalized_break_times['end_time'] : $break_end_time;
+                        }
+
                         $bookingpress_insert_breakhours_data = array(
                          'bookingpress_workday_key' => $dayname,
                          'bookingpress_start_time'  => $break_start_time,
@@ -3622,7 +3628,7 @@ if (! class_exists('bookingpress_settings') ) {
          
             $response['data']                = $bookingpress_workhours_data;
             $response['selected_workhours']  = $bookingpress_selected_work_times;
-            $response['default_break_times'] = $default_break_timings;
+            $response['default_break_times'] = apply_filters( 'bpa_modify_default_break_timings', $default_break_timings );
             $response['msg']                 = esc_html__('Workhours Data.', 'bookingpress-appointment-booking');
             $response['title']               = esc_html__('Success', 'bookingpress-appointment-booking');
             $response['variant']             = 'success';

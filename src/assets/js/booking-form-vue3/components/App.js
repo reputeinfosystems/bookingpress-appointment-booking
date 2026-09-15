@@ -20,7 +20,7 @@ import EmptyPlaceholder from './shared/EmptyPlaceholder.js?v=1';
 import ServiceStep from './steps/ServiceStep.js?v=19';
 import DateTimeStep from './steps/DateTimeStep.js?v=27';
 import BasicDetailsStep from './steps/BasicDetailsStep.js?v=15';
-import SummaryStep from './steps/SummaryStep.js?v=22';
+import SummaryStep from './steps/SummaryStep.js?v=23';
 
 export default {
   name: 'BookingFormApp',

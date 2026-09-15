@@ -83,6 +83,7 @@ export default {
         const prev = state.appointment_step_form_data.selected_service;
         state.appointment_step_form_data.selected_service = String(v);
         const svc = state.services.find(s => parseInt(s.serviceId, 10) === parseInt(v, 10));
+        state.appointment_step_form_data.selected_service_name = svc ? svc.serviceName : '';
         syncSelectedServiceDuration(state, svc || null);
         // Reset downstream date+time when switching service.
         //

@@ -127,19 +127,110 @@ const count = Object.keys(instances).length;
 // eslint-disable-next-line no-console
 console.info(`[bp-v3] loader ready (instances: ${count})`);
 
+function instanceRoot(instanceId, scope = document) {
+  if (!scope || typeof scope.querySelector !== 'function') return null;
+  return scope.querySelector(`[data-bp-v3-instance="${instanceId}"]`)
+    || scope.querySelector(`[data-instance="${instanceId}"]`)
+    || scope.querySelector(`#bookingpress-form-vue3-${instanceId}`)
+    || null;
+}
+
+function runAddons(id, handle) {
+  if (!handle || !window.BookingPressFormV3 || !window.BookingPressFormV3.addons) return;
+  for (const [name, factory] of window.BookingPressFormV3.addons.entries()) {
+    try {
+      factory({
+        instanceId: id,
+        state: handle.state,
+        api: handle.api,
+        bus: handle.bus,
+        name,
+      });
+    } catch (_e) {}
+  }
+}
+
+/**
+ * Mount (or remount) an instance on a specific DOM node.
+ *
+ * Elementor renders popup templates in a hidden source container and creates
+ * the live modal from that markup when the popup opens. DOM copies retain the
+ * rendered HTML but not Vue's event listeners, so the live popup must own a
+ * fresh Vue app. On subsequent opens, seed the replacement app from the
+ * current reactive state so the visitor's selections are preserved.
+ */
+function mountInstance(id, initialState, mountNode = null) {
+  const registry = window.BookingPressFormV3 && window.BookingPressFormV3.instances;
+  const current = registry && registry[id];
+
+  if (current && mountNode && current.mountNode === mountNode && mountNode.__vue_app__) {
+    return current;
+  }
+
+  const stateSeed = current && current.state ? current.state : initialState;
+  if (current && current.app && typeof current.app.unmount === 'function') {
+    try { current.app.unmount(); } catch (_e) {}
+  }
+
+  const handle = mountBookingFormInstance(id, stateSeed, mountNode);
+  runAddons(id, handle);
+  return handle;
+}
+
+function isHiddenElementorPopupTemplate(root) {
+  return !!(
+    root
+    && typeof root.closest === 'function'
+    && root.closest('[data-elementor-type="popup"]')
+    && !root.closest('.elementor-popup-modal')
+  );
+}
+
 for (const [id, initialState] of Object.entries(instances)) {
   try {
-    const handle = mountBookingFormInstance(id, initialState);
-    // Run pre-registered add-ons against the freshly-mounted instance.
-    if (handle && window.BookingPressFormV3 && window.BookingPressFormV3.addons) {
-      for (const [name, factory] of window.BookingPressFormV3.addons.entries()) {
-        try { factory({ instanceId: id, state: handle.state, api: handle.api, bus: handle.bus, name }); } catch (_e) {}
-      }
+    const root = instanceRoot(id);
+    if (isHiddenElementorPopupTemplate(root)) {
+      // Mount only after Elementor creates/reveals the live modal. Mounting
+      // this hidden source node would attach listeners to markup that is not
+      // the markup the visitor interacts with.
+      // eslint-disable-next-line no-console
+      console.info('[bp-v3] deferred Elementor popup instance', id);
+      continue;
     }
+    mountInstance(id, initialState, root);
   } catch (err) {
     // eslint-disable-next-line no-console
     console.error('[bp-v3] failed to mount instance', id, err);
   }
+}
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('elementor/popup/show', (event) => {
+    const detailInstance = event && event.detail && event.detail.instance;
+    const popupRoot = detailInstance
+      && detailInstance.$element
+      && detailInstance.$element[0];
+    const scope = popupRoot && typeof popupRoot.querySelectorAll === 'function'
+      ? popupRoot
+      : document;
+    const roots = scope.querySelectorAll(
+      '.bpa-frontend-main-container.bpa-frontend-vue3[data-bp-v3-instance],'
+      + '.bpa-frontend-main-container.bpa-frontend-vue3[data-instance]'
+    );
+
+    for (const root of roots) {
+      const id = root.getAttribute('data-bp-v3-instance')
+        || root.getAttribute('data-instance')
+        || '';
+      if (!id || !instances[id]) continue;
+      try {
+        mountInstance(id, instances[id], root);
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.error('[bp-v3] failed to mount Elementor popup instance', id, err);
+      }
+    }
+  });
 }
 
 export {};

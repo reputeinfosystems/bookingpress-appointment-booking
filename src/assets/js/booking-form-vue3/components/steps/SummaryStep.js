@@ -325,10 +325,24 @@ export default {
               const full       = svc ? effectivePrice(state, svc.servicePrice, svc.serviceId) : 0;
               // Charge the amount payable now (deposit when active; full otherwise).
               const price      = payableAmount(state, full, selectedId);
-              const resp = await api.paypalValidate({
+              const payload = {
                 ...state.appointment_step_form_data,
                 service_price_without_currency: price,
+              };
+
+
+              let cancelled = false;
+              bus && bus.emit('bp-v3:before-submit', {
+                instanceId: state.instanceId,
+                payload,
+                cancel() { cancelled = true; },
               });
+              if (cancelled) {
+                submission.submitError.value = 'Submission was cancelled by an add-on.';
+                return 0;
+              }
+
+              const resp = await api.paypalValidate(payload);
               if (resp && resp.ok && resp.data && resp.data.order_id) {
                 if (resp.data.paypal_success_url) state.paypal_success_url = resp.data.paypal_success_url;
                 if (resp.data.paypal_cancel_url)  state.paypal_cancel_url  = resp.data.paypal_cancel_url;
@@ -735,6 +749,7 @@ export default {
               <div
                 class="bpa-front-bs-sm__item-val"
               >{{ appointmentDateTimeLabel || '—' }}</div>
+              <div class="bp-v3-slot" data-bp-v3-slot="summary-step:after-datetime-inner" :data-bp-v3-instance="state.instanceId"></div>
             </div>
             <div class="bp-v3-slot bpa-front-module--bs-summary-content-item" data-bp-v3-slot="summary-step:after-datetime" :data-bp-v3-instance="state.instanceId"></div>
           </div>

@@ -326,7 +326,8 @@ class SubmissionService implements SubmissionServiceInterface {
 		$full_total    = 0.0;
 		$payable_total = 0.0;
 		$items         = array();
-		foreach ( $line_items as $item ) {
+		$item_count    = count( $line_items );
+		foreach ( $line_items as $item_index => $item ) {
 			$item       = is_array( $item ) ? $item : array();
 			$service_id = isset( $item['selected_service'] ) ? (int) $item['selected_service'] : 0;
 			$full       = (float) $this->pricing->compute_total( array(
@@ -336,6 +337,9 @@ class SubmissionService implements SubmissionServiceInterface {
 			$payable = (float) apply_filters( Hooks::FILTER_PAYABLE_AMOUNT, $full, array(
 				'service_id' => $service_id,
 				'form_data'  => $item,
+				'item_index' => (int) $item_index,
+				'item_count' => $item_count,
+				'is_order'   => $item_count > 1,
 			) );
 			$full_total    += $full;
 			$payable_total += $payable;
@@ -1162,6 +1166,8 @@ class SubmissionService implements SubmissionServiceInterface {
 		// (where the payload is gone). Pro-only column — dropped on Lite tables.
 		$item_full = isset( $context['item_full'] ) ? (float) $context['item_full'] : (float) $expected_total;
 
+		$selected_service_name = (isset( $payload['selected_service_name'] ) && $payload['selected_service_name'] ) ? (string) $payload['selected_service_name'] : ( (string) ( isset( $service['serviceName'] ) ? $service['serviceName'] : '' ) );
+
 		$data = array(
 			'bookingpress_customer_id'           => $customer_id,
 			'bookingpress_customer_name'         => (string) ( isset( $payload['customer_name'] ) ? $payload['customer_name'] : '' ),
@@ -1174,7 +1180,7 @@ class SubmissionService implements SubmissionServiceInterface {
 			'bookingpress_customer_email'        => (string) ( isset( $payload['customer_email'] ) ? $payload['customer_email'] : '' ),
 			'bookingpress_customer_timezone'     => (string) ( isset( $payload['bookingpress_customer_timezone'] ) ? $payload['bookingpress_customer_timezone'] : '' ),
 			'bookingpress_service_id'            => $service_id,
-			'bookingpress_service_name'          => (string) ( isset( $service['serviceName'] ) ? $service['serviceName'] : '' ),
+			'bookingpress_service_name'          => $selected_service_name,
 			'bookingpress_service_price'         => (float) $expected_total,
 			'bookingpress_service_currency'      => $currency,
 			'bookingpress_service_duration_val'  => (int) ( isset( $service['serviceDurationVal'] ) ? $service['serviceDurationVal'] : 0 ),
@@ -1605,7 +1611,7 @@ class SubmissionService implements SubmissionServiceInterface {
 		}
 
 		$data = array(
-			'bookingpress_invoice_id'            => (int) ( isset( $extra['invoice_id'] ) ? $extra['invoice_id'] : 0 ),
+			'bookingpress_invoice_id'            => (string) ( isset( $extra['invoice_id'] ) ? $extra['invoice_id'] : 0 ),
 			'bookingpress_appointment_booking_ref' => (int) ( isset( $extra['booking_id'] ) ? $extra['booking_id'] : 0 ),
 			'bookingpress_customer_id'           => (int) ( isset( $entry['bookingpress_customer_id'] ) ? $entry['bookingpress_customer_id'] : 0 ),
 			'bookingpress_customer_name'         => (string) ( isset( $entry['bookingpress_customer_name'] ) ? $entry['bookingpress_customer_name'] : '' ),
@@ -1679,9 +1685,9 @@ class SubmissionService implements SubmissionServiceInterface {
 		$this->settings->set(
 			'bookingpress_last_invoice_id',
 			SettingsRepository::GROUP_INVOICE,
-			(string) $next
+			$next
 		);
-		return (int) apply_filters( 'bookingpress_modify_invoice_id_externally', $next );
+		return apply_filters( 'bookingpress_modify_invoice_id_externally', $next );
 	}
 
 	/**

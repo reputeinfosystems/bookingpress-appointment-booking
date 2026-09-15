@@ -2241,7 +2241,7 @@ if (! class_exists('BookingPress') ) {
         {
             global $bookingpress_version;
             $bookingpress_old_version = get_option('bookingpress_version', true);
-            if (version_compare($bookingpress_old_version, '1.6.1', '<') ) {
+            if (version_compare($bookingpress_old_version, '1.6.2', '<') ) {
                 $bookingpress_load_upgrade_file = BOOKINGPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $bookingpress_load_upgrade_file;
                 $this->bookingpress_send_anonymous_data_cron();
@@ -6646,7 +6646,7 @@ if (! class_exists('BookingPress') ) {
                 $args = [
                     'columns'       => 'DATE(bookingpress_dayoff_date) as off_date, bookingpress_dayoff_enddate as off_end_date, bookingpress_repeat',
                     'table'         => $tbl_bookingpress_default_daysoff,
-                    'where'         => $wpdb->prepare( 'WHERE bookingpress_dayoff_parent = %d AND ((bookingpress_dayoff_date BETWEEN %s AND %s) OR bookingpress_repeat = %d)', 0, $start_date, $end_date, 1 ),
+                    'where'         => $wpdb->prepare( 'WHERE bookingpress_dayoff_parent = %d', 0 ),
                     'type'          => ARRAY_A
                 ];
                 $daysoff_data       = BookingPressDb::bpa_fetch_records( $args );
@@ -6715,17 +6715,17 @@ if (! class_exists('BookingPress') ) {
                 |--------------------------------------------------
                 */
 
-                $md_start = date('m-d', $from);
-                $md_end   = date('m-d', $to);
+                $md_start      = date('m-d', $from);
+                $duration_days = max(0, (int) round(($to - $from) / DAY_IN_SECONDS));
+                $first_year    = max((int) date('Y', $from), $start_year - 1);
 
-                for ($y = $start_year; $y <= $end_year; $y++) {
+                for ($y = $first_year; $y <= $end_year; $y++) {
 
                     $range_start = strtotime("$y-$md_start");
-                    $range_end   = strtotime("$y-$md_end");
-
-                    if (!$range_start || !$range_end) {
-                        continue; // handles invalid dates like Feb 29
+                    if (!$range_start || date('m-d', $range_start) !== $md_start) {
+                        continue;
                     }
+                    $range_end = strtotime('+' . $duration_days . ' days', $range_start);
 
                     if ($range_end < $window_start_ts || $range_start > $window_end_ts) {
                         continue;

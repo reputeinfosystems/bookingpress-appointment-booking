@@ -244,7 +244,6 @@ class Settings extends Base{
                 'end_time'             => $end_time,
                 'end_time_val'             => $end_time,
                 'formatted_end_time' => date($bookingpress_options['wp_default_time_format'], strtotime($end_time))." ".($end_time == "24:00:00" ? esc_html__('Next Day', 'bookingpress-appointment-booking') : '' ),
-                
             );
 
             if($end_time == "24:00:00"){

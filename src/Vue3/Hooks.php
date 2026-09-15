@@ -238,6 +238,17 @@ class Hooks {
 	const FILTER_DAY_SCHEDULE = 'bookingpress_form_v3_day_schedule';
 
 	/**
+	 * Refine one concrete staff candidate's resolved day schedule while an
+	 * Any-Staff grid is building its union window. Location uses this seam to
+	 * replace the ordinary staff schedule with the selected location's
+	 * staff/service special day or working hours.
+	 *
+	 * Filter signature: `(array|null $staff_schedule, int $staff_id,
+	 * int $service_id, string $date, array $context, array $base_schedule): array|null`
+	 */
+	const FILTER_STAFF_DAY_SCHEDULE = 'bookingpress_form_v3_staff_day_schedule';
+
+	/**
 	 * Reshape the bookable working-hours window for a service/date before slots
 	 * are generated.
 	 *
@@ -289,9 +300,8 @@ class Hooks {
 	 *
 	 * Fired inside `AvailabilityService::build_slots()` right after the booked
 	 * ranges are fetched and BEFORE the per-slot overlap loop, so a consumer can
-	 * extend/pad how an existing booking blocks neighbouring slots without
-	 * changing the capacity math (the loop sums each overlapping range's
-	 * `count`). Pro's "Buffer Time" extends every range symmetrically by the
+	 * extend/pad how an existing booking blocks neighbouring slots. Pro's
+	 * "Buffer Time" extends every range symmetrically by the
 	 * BOOKED service's `(before + after)` buffer, so a booking blocks slots that
 	 * would not leave enough buffer around it.
 	 *
@@ -299,6 +309,9 @@ class Hooks {
 	 * 'service_id' => int]`; `service_id` is the service the booking belongs to
 	 * (the viewing service in the non-shared case, the actual booked service in
 	 * the shared-timeslot case) so a consumer can apply per-booked-service rules.
+	 * A range transformer may also provide `unbuffered_start_ts` and
+	 * `unbuffered_end_ts`; these preserve exact booking identity while the
+	 * transformed `start_ts` / `end_ts` continue to control overlap blocking.
 	 *
 	 * The `$context` arg is the caller context (the REST request on the initial /
 	 * month timeslot path, empty otherwise), so a consumer can resolve

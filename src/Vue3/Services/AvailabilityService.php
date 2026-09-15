@@ -85,7 +85,6 @@ class AvailabilityService implements AvailabilityServiceInterface {
 		//   - window : the general weekday working hours (may be null = closed).
 		//   - breaks : the general weekday break gaps (default_workhours is_break=1).
 		$schedule = $this->get_schedule_for_date( $service_id, (string) $date, $context );
-
 		
 
 		// Off, or no usable window → no slots. The date then greys naturally: it
@@ -200,87 +199,48 @@ class AvailabilityService implements AvailabilityServiceInterface {
 	 * @inheritDoc
 	 */
 	public function get_disabled_dates( $service_id, array $context = array() ) {
-		global $wpdb;
-		$table = $wpdb->prefix . 'bookingpress_default_daysoff';
-
-		$rows = $wpdb->get_results(
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				"SELECT * FROM `{$table}`", ARRAY_A
-		);
-		$dates = array();
-		$today = current_time( 'Y-m-d' );
-
-		if ( is_array( $rows ) ) {
-
-			foreach ( $rows as $r ) {
-				$start = isset( $r['bookingpress_dayoff_date'] ) ? (string) $r['bookingpress_dayoff_date'] : '';
-				$end   = isset( $r['bookingpress_dayoff_enddate'] ) ? (string) $r['bookingpress_dayoff_enddate'] : '';
-				$rep   = ! empty( $r['bookingpress_repeat'] );
-
-				if ( '' === $start ) {
-					continue;
-				}
-				$start_ts = strtotime( $start );
-				if ( false === $start_ts ) {
-					continue;
-				}
-				$end_ts = ( '' === $end || '0000-00-00' === $end ) ? $start_ts : strtotime( $end );
-				if ( false === $end_ts || $end_ts < $start_ts ) {
-					$end_ts = $start_ts;
-				}
-
-				if ( $rep ) {
-					// Annual repeat — emit (month-day) into each year we care about.
-					$freq  = (int) ($r['bookingpress_dayoff_repeat_frequency'] ?? 1);
-					$limit = (int) ($r['bookingpress_dayoff_repeat_times'] ?? 10);
-
-					$y0 = (int) gmdate('Y', $start_ts);
-
-					for ($i = 0; $i < $limit; $i++) {
-
-						$y = $y0 + ($i * $freq);
-
-						$s = strtotime($y . '-' . gmdate('m-d', $start_ts));
-						$e = strtotime($y . '-' . gmdate('m-d', $end_ts));
-
-						if (!$s || !$e) continue;
-
-						for ($t = $s; $t <= $e; $t += DAY_IN_SECONDS) {
-							$dates[] = gmdate('Y-m-d', $t);
-						}
-					}
-				} else {
-					// Single date or range — emit each day in [start, end].
-					for ( $ts = $start_ts; $ts <= $end_ts; $ts += DAY_IN_SECONDS ) {
-						$dates[] = gmdate( 'Y-m-d', $ts );
-					}
-				}
-			}
+		$range = $this->resolve_date_range( $context );
+		if ( empty( $range ) ) {
+			return array();
 		}
 
-		// Add past dates (within the visible window).
-		if ( isset( $context['from_date'] ) && isset( $context['to_date'] ) ) {
-			$from_ts = strtotime( (string) $context['from_date'] );
-			$to_ts   = strtotime( (string) $context['to_date'] );
-			if ( false !== $from_ts && false !== $to_ts ) {
-				$today_ts = strtotime( $today );
-				for ( $ts = $from_ts; $ts < $today_ts && $ts <= $to_ts; $ts += DAY_IN_SECONDS ) {
-					$dates[] = gmdate( 'Y-m-d', $ts );
-				}
-			}
-		}
+		list( $from_date, $to_date ) = $range;
+		$range_context              = $context;
+		$range_context['from_date'] = $from_date;
+		$range_context['to_date']   = $to_date;
 
-		$dates = array_values( array_unique( $dates ) );
-
-		/**
-		 * Reshape the disabled-dates list.
+		/*
+		 * Start with the company-holiday/past-date list after the public disabled
+		 * date filter has run. Then resolve the SAME priority-aware day schedule
+		 * used to build slots for every date in the requested window.
 		 *
-		 * @param array $dates
-		 * @param int   $service_id
-		 * @param array $context
+		 * A company holiday is only finally disabled when no higher-priority
+		 * staff/service/location/general special day re-opens it. Conversely,
+		 * scoped holidays and explicitly-Off custom weekdays are added even though
+		 * they do not live in Lite's company holiday table.
 		 */
-		$dates = apply_filters( Hooks::FILTER_DISABLED_DATES, $dates, (int) $service_id, $context );
-		return is_array( $dates ) ? $dates : array();
+		$base_disabled = $this->get_base_disabled_dates( (int) $service_id, $from_date, $to_date, $range_context );
+		$disabled_set  = array_fill_keys( $base_disabled, true );
+
+		$cursor = new \DateTimeImmutable( $from_date );
+		$end    = new \DateTimeImmutable( $to_date );
+		while ( $cursor <= $end ) {
+			$date     = $cursor->format( 'Y-m-d' );
+			$schedule = $this->get_schedule_for_date( (int) $service_id, $date, $range_context, $base_disabled );
+
+			if ( ! is_array( $schedule ) || ! empty( $schedule['is_off'] ) ) {
+				$disabled_set[ $date ] = true;
+			} else {
+				unset( $disabled_set[ $date ] );
+			}
+
+			$cursor = $cursor->modify( '+1 day' );
+		}
+
+		$dates = array_keys( $disabled_set );
+		sort( $dates, SORT_STRING );
+		return array_values( $dates );
+
 	}
 
 	// -----------------------------------------------------------------------
@@ -296,13 +256,15 @@ class AvailabilityService implements AvailabilityServiceInterface {
 	 *
 	 * @return array
 	 */
-	private function get_schedule_for_date( $service_id, $date, array $context = array() ) {
-		$disabled_context = array(
-			'date'      => $date,
-			'from_date' => isset( $context['from_date'] ) ? (string) $context['from_date'] : $date,
-			'to_date'   => isset( $context['to_date'] ) ? (string) $context['to_date'] : $date,
-		);
-		$disabled = $this->get_disabled_dates( $service_id, $disabled_context );
+	private function get_schedule_for_date( $service_id, $date, array $context = array(), $base_disabled_dates = null ) {
+		$disabled_context              = $context;
+		$disabled_context['date']      = (string) $date;
+		$disabled_context['from_date'] = (string) $date;
+		$disabled_context['to_date']   = (string) $date;
+
+		$disabled = is_array( $base_disabled_dates )
+			? $base_disabled_dates
+			: $this->get_base_disabled_dates( (int) $service_id, (string) $date, (string) $date, $disabled_context );
 		$weekday  = strtolower( gmdate( 'l', strtotime( (string) $date ) ) );
 
 		$schedule = array(
@@ -326,7 +288,98 @@ class AvailabilityService implements AvailabilityServiceInterface {
 		 */
 		$schedule = apply_filters( Hooks::FILTER_DAY_SCHEDULE, $schedule, (int) $service_id, (string) $date, $context );
 
+		// A special day can re-open a holiday, but no resolver may re-open a date
+		// that has already passed.
+		if ( (string) $date < current_time( 'Y-m-d' ) ) {
+			$schedule = array(
+				'is_off' => true,
+				'window' => null,
+				'breaks' => array(),
+				'source' => 'past',
+			);
+		}
+
 		return is_array( $schedule ) ? $schedule : array();
+	}
+
+	/**
+	 * Resolve and normalize the requested date window.
+	 *
+	 * @param array $context
+	 *
+	 * @return array{0:string,1:string}|array
+	 */
+	private function resolve_date_range( array $context ) {
+		$from = isset( $context['from_date'] ) ? (string) $context['from_date'] : '';
+		if ( '' === $from && isset( $context['date'] ) ) {
+			$from = (string) $context['date'];
+		}
+		if ( '' === $from ) {
+			$from = current_time( 'Y-m-d' );
+		}
+
+		$to = isset( $context['to_date'] ) ? (string) $context['to_date'] : $from;
+		if ( ! DayServiceHelper::is_valid_ymd( $from ) || ! DayServiceHelper::is_valid_ymd( $to ) ) {
+			return array();
+		}
+		if ( $to < $from ) {
+			$to = $from;
+		}
+
+		return array( $from, $to );
+	}
+
+	/**
+	 * Company holidays + past dates, after the extension filter has had a chance
+	 * to reshape the base list. This method deliberately does NOT resolve staff,
+	 * service or location precedence; {@see self::get_schedule_for_date()} does.
+	 *
+	 * @param int    $service_id
+	 * @param string $from_date
+	 * @param string $to_date
+	 * @param array  $context
+	 *
+	 * @return array<int,string>
+	 */
+	private function get_base_disabled_dates( $service_id, $from_date, $to_date, array $context ) {
+		global $BookingPress;
+
+		$dates = array();
+		if ( is_object( $BookingPress ) && method_exists( $BookingPress, 'bookingpress_retrieve_holidays' ) ) {
+			$dates = $BookingPress->bookingpress_retrieve_holidays( (string) $from_date, (string) $to_date, 'company' );
+		}
+		$dates = is_array( $dates ) ? $dates : array();
+
+		$today  = current_time( 'Y-m-d' );
+		$cursor = new \DateTimeImmutable( (string) $from_date );
+		$end    = new \DateTimeImmutable( (string) $to_date );
+		while ( $cursor <= $end && $cursor->format( 'Y-m-d' ) < $today ) {
+			$dates[] = $cursor->format( 'Y-m-d' );
+			$cursor  = $cursor->modify( '+1 day' );
+		}
+
+		/**
+		 * Reshape the company-holiday/past-date baseline before schedule priority
+		 * is resolved. The full request context is retained so staff/location-aware
+		 * consumers can make a scoped decision.
+		 *
+		 * @param array $dates
+		 * @param int   $service_id
+		 * @param array $context
+		 */
+		$dates = apply_filters( Hooks::FILTER_DISABLED_DATES, array_values( array_unique( $dates ) ), (int) $service_id, $context );
+		if ( ! is_array( $dates ) ) {
+			return array();
+		}
+
+		$out = array();
+		foreach ( $dates as $date ) {
+			$date = (string) $date;
+			if ( DayServiceHelper::is_valid_ymd( $date ) && $date >= $from_date && $date <= $to_date ) {
+				$out[ $date ] = true;
+			}
+		}
+		return array_keys( $out );
 	}
 
 	/**

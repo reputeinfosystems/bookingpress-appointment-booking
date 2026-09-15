@@ -964,7 +964,8 @@ if (! class_exists('bookingpress_customers') ) {
                     }
                 } else {
 
-                    if( true === $create_only_wpuser ){
+
+                    if( true === $create_only_wpuser && 1 == $is_front ){
                         $bookingpress_customer_id = $bookingpress_existing_user_id;
                         $submission_cls = new BookingPress\Vue3\Services\SubmissionService();
                         $submission_cls->maybe_create_wp_user_for_customer( $bookingpress_customer_data, (int) $bookingpress_customer_id ); 

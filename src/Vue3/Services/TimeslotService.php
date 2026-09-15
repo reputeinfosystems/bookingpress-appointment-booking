@@ -143,10 +143,10 @@ class TimeslotService implements TimeslotServiceInterface {
 				break;
 			}
 
-			$month_blocked     = $this->availability->get_disabled_dates(
-				$service_id,
-				array( 'from_date' => $iter_start, 'to_date' => $last_day )
-			);
+			$blocked_context              = $request;
+			$blocked_context['from_date'] = $iter_start;
+			$blocked_context['to_date']   = $last_day;
+			$month_blocked                = $this->availability->get_disabled_dates( $service_id, $blocked_context );
 			$month_blocked_set = array_flip( $month_blocked );
 
 			$month_details = array();
@@ -323,11 +323,11 @@ class TimeslotService implements TimeslotServiceInterface {
 			return $cached;
 		}
 
-		$working_details = array();
-		$blocked         = $this->availability->get_disabled_dates(
-			$svc_id,
-			array( 'from_date' => $first, 'to_date' => $last )
-		);
+		$working_details             = array();
+		$blocked_context             = $request;
+		$blocked_context['from_date'] = $first;
+		$blocked_context['to_date']   = $last;
+		$blocked                    = $this->availability->get_disabled_dates( $svc_id, $blocked_context );
 		$blocked_set     = array_flip( $blocked );
 
 		for ( $ts = strtotime( $first ); $ts <= $last_ts; $ts += DAY_IN_SECONDS ) {

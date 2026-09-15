@@ -1143,7 +1143,9 @@ function createMyBookingsComponent(cfg) {
 
               <!-- Success banner (api.notifySuccess) -->
               <div class="bpa-front-mb-v3-success" role="status" v-if="successMessage">{{ successMessage }}</div>
-
+               <div class="bpa-cp-tn__left">
+                <div class="bpa-front-module-heading" :aria-label="strings.mybooking_title_text">{{ strings.mybooking_title_text }}</div>	
+              </div>
               <!-- Filter bar -->
               <div class="bpa-front-cp--filter-wrapper">
                 <div class="bpa-front-cp--fw__row">

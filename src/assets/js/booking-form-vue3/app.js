@@ -16,7 +16,7 @@ import { createApp } from 'vue';
 // query string is appended manually. Bump the `?v=` suffix when you edit any
 // of the imported files to force a fresh fetch even when the browser has
 // cached an earlier copy under a no-query URL.
-import App from './components/App.js?v=32';
+import App from './components/App.js?v=33';
 import { createApiClient } from './api/client.js?v=2';
 import { useFormState } from './composables/useFormState.js?v=3';
 import { useReadiness } from './composables/useReadiness.js?v=4';
@@ -34,12 +34,13 @@ console.info('[bp-v3] app module loaded');
  * @param {object} initialState
  * @returns {object} The mounted-instance handle (also stored on the global registry).
  */
-export function mountBookingFormInstance(instanceId, initialState) {
+export function mountBookingFormInstance(instanceId, initialState, mountNodeOverride = null) {
   // The shortcode root carries `data-instance="<id>"` (matching the released
   // markup) AND `data-bp-v3-instance="<id>"` (back-compat for any add-on that
   // wrote against the M5 path). Either selector finds the same node.
   const mountSel = `[data-instance="${instanceId}"], [data-bp-v3-instance="${instanceId}"]`;
   const mountNode =
+    mountNodeOverride ||
     document.querySelector(`[data-instance="${instanceId}"]`) ||
     document.querySelector(`[data-bp-v3-instance="${instanceId}"]`) ||
     document.querySelector(`#bookingpress-form-vue3-${instanceId}`) ||

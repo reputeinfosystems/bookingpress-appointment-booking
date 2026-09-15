@@ -430,6 +430,7 @@ class StateBuilder {
 			'appointment_step_form_data' => $step_form_data,
 			'strings'               => $this->compose_strings( $bf_strings, $message_settings ),
 			'preselection'          => $preselection,
+			'bpa_check_user_login'  => is_user_logged_in() ? 1 : 0,
 		);
 
 		/**
@@ -781,6 +782,7 @@ class StateBuilder {
 			'next_button'             => $d( 'next_button_text', 'Next' ),
 			'goback_button'           => $d( 'goback_button_text', 'Go Back' ),
 			'book_button'             => $d( 'book_appointment_btn_text', 'Book Appointment' ),
+			'book_button_string'	  => $d( 'book_appointment_btn_text', 'Book Appointment' ),
 			'total_amount_label'      => $d( 'total_amount_text', 'Total Amount Payable' ),
 			'no_service_text'         => $d( 'no_service_text', 'No services available.' ),
 			'no_categories_services'  => $d( 'no_categories_services_text', 'No categories and services added!' ),
@@ -829,6 +831,7 @@ class StateBuilder {
 			'no_appointment_time_error'    => $m( 'no_appointment_time_selected_for_the_booking', 'Please select a time slot to proceed with the booking.' ),
 			'no_payment_method'            => $m( 'no_payment_method_available',                  'Oops! There is no payment method available.' ),
 			'no_payment_method_picked'     => $m( 'no_payment_method_is_selected_for_the_booking', 'Please select a payment method to proceed with the booking.' ),
+			'subtotal_text'					=> $d( 'subtotal_text', 'Subtotal' )
 		);
 	}
 
