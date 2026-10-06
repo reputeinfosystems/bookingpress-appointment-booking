@@ -213,8 +213,18 @@ class SubmissionService implements SubmissionServiceInterface {
 		$gateway = isset( $payload['selected_payment_method'] ) ? (string) $payload['selected_payment_method'] : '';
 
 		// Validated Supported Currency based on the Selected Payment Method.
+		//
+		// Skipped when nothing is payable, for the same reason as D51 and as the
+		// matching gate in `PackageContext::stage()`: this asks whether a GATEWAY
+		// can charge the store currency, and a fully covered order (gift card,
+		// 100% coupon, reward points) never reaches one. The id in
+		// `selected_payment_method` is then a leftover — the customer may have
+		// picked a method BEFORE applying the gift card, and the picker hides
+		// rather than clearing the selection — so validating against it refused
+		// free bookings on any site whose selected method cannot take the store
+		// currency. An INR store with PayFast selected (ZAR only) is the case.
 		$is_currency_supported = true;
-		if( 'paypal' != $gateway && 'on-site' != $gateway ) {
+		if( ! $this->nothing_to_charge( $payable ) && 'paypal' != $gateway && 'on-site' != $gateway ) {
 			$currency_code = $this->settings->get( 'payment_default_currency', SettingsRepository::GROUP_PAYMENT, 'USD' );
 
 			$unsupported_currency_msg = $this->settings->get( 'unsupported_currecy_selected_for_the_payment', SettingsRepository::GROUP_MESSAGE, esc_html__( 'The selected currency is not supported for the chosen payment method.', 'bookingpress-appointment-booking') );
@@ -233,8 +243,27 @@ class SubmissionService implements SubmissionServiceInterface {
 		// drop the PAYABLE to 0 while the full total stays > 0, so the booking
 		// completes with no payment. Inert for Lite (payable === expected) and for
 		// Deposit (payable > 0); coupon-zero / free already trigger via $expected.
-		$nothing_payable = ( $payable <= 0.0 );
-		$finalize_inline = ( 'on-site' === $gateway ) || ( $expected <= 0.0 ) || $nothing_payable;
+		// The test is what is PAYABLE NOW, never the order total. A zero total
+		// used to short-circuit here too, on the assumption that nothing can be
+		// owed on a free order. Tip breaks that assumption by construction: it
+		// adds to FILTER_PAYABLE_AMOUNT at terminal priority 9999 and
+		// deliberately never touches FILTER_SUMMARY_TOTAL, so a package
+		// redemption (which zeroes BOTH pipelines) plus a tip leaves
+		// $expected 0 and $payable > 0.
+		//
+		// That combination finalized the booking inline and recorded the tip as
+		// PAID with no transaction id, then returned an envelope carrying no
+		// entry_token — so BookingFormContext::stage() threw "Could not secure
+		// the staged booking." AFTER the appointment had already been created.
+		// The customer saw a failure, the appointment existed, and the money was
+		// never collected.
+		//
+		// $expected <= 0 is fully subsumed by nothing_to_charge( $payable ): a
+		// genuinely free order has both at zero. The only case it added was the
+		// bug, so it is gone rather than widened. Any future add-on that moves
+		// only the payable inherits the correct behaviour for free.
+		$nothing_payable = $this->nothing_to_charge( $payable );
+		$finalize_inline = ( 'on-site' === $gateway ) || $nothing_payable;
 
 		if ( $finalize_inline ) {
 			// A free order ($expected <= 0) or a fully prepaid-tender order
@@ -245,7 +274,13 @@ class SubmissionService implements SubmissionServiceInterface {
 			// `onsite_appointment_status` setting as the payment status — 1=Paid /
 			// 2=Pending, default 2). The Vue3 migration had hard-coded STATUS_PAID
 			// for every inline case, which wrongly marked on-site bookings Paid.
-			$is_free_or_prepaid = ( $expected <= 0.0 ) || $nothing_payable;
+			// Same correction as the gate above, for the same reason: "the order
+			// total is 0" does not mean "nothing is owed". An ON-SITE booking
+			// whose service is package-covered but which carries a tip owes that
+			// tip in person, so it must stay PENDING under the merchant's
+			// on-site setting rather than being stamped Paid against a ' - '
+			// gateway. A genuinely free order still has $nothing_payable true.
+			$is_free_or_prepaid = $nothing_payable;
 			if ( $is_free_or_prepaid ) {
 				$inline_payment_status = PaymentTransactionRepository::STATUS_PAID;
 			} else {
@@ -257,7 +292,9 @@ class SubmissionService implements SubmissionServiceInterface {
 					'payment_gateway' => $is_free_or_prepaid ? ' - ' : 'on-site',
 					'payment_status'  => $inline_payment_status,
 					'transaction_id'  => '',
-					'paid_amount'     => $payable,
+					// A sub-minor-unit residue (see nothing_to_charge()) was never
+					// charged, so it is not recorded as paid.
+					'paid_amount'     => $nothing_payable ? 0.0 : $payable,
 					'currency'        => $this->settings->get( 'payment_default_currency', SettingsRepository::GROUP_PAYMENT, 'USD' ),
 					'payload'         => $payload,
 				) );
@@ -272,12 +309,22 @@ class SubmissionService implements SubmissionServiceInterface {
 		// call finalize_booking() after capture. Return a stub redirect so
 		// the client can pivot into the SDK / redirect form. The primary entry
 		// id resumes the whole order on confirm.
-		$entry_token = '';
-		if ( 'paypal' === $gateway ) {
-			$entry_token = $this->entries->issue_paypal_entry_token( $entry_id );
-			if ( '' === $entry_token ) {
-				return $this->error_envelope( 'bp_v3_entry_token_failed', 'Could not secure the staged booking.' );
-			}
+		// Issued for EVERY off-site gateway, not just PayPal. The token is proof
+		// that the caller staged this entry — a CONTEXT concern, not a PayPal one.
+		// Gating it on the gateway id meant a staged Stripe booking came back
+		// unsecured, and PaymentContextInterface::stage() rightly refuses to hand
+		// an unsecured reference to a gateway ("Could not secure the staged
+		// booking."). Anything reaching this line is off-site and staging, so it
+		// needs one. Gateways still on the legacy routes simply ignore the extra
+		// field.
+		//
+		// NOTE: issue_paypal_entry_token() / verify_paypal_entry_token() /
+		// META_V3_PAYPAL_ENTRY_TOKEN keep their PayPal names for now — renaming
+		// touches Pro and every released gateway build. See the PHASE 1 RENAME
+		// note in BookingFormContext.
+		$entry_token = $this->entries->issue_paypal_entry_token( $entry_id );
+		if ( '' === $entry_token ) {
+			return $this->error_envelope( 'bp_v3_entry_token_failed', 'Could not secure the staged booking.' );
 		}
 
 		return array(
@@ -363,6 +410,13 @@ class SubmissionService implements SubmissionServiceInterface {
 				'form_data'  => $item,
 			) );
 			$payable = (float) apply_filters( Hooks::FILTER_PAYABLE_AMOUNT, $full, array(
+				// D28 — every context names itself, so a callback can opt IN to
+				// the ones it understands. This is the live booking-form
+				// pipeline; Complete Payment, Gift Card and Package pass their
+				// own id. A callback that sees no `context_id` at all must
+				// behave exactly as it does today, which is why this key is
+				// additive rather than required.
+				'context_id' => \BookingPress\Vue3\Payments\Contexts\BookingFormContext::ID,
 				'service_id' => $service_id,
 				'form_data'  => $item,
 				'item_index' => (int) $item_index,
@@ -909,7 +963,7 @@ class SubmissionService implements SubmissionServiceInterface {
 		// Legacy parity (class.bookingpress_appointment_bookings.php:524):
 		// PayPal requires a non-zero charge. Free services route through
 		// the inline finalize path of submit(), never here.
-		if ( $payable <= 0.0 ) {
+		if ( $this->nothing_to_charge( $payable ) ) {
 			throw new \RuntimeException( 'Service price must be more than 0 for PayPal.' );
 		}
 
@@ -1180,6 +1234,33 @@ class SubmissionService implements SubmissionServiceInterface {
 			'config'               => array( 'payment_methods' => $payment ),
 			'form_data'            => $payload,
 		);
+	}
+
+	/**
+	 * Whether an amount rounds to nothing in the booking currency's minor unit.
+	 *
+	 * `<= 0.0` is not the test. A pricing pipeline that rounds its discounts at
+	 * two decimals, on a site that prices at three, leaves a residue no gateway
+	 * can charge: a 100% online discount on a 500.444 + 278.555 cart splits into
+	 * per-line shares of 500.44 + 278.555 (the second is capped at its line), so
+	 * the order payable is 0.004. That passed the 0.01 anti-tamper against the
+	 * client's 0, was not `<= 0.0`, and so the submit returned `pending_payment`
+	 * to a PayPal client that had correctly stepped aside at zero. Book did
+	 * nothing.
+	 *
+	 * The charge is quantized to the minor unit before it reaches a gateway
+	 * anyway ({@see \BookingPress\Vue3\Payments\Money::quantized()}), so an
+	 * amount that quantizes to 0 IS zero for every purpose that matters here.
+	 *
+	 * @param float $amount
+	 *
+	 * @return bool
+	 */
+	private function nothing_to_charge( $amount ) {
+		$currency = (string) $this->settings->get( 'payment_default_currency', SettingsRepository::GROUP_PAYMENT, 'USD' );
+		$decimals = \BookingPress\Vue3\Payments\Money::decimals_for( $currency );
+
+		return round( (float) $amount, $decimals ) <= 0.0;
 	}
 
 	/**
@@ -1667,7 +1748,7 @@ class SubmissionService implements SubmissionServiceInterface {
 			'bookingpress_selected_appointment_end_time' => (string) ( isset( $entry['bookingpress_selected_appointment_end_time'] ) ? $entry['bookingpress_selected_appointment_end_time'] : '' ),
 		);
 
-		if( 'd' !== (string) $entry_data['bookingpress_service_duration_unit'] && '00:00:00' == $entry_data['bookingpress_appointment_end_time'] ) {
+		if( 'd' !== (string) $entry_data['bookingpress_service_duration_unit'] && '00:00:00' == $entry_data['bookingpress_appointment_end_time']  || $entry_data['bookingpress_appointment_end_time'] < $entry_data['bookingpress_appointment_time'] ) {
 			$entry_data['bookingpress_appointment_end_date'] = date( 'Y-m-d', strtotime( $entry_data['bookingpress_appointment_date'] . ' +1 day' ) );
 		}
 

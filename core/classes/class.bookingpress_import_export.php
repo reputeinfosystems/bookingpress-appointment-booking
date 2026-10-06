@@ -951,7 +951,8 @@ if (! class_exists('bookingpress_import_export') ) {
                                                     $import_data_v = $import_record_data[$i][$key];                                                  
                                                     if($import_data_v == 'null' || is_null($import_data_v)){
                                                         $single_import_record[$key] = NULL;  
-                                                        if($key == "bookingpress_customer_full_name"){
+                                                        // Ensure NOT NULL columns default to empty string instead of NULL to prevent MySQL strict mode query errors.
+                                                        if($key == "bookingpress_customer_full_name" || $key == "bookingpress_user_name" || $key == "bookingpress_user_login" || $key == "bookingpress_user_firstname" || $key == "bookingpress_user_lastname"){
                                                             $single_import_record[$key] = "";
                                                         }
                                                     }else{

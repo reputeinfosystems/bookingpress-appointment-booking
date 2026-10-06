@@ -408,6 +408,13 @@ function createMyBookingsComponent(cfg) {
       };
     },
     computed: {
+      currentTabTitle() {
+        const activeTab = this.extensionTabs.find(
+          tab => tab.id === this.currentTab
+        );
+
+        return activeTab?.title || this.strings.mybooking_title_text || 'My Bookings';
+      },
       showPagination() {
         return this.totalRecords > this.perPage;
       },
@@ -1210,7 +1217,7 @@ function createMyBookingsComponent(cfg) {
           <!-- Top navbar (Mobile & Tablet) -->
           <div v-if="currentScreenSize !== 'desktop' && !hideCustomerDetails && currentTab !== 'delete_account'" class="bpa-front-cp-top-navbar">
             <div class="bpa-cp-tn__left" >
-              <div class="bpa-front-module-heading" :aria-label="strings.mybooking_title_text">{{ strings.mybooking_title_text }}</div>	
+              <div class="bpa-front-module-heading" :aria-label="currentTabTitle">{{ currentTabTitle }}</div>	
             </div>
           
             <div class="bpa-cp-tn__right">

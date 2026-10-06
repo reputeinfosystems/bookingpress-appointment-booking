@@ -244,6 +244,59 @@ class EntryRepository extends BaseRepository {
 	}
 
 	/**
+	 * Normalise a staged entry's charged amount to a value its currency can
+	 * actually express.
+	 *
+	 * The pricing pipeline can land on an amount that is not legal tender —
+	 * JPY 45.57 (no minor unit), or USD 45.028 on a site whose "number of
+	 * decimals" display setting is 3. Such a value cannot be charged by any
+	 * gateway, so what the gateway does charge would then disagree with the
+	 * staged row, and `SubmissionService::finalize_booking()` rejects a paid
+	 * amount that differs from the entry by more than 0.01 — taking the money
+	 * and refusing to create the booking.
+	 *
+	 * Writing the quantized amount back BEFORE the charge keeps the staged row,
+	 * the gateway charge and the finalized booking on one number.
+	 *
+	 * Updates both columns `stage1_insert_entry()` writes the payable to, so
+	 * they stay in lockstep.
+	 *
+	 * @param int   $entry_id
+	 * @param float $amount Quantized amount.
+	 *
+	 * @return bool
+	 */
+	public function update_sealed_amount( $entry_id, $amount ) {
+		$entry_id = (int) $entry_id;
+		if ( $entry_id <= 0 ) {
+			return false;
+		}
+
+		global $wpdb;
+
+		$data = $this->filter_to_existing_columns(
+			array(
+				'bookingpress_paid_amount'   => (float) $amount,
+				'bookingpress_service_price' => (float) $amount,
+			)
+		);
+
+		if ( empty( $data ) ) {
+			return false;
+		}
+
+		$ok = $wpdb->update(
+			$this->table(),
+			$data,
+			array( 'bookingpress_entry_id' => $entry_id ),
+			array_fill( 0, count( $data ), '%f' ),
+			array( '%d' )
+		);
+
+		return false !== $ok;
+	}
+
+	/**
 	 * Drop columns from $data that don't exist on this install's table.
 	 *
 	 * @param array $data

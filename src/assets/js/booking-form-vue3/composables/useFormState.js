@@ -34,6 +34,13 @@ export function useFormState(initial) {
   state.submitOk     = false;
   state.redirectUrl  = '';
 
+  // True while a gateway has taken over the footer's primary control via the
+  // payment host's `mountAction` — PayPal's Smart Buttons are the motivating
+  // case. Seeded here rather than created on first write so the Summary step's
+  // `v-if` has a defined value on its very first render, before any gateway
+  // module has run.
+  state.gatewayOwnsAction = false;
+
   // Post-booking confirmation flags. Default behaviour is to redirect to the
   // thank-you page, so these stay false/empty for a Lite-only render. Pro's
   // In-Built redirection feature sets `config.postBookingMode = 'inline'`,

@@ -819,7 +819,7 @@ export default {
       <div class="bpa-front-dc--body">
         <div class="bpa-front-module-container bpa-front-module--date-and-time">
           <div class="bpa-front-module-heading" role="heading" aria-level="2" tabindex="-1" data-bp-step-heading>{{ state.strings.datetime_step_name }}</div>
-
+          <div class="bpa-front-module--note-desc" v-if="'' != state.strings.date_time_step_note" :aria-label="state.strings.date_time_step_note">{{state.strings.date_time_step_note}}</div>
           <div class="bp-v3-slot" data-bp-v3-slot="datetime-step:above-calendar" :data-bp-v3-instance="state.instanceId"></div>
 
           <!-- Released-form parity: while the first month payload is being

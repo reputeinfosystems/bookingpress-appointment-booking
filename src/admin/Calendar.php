@@ -408,6 +408,8 @@ class Calendar extends Base {
 
         $data['firstDayOfWeek'] = intval( $bookingpress_options['start_of_week'] );
 
+        $data['default_appointment_formdata'] = $data['appointment_formdata'];
+
         $data = apply_filters( 'bookingpress_calendar_data', $data );
 
         return $data;

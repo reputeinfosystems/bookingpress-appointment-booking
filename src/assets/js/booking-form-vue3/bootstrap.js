@@ -12,6 +12,8 @@ import { mountBookingFormInstance } from 'bookingpress-form-v3';
 import { installSlotApi } from './utils/slots.js?v=3';
 import { formatPrice } from './utils/currency.js';
 import { formatDate, formatTime } from './utils/datetime.js?v=2';
+import { effectivePrice } from './utils/pricing.js?v=2';
+import { payableAmount } from './utils/payable.js?v=1';
 
 // Side-effect import: `bp-vcalendar.js` is an IIFE bundle that populates
 // `window.BpVCalendar` (the DatePicker mount bridge used by DateTimeStep).
@@ -62,6 +64,39 @@ import 'bookingpress-ui';
   }
   if (typeof window.BookingPressFormV3.formatTime !== 'function') {
     window.BookingPressFormV3.formatTime = formatTime;
+  }
+
+  // Same pattern again for the canonical "amount payable NOW". A payment
+  // gateway that mounts a field BEFORE submit — Stripe's Payment Element,
+  // Square's card form, Braintree's hosted fields — needs the charge amount at
+  // MOUNT time, long before the server seals it. Re-deriving it inside the
+  // add-on means a second pricing pipeline living in a gateway, which is the
+  // exact duplication the payment layer exists to remove: it silently
+  // disagrees with the sealed amount the moment any module moves the price
+  // (staff price override, Service Extras, Multiple Quantity, Coupon,
+  // Deposit, ...). Lite resolves it once here, through the SAME chain the
+  // Summary total and the submit payload use:
+  //   effectivePrice() -> payableAmount()
+  // Returns MAJOR units (e.g. 75.06); the caller converts to minor units for
+  // its own processor.
+  //   window.BookingPressFormV3.payableNow(state)
+  if (typeof window.BookingPressFormV3.payableNow !== 'function') {
+    window.BookingPressFormV3.payableNow = function (state) {
+      const fd = (state && state.appointment_step_form_data) || {};
+      const sid = parseInt(fd.selected_service || 0, 10);
+      const svc = ((state && state.services) || []).find(
+        (s) => parseInt(s.serviceId, 10) === sid
+      );
+      if (!svc) return 0;
+      // Read the staff selection so a Vue watcher wrapping this call re-runs
+      // when it changes: the Staff price override reaches the total through a
+      // filter callback, so it is not otherwise a tracked dependency. Same
+      // reason SummaryStep's `total` computed touches it.
+      // eslint-disable-next-line no-unused-expressions
+      fd.selected_staff_member_id;
+      const full = effectivePrice(state, svc.servicePrice, svc.serviceId);
+      return payableAmount(state, full, svc.serviceId);
+    };
   }
 
   // Tiny global event bus shared across instances. Per-instance buses live

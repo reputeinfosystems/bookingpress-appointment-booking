@@ -1455,7 +1455,8 @@ if (! class_exists('bookingpress_appointment') ) {
                     vm2.appointment_formdata.appointment_internal_note = ''
                     vm2.appointment_formdata.appointment_send_notification = ''
                     vm2.appointment_formdata.appointment_status = '<?php echo esc_html($bookingpress_default_status_option); ?>'
-                    vm2.appointment_formdata.appointment_update_id = 0                
+                    vm2.appointment_formdata.appointment_update_id = 0
+                    vm2.appointment_formdata.is_allow_edit_past_appointment = 0                
             },
             closeAppointmentModal() {
                 const vm2= this
