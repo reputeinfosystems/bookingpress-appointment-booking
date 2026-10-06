@@ -15,6 +15,63 @@ export function useSubmission(state, readiness, api, bus) {
   const redirectUrl  = ref('');
   const failedGates  = ref([]);
 
+  /**
+   * Build the submit payload and give add-ons their chance at it.
+   *
+   * Extracted from `submit()` so there is exactly ONE construction site. A
+   * gateway whose flow does not go through the host's submit button — PayPal
+   * Smart Buttons, where the SDK's `createOrder` needs the payload with no
+   * submit in sight — asks for it here instead of rebuilding it. The previous
+   * arrangement had SummaryStep assembling a second copy inline, and the two
+   * were already free to drift.
+   *
+   * Emitting `bp-v3:before-submit` is part of building it, not a side effect:
+   * Cart, Coupon and the rest contribute through that event, so a payload
+   * built without it is missing their fields.
+   *
+   * @returns {{payload: object, cancelled: boolean, silent: boolean}}
+   */
+  function buildPayload() {
+    // We send the full appointment_step_form_data plus the resolved service
+    // price (the server re-computes and rejects mismatches; this is purely a
+    // sanity hint).
+    const selectedId = parseInt(state.appointment_step_form_data.selected_service || 0, 10);
+    const svc = state.services.find(s => parseInt(s.serviceId, 10) === selectedId);
+    const full = svc ? effectivePrice(state, svc.servicePrice, svc.serviceId) : 0;
+    // The amount charged NOW: the order total by default, or a deposit when a
+    // partial-payment feature is active (server applies the identical filter
+    // and anti-tampers against this). Inert in Lite (returns `full`).
+    const price = payableAmount(state, full, selectedId);
+
+    const payload = {
+      ...state.appointment_step_form_data,
+      service_price_without_currency: price,
+    };
+
+    // Per plan §3.3 — give add-ons a chance to mutate the payload or cancel
+    // the submission entirely.
+    //
+    // `cancel({ silent: true })` means the add-on is TAKING OVER the
+    // submission rather than aborting it — a payment gateway routing the
+    // payload through /payment-v3/prepare, say. A silent cancel must not show
+    // an error, and must not arm clearSubmissionError(): that timer blanks
+    // submitError 3s later, which would wipe a genuine "card declined" the
+    // add-on sets in the meantime. Omitting the argument keeps the original
+    // behaviour, so existing cancellers are unaffected.
+    let cancelled = false;
+    let cancelSilently = false;
+    bus && bus.emit('bp-v3:before-submit', {
+      instanceId: state.instanceId,
+      payload,
+      cancel(opts) {
+        cancelled = true;
+        if (opts && opts.silent) cancelSilently = true;
+      },
+    });
+
+    return { payload, cancelled, silent: cancelSilently };
+  }
+
   async function submit() {
     submitError.value = '';
     submitOk.value    = false;
@@ -30,33 +87,16 @@ export function useSubmission(state, readiness, api, bus) {
     isSubmitting.value = true;
     state.isSubmitting = true;
     try {
-      // Build the submit payload. We send the full appointment_step_form_data
-      // plus the resolved service price (the server re-computes and rejects
-      // mismatches; this is purely a sanity hint).
-      const selectedId = parseInt(state.appointment_step_form_data.selected_service || 0, 10);
-      const svc = state.services.find(s => parseInt(s.serviceId, 10) === selectedId);
-      const full = svc ? effectivePrice(state, svc.servicePrice, svc.serviceId) : 0;
-      // The amount charged NOW: the order total by default, or a deposit when a
-      // partial-payment feature is active (server applies the identical filter
-      // and anti-tampers against this). Inert in Lite (returns `full`).
-      const price = payableAmount(state, full, selectedId);
+      const built = buildPayload();
+      const payload = built.payload;
 
-      const payload = {
-        ...state.appointment_step_form_data,
-        service_price_without_currency: price,
-      };
-
-      // Per plan §3.3 — give add-ons a chance to mutate the payload or
-      // cancel the submission entirely.
-      let cancelled = false;
-      bus && bus.emit('bp-v3:before-submit', {
-        instanceId: state.instanceId,
-        payload,
-        cancel() { cancelled = true; },
-      });
-      if (cancelled) {
-        submitError.value = 'Submission was cancelled by an add-on.';
-        clearSubmissionError();
+      // `buildPayload()` already emitted `bp-v3:before-submit`, so an add-on
+      // has had its chance to mutate the payload or cancel outright.
+      if (built.cancelled) {
+        if (!built.silent) {
+          submitError.value = 'Submission was cancelled by an add-on.';
+          clearSubmissionError();
+        }
         return false;
       }
 
@@ -125,5 +165,5 @@ export function useSubmission(state, readiness, api, bus) {
   }
 
 
-  return { isSubmitting, submitError, submitOk, redirectUrl, failedGates, submit };
+  return { isSubmitting, submitError, submitOk, redirectUrl, failedGates, submit, buildPayload };
 }

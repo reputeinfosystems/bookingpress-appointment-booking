@@ -19,6 +19,10 @@ namespace BookingPress\Vue3\Services;
 use BookingPress\Vue3\Contracts\PaymentServiceInterface;
 use BookingPress\Vue3\Contracts\SubmissionServiceInterface;
 use BookingPress\Vue3\Hooks;
+use BookingPress\Vue3\Payments\Contexts\BookingFormContext;
+use BookingPress\Vue3\Payments\PaymentHooks;
+use BookingPress\Vue3\Payments\PaymentOrchestrator;
+use BookingPress\Vue3\Payments\PrepareResult;
 use BookingPress\Vue3\Repositories\CustomizeRepository;
 use BookingPress\Vue3\Repositories\EntryRepository;
 use BookingPress\Vue3\Repositories\PaymentTransactionRepository;
@@ -37,6 +41,46 @@ class PaymentService implements PaymentServiceInterface {
 
 	public function __construct( ?SettingsRepository $settings = null ) {
 		$this->settings = $settings ?: new SettingsRepository();
+	}
+
+	/**
+	 * THE currency question, answered in one place.
+	 *
+	 * Every gateway used to read `payment_default_currency` for itself. That is
+	 * correct on the booking form, where a new booking is priced in whatever is
+	 * configured now — and wrong everywhere the payment predates the setting.
+	 * Complete Payment is the first such context: a balance owed on a booking
+	 * priced in USD is owed in USD, however many times the site currency has
+	 * changed since. PayPal refuses the capture outright when the SDK and the
+	 * order disagree, and Stripe fails the orchestrator's anti-tamper check,
+	 * which compares currency as well as amount.
+	 *
+	 * So the question is asked here and answered by whoever knows. A context
+	 * that can differ from the site setting filters
+	 * {@see Hooks::FILTER_PAYMENT_CURRENCY}; everything else inherits the
+	 * setting without doing anything. Static so an enqueue path can call it
+	 * without resolving a service.
+	 *
+	 * @param array $context Free-form; passed to the filter so a listener can
+	 *                       tell which payment is being asked about. Contexts
+	 *                       that know it should pass `payment_id`.
+	 *
+	 * @return string Currency name as stored. Never empty.
+	 */
+	public static function resolve_currency( array $context = array() ) {
+		$settings = new SettingsRepository();
+		$currency = (string) $settings->get( 'payment_default_currency', SettingsRepository::GROUP_PAYMENT, '' );
+
+		/** This filter is documented in src/Vue3/Hooks.php */
+		$filtered = apply_filters( Hooks::FILTER_PAYMENT_CURRENCY, $currency, $context );
+
+		if ( is_string( $filtered ) && '' !== trim( $filtered ) ) {
+			return trim( $filtered );
+		}
+
+		// A listener that cannot answer returns '' rather than guessing, so the
+		// site setting stands. Only if THAT is empty too do we assume USD.
+		return '' !== $currency ? $currency : 'USD';
 	}
 
 	/**
@@ -75,6 +119,19 @@ class PaymentService implements PaymentServiceInterface {
 				'extra' => array(
 					'client_id' => isset( $payment['paypal_client_id'] ) ? (string) $payment['paypal_client_id'] : '',
 				),
+				// The client config the browser's gateway module reads, taken
+				// from the gateway itself rather than rebuilt here.
+				//
+				// This entry is assembled by hand (PayPal predates the payment
+				// layer), so without this key the PayPal client module would
+				// find no config at all, read no `mode`, and treat a popup site
+				// as a redirect one. Silently: both modes "work", one of them
+				// just stops being the mode the merchant chose.
+				//
+				// That is the same defect as the Stripe `decimals` field that
+				// never reached the browser — see PAYMENT_LAYER.md section 8,
+				// "A fix that never reached the client".
+				'client' => self::gateway_client_config( 'paypal', $form_context ),
 			);
 		}
 
@@ -86,6 +143,40 @@ class PaymentService implements PaymentServiceInterface {
 		 */
 		$methods = apply_filters( Hooks::FILTER_PAYMENT_METHODS, $methods, $context );
 		return is_array( $methods ) ? $methods : array();
+	}
+
+	/**
+	 * The `client` block a registered gateway publishes for the browser.
+	 *
+	 * One source of truth: the gateway's own `get_descriptor()`. Nothing is
+	 * duplicated here, so a gateway that adds a client-side field gets it to
+	 * the browser by editing one place.
+	 *
+	 * Returns an empty array when the payment layer is absent or the gateway is
+	 * not registered, which is the honest answer — the caller's client module
+	 * then finds no config and says so, rather than running on a stale guess.
+	 *
+	 * @param string $gateway_id
+	 * @param string $context_id
+	 *
+	 * @return array
+	 */
+	private static function gateway_client_config( $gateway_id, $context_id = '' ) {
+		if ( ! class_exists( '\BookingPress\Vue3\Payments\GatewayRegistry' ) ) {
+			return array();
+		}
+
+		$gateway = \BookingPress\Vue3\Payments\GatewayRegistry::get( $gateway_id );
+		if ( ! $gateway instanceof \BookingPress\Vue3\Payments\Contracts\PaymentGatewayInterface ) {
+			return array();
+		}
+
+		$descriptor = $gateway->get_descriptor( (string) $context_id );
+		if ( ! is_array( $descriptor ) || ! isset( $descriptor['client'] ) || ! is_array( $descriptor['client'] ) ) {
+			return array();
+		}
+
+		return $descriptor['client'];
 	}
 
 	/**
@@ -109,27 +200,12 @@ class PaymentService implements PaymentServiceInterface {
 	 * `onApprove` redirect lands on the same thank-you page.
 	 */
 	public function paypal_validate( array $payload ) {
-		$payment        = $this->settings->get_group( SettingsRepository::GROUP_PAYMENT );
-		$client_id      = isset( $payment['paypal_client_id'] ) ? (string) $payment['paypal_client_id'] : '';
-		$client_secret  = isset( $payment['paypal_client_secret'] ) ? (string) $payment['paypal_client_secret'] : '';
-		$mode           = isset( $payment['paypal_payment_mode'] ) ? (string) $payment['paypal_payment_mode'] : '';
-
-		if ( '' === $client_id ) {
-			throw new \RuntimeException( 'Please configure PayPal Client ID' );
-		}
-		if ( '' === $client_secret ) {
-			throw new \RuntimeException( 'Please Configure PayPal Client Secret' );
-		}
-
 		// Stage the booking through the canonical submit pipeline (readiness
 		// gates, anti-tamper price check, entries insert). For a PayPal booking
 		// this returns a `pending_payment` envelope carrying the primary
 		// `entry_id`; the booking is finalized later by paypal_confirm() after
 		// the SDK capture. The popup/Smart-Buttons `createOrder` posts here
-		// directly WITHOUT a prior /submit, so we must stage here — the previous
-		// implementation looked up a non-existent `appointment_id`, so it never
-		// found an entry and sent PayPal a zero amount (which PayPal rejects as
-		// "Request is not well-formed / violates schema").
+		// directly WITHOUT a prior /submit, so we must stage here.
 		$submission = $this->get_submission_service();
 		$staged     = $submission->submit( $payload );
 
@@ -143,13 +219,66 @@ class PaymentService implements PaymentServiceInterface {
 			throw new \RuntimeException( '' !== $msg ? $msg : 'Could not stage the booking for PayPal.' );
 		}
 
-		$entry_id = isset( $staged['entry_id'] ) ? (int) $staged['entry_id'] : 0;
+		$entry_id    = isset( $staged['entry_id'] ) ? (int) $staged['entry_id'] : 0;
 		$entry_token = isset( $staged['entry_token'] ) ? (string) $staged['entry_token'] : '';
 		if ( $entry_id <= 0 ) {
 			throw new \RuntimeException( 'Could not stage the booking for PayPal.' );
 		}
-		if ( '' === $entry_token ) {
-			throw new \RuntimeException( 'Could not secure the staged booking for PayPal.' );
+
+		// Which context owns this entry — booking form, Complete Payment, or
+		// whatever registers next. See payment_target().
+		if ( $this->paypal_route_is_legacy( $entry_id ) ) {
+			return $this->legacy_paypal_create_order( $entry_id, $entry_token );
+		}
+
+		$target = $this->payment_target( $entry_id, $entry_token );
+		$out    = PaymentOrchestrator::prepare_existing(
+			$target['context_id'],
+			'paypal',
+			$target['reference_id'],
+			$target['token']
+		);
+
+		$data = isset( $out['prepare']['data'] ) ? (array) $out['prepare']['data'] : array();
+
+		// Map the normalized PrepareResult back onto the response shape the
+		// current Vue 3 client expects. This mapping is the whole reason the
+		// client needs no change yet; it disappears when SummaryStep.js moves to
+		// `/payment-v3/`.
+		return array(
+			'order_id'           => isset( $data['order_id'] ) ? (string) $data['order_id'] : '',
+			'entry_id'           => $entry_id,
+			'entry_token'        => $entry_token,
+			'paypal_success_url' => '',
+			'paypal_cancel_url'  => isset( $data['cancel_url'] ) ? (string) $data['cancel_url'] : '',
+		);
+	}
+
+	/**
+	 * ORIGINAL PayPal order creation — retained verbatim for Pro's Complete
+	 * Payment, which still computes its charge through
+	 * `complete_payment_payable_for_entry()`. Delete once a
+	 * `complete_payment` PaymentContext exists and Pro routes through it.
+	 *
+	 * @param int    $entry_id
+	 * @param string $entry_token
+	 *
+	 * @return array
+	 *
+	 * @throws \RuntimeException
+	 */
+	private function legacy_paypal_create_order( $entry_id, $entry_token ) {
+		$submission     = $this->get_submission_service();
+		$payment        = $this->settings->get_group( SettingsRepository::GROUP_PAYMENT );
+		$client_id      = isset( $payment['paypal_client_id'] ) ? (string) $payment['paypal_client_id'] : '';
+		$client_secret  = isset( $payment['paypal_client_secret'] ) ? (string) $payment['paypal_client_secret'] : '';
+		$mode           = isset( $payment['paypal_payment_mode'] ) ? (string) $payment['paypal_payment_mode'] : '';
+
+		if ( '' === $client_id ) {
+			throw new \RuntimeException( 'Please configure PayPal Client ID' );
+		}
+		if ( '' === $client_secret ) {
+			throw new \RuntimeException( 'Please Configure PayPal Client Secret' );
 		}
 
 		// Read the SERVER-authoritative amount + currency off the staged entry —
@@ -162,6 +291,18 @@ class PaymentService implements PaymentServiceInterface {
 		}
 
 		$cp_payable = $submission->complete_payment_payable_for_entry( $entry_id );
+
+		// The staged entry must carry an entry-specific token for the later
+		// resume leg to present. Both forms now issue one for a PayPal gateway
+		// leg — the booking form in SubmissionService::submit(), Complete
+		// Payment in its submit intercept — so an empty token here means the
+		// staging did not secure the entry and the order must not be created.
+		// (`$cp_payable` still distinguishes the two only for the AMOUNT read
+		// above, not for the token requirement.)
+		if ( '' === $entry_token ) {
+			throw new \RuntimeException( 'Could not secure the staged booking for PayPal.' );
+		}
+
 		$total = ( null !== $cp_payable )
 			? (float) $cp_payable
 			: ( isset( $entry['bookingpress_paid_amount'] ) ? (float) $entry['bookingpress_paid_amount'] : 0.0 );
@@ -319,6 +460,73 @@ class PaymentService implements PaymentServiceInterface {
 	 * envelope — identical to the on-site/zero-price success path.
 	 */
 	public function paypal_confirm( array $payload ) {
+		// Identify the entry the way the ORIGINAL code did — from PayPal's own
+		// verified `reference_id`, never from the browser. The gateway memoizes
+		// the fetched order, so the confirm below does not re-request it.
+		$entry_id        = 0;
+		$correlation_key = '';
+		try {
+			$gateway = \BookingPress\Vue3\Payments\GatewayRegistry::get( 'paypal' );
+			if ( null !== $gateway ) {
+				$key    = $gateway->resolve_reference_key( $payload );
+				$parsed = ( null !== $key )
+					? \BookingPress\Vue3\Payments\PaymentReference::parse_correlation_key( $key )
+					: null;
+				if ( null !== $parsed ) {
+					$correlation_key = (string) $key;
+					// Only the BOOKING FORM's reference is an entry id. Another
+					// context addresses its purchases however it likes — Complete
+					// Payment uses the appointment id — so reducing the key to an
+					// int here and re-deriving from it loses the one authoritative
+					// fact PayPal gave us, and then contradicts it.
+					if ( BookingFormContext::ID === $parsed['context_id'] ) {
+						$entry_id = (int) $parsed['reference_id'];
+					}
+				}
+			}
+		} catch ( \Throwable $e ) {
+			$entry_id        = 0;
+			$correlation_key = '';
+		}
+
+		// Nothing identified at all — fall back to the original implementation,
+		// which derives and validates the entry itself. A key from a NON booking
+		// form context is identified, so it does not take this branch: the legacy
+		// confirm only understands entry ids.
+		if ( '' === $correlation_key && $entry_id <= 0 ) {
+			return $this->legacy_paypal_confirm( $payload );
+		}
+		if ( $entry_id > 0 && $this->paypal_route_is_legacy( $entry_id ) ) {
+			return $this->legacy_paypal_confirm( $payload );
+		}
+
+		$target = $this->payment_target(
+			$entry_id,
+			isset( $payload['entry_token'] ) ? (string) $payload['entry_token'] : '',
+			$correlation_key
+		);
+
+		return PaymentOrchestrator::confirm(
+			$target['context_id'],
+			'paypal',
+			$target['reference_id'],
+			$target['token'],
+			$payload
+		);
+	}
+
+	/**
+	 * ORIGINAL PayPal confirm — retained for Pro's Complete Payment and as the
+	 * fallback when the new path cannot identify the entry. Delete with the
+	 * other `legacy_paypal_*` methods once Complete Payment has a PaymentContext.
+	 *
+	 * @param array $payload
+	 *
+	 * @return array
+	 *
+	 * @throws \RuntimeException
+	 */
+	private function legacy_paypal_confirm( array $payload ) {
 		// Legacy parity (class.bookingpress_appointment_bookings.php:318):
 		// log the popup response before any validation so we still get a
 		// row when the subsequent verification fails.
@@ -404,34 +612,106 @@ class PaymentService implements PaymentServiceInterface {
 	 * auto-submit form that redirects the browser to PayPal.
 	 */
 	public function paypal_redirect_prepare( array $payload ) {
-		$submission     = $this->get_submission_service();
-		$appointment_id = isset( $payload['appointment_id'] ) ? (int) $payload['appointment_id'] : 0;
-		$entry_id       = isset( $payload['entry_id'] ) ? (int) $payload['entry_id'] : 0;
-
-		// Complete Payment passes `appointment_id`; resolve its staged entry.
-		if ( $entry_id <= 0 && $appointment_id > 0 ) {
-			global $wpdb, $tbl_bookingpress_appointment_bookings;
-			$entry_id = (int) $wpdb->get_var(
-				$wpdb->prepare(
-					// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-					"SELECT bookingpress_entry_id FROM {$tbl_bookingpress_appointment_bookings} WHERE bookingpress_appointment_booking_id = %d",
-					$appointment_id
-				)
-			);
-		}
+		$entry_id = $this->paypal_resolve_entry_id( $payload );
 		if ( $entry_id <= 0 ) {
 			throw new \RuntimeException( 'Missing booking reference for PayPal.' );
 		}
 
-		// The normal booking form supplies entry_id directly. Require the opaque
-		// token before even reading that entry so sequential ids cannot be used as
-		// an existence/data oracle. Complete Payment supplies appointment_id and
-		// keeps its existing Pro authorization flow unchanged.
+		if ( $this->paypal_route_is_legacy( $entry_id ) ) {
+			return $this->legacy_paypal_redirect_prepare( $payload );
+		}
+
+		$target = $this->payment_target( $entry_id, isset( $payload['entry_token'] ) ? (string) $payload['entry_token'] : '' );
+		$out    = PaymentOrchestrator::prepare_existing(
+			$target['context_id'],
+			'paypal',
+			$target['reference_id'],
+			$target['token']
+		);
+
+		$prepare = isset( $out['prepare'] ) ? (array) $out['prepare'] : array();
+		$kind    = isset( $prepare['kind'] ) ? (string) $prepare['kind'] : '';
+		$data    = isset( $prepare['data'] ) ? (array) $prepare['data'] : array();
+
+		if ( PrepareResult::KIND_FORM_POST !== $kind ) {
+			throw new \RuntimeException( 'PayPal is not configured for the redirect flow.' );
+		}
+
+		$form = $this->render_auto_post_form( $data );
+
+		global $bookingpress_debug_payment_log_id;
+		do_action( 'bookingpress_payment_log_entry', 'paypal', 'payment form redirected data', 'bookingpress', $form, $bookingpress_debug_payment_log_id );
+
+		return array(
+			'variant'       => 'redirect',
+			'is_redirect'   => 1,
+			'redirect_data' => $form,
+			'entry_id'      => $entry_id,
+		);
+	}
+
+	/**
+	 * Resolve the staged entry id from a redirect-prepare payload. The booking
+	 * form sends `entry_id`; Complete Payment sends `appointment_id`.
+	 *
+	 * Lookup ONLY — no authorization is implied. The token check still happens
+	 * downstream, before any entry data is read.
+	 *
+	 * @param array $payload
+	 *
+	 * @return int
+	 */
+	private function paypal_resolve_entry_id( array $payload ) {
+		$entry_id = isset( $payload['entry_id'] ) ? (int) $payload['entry_id'] : 0;
+		if ( $entry_id > 0 ) {
+			return $entry_id;
+		}
+
+		$appointment_id = isset( $payload['appointment_id'] ) ? (int) $payload['appointment_id'] : 0;
 		if ( $appointment_id <= 0 ) {
-			$entry_token = isset( $payload['entry_token'] ) ? (string) $payload['entry_token'] : '';
-			if ( ! ( new EntryRepository() )->verify_paypal_entry_token( $entry_id, $entry_token ) ) {
-				throw new \RuntimeException( 'Invalid booking reference for PayPal.' );
-			}
+			return 0;
+		}
+
+		global $wpdb, $tbl_bookingpress_appointment_bookings;
+		return (int) $wpdb->get_var(
+			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				"SELECT bookingpress_entry_id FROM {$tbl_bookingpress_appointment_bookings} WHERE bookingpress_appointment_booking_id = %d",
+				$appointment_id
+			)
+		);
+	}
+
+	/**
+	 * ORIGINAL PayPal Standard redirect — retained for Pro's Complete Payment.
+	 * Delete with the other `legacy_paypal_*` methods.
+	 *
+	 * @param array $payload
+	 *
+	 * @return array
+	 *
+	 * @throws \RuntimeException
+	 */
+	private function legacy_paypal_redirect_prepare( array $payload ) {
+		$submission = $this->get_submission_service();
+		$entry_id   = $this->paypal_resolve_entry_id( $payload );
+
+		if ( $entry_id <= 0 ) {
+			throw new \RuntimeException( 'Missing booking reference for PayPal.' );
+		}
+
+		// EVERY caller must prove possession of the entry-specific opaque token
+		// issued when that entry was staged — the booking form (which supplies
+		// `entry_id` directly) and Complete Payment (which supplies
+		// `appointment_id`, and whose submit now issues the same token) alike.
+		// Verify BEFORE reading the entry so a sequential `entry_id` /
+		// `appointment_id` can never be used as an existence / data oracle: an
+		// `entry_id` + `entry_token` pair that does not match is rejected here
+		// instead of returning the PayPal form (which carries the customer
+		// email, the service name and the charged amount).
+		$entry_token = isset( $payload['entry_token'] ) ? (string) $payload['entry_token'] : '';
+		if ( ! ( new EntryRepository() )->verify_paypal_entry_token( $entry_id, $entry_token ) ) {
+			throw new \RuntimeException( 'Invalid booking reference for PayPal.' );
 		}
 
 		$entry = ( new EntryRepository() )->find( $entry_id );
@@ -544,6 +824,35 @@ class PaymentService implements PaymentServiceInterface {
 	 * POST body until PayPal echoes `VERIFIED`.
 	 */
 	public function paypal_ipn( array $post ) {
+		if ( empty( $post ) ) {
+			return false;
+		}
+
+		// `custom` carries the correlation key for orders created by the new
+		// gateway, and a bare entry_id for anything staged before the upgrade.
+		$custom   = isset( $post['custom'] ) ? (string) $post['custom'] : '';
+		$entry_id = 0;
+		if ( '' !== $custom ) {
+			$parsed   = \BookingPress\Vue3\Payments\PaymentReference::parse_correlation_key( $custom );
+			$entry_id = ( null !== $parsed ) ? (int) $parsed['reference_id'] : (int) $custom;
+		}
+
+		if ( $entry_id <= 0 || $this->paypal_route_is_legacy( $entry_id ) ) {
+			return $this->legacy_paypal_ipn( $post );
+		}
+
+		return (bool) PaymentOrchestrator::webhook( 'paypal', $post, array(), '' );
+	}
+
+	/**
+	 * ORIGINAL PayPal IPN listener — retained for Pro's Complete Payment.
+	 * Delete with the other `legacy_paypal_*` methods.
+	 *
+	 * @param array $post
+	 *
+	 * @return bool
+	 */
+	private function legacy_paypal_ipn( array $post ) {
 		global $bookingpress_debug_payment_log_id;
 		do_action( 'bookingpress_payment_log_entry', 'paypal', 'legacy ipn received', 'bookingpress', $post, $bookingpress_debug_payment_log_id );
 
@@ -789,6 +1098,126 @@ class PaymentService implements PaymentServiceInterface {
 			// Fall through to direct instantiation.
 		}
 		return new SubmissionService();
+	}
+
+	/**
+	 * Which context owns this entry, and how it is addressed there.
+	 *
+	 * The PayPal routes know only an `entry_id`, which is not enough to tell
+	 * a booking being taken from a balance being settled. Those are different
+	 * contexts with different reference identities — the booking form is
+	 * addressed by entry id + entry token, Complete Payment by appointment id
+	 * + the pay-page token — so the answer is asked for rather than assumed.
+	 *
+	 * @param int    $entry_id
+	 * @param string $entry_token
+	 * @param string $correlation_key `context:reference` when the caller already
+	 *                                knows it — a gateway that reports which
+	 *                                purchase was paid is a BETTER source than an
+	 *                                entry id, and for a context whose reference is
+	 *                                not an entry id it is the only correct one.
+	 *
+	 * @return array{context_id:string,reference_id:string,token:string}
+	 */
+	private function payment_target( $entry_id, $entry_token, $correlation_key = '' ) {
+		$default = array(
+			'context_id'   => BookingFormContext::ID,
+			'reference_id' => (string) (int) $entry_id,
+			'token'        => (string) $entry_token,
+		);
+
+		/** This filter is documented in src/Vue3/Payments/PaymentHooks.php */
+		$target = apply_filters( PaymentHooks::FILTER_PAYMENT_TARGET, $default, (int) $entry_id, (string) $entry_token, (string) $correlation_key );
+
+		if ( ! is_array( $target )
+			|| empty( $target['context_id'] )
+			|| ! isset( $target['reference_id'] )
+			|| '' === (string) $target['reference_id'] ) {
+			// A malformed answer must not silently become a mis-routed payment.
+			return $default;
+		}
+
+		return array(
+			'context_id'   => (string) $target['context_id'],
+			'reference_id' => (string) $target['reference_id'],
+			'token'        => isset( $target['token'] ) ? (string) $target['token'] : '',
+		);
+	}
+
+	/**
+	 * Whether this entry must keep using the ORIGINAL PayPal implementation.
+	 *
+	 * No longer about Complete Payment — that has its own context now and is
+	 * routed by payment_target(). What remains are the SAFETY fallbacks: the
+	 * payment layer not bootstrapped, the gateway not registered, or the gateway
+	 * registered but misconfigured.
+	 *
+	 * The misconfigured case is deliberate. The original code produced precise
+	 * messages there ("Please Configure PayPal Client Secret") that support
+	 * relies on; the registry would answer a generic "not available".
+	 *
+	 * Fails SAFE: if anything about the check throws, we keep the old path.
+	 *
+	 * @param int $entry_id
+	 *
+	 * @return bool
+	 */
+	private function paypal_route_is_legacy( $entry_id ) {
+		try {
+			// Complete Payment used to be diverted here. It now has its own
+			// context and answers FILTER_PAYMENT_TARGET, so it routes through the
+			// payment layer like any other context — see payment_target().
+
+			// The new path needs the payments layer actually bootstrapped. If
+			// Bootstrap::register() was never called there is no `booking_form`
+			// context and no `paypal` gateway, so fall back rather than fatal.
+			if ( null === \BookingPress\Vue3\Payments\ContextRegistry::get( BookingFormContext::ID ) ) {
+				return true;
+			}
+			$gateway = \BookingPress\Vue3\Payments\GatewayRegistry::get( 'paypal' );
+			if ( null === $gateway ) {
+				return true;
+			}
+
+			// Registered but not fully configured. The ORIGINAL code produced
+			// precise messages here ("Please Configure PayPal Client Secret",
+			// "Please configure merchant email address") that support relies on;
+			// the registry would instead answer a generic "not available". Keep
+			// the old path so misconfiguration diagnostics do not regress.
+			if ( ! $gateway->is_enabled() ) {
+				return true;
+			}
+		} catch ( \Throwable $e ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Render a {@see PrepareResult::KIND_FORM_POST} payload as the
+	 * auto-submitting HTML the current client expects under `redirect_data`.
+	 *
+	 * Temporary adapter. When the Vue 3 client consumes `/payment-v3/`
+	 * directly it receives `{ action, fields }` and builds the POST itself,
+	 * which also removes this blob of inline script from the response.
+	 *
+	 * @param array $data `action` + `fields`.
+	 *
+	 * @return string
+	 */
+	private function render_auto_post_form( array $data ) {
+		$action = isset( $data['action'] ) ? (string) $data['action'] : '';
+		$fields = isset( $data['fields'] ) && is_array( $data['fields'] ) ? $data['fields'] : array();
+
+		$form = '<form name="_xclick" id="bookingpress_paypal_form" action="' . esc_url( $action ) . '" method="post">';
+		foreach ( $fields as $name => $value ) {
+			$form .= '<input type="hidden" name="' . esc_attr( $name ) . '" value="' . esc_attr( $value ) . '" />';
+		}
+		$form .= '</form>';
+		$form .= '<script type="text/javascript">document.getElementById("bookingpress_paypal_form").submit();</script>';
+
+		return $form;
 	}
 
 	/**

@@ -84,6 +84,12 @@ class Routing {
 		// M4: register the eight `/form-v3/*` REST routes on `rest_api_init`.
 		add_action( 'rest_api_init', array( RouteRegistrar::class, 'register' ) );
 
+		// Gateway-agnostic payment layer: registers the `booking_form` context,
+		// the `on-site` + `paypal` gateways, and the `/payment-v3/*` routes.
+		// Additive — the `/form-v3/payment/paypal-*` routes above stay mounted
+		// and now delegate here for Lite booking-form entries.
+		\BookingPress\Vue3\Payments\Bootstrap::register();
+
 		// Late-render import-map fix. WordPress prints script modules at the
 		// default wp_footer priority (10), while page builders such as
 		// Elementor also render popup templates at priority 10. Core's module
@@ -260,6 +266,11 @@ class Routing {
 		$pro_version = self::get_pro_version();
 		if ( null === $pro_version ) {
 			// Fail-closed: Pro is active but version is unknown.
+			return false;
+		}
+
+		/** reputelog - only for development purposes, allows forcing the legacy Vue2 renderer by defining BPA_LOAD_LEGACY as true */
+		if( defined( 'BPA_LOAD_LEGACY' ) && BPA_LOAD_LEGACY ){
 			return false;
 		}
 

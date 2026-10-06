@@ -20,7 +20,13 @@ class Header extends Base{
             'bookingpress_customers',
             'bookingpress_growth_tools',
             'bookingpress_settings',
+            'bookingpress_notifications',
+            //'bookingpress_customize',
         ];
+
+        if( ( !empty( $_GET['page'] ) && 'bookingpress_customize' == $_GET['page'] && (empty( $_GET['action'] ) || $_GET['action'] != 'form_fields') ) ){
+            $scoped_hooks[] = 'bookingpress_customize';
+        }
 
         return apply_filters( 'bookingpress_scoped_pages', $scoped_hooks );
 
@@ -122,6 +128,9 @@ class Header extends Base{
             'bookingpress_page_bookingpress_addons'         => 'bpa_addons_wp_nonce',
             'bookingpress_page_bookingpress_customers'      => 'bpa_customers_wp_nonce',
             'bookingpress_page_bookingpress_settings'  => 'bpa_settings_wp_nonce',
+            'bookingpress_page_bookingpress_notifications' => 'bpa_notifications_wp_nonce',
+            'bookingpress_page_bookingpress_settings'       => 'bpa_settings_wp_nonce',
+            'bookingpress_page_bookingpress_customize'      => 'bpa_customize_wp_nonce',
         ];
 
         return apply_filters( 'bookingpress_scoped_nonces', $scoped_nonces );

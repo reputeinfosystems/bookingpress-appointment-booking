@@ -48,6 +48,53 @@ class Assets {
 	const MODULE_APP = 'bookingpress-form-v3';
 
 	/**
+	 * Handle for the gateway-agnostic payment HOST registry.
+	 *
+	 * Deliberately separate from the form handles: a payment host is not a
+	 * booking form. The Complete Payment page, Gift Card and Package forms
+	 * register into the same registry, and every gateway add-on depends on this
+	 * handle alone rather than on any one page's app.
+	 */
+	const MODULE_PAYMENTS_HOST = 'bookingpress-payments-host';
+
+	/**
+	 * PayPal's gateway client.
+	 *
+	 * A gateway module like any add-on's, which happens to ship in Lite because
+	 * PayPal does. It depends on MODULE_PAYMENTS_HOST and nothing else — in
+	 * particular NOT on the booking form's app, so the same file serves
+	 * Complete Payment, Gift Card and Package.
+	 */
+	const MODULE_PAYPAL_GATEWAY = 'bookingpress-paypal-gateway';
+
+	/**
+	 * The shared client for hosted-redirect gateways.
+	 *
+	 * Mollie, Paystack, PayFast, PayUMoney, ECPay, PagSeguro, 2Checkout and the
+	 * rest of the redirect-shaped catalogue all used to ship a near-identical
+	 * copy of the same forty lines. They enqueue this handle instead, and opt
+	 * in by putting `'genericRedirect' => true` in their descriptor's `client`
+	 * block.
+	 *
+	 * Registered in Lite because it belongs to the payment layer, not to any
+	 * one add-on — the same reason MODULE_PAYMENTS_HOST lives here.
+	 */
+	const MODULE_REDIRECT_GATEWAY = 'bookingpress-redirect-gateway';
+
+	/**
+	 * Card-detail fields for direct-API gateways (Authorize.Net, PayPal Pro),
+	 * built with the BookingPress UI library.
+	 *
+	 * A gateway that takes the card itself imports `mountCardFields()` from this
+	 * handle and mounts it into the node `host.mount()` gives it, so every such
+	 * gateway draws the same `bp-ui` controls on every payment host — booking
+	 * form, Complete Payment, Gift Card, Package, Waiting List — instead of each
+	 * hand-writing its own `<input>` markup. Registered in Lite for the same
+	 * reason as MODULE_PAYMENTS_HOST: it belongs to the payment layer.
+	 */
+	const MODULE_CARD_FIELDS = 'bookingpress-payments-card-fields';
+
+	/**
 	 * Shared vendor handles (re-registered defensively).
 	 */
 	const MODULE_VUE       = 'vue';
@@ -167,10 +214,14 @@ class Assets {
 		);
 
 		// --- Vue3 greenfield handles --------------------------------------
+		// The payment-layer modules live in their own method, because the
+		// Complete Payment page needs them and never calls register().
+		self::register_payment_modules();
+
 		wp_register_script_module(
 			self::MODULE_APP,
 			$base . '/src/assets/js/booking-form-vue3/app.js',
-			array( self::MODULE_VUE, self::MODULE_UI, self::MODULE_VCALENDAR ),
+			array( self::MODULE_VUE, self::MODULE_UI, self::MODULE_VCALENDAR, self::MODULE_PAYMENTS_HOST ),
 			$ver( 'src/assets/js/booking-form-vue3/app.js' )
 		);
 
@@ -298,6 +349,18 @@ class Assets {
 			'root'      => esc_url_raw( rest_url( RouteRegistrar::REST_NAMESPACE . '/' . RouteRegistrar::ROUTE_PREFIX . '/' ) ),
 			'namespace' => RouteRegistrar::REST_NAMESPACE,
 			'prefix'    => RouteRegistrar::ROUTE_PREFIX,
+
+			// The gateway-agnostic payment routes are deliberately NOT under the
+			// form prefix — binding payment endpoints to a form was the original
+			// mistake. Exposed here ONCE so no gateway add-on has to build this
+			// URL itself; ~20 add-ons each deriving it would be the same
+			// duplication this layer exists to remove.
+			'paymentRoot' => esc_url_raw(
+				rest_url(
+					\BookingPress\Vue3\Payments\REST\PaymentRouteRegistrar::REST_NAMESPACE
+					. '/' . \BookingPress\Vue3\Payments\REST\PaymentRouteRegistrar::ROUTE_PREFIX . '/'
+				)
+			),
 		);
 		$state['nonces'] = array(
 			'wpRestNonce'   => $wp_rest_nonce,
@@ -386,6 +449,120 @@ class Assets {
 		// at shortcode render time, makes the Vue 3 form self-sufficient no
 		// matter where the shortcode lives (footer scripts print after render).
 		self::maybe_enqueue_paypal_sdk();
+
+		// PayPal's own client module. Separate from the SDK enqueue above: the
+		// SDK is popup-only, while this module serves BOTH modes — redirect
+		// mode has no SDK at all and still needs the `form_post` handshake.
+		self::maybe_enqueue_paypal_gateway();
+	}
+
+	/**
+	 * Enqueue the PayPal gateway client when PayPal is switched on.
+	 *
+	 * This module used to be ~200 lines inside `SummaryStep.js` plus a branch
+	 * in its template, which is why Complete Payment needed its own copy. It
+	 * is now an ordinary D29 gateway client: it names no page, depends only on
+	 * the host registry, and every context that registers a host gets PayPal
+	 * without a line of new code.
+	 *
+	 * @return void
+	 */
+	private static function maybe_enqueue_paypal_gateway() {
+		if ( ! function_exists( 'wp_enqueue_script_module' ) ) {
+			return;
+		}
+
+		$helper = self::get_legacy_helper();
+		if ( ! $helper || ! method_exists( $helper, 'bookingpress_get_settings' ) ) {
+			return;
+		}
+
+		$paypal_payment = $helper->bookingpress_get_settings( 'paypal_payment', 'payment_setting' );
+		$is_paypal_on   = ( 'true' === strtolower( (string) $paypal_payment ) || '1' === (string) $paypal_payment );
+		if ( ! $is_paypal_on ) {
+			return;
+		}
+
+		wp_enqueue_script_module( self::MODULE_PAYPAL_GATEWAY );
+	}
+
+	/**
+	 * Register the payment layer's own script modules.
+	 *
+	 * SEPARATE FROM register() ON PURPOSE.
+	 *
+	 * `Assets::register()` is called from `BookingForm.php` — that is, when the
+	 * BOOKING FORM shortcode renders. The Complete Payment page is a different
+	 * shortcode in a different plugin and never triggers it, so a module
+	 * registered only there does not exist on that page.
+	 *
+	 * That matters more than it sounds, because `wp_enqueue_script_module()` on
+	 * an unregistered handle fails SILENTLY — no warning, no script tag, and a
+	 * gateway that simply never wires itself up. Complete Payment would have
+	 * offered every redirect gateway in its picker and then done nothing when
+	 * the customer pressed the button.
+	 *
+	 * Gift Card and Package will be in exactly this position the day they
+	 * land, which is the other reason this is public rather than inlined.
+	 *
+	 * Re-registration with an identical handle, URL and version is a no-op, so
+	 * calling this from several places is safe and intended.
+	 *
+	 * @return void
+	 */
+	public static function register_payment_modules() {
+		if ( ! function_exists( 'wp_register_script_module' ) ) {
+			return;
+		}
+
+		$base    = untrailingslashit( BOOKINGPRESS_URL );
+		$version = defined( 'BOOKINGPRESS_VERSION' ) ? BOOKINGPRESS_VERSION : '1.0.0';
+		$dir     = defined( 'BOOKINGPRESS_DIR' ) ? untrailingslashit( BOOKINGPRESS_DIR ) : '';
+
+		$ver = static function ( $relative_path ) use ( $version, $dir ) {
+			if ( '' === $dir ) {
+				return $version;
+			}
+			$abs = $dir . '/' . ltrim( $relative_path, '/' );
+			if ( ! file_exists( $abs ) ) {
+				return $version;
+			}
+			$m = filemtime( $abs );
+			return false === $m ? $version : ( $version . '.' . $m );
+		};
+
+		// The host registry has NO dependencies — not vue, not the form. It is
+		// plain DOM-free bookkeeping, so it can load on any page that collects
+		// a payment, including ones that are not Vue apps at all.
+		wp_register_script_module(
+			self::MODULE_PAYMENTS_HOST,
+			$base . '/src/assets/js/payments/host-registry.js',
+			array(),
+			$ver( 'src/assets/js/payments/host-registry.js' )
+		);
+
+		wp_register_script_module(
+			self::MODULE_REDIRECT_GATEWAY,
+			$base . '/src/assets/js/payments/redirect-gateway.js',
+			array( self::MODULE_PAYMENTS_HOST ),
+			$ver( 'src/assets/js/payments/redirect-gateway.js' )
+		);
+
+		// Depends on vue + bookingpress-ui, which every payment host registers
+		// for its own app; resolution happens when the import map is printed.
+		wp_register_script_module(
+			self::MODULE_CARD_FIELDS,
+			$base . '/src/assets/js/payments/card-fields.js',
+			array( self::MODULE_VUE, self::MODULE_UI ),
+			$ver( 'src/assets/js/payments/card-fields.js' )
+		);
+
+		wp_register_script_module(
+			self::MODULE_PAYPAL_GATEWAY,
+			$base . '/src/assets/js/payments/paypal-gateway.js',
+			array( self::MODULE_PAYMENTS_HOST ),
+			$ver( 'src/assets/js/payments/paypal-gateway.js' )
+		);
 	}
 
 	/**
@@ -478,7 +655,15 @@ class Assets {
 			return;
 		}
 
-		$currency_name = (string) $helper->bookingpress_get_settings( 'payment_default_currency', 'payment_setting' );
+		// NOT the raw `payment_default_currency` setting. The SDK currency must
+		// match the currency the ORDER is created in, and on Complete Payment
+		// that is the currency the booking was priced in, not today's setting —
+		// PayPal rejects the capture when they disagree ("Expected currency from
+		// order api call to be TWD, got USD"). resolve_currency() answers the
+		// site setting here and lets the paying context override it.
+		$currency_name = \BookingPress\Vue3\Services\PaymentService::resolve_currency(
+			array( 'purpose' => 'paypal_sdk' )
+		);
 		$currency_code = method_exists( $helper, 'bookingpress_get_currency_code' )
 			? (string) $helper->bookingpress_get_currency_code( $currency_name )
 			: ( '' !== $currency_name ? $currency_name : 'USD' );

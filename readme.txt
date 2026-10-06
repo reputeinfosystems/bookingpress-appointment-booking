@@ -3,9 +3,9 @@ Contributors: reputeinfosystems
 Tags: booking, appointment, booking calendar, scheduling, booking system
 Donate link: https://bookingpressplugin.com/
 Requires at least: 6.7
-Tested up to: 7.1
+Tested up to: 7.1.2
 Requires PHP: 7.4
-Stable tag: 1.6.5
+Stable tag: 1.6.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -219,6 +219,12 @@ Please follow the steps for installation:
 13. BookingPress - General Settings
 
 == Changelog ==
+
+= 1.6.6 =
+* Fixed: Help drawer doesn't load the content properly for certain pages.
+* Fixed: Mobile devide UI issues
+* Fixed: Date & Time note visible on the front-end section
+* Other minor bug fixes & improvements
 
 = 1.6.5 =
 * Improved PayPal Standard payment flow security with enhanced staged booking validation and entry binding.

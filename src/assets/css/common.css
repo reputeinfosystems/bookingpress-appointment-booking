@@ -210,6 +210,12 @@ body.folded .bpa-dialog--fullscreen.is-fullscreen {
     transform: rotate(0deg) scaleY(1);
 }
 
+.bp-checkbox__input.is-disabled .bp-checkbox__inner {
+    background-color: #EDF2F9 !important;
+    border-color: #DCDFE6 !important;
+    cursor: not-allowed !important;
+}
+
 .bp-select-dropdown__item.is-disabled {
     opacity: 0.5;
 }

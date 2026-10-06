@@ -155,12 +155,194 @@ export default {
     });
 
     const isBookAgain = new URLSearchParams(window.location.search).get('book_again') === '1';
+    const urlParams = new URLSearchParams(window.location.search);
+    const rawAllowModify = urlParams.get('allow_modify');
+    const rawServiceParam = urlParams.get('s_id') || urlParams.get('bpservice_id');
+    const rawStaffParam = urlParams.get('sm_id') || urlParams.get('bpstaffmember_id');
+    const rawLocationParam = urlParams.get('loc_id') || urlParams.get('location_id');
+
+    // When allow_modify=0 is passed, hide corresponding preselected steps so customer cannot change them
+    if (rawAllowModify === '0') {
+      const steps = Array.isArray(props.state.steps) ? props.state.steps : [];
+      if (rawServiceParam) {
+        const svcSt = steps.find((s) => s && s.id === 'service');
+        if (svcSt) svcSt.is_display_step = 0;
+      }
+      if (rawStaffParam) {
+        const staffSt = steps.find((s) => s && s.id === 'staff');
+        if (staffSt) staffSt.is_display_step = 0;
+      }
+      if (rawLocationParam) {
+        const locSt = steps.find((s) => s && s.id === 'location');
+        if (locSt) locSt.is_display_step = 0;
+      }
+    }
+
+    if (!isBookAgain) {
+      // Pre-select location and staff from URL if not already populated
+      if (rawLocationParam && !props.state.appointment_step_form_data.selected_location) {
+        props.state.appointment_step_form_data.selected_location = String(rawLocationParam);
+        props.state.appointment_step_form_data.bookingpress_location_id = String(rawLocationParam);
+      }
+      if (rawStaffParam && !props.state.appointment_step_form_data.selected_staff_member_id) {
+        props.state.appointment_step_form_data.selected_staff_member_id = String(rawStaffParam);
+      }
+
+      if (rawAllowModify === '0') {
+        nextTick(() => {
+          const steps = Array.isArray(props.state.steps) ? props.state.steps : [];
+          const cur = steps.find((s) => s && s.id === props.state.currentTab);
+          if (!cur || !cur.is_display_step) {
+            const firstVis = steps.find((s) => s && s.is_display_step);
+            if (firstVis) {
+              props.nav.goTo(firstVis.id);
+            }
+          }
+        });
+      }
+    }
 
     if (isBookAgain) {
       const params = new URLSearchParams(window.location.search);
-      const staffId = params.get('sm_id');
+      const rawServiceId = params.get('s_id') || params.get('bpservice_id');
+      const rawStaffId = params.get('sm_id');
+      const rawLocationId = params.get('loc_id') || params.get('location_id');
+      const rawCategoryId = params.get('c_id') || params.get('category_id');
+      const rawExtraId = params.get('se_id');
+
       nextTick(() => {
-        if (staffId) { props.state.appointment_step_form_data.selected_staff_member_id = String(staffId); }
+        // Validate Category provided in URL
+        if (rawCategoryId) {
+          const targetCid = parseInt(rawCategoryId, 10);
+          const categoriesList = Array.isArray(props.state.categories) ? props.state.categories : [];
+          if (categoriesList.length > 0) {
+            const isCategoryMatched = categoriesList.some(
+              (c) => parseInt(c.categoryId || c.category_id || c.id || 0, 10) === targetCid
+            );
+            if (!isCategoryMatched) {
+              return; // Category is disabled or does not exist
+            }
+          }
+        }
+
+        // Validate Service bpservice_id provided in URL
+        const currentServiceId = props.state.appointment_step_form_data.selected_service || rawServiceId;
+        if (rawServiceId || currentServiceId) {
+          const targetSid = parseInt(currentServiceId || rawServiceId, 10);
+          const servicesList = Array.isArray(props.state.services) ? props.state.services : [];
+          const matchedService = servicesList.find(
+            (s) => parseInt(s.serviceId || s.service_id || s.id || 0, 10) === targetSid
+          );
+
+          if (!matchedService) {
+            return; // Service is disabled or does not exist
+          }
+
+          // If category was specified, ensure service belongs to that category
+          if (rawCategoryId && matchedService.categoryId != null) {
+            if (parseInt(matchedService.categoryId, 10) !== parseInt(rawCategoryId, 10)) {
+              return;
+            }
+          }
+        }
+
+        const targetSid = parseInt(props.state.appointment_step_form_data.selected_service || rawServiceId || 0, 10);
+
+        // Check if location map exists and validate locations for the selected service
+        const svcLocMap = props.state.config && props.state.config.service_location_map;
+        if (targetSid > 0 && svcLocMap && Object.keys(svcLocMap).length > 0) {
+          const validLocs = Array.isArray(svcLocMap[String(targetSid)]) ? svcLocMap[String(targetSid)].map(String) : [];
+          if (validLocs.length === 0) {
+            return; // No location available for this service
+          }
+          if (rawLocationId && !validLocs.includes(String(rawLocationId))) {
+            return; // Provided location is not assigned to this service
+          }
+        }
+
+        // Validate Location provided in URL
+        if (rawLocationId) {
+          const targetLocId = parseInt(rawLocationId, 10);
+          const locationList = (props.state.config && Array.isArray(props.state.config.location_list))
+            ? props.state.config.location_list
+            : (Array.isArray(props.state.locations) ? props.state.locations : []);
+
+          if (locationList.length > 0) {
+            const matchedLocation = locationList.find(
+              (l) => parseInt(l.value || l.id || l.bookingpress_location_id || 0, 10) === targetLocId
+            );
+            if (!matchedLocation) {
+              return; // Location is disabled or does not exist
+            }
+          }
+
+          props.state.appointment_step_form_data.selected_location = String(rawLocationId);
+        }
+
+        // Validate Staff Member provided in URL
+        if (rawStaffId) {
+          const targetStaffId = parseInt(rawStaffId, 10);
+          const staffList = Array.isArray(props.state.pro_staff) ? props.state.pro_staff : [];
+          const matchedStaff = staffList.find(
+            (s) => parseInt(s.id || s.bookingpress_staffmember_id || 0, 10) === targetStaffId
+          );
+
+          if (!matchedStaff) {
+            return; // Staff member is disabled or not found
+          }
+
+          // Check if staff member is assigned to the current service
+          if (targetSid > 0 && Array.isArray(matchedStaff.serviceIds)) {
+            const isAssigned = matchedStaff.serviceIds.some(
+              (sid) => parseInt(sid, 10) === targetSid
+            );
+            if (!isAssigned) {
+              return;
+            }
+          }
+
+          // Check if staff member is assigned to the selected location
+          const selectedLocId = rawLocationId || props.state.appointment_step_form_data.selected_location;
+          if (selectedLocId) {
+            const targetLocId = parseInt(selectedLocId, 10);
+            const svcLocStaffMap = props.state.config && props.state.config.service_location_staff_map;
+            const locStaffMap = props.state.config && props.state.config.location_staff_map;
+
+            if (svcLocStaffMap && Object.keys(svcLocStaffMap).length > 0) {
+              const byLoc = svcLocStaffMap[String(targetSid)];
+              if (byLoc) {
+                const validStaffAtLoc = Array.isArray(byLoc[String(targetLocId)]) ? byLoc[String(targetLocId)].map(String) : [];
+                if (!validStaffAtLoc.includes(String(targetStaffId))) {
+                  return; // Staff member not assigned to this service at this location
+                }
+              }
+            } else if (locStaffMap && Object.keys(locStaffMap).length > 0) {
+              const validStaffAtLoc = Array.isArray(locStaffMap[String(targetLocId)]) ? locStaffMap[String(targetLocId)].map(String) : [];
+              if (!validStaffAtLoc.includes(String(targetStaffId))) {
+                return; // Staff member not assigned to this location
+              }
+            }
+          }
+
+          // Valid staff member matching the service & location
+          props.state.appointment_step_form_data.selected_staff_member_id = String(rawStaffId);
+        }
+
+        // Validate Service Extras provided in URL
+        if (rawExtraId && targetSid > 0) {
+          const rawExtraIds = String(rawExtraId).split(/[~,]+/).map((item) => parseInt(item.split('|')[0].trim(), 10)).filter(Boolean);
+          const multiExtras = props.state.appointment_step_form_data && props.state.appointment_step_form_data.bookingpress_multi_service_extra_details;
+          const serviceExtras = multiExtras && multiExtras[String(targetSid)];
+
+          if (serviceExtras && typeof serviceExtras === 'object') {
+            const validExtraIds = Object.keys(serviceExtras).map((id) => parseInt(id, 10));
+            const allExtrasValid = rawExtraIds.every((eid) => validExtraIds.includes(eid));
+            if (!allExtrasValid) {
+              return;
+            }
+          }
+        }
+
         setTimeout(() => {
           const datetimeStep = visibleSteps.value.find(
             (step) => step && step.id === 'datetime'
