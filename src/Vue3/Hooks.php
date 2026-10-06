@@ -938,4 +938,24 @@ class Hooks {
 	 * Filter signature: `(array $customization_settings): array`
 	 */
 	const FILTER_CUSTOMIZATION_SETTINGS = 'bookingpress_form_v3_customization_settings';
+
+	/**
+	 * The currency a payment is denominated in.
+	 *
+	 * Answered centrally by {@see \BookingPress\Vue3\Services\PaymentService::resolve_currency()},
+	 * which defaults to the `payment_default_currency` setting. A context where
+	 * the payment's currency can differ from the site's — Complete Payment being
+	 * the first, since it collects a balance on a booking priced months ago —
+	 * filters this to return the currency that payment was taken in.
+	 *
+	 * NO gateway should read `payment_default_currency` directly. Doing so
+	 * re-denominates an old balance into today's currency, which PayPal refuses
+	 * at capture ("Expected currency from order api call to be TWD, got USD")
+	 * and which fails Stripe against the orchestrator's anti-tamper check.
+	 *
+	 * Returning an empty string falls back to the site setting.
+	 *
+	 * Filter signature: `(string $currency, array $context): string`
+	 */
+	const FILTER_PAYMENT_CURRENCY = 'bookingpress_form_v3_payment_currency';
 }

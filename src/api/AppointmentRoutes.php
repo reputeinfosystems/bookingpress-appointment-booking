@@ -122,8 +122,12 @@ class AppointmentRoutes extends Base {
 
         $bpa_share_url_form_data = !empty($request->get_param('share_url_form_data')) ? $request->get_param('share_url_form_data') : array(); // phpcs:ignore
         if(!empty($bpa_share_url_form_data)){
+            // Populate $_POST for template filters expecting it
+            // bookingpress_modify_allowed_email_notification_flag_func() could not detect that a Share URL notification was being generated
+            $_POST['share_url_form_data'] = $bpa_share_url_form_data;
+
             $is_email_sharing = !empty($bpa_share_url_form_data['email_sharing']) ? $bpa_share_url_form_data['email_sharing'] : false;
-            if($is_email_sharing == "true"){
+            if($is_email_sharing === true || $is_email_sharing == 'true' || $is_email_sharing == '1' || $is_email_sharing === 1){
                 $bpa_share_email_addresses = !empty($bpa_share_url_form_data['sharing_email']) ? $bpa_share_url_form_data['sharing_email'] : '';
                 if(!empty($bpa_share_email_addresses)){
                     $bpa_share_email_addresses = explode(',', $bpa_share_email_addresses);

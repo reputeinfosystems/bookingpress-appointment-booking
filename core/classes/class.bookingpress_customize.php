@@ -256,8 +256,7 @@ if (! class_exists('bookingpress_customize') ) {
                 $response['formdata']['booking_form_settings']['bookigpress_check_inherit_time_format'] = true;
             }
 
-            echo wp_json_encode($response);
-            exit();
+            return $response;
         }
         
         /**
@@ -336,8 +335,7 @@ if (! class_exists('bookingpress_customize') ) {
             $response['msg']      = esc_html__('Field Settings Data Retrieved Successfully', 'bookingpress-appointment-booking');
             $response['formdata'] = $bookingpress_return_data;
 
-            echo wp_json_encode($response);
-            exit();
+            return $response;
         }
         
         /**
@@ -844,6 +842,7 @@ if (! class_exists('bookingpress_customize') ) {
          */
         function bookingpress_dynamic_vue_methods_func()
         {
+
             global $bookingpress_notification_duration;
             ?>
                 bookingpress_toggle_calendar(){

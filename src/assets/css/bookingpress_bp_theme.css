@@ -12308,7 +12308,8 @@
 .bp-color-hue-slider.is-vertical {
     width: 12px;
     height: 180px;
-    padding: 2px 0
+    padding: 2px 0;
+    float:right;
 }
 
 .bp-color-hue-slider.is-vertical .bp-color-hue-slider__bar {
@@ -12429,7 +12430,22 @@
 
 .bp-color-dropdown__btns {
     margin-top: 6px;
-    text-align: right
+    text-align: right;
+}
+.bp-color-picker-panel__footer{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.bp-color-picker-panel__footer button{
+    min-height: 28px;
+    padding: 7px 15px;
+}
+.bp-color-picker-panel__footer > div:last-child {
+    float: right;
+}
+.bp-color-picker-panel__footer .bp-input--small{
+    width: 140px;
 }
 
 .bp-color-dropdown__value {
@@ -12587,14 +12603,19 @@
     top: 0;
     right: 0;
     bottom: 0
+    
 }
 
+
 .bp-color-picker__empty,
-.bp-color-picker__icon {
+.bp-color-picker__color-inner .bp-color-picker__icon {
     top: 50%;
     left: 50%;
     font-size: 12px;
-    position: absolute
+    position: absolute;
+    color: #fff;
+    font-weight: 400;
+    text-align: center;
 }
 
 .bp-color-picker__empty {
@@ -12612,10 +12633,13 @@
     text-align: center
 }
 
+.bp-color-picker-panel__wrapper{
+    margin-bottom: 6px;
+}
 .bp-color-picker__panel {
     position: absolute;
     z-index: 10;
-    padding: 6px;
+    padding: 6px !important;
     -webkit-box-sizing: content-box;
     box-sizing: content-box;
     background-color: #fff;
@@ -12624,6 +12648,10 @@
     -webkit-box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .1);
     box-shadow: 0 2px 12px 0 rgba(0, 0, 0, .1)
 }
+.bp-color-picker-panel{
+    width: 300px;
+}
+
 
 .bp-textarea {
     position: relative;
