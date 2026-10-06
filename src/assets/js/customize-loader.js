@@ -27,6 +27,9 @@ const initCustomizeWrapper = () => {
     const BookingPressConfig = window.BookingPressConfig || {};
     const rest_url = BookingPressConfig.rest_url || '';
     const moduleData = getModuleData('bookingpress-customize-loader');
+
+    const customizePageMethodsData = wp.hooks.applyFilters( 'bookingpress_customize_methods', customizePageMethods );
+
     const customizePageConfig = {
 
         data() {
@@ -115,10 +118,12 @@ const initCustomizeWrapper = () => {
                 is_disabled_caching_notice: moduleData.is_disabled_caching_notice || false,
                 gift_card_form_settings: moduleData.gift_card_form_settings || {},
                 package_booking_form_settings: moduleData.package_booking_form_settings || {},
+                waiting_list_container_data: moduleData.waiting_list_container_data || {},
+                recurring_appointment_container_data: moduleData.recurring_appointment_container_data || {},
             };
         },
 
-       mounted() {
+        mounted() {
             const vm = this;
             if (window.screen.width >= 1200) {
                 vm.current_screen_size = 'desktop';
@@ -188,7 +193,7 @@ const initCustomizeWrapper = () => {
         },
 
         methods: {
-            ...customizePageMethods,
+            ...customizePageMethodsData,
             ...(window.BookingPressCustomizeProMethods || {}),
             ...(window.BookingPressGiftCardCustomizeMethods || {}),
             ...(window.BookingPressPackageCustomizeMethods || {}),

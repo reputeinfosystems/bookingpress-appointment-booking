@@ -5,7 +5,7 @@ Donate link: https://bookingpressplugin.com/
 Requires at least: 6.7
 Tested up to: 7.1.2
 Requires PHP: 7.4
-Stable tag: 1.6.6
+Stable tag: 1.6.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -219,6 +219,9 @@ Please follow the steps for installation:
 13. BookingPress - General Settings
 
 == Changelog ==
+
+= 1.6.7 =
+* Minor bug fixes & improvements
 
 = 1.6.6 =
 * Fixed: Help drawer doesn't load the content properly for certain pages.

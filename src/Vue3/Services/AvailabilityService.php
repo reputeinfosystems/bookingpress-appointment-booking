@@ -454,7 +454,8 @@ class AvailabilityService implements AvailabilityServiceInterface {
 
 	/**
 	 * Block day-service starts whose occupied date range overlaps an existing
-	 * booking for the same main service.
+	 * booking for the same main service — or, when "Share timeslot between all
+	 * services" is enabled, a booking of ANY other service.
 	 *
 	 * @param int    $service_id
 	 * @param string $start_date
@@ -476,8 +477,64 @@ class AvailabilityService implements AvailabilityServiceInterface {
 			ARRAY_A
 		);
 
-		$has_overlap = false;
+		$has_overlap = $this->day_rows_overlap_range( $rows, $start_date, $end_date );
 
+		$has_overlap = apply_filters(
+			Hooks::FILTER_DAY_SERVICE_BOOKING_OVERLAP,
+			(bool) $has_overlap,
+			(int) $service_id,
+			(string) $start_date,
+			(string) $end_date,
+			$context
+		);
+
+		// "Share timeslot between all services" — the day-service counterpart
+		// of build_slots()' share check. A booking of ANY other service (any
+		// staff) that touches the range blocks it. Checked AFTER the filter
+		// above on purpose: its Pro consumers (staff / quantity capacity) only
+		// reason about same-service bookings and would otherwise discard it.
+		if ( ! $has_overlap && $this->is_share_timeslots_enabled() ) {
+			$other_rows = $wpdb->get_results(
+				$wpdb->prepare(
+					// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+					"SELECT bookingpress_service_id AS service_id, bookingpress_appointment_date AS start_d, bookingpress_appointment_end_date AS end_d, bookingpress_service_duration_val AS duration_val, bookingpress_service_duration_unit AS duration_unit FROM `{$table}` WHERE bookingpress_service_id <> %d AND bookingpress_appointment_status IN (1, 2) AND bookingpress_appointment_date <= %s",
+					(int) $service_id,
+					(string) $end_date
+				),
+				ARRAY_A
+			);
+
+			/**
+			 * Narrow the other-service bookings that block a day-service range
+			 * under "Share timeslot between all services" (e.g. Pro's "Share
+			 * time across category" scope). Day-service counterpart of
+			 * Hooks::FILTER_BOOKED_RANGES. Inert in Lite (no callback).
+			 */
+			$other_rows = apply_filters(
+				Hooks::FILTER_DAY_SERVICE_SHARED_BOOKINGS,
+				is_array( $other_rows ) ? $other_rows : array(),
+				(int) $service_id,
+				(string) $start_date,
+				(string) $end_date,
+				$context
+			);
+
+			$has_overlap = $this->day_rows_overlap_range( $other_rows, $start_date, $end_date );
+		}
+
+		return (bool) $has_overlap;
+	}
+
+	/**
+	 * Whether any booking row's occupied date range overlaps [start, end].
+	 *
+	 * @param mixed  $rows       Rows with `start_d`, `end_d`, `duration_val`, `duration_unit`.
+	 * @param string $start_date Inclusive range start.
+	 * @param string $end_date   Inclusive range end.
+	 *
+	 * @return bool
+	 */
+	private function day_rows_overlap_range( $rows, $start_date, $end_date ) {
 		foreach ( is_array( $rows ) ? $rows : array() as $row ) {
 			$booked_start = isset( $row['start_d'] ) ? (string) $row['start_d'] : '';
 			if ( ! DayServiceHelper::is_valid_ymd( $booked_start ) ) {
@@ -493,23 +550,24 @@ class AvailabilityService implements AvailabilityServiceInterface {
 			}
 
 			if ( $start_date <= $booked_end && $end_date >= $booked_start ) {
-				$has_overlap = true;
-				break;
+				return true;
 			}
 		}
-
-		$has_overlap = apply_filters(
-			Hooks::FILTER_DAY_SERVICE_BOOKING_OVERLAP,
-			(bool) $has_overlap,
-			(int) $service_id,
-			(string) $start_date,
-			(string) $end_date,
-			$context
-		);
-
-		return (bool) $has_overlap;
+		return false;
 	}
 
+	/**
+	 * "Share timeslot between all services" setting.
+	 *
+	 * @return bool
+	 */
+	private function is_share_timeslots_enabled() {
+		return in_array(
+			(string) $this->settings->get( 'share_timeslot_between_services', SettingsRepository::GROUP_GENERAL, '0' ),
+			array( '1', 'true' ),
+			true
+		);
+	}
 	/**
 	 * Look up the start/end times for a weekday from `default_workhours`.
 	 *

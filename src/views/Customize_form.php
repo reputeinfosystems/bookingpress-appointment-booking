@@ -14,8 +14,8 @@
     $bookingpress_service_price1 = $BookingPress->bookingpress_price_formatter_with_currency_symbol(350);
     $bookingpress_service_price2 = $BookingPress->bookingpress_price_formatter_with_currency_symbol(150);
 ?>
-<link v-if="selected_font_values.title_font_family" rel="stylesheet" :href="'https://fonts.googleapis.com/css?family=' + selected_font_values.title_font_family">
     <div class="customize-form-app-root bookingpress_page_inner_wrapper" v-cloak id="customize-form-app-root">
+        <link v-if="selected_font_values.title_font_family" rel="stylesheet" :href="'https://fonts.googleapis.com/css?family=' + selected_font_values.title_font_family">
         <bp-ui-main class="bpa-main-listing-card-container bpa-default-card bpa--is-page-scrollable-tablet" id="all-page-main-container">
             <bp-ui-row type="flex" class="bpa-mlc-head-wrap">
                 <bp-ui-col :xs="12" :sm="12" :md="12" :lg="12" :xl="12" class="bpa-mlc-left-heading">
@@ -31,6 +31,7 @@
                             <div></div>
                         </div>
                         </bp-ui-button>
+                        <?php do_action('bookingpress_form_customized_language_translation_btn'); ?>
                     </div>
                 </bp-ui-col>
             </bp-ui-row>    
@@ -66,16 +67,25 @@
                                 </div>
                                 <div class="bpa-bi__body">
                                     <bp-ui-tooltip effect="dark" content="<?php esc_html_e('Primary color', 'bookingpress-appointment-booking'); ?>" placement="top" open-delay="300">
-                                        <bp-ui-color-picker class="bpa-customize-tp__color-picker" v-model="selected_colorpicker_values.primary_color" @change="bpa_select_primary_color" ></bp-ui-color-picker>
+                                        <span>
+                                            <bp-ui-color-picker class="bpa-customize-tp__color-picker" v-model="selected_colorpicker_values.primary_color" @change="bpa_select_primary_color" ></bp-ui-color-picker>
+                                        </span>
                                     </bp-ui-tooltip>
+
                                     <bp-ui-tooltip effect="dark" content="<?php esc_html_e('Form background color', 'bookingpress-appointment-booking'); ?>" placement="top" open-delay="300">
-                                        <bp-ui-color-picker class="bpa-customize-tp__color-picker" v-model="selected_colorpicker_values.background_color" @change="bookingpress_change_border_color"></bp-ui-color-picker>
+                                        <span>
+                                            <bp-ui-color-picker class="bpa-customize-tp__color-picker" v-model="selected_colorpicker_values.background_color" @change="bookingpress_change_border_color"></bp-ui-color-picker>
+                                        </span>
                                     </bp-ui-tooltip>
                                     <bp-ui-tooltip effect="dark" content="<?php esc_html_e('Panel background color', 'bookingpress-appointment-booking'); ?>" placement="top" open-delay="300">
-                                        <bp-ui-color-picker class="bpa-customize-tp__color-picker"v-model="selected_colorpicker_values.footer_background_color" @change="bookingpress_change_border_color"></bp-ui-color-picker>
+                                        <span>
+                                            <bp-ui-color-picker class="bpa-customize-tp__color-picker" v-model="selected_colorpicker_values.footer_background_color" @change="bookingpress_change_border_color"></bp-ui-color-picker>
+                                        </span>
                                     </bp-ui-tooltip>
                                     <bp-ui-tooltip effect="dark" content="<?php esc_html_e('Border color', 'bookingpress-appointment-booking'); ?>" placement="top" open-delay="300" >
-                                        <bp-ui-color-picker class="bpa-customize-tp__color-picker"v-model="selected_colorpicker_values.border_color" @change="bookingpress_change_border_color"></bp-ui-color-picker>
+                                        <span>
+                                            <bp-ui-color-picker class="bpa-customize-tp__color-picker" v-model="selected_colorpicker_values.border_color" @change="bookingpress_change_border_color"></bp-ui-color-picker>
+                                        </span>
                                     </bp-ui-tooltip>
                                 </div>
                             </div>                                                                                                          
@@ -85,13 +95,19 @@
                                 </div>
                                 <div class="bpa-bi__body">
                                     <bp-ui-tooltip effect="dark" content="<?php esc_html_e('Title color', 'bookingpress-appointment-booking'); ?>" placement="top" open-delay="300">
-                                        <bp-ui-color-picker class="bpa-customize-tp__color-picker" v-model="selected_colorpicker_values.label_title_color" @change="bookingpress_change_border_color"></bp-ui-color-picker>
+                                        <span>
+                                            <bp-ui-color-picker class="bpa-customize-tp__color-picker" v-model="selected_colorpicker_values.label_title_color" @change="bookingpress_change_border_color"></bp-ui-color-picker>
+                                        </span>
                                     </bp-ui-tooltip>
                                     <bp-ui-tooltip effect="dark" content="<?php esc_html_e('Sub title color', 'bookingpress-appointment-booking'); ?>" placement="top" open-delay="300">
-                                        <bp-ui-color-picker class="bpa-customize-tp__color-picker" v-model="selected_colorpicker_values.sub_title_color" @change="bookingpress_change_border_color"></bp-ui-color-picker>
+                                        <span>
+                                            <bp-ui-color-picker class="bpa-customize-tp__color-picker" v-model="selected_colorpicker_values.sub_title_color" @change="bookingpress_change_border_color"></bp-ui-color-picker>
+                                        </span>
                                     </bp-ui-tooltip>  
                                     <bp-ui-tooltip effect="dark" content="<?php esc_html_e('Content color', 'bookingpress-appointment-booking'); ?>" placement="top" open-delay="300">
-                                        <bp-ui-color-picker class="bpa-customize-tp__color-picker" v-model="selected_colorpicker_values.content_color" @change="bookingpress_change_border_color"></bp-ui-color-picker>
+                                        <span>
+                                            <bp-ui-color-picker class="bpa-customize-tp__color-picker" v-model="selected_colorpicker_values.content_color" @change="bookingpress_change_border_color"></bp-ui-color-picker>
+                                        </span>
                                     </bp-ui-tooltip>    
                                 </div>
                             </div>  
@@ -1313,27 +1329,10 @@
                 </div>    
             </bp-ui-container>    
         </bp-ui-main>
-        <bp-ui-dialog class="bpa-dialog---bookingform_custom_css" title="" v-model="add_custom_css_modal" close-on-press-escape="close_modal_on_esc"  @open="bookingpress_enable_modal" @close="bookingpress_disable_modal">
-            <div class="bpa-dialog-heading">
-                <bp-ui-row type="flex">
-                    <bp-ui-col :xs="12" :sm="12" :md="16" :lg="16" :xl="16">
-                        <h1 class="bpa-page-heading"><?php esc_html_e('Custom CSS', 'bookingpress-appointment-booking'); ?></h1>
-                    </bp-ui-col>
-                </bp-ui-row>
-            </div>
-            <div class="bpa-dialog-body">
-                <div class="bpa-dialog--custom_css_body">
-                    <bp-ui-input type="textarea" :rows="18" class="bpa-form-control" v-model="bookigpress_form_custom_css"/>
-                </div>
-                <div class="bpa-hw-right-btn-group bpa-custom-css-block">
-                    <bp-ui-button class="bpa-btn bpa-btn__medium bpa-btn--primary" @click="bookingpress_save_custom_css()" >                    
-                        <span class="bpa-btn__label"><?php esc_html_e('OK', 'bookingpress-appointment-booking'); ?></span>                        
-                    </bp-ui-button> 
-                    <bp-ui-button class="bpa-btn bpa-btn__medium" @click="close_custom_css_modal()">
-                        <span><?php esc_html_e('Close', 'bookingpress-appointment-booking'); ?></span>
-                    </bp-ui-button>                    
-                </div>
-            </div>    
-        </bp-ui-dialog>
+            <?php
+            if ( class_exists('BookingPressPro\admin\Customize') && method_exists('BookingPressPro\admin\Customize', 'render_customize_form_modal_content') ) {
+                \BookingPressPro\admin\Customize::render_customize_form_modal_content();
+            }
+            ?>
     </div>
 </div>

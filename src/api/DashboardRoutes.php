@@ -533,11 +533,11 @@ class DashboardRoutes extends Base {
             $payment_search_query .= " AND (bookingpress_payment_date_time BETWEEN '".$bookingpress_start_date . " 00:00:00' AND '".$bookingpress_end_date." 23:59:59')";
             $customer_search_query .= " AND (bookingpress_user_created BETWEEN '".$bookingpress_start_date . " 00:00:00' AND '".$bookingpress_end_date." 23:59:59')";  
         }  
-        $payment_status_check = "AND bookingpress_payment_status = 1 )";
-        $payment_status_check = apply_filters('bookingpress_check_payment_status', $payment_status_check);
-
+        $payment_status_check = "AND bookingpress_payment_status = 1 )";        
         $appointments_search_query  = apply_filters('bookingpress_dashboard_appointment_summary_data_filter', $appointments_search_query);                    
-        $payment_search_query  = apply_filters('bookingpress_dashboard_payment_summary_data_filter', $payment_search_query);            
+        $payment_search_query  = apply_filters('bookingpress_dashboard_payment_summary_data_filter', $payment_search_query);     
+
+        $payment_status_check = apply_filters('bookingpress_check_payment_status', $payment_status_check, $payment_search_query);
 
         $total_appointments                = $wpdb->get_var("SELECT COUNT(bookingpress_appointment_booking_id) FROM {$tbl_bookingpress_appointment_bookings} WHERE {$appointments_search_query} "); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $tbl_bookingpress_appointment_bookings is a table name. false alarm
         $return_data['total_appointments'] = $total_appointments;

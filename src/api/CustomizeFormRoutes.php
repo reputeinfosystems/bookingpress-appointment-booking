@@ -87,6 +87,9 @@ class CustomizeFormRoutes extends Base {
             'booking_form_settings',
             'summary_container_data',
             'front_label_edit_data',
+            'waiting_list_container_data',
+            'recurring_appointment_container_data',
+            'language_data',
         ];
 
        foreach ( $params as $param ) {

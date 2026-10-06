@@ -4469,6 +4469,9 @@
 .bp-color-picker .bp-color-picker__empty {
   font-size: 12px;
   color: var(--bp-text-color-secondary);
+  top: 50%;
+  left: 50%;
+  position: absolute;
 }
 .bp-color-picker .bp-color-picker__icon {
   display: inline-flex;
@@ -11872,6 +11875,7 @@
   color: var(--bpa-dt-black-300);
   font-size: 14px;
   line-height: 1.5;
+  text-align: left;
 }
 
 .bpa-notification.bp-notification {

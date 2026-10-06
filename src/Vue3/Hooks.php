@@ -338,6 +338,24 @@ class Hooks {
 	const FILTER_DAY_SERVICE_BOOKING_OVERLAP = 'bookingpress_form_v3_day_service_booking_overlap';
 
 	/**
+	 * Narrow the OTHER-service bookings that block a day-service range when
+	 * "Share timeslot between all services" is ON.
+	 *
+	 * Fired in `AvailabilityService::day_range_has_booking_overlap()` after the
+	 * same-service decision (and FILTER_DAY_SERVICE_BOOKING_OVERLAP). Any row
+	 * left whose date range touches the candidate range blocks it. Day-service
+	 * counterpart of FILTER_BOOKED_RANGES — e.g. Pro's "Share time across
+	 * category" scope drops rows of services in other categories.
+	 *
+	 * Each row: `service_id`, `start_d`, `end_d`, `duration_val`, `duration_unit`.
+	 *
+	 * Lite registers no callback, so a Lite-only install is unchanged.
+	 *
+	 * Filter signature: `(array $rows, int $service_id, string $start_date, string $end_date, array $context): array`
+	 */
+	const FILTER_DAY_SERVICE_SHARED_BOOKINGS = 'bookingpress_form_v3_day_service_shared_bookings';
+
+	/**
 	 * Override the selected day-service duration.
 	 *
 	 * Fired for date-range availability and again while normalizing the submit

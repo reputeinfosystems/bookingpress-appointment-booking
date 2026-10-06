@@ -128,11 +128,16 @@ class TimeslotService implements TimeslotServiceInterface {
 		$cursor_year  = (int) gmdate( 'Y', $start_ts );
 		$cursor_month = (int) gmdate( 'm', $start_ts );
 
-		// Hard cap on the walk so a misconfigured service can never spin
-		// the request indefinitely. 12 months is well past the 365-day
-		// booking window and matches the legacy walker's safety cap.
-		for ( $i = 0; $i < 12; $i++ ) {
+		// Walk until the month's first day passes `$max_date`. A fixed 12-month
+		// cap is one short: a 365-day window starting mid-month spans 13 calendar
+		// months, so availability in the final month (e.g. 3 Sep next year when
+		// today is 29 Sep) was never reached and `found_month` came back null.
+		// The iteration guard only stops a runaway walk on a bad `$max_date`.
+		for ( $i = 0; $i < 120; $i++ ) {
 			$first_day   = sprintf( '%04d-%02d-01', $cursor_year, $cursor_month );
+			if ( $first_day > $max_date ) {
+				break;
+			}
 			$last_day_ts = strtotime( $first_day . ' +1 month -1 day' );
 			$last_day    = gmdate( 'Y-m-d', $last_day_ts );
 

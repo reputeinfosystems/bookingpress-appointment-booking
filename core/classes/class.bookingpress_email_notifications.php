@@ -981,7 +981,8 @@ if (! class_exists('bookingpress_email_notifications') ) {
                         $bookingpress_email_content_data .= "\r\n--{$boundary}\r\n";
                         $bookingpress_email_content_data .= 'Content-Type: text/html; charset=' . $charset . "\r\n";
                         $bookingpress_email_content_data .= "Content-Transfer-Encoding: base64" . "\r\n\r\n";
-                        $bookingpress_email_content_data .= $email_content . "\r\n";
+                        $gmail_email_content = chunk_split(base64_encode($email_content));
+                        $bookingpress_email_content_data .= $gmail_email_content . "\r\n";
                         $bookingpress_email_content_data .= "\r\n--{$boundary}--\r\n";
 
                         if(!empty($cc_emails) && is_array($cc_emails)){

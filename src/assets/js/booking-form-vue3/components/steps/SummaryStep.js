@@ -390,6 +390,48 @@ export default {
             }
         }
 
+        /**
+         * Announce a selection nobody clicked.
+         *
+         * `bp-v3:payment-method-selected` is what the payment host turns into
+         * `onMethodChange`, and it was only ever emitted by the computed setter
+         * above — i.e. by a CLICK. Two paths set the method without one:
+         *
+         *   - the server, when exactly one gateway is enabled
+         *     (`StateBuilder.php:256` seeds `selected_payment_method` straight
+         *     into `step_form_data`), and
+         *   - the auto-select block above, which assigns the raw state field.
+         *
+         * With a single gateway the picker is suppressed by `showPaymentBlock`,
+         * so no click is even possible and the event never fired. A gateway that
+         * mounts inline fields on `onMethodChange` — Stripe's Payment Element,
+         * and equally Braintree's Hosted Fields or Square's card form — was
+         * therefore never told it had been selected, and the customer got a
+         * form with no card fields. Stripe.js then refuses the submit with
+         * "could not retrieve data from the specified Element".
+         *
+         * Emitted on MOUNT rather than in setup, so the `above-actions` slot
+         * exists by the time a gateway reacts, and after `nextTick` so the slot
+         * factory has run. Re-emitting on a later step re-mount is harmless and
+         * mildly desirable: gateways re-sync against a fresh DOM node, and every
+         * handler is written to be idempotent (Stripe's `mountElement()` returns
+         * early when an element is already mounted).
+         *
+         * The form still owns selection; this only makes a silent selection
+         * indistinguishable from a clicked one, which is what the host contract
+         * always assumed.
+         */
+        onMounted(() => {
+            const current = String(state.appointment_step_form_data.selected_payment_method || '');
+            if (!current || !bus) return;
+            nextTick(() => {
+                bus.emit('bp-v3:payment-method-selected', {
+                    instanceId: state.instanceId,
+                    method: current,
+                });
+            });
+        });
+
         // --- Keyboard navigation (APG radio-group pattern) ----------------------
         //
         // Payment methods behave as true radios: Tab enters the group on the

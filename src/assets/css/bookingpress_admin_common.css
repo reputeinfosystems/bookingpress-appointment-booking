@@ -1486,12 +1486,22 @@ body:not(.__bpa-is-staff-customize-view-active) #bpa-staff-panel-header {
 .bp-date-picker__time-header .bp-ui-input .bp-input__inner::placeholder{
     color: var(--bpa-dt-black-200);
 }
-.bp-dialog.bpa-dialog---bookingform_custom_css{
+.bp-dialog.bpa-dialog---bookingform_custom_css,
+.bp-dialog.bpa-dialog--redirection_msg_model{
     padding: 0;
     margin-top: 15vh;
 }
 .bp-dialog.bpa-dialog---bookingform_custom_css .bp-textarea__inner{
-    border: unset;
+    box-shadow: unset !important;
+}
+.bp-button--small.bp-ui-popconfirm__cancel.bp-ui-button{
+    border: 1px solid #dcdfe6;
+    padding: 8px 16px;
+    font-weight: 500;
+    font-size: 13px;
+    line-height: 16px;
+    border-radius: var(--bpa-radius-4px);
+    min-height: 34px;
 }
 
 .bp-ui-root .bpa-customize-main-container .bpa-form-control.bp-input .bp-input__wrapper,
@@ -1512,10 +1522,15 @@ body:not(.__bpa-is-staff-customize-view-active) #bpa-staff-panel-header {
 }
 .bpa-customize-step-top-panel .bpa-form-control.bp-select .bp-select__wrapper{
     min-width: 244px;
+    max-width: 244px;
+}
+.bpa-customize-step-top-panel .bpa-form-control.bp-select .bp-select__wrapper .bp-select__input{
+    margin-left: 0;
 }
 .bpa-front-cp-my-appointment .bpa-front-ma-table-actions-wrap{
     display: block !important;
 }
+
 
 /* For the Settings Page */
 @media (max-width: 1024px) {
@@ -1683,9 +1698,13 @@ body.rtl .bpa-en-body-card .bpa-tabs .bp-tabs__item {
 }
 
 .bpa-en-body-card .bpa-en-body-card__content .bpa-en-body-card__content--form .bp-form-item .bp-form-item__content,
-.bpa-en-body-card .bpa-en-body-card__content .bpa-en-body-card__content--form .bpa-form-item .bp-form-item__content {
+.bpa-en-body-card .bpa-en-body-card__content .bpa-en-body-card__content--form .bpa-form-item .bp-form-item__content ,
+.bpa-dialog--redirection_msg_model .bpa-form-item .bp-form-item__content {
     width: 100%;
     display: block;
+}
+.bpa-dialog--redirection_msg_model .bpa-form-item{
+    margin-bottom: 0;
 }
 
 .bpa-en-body-card .bpa-en-body-card__content .bpa-en-body-card__content--form .bp-input,

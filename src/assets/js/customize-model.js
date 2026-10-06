@@ -97,6 +97,8 @@ export const customizePageMethods = {
             front_label_edit_data: vm.front_label_edit_data,
             booking_form_settings: vm.booking_form_settings,
             summary_container_data: vm.summary_container_data,
+            waiting_list_container_data: vm.waiting_list_container_data,
+            recurring_appointment_container_data: vm.recurring_appointment_container_data,
         };
 
         if (typeof wp !== 'undefined' && wp.hooks) {
@@ -388,18 +390,18 @@ export const customizePageMethods = {
                     formdata.booking_form_settings || {};
                 
                 if (typeof vm.booking_form_settings.bookingpress_form_sequance === 'string') {
-    vm.booking_form_settings.bookingpress_form_sequance = JSON.parse(vm.booking_form_settings.bookingpress_form_sequance);
-}
+                    vm.booking_form_settings.bookingpress_form_sequance = JSON.parse(vm.booking_form_settings.bookingpress_form_sequance);
+                }
 
-vm.booking_form_sequence = vm.booking_form_settings.bookingpress_form_sequance || [];
+                vm.booking_form_sequence = vm.booking_form_settings.bookingpress_form_sequance || [];
 
-vm.bookingpress_change_form_sequence();
+                vm.bookingpress_change_form_sequence();
 
                 vm.summary_container_data =
                     formdata.summary_container_data || {};
 
                 vm.front_label_edit_data =
-                    formdata.front_label_edit_data || {};
+                    formdata.front_label_edit_data || {}; 
 
                 if (typeof wp !== 'undefined' && wp.hooks) {
                     wp.hooks.doAction(
@@ -620,6 +622,7 @@ vm.bookingpress_change_form_sequence();
             '.bpa-front-ma-table-actions-wrap .bpa-front-ma-taw__card,' +
             '.bpa-front-module--bd-form .--bpa-country-dropdown .vti__dropdown-list,' +
             '.bpa-cbf--tabs .bp-tabs__nav-wrap,' +
+            '.bp-ui-popconfirm.bp-popover.bp-popconfirm,' +
             '.bpa-tn__dropdown-menu,.bp-ui-popover{' +
             'background-color:' + form_background_color + '}' +
 
@@ -633,6 +636,8 @@ vm.bookingpress_change_form_sequence();
             '.bp-ui-popover,' +
             '.bp-ui-popconfirm .bp-ui-popconfirm__action,' +
             '.bp-ui-button.bp-ui-button--bpa-btn.bpa-btn__small.bp-ui-button--mini:not(.bpa-btn--danger),' +
+            '.bp-button--small.bp-ui-popconfirm__cancel.bp-ui-button,' +
+            '.bp-ui-popconfirm.bp-popover.bp-popconfirm,' +
             '.bpa-ci__service-actions .bpa-ci__sa-wrap{' +
             'border-color:' + border_color +
             '}' +
@@ -701,7 +706,8 @@ vm.bookingpress_change_form_sequence();
             'color:var(--bpa-cl-white) !important' +
             '}' +
 
-            '.bpa-custom-checkbox--is-label .bp-ui-checkbox__inner , .bp-ui-root .bpa-front-cp--fw__row .bp-input__wrapper{' +
+            '.bpa-custom-checkbox--is-label .bp-ui-checkbox__inner , .bp-ui-root .bpa-front-cp--fw__row .bp-input__wrapper,' +
+            '.bpa-cbf--preview-step__body-content  .bpa-form-control.bp-tel-input .bp-ui-tel-input__surface{' +
             'border-color:' + border_color + '!important' +
             '}' +
 
@@ -720,6 +726,43 @@ vm.bookingpress_change_form_sequence();
 
             '.bpa-cart__item .bpa-ci__service-actions .bpa-btn--icon-without-box:hover{' +
             'border-color:' + primary_color + '!important' +
+            '}' +
+
+            '.bpa-customize-sm-card .bpa-customize-sm__default-avatar svg > rect{' +
+            'fill:' + border_color + ' !important;' +
+            'fill-opacity:0.5' +
+            '}' +
+
+            '.bpa-customize-sm-card .bpa-customize-sm__default-avatar svg path{' +
+            'fill:' + form_background_color + ' !important' +
+            '}' +
+
+            '.bpa-customize-sm-card__body--name,' +
+            '.bpa-customize-sm-card__inner-body--name,' +
+            '.bpa-customize-sm-card__inner-body-item-wrapper{' +
+            'color:' + title_color + ' !important' +
+            '}' +
+
+            '.bpa-customize-sm-card__inner-item-icon svg path{' +
+            'stroke:' + title_color + ' !important' +
+            '}' +
+
+            '.bpa-customize-sm-card .bpa-customize-sm-card__inner-button{' +
+            'background-color:' + border_color + '4d !important;' +
+            'color:' + sub_title_color + ' !important' +
+            '}' +
+
+            '.bpa-customize-sm-card .bpa-customize-sm-card__inner-button svg path{' +
+            'fill:' + border_color + ' !important' +
+            '}' +
+
+            '.bpa-customize-sm-card .bpa-customize-sm-card__inner-button.bpa-sm-card__active{' +
+            'background-color:' + primary_color + ' !important;' +
+            'color:' + vm.selected_colorpicker_values.price_button_text_color + ' !important' +
+            '}' +
+
+            '.bpa-customize-sm-card .bpa-customize-sm-card__inner-button.bpa-sm-card__active svg path{' +
+            'fill:' + vm.selected_colorpicker_values.price_button_text_color + ' !important' +
             '}';
 
         let bookingpressStyle =
