@@ -27,9 +27,9 @@ class HelpDrawerRoutes extends Base {
         
         $type   = $request->get_param('type');
 
-        $wpnonce = $request->get_header('x-wp-nonce');
+            $wpnonce = $request->get_header('x-wp-nonce');
 
-        if ( empty( $wpnonce ) || ! wp_verify_nonce( $wpnonce, 'wp_rest' ) ) {
+            if ( empty( $wpnonce ) || ! wp_verify_nonce( $wpnonce, 'wp_rest' ) ) {
             return new \WP_REST_Response(
                 [
                     'variant' => 'error',

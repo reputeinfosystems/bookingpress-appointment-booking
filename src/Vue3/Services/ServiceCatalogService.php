@@ -205,12 +205,11 @@ class ServiceCatalogService implements ServiceCatalogServiceInterface {
 			$is_from_url      = 1;
 		}
 
-		// If no selected_service was explicitly set, but a single service was specified in 'service', auto-select it.
-		if ( empty( $selected_service ) && ! empty( $service ) && false === strpos( $service, ',' ) ) {
-			$single_sid = (int) $service;
-			if ( $single_sid > 0 && null !== $this->services->find( $single_sid ) ) {
-				$selected_service = $single_sid;
-			}
+		// Validate selected_service exists in the catalog. Silent fallback
+		// to "no preselection" if it doesn't — matches the §M0.1 edge case.
+		if ( $selected_service > 0 && null === $this->services->find( $selected_service ) ) {
+			$selected_service = 0;
+			$is_from_url      = 0;
 		}
 
 		$resolution = array(

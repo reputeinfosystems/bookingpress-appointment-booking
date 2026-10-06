@@ -23,16 +23,12 @@ use BookingPress\api\HelpDrawerRoutes;
 use BookingPress\admin\Dashboard;
 use BookingPress\admin\AddonsList;
 use BookingPress\admin\Customer;
-use BookingPress\admin\Customize;
 use BookingPress\admin\GrowthTools;
 use BookingPress\admin\Settings;
-use BookingPress\admin\Notifications;
-use BookingPress\api\NotificationRoutes;
-use BookingPress\api\CustomizeFormRoutes;
 
 use BookingPress\frontend\BookingForm;
 
-// Vue3 greenfield path - see docs/migration/BOOKINGPRESS_FORM_VUE3_GREENFIELD_PLAN.md
+// Vue3 greenfield path — see docs/migration/BOOKINGPRESS_FORM_VUE3_GREENFIELD_PLAN.md
 use BookingPress\Vue3\Routing as Vue3Routing;
 
 class BookingPressLoader{
@@ -82,10 +78,8 @@ class BookingPressLoader{
         Dashboard::init();
         AddonsList::init();
         Customer::init();
-        Customize::init();
         GrowthTools::init();
         Settings::init();
-        Notifications::init();
         new CalendarRoutes();
         new CustomerRoutes();
         new TimeRoutes();
@@ -93,11 +87,9 @@ class BookingPressLoader{
         new DashboardRoutes();
         new AddonsRoutes();
         new CustomerPageRoutes();
-        new CustomizeFormRoutes();
         new GrowthToolsRoutes();
         new SettingsRoutes();
         new HelpDrawerRoutes();
-        new NotificationRoutes();
 	
 	    BookingForm::init();
         

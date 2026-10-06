@@ -155,8 +155,6 @@ if (! class_exists('bookingpress_payment_gateways') ) {
             if (! empty($posted_data) && ! empty($payment_gateway) ) {
                 $bookingpress_selected_service_id     = sanitize_text_field($bookingpress_appointment_data['selected_service']);
                 $bookingpress_appointment_booked_date = sanitize_text_field($bookingpress_appointment_data['selected_date']);
-                // Fallback to appointment start date if end date is empty
-                $bookingpress_appointment_booked_end_date = ( !empty($bookingpress_appointment_data['selected_end_date']) && '0000-00-00' != $bookingpress_appointment_data['selected_end_date'] ) ? sanitize_text_field($bookingpress_appointment_data['selected_end_date']) : $bookingpress_appointment_booked_date;
                 $bookingpress_selected_start_time     = sanitize_text_field($bookingpress_appointment_data['selected_start_time']);
                 $bookingpress_selected_end_time       = sanitize_text_field($bookingpress_appointment_data['selected_end_time']);
                 $bookingpress_internal_note           = ! empty($bookingpress_appointment_data['appointment_note']) ? sanitize_textarea_field($bookingpress_appointment_data['appointment_note']) : '';
@@ -271,7 +269,6 @@ if (! class_exists('bookingpress_payment_gateways') ) {
                 'bookingpress_service_duration_unit' => $service_data['bookingpress_service_duration_unit'],
                 'bookingpress_payment_gateway'       => $payment_gateway,
                 'bookingpress_appointment_date'      => $bookingpress_appointment_booked_date,
-                'bookingpress_appointment_end_date'  => $bookingpress_appointment_booked_end_date,
                 'bookingpress_appointment_time'      => $bookingpress_selected_start_time,
                 'bookingpress_appointment_end_time'  => $bookingpress_selected_end_time,
                 'bookingpress_appointment_internal_note' => $bookingpress_internal_note,
@@ -376,8 +373,6 @@ if (! class_exists('bookingpress_payment_gateways') ) {
                     $bookingpress_service_duration_unit          = $entry_data['bookingpress_service_duration_unit'];
                     $bookingpress_payment_gateway                = $entry_data['bookingpress_payment_gateway'];
                     $bookingpress_appointment_date               = $entry_data['bookingpress_appointment_date'];
-                    // Fallback to appointment start date if end date is empty
-                    $bookingpress_appointment_end_date           = ( !empty($entry_data['bookingpress_appointment_end_date']) && '0000-00-00' != $entry_data['bookingpress_appointment_end_date'] ) ? $entry_data['bookingpress_appointment_end_date'] : $bookingpress_appointment_date;
                     $bookingpress_appointment_time               = $entry_data['bookingpress_appointment_time'];
                     $bookingpress_appointment_end_time           = $entry_data['bookingpress_appointment_end_time'];
                     $bookingpress_appointment_internal_note      = $entry_data['bookingpress_appointment_internal_note'];
@@ -419,7 +414,6 @@ if (! class_exists('bookingpress_payment_gateways') ) {
                         'bookingpress_service_duration_val' => $bookingpress_service_duration_val,
                         'bookingpress_service_duration_unit' => $bookingpress_service_duration_unit,
                         'bookingpress_appointment_date'   => $bookingpress_appointment_date,
-                        'bookingpress_appointment_end_date' => $bookingpress_appointment_end_date,
                         'bookingpress_appointment_time'   => $bookingpress_appointment_time,
                         'bookingpress_appointment_end_time' => $bookingpress_appointment_end_time,
                         'bookingpress_appointment_internal_note' => $bookingpress_appointment_internal_note,

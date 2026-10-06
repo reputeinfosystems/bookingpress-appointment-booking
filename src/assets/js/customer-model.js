@@ -77,7 +77,6 @@ const initNewCustomerDialog = () => {
                 bookingpress_customer_fields: typeof moduleData.bookingpress_customer_fields !== 'undefined' ? moduleData.bookingpress_customer_fields : [],
                 ...customerExternalAddonData
             };
-            ModelConfigData = wp.hooks.applyFilters( 'bookingpress_customer_dialog_model_data', ModelConfigData );
             return ModelConfigData;
         },
         methods: {
@@ -148,9 +147,6 @@ const initNewCustomerDialog = () => {
                 this.resetForm();
                 if( 'undefined' != typeof window.BookingPressAppointmentDialog ){
                     window.BookingPressAppointmentDialog.appointment_formdata.appointment_selected_customer = '';
-                }                
-                if( 'undefined' != typeof window.PackageOrderModelApp ){
-                    window.PackageOrderModelApp.package_formdata.package_selected_customer = '';
                 }
             },
             resetForm() {                        
@@ -210,9 +206,6 @@ const initNewCustomerDialog = () => {
                                     this.customer.update_id = rest_response.data.customer_id;
                                     if ('undefined' != typeof window.BookingPressAppointmentDialog) {
                                         window.BookingPressAppointmentDialog.bookingpress_get_customer_list({ customer_id: rest_response.data.customer_id });
-                                    }
-                                    if ('undefined' != typeof window.PackageOrderModelApp) {
-                                        window.PackageOrderModelApp.bookingpress_get_customer_list({ customer_id: rest_response.data.customer_id });
                                     }
                                     this.$notify({
                                         title: rest_response.data.title,
@@ -299,9 +292,7 @@ const initNewCustomerDialog = () => {
             },
             bookingpress_remove_customer_avatar(file, fileList) {
                 const vm = this;
-                if (!vm.customer.avatar_url) {
-                    return;
-                }
+
                 fetch(rest_url + '/customer/remove_avatar', {
                     method: 'POST',
                     credentials: 'same-origin',

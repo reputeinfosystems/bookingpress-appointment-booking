@@ -27,6 +27,7 @@ function getModuleData(moduleId) {
     }
 }
 const initHeaderWrapper = () => {
+
     let headerExternalMethods = wp.hooks.applyFilters('bookingpress_header_wrapper_methods', {
         bpa_mobile_toggle_menu(){
             this.toggle_drawer = !this.toggle_drawer;
@@ -61,8 +62,6 @@ const initHeaderWrapper = () => {
         methods: {
             ...headerExternalMethods
         },
-
-        
         mounted(){
             const vm = this;
             let configData = getModuleData('bookingpress-sidemenu-drawer');
@@ -85,9 +84,11 @@ const initHeaderWrapper = () => {
             }
         }
     };
+
     const BookingPressHeader = createApp( headerConfig );
     BookingPressHeader.use(BookingPressUI);
     window.BookingPressHeader = BookingPressHeader.mount('#bookingpress_header_wrapper');
+
 }
 
 document.addEventListener('DOMContentLoaded', () => {

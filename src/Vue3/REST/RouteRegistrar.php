@@ -154,6 +154,19 @@ class RouteRegistrar {
 			)
 		);
 		
+		add_filter( 'rest_authentication_errors', array( __CLASS__, 'exempt_refresh_nonce_route' ), 999 );
+	}
+
+	public static function exempt_refresh_nonce_route( $result ) {
+		if (
+			is_wp_error( $result )
+			&& 'rest_cookie_invalid_nonce' === $result->get_error_code()
+			&& isset( $_SERVER['REQUEST_URI'] )
+			&& false !== strpos( $_SERVER['REQUEST_URI'], self::REST_NAMESPACE . '/' . self::ROUTE_PREFIX . '/refresh-nonce' )
+		) {
+			return null; // Only this one route bypasses core's stale-nonce check.
+		}
+		return $result;
 	}
 
 	public static function add_locale_to_rest_request( $response, $server, $request ) {

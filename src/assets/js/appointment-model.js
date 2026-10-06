@@ -295,11 +295,6 @@ const initNewAppointmentDialog = () => {
             .then(rest_response => {
                 if (rest_response.success) {
                     const vm = window.BookingPressAppointmentDialog;
-
-                    if (parseInt(vm.appointment_formdata.appointment_update_id) !== parseInt(appointment_id)) {
-                        return;
-                    }
-
                     vm.appointment_customers_list = rest_response.data.appointment_customer_list;
                     vm.appointment_formdata.appointment_selected_customer = rest_response.data.bookingpress_customer_id;
 
@@ -331,25 +326,7 @@ const initNewAppointmentDialog = () => {
         },
         ResetAppointmentModel() {
             document.body.classList.remove('el-popup-parent--hidden');
-            const vm = this;
-            const form = this.$refs.appointment_formdata;
-            if (form && typeof form.resetFields === 'function') {
-                form.resetFields();
-            }
-            this.appointment_customers_list = [];
-
-            if (this.default_appointment_formdata) {
-                for (let key in this.appointment_formdata) {
-                    if (!(key in this.default_appointment_formdata)) {
-                        delete this.appointment_formdata[key];
-                    }
-                }
-                Object.assign(this.appointment_formdata, JSON.parse(JSON.stringify(this.default_appointment_formdata)));
-            }
-            this.appointment_formdata.appointment_update_id = 0;
-            this.appointment_formdata.is_allow_edit_past_appointment = 0;
-
-            wp.hooks.doAction('bookingpress_add_appointment_model_reset', vm);
+            Object.assign(this.appointment_formdata, this.default_appointment_formdata);
         },
         closeAppointmentDialog() {
             this.openAddNewAppointmentModel = false;
@@ -429,23 +406,9 @@ const initNewAppointmentDialog = () => {
         closeAppointmentBookingModal() {
             const vm = this;
             const form = this.$refs.appointment_formdata;
-            if (form && typeof form.resetFields === 'function') {
-                form.resetFields();
-            }
+            form.resetFields();
             this.appointment_customers_list = [];
             this.openAddNewAppointmentModel = false;
-
-            if (this.default_appointment_formdata) {
-                for (let key in this.appointment_formdata) {
-                    if (!(key in this.default_appointment_formdata)) {
-                        delete this.appointment_formdata[key];
-                    }
-                }
-                Object.assign(this.appointment_formdata, JSON.parse(JSON.stringify(this.default_appointment_formdata)));
-            }
-            this.appointment_formdata.appointment_update_id = 0;
-            this.appointment_formdata.is_allow_edit_past_appointment = 0;
-
             wp.hooks.doAction('bookingpress_add_appointment_model_reset', vm);
         },
         bpa_select_customer(bookingpress_selected_customer) {
@@ -834,12 +797,6 @@ const initNewAppointmentDialog = () => {
 
             let ModelConfigData = moduleData;
             ModelConfigData = wp.hooks.applyFilters('bookingpress_modify_appointment_model_data', ModelConfigData, vm);
-
-            if (typeof ModelConfigData.appointment_formdata !== 'undefined') {
-                ModelConfigData.appointment_formdata.is_allow_edit_past_appointment = 0;
-                ModelConfigData.appointment_formdata.appointment_update_id = 0;
-                ModelConfigData.default_appointment_formdata = JSON.parse(JSON.stringify(ModelConfigData.appointment_formdata));
-            }
 
             return ModelConfigData;
         },

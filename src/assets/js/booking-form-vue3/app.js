@@ -17,13 +17,12 @@ import { createApp } from 'vue';
 // of the imported files to force a fresh fetch even when the browser has
 // cached an earlier copy under a no-query URL.
 import App from './components/App.js?v=33';
-import { createApiClient } from './api/client.js?v=3';
+import { createApiClient } from './api/client.js?v=2';
 import { useFormState } from './composables/useFormState.js?v=3';
 import { useReadiness } from './composables/useReadiness.js?v=4';
 import { useStepNavigation } from './composables/useStepNavigation.js?v=4';
 import { useTimeslots } from './composables/useTimeslots.js?v=13';
 import { useSubmission } from './composables/useSubmission.js?v=6';
-import { registerBookingFormHost } from './payments/booking-form-host.js?v=1';
 
 // eslint-disable-next-line no-console
 console.info('[bp-v3] app module loaded');
@@ -100,12 +99,6 @@ export function mountBookingFormInstance(instanceId, initialState, mountNodeOver
   if (!window.BookingPressFormV3) window.BookingPressFormV3 = { instances: {} };
   if (!window.BookingPressFormV3.instances) window.BookingPressFormV3.instances = {};
   window.BookingPressFormV3.instances[instanceId] = handle;
-
-  // Announce this form as a payment host, so a gateway add-on can wire itself
-  // without knowing what a booking form is. Registered AFTER the handle so a
-  // gateway reacting synchronously finds a fully-built instance, and after
-  // mount so the slot API has nodes to hand it.
-  registerBookingFormHost(handle);
 
   // Per plan §3.3. The bus auto-mirrors to the global
   // `window.BookingPressFormV3.bus`, so a single emit reaches both.

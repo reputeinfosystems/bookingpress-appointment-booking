@@ -2,13 +2,7 @@
     if ( ! defined( 'ABSPATH' ) ) { exit; }
     $requested_module = ( ! empty($_REQUEST['page']) && ( $_REQUEST['page'] != 'bookingpress' ) ) ? sanitize_text_field(str_replace('bookingpress_', '', $_REQUEST['page'])) : 'dashboard'; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized --Reason - $_REQUEST['page'] sanitized properly
 
-    $skip_header = false;
-    if( ( 'customize' == $requested_module && (empty( $_GET['action'] ) || $_GET['action'] != 'form_fields') ) ){
-        //$excluded_slugs[] = 'bookingpress_customize';
-        $skip_header = true;
-    }
-
-    if( isset($requested_module) && 'growth_tools' != $requested_module && false == $skip_header){
+    if( isset($requested_module) && 'growth_tools' != $requested_module  ){
         $bookingpress_load_file_name = BOOKINGPRESS_VIEWS_DIR . '/bookingpress_header.php';
         $bookingpress_load_file_name = apply_filters('bookingpress_modify_header_content', $bookingpress_load_file_name,1);
         require $bookingpress_load_file_name;

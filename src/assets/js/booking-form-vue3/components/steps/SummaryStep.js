@@ -258,14 +258,214 @@ export default {
         function next() { /* Summary has Book, not Next. */ }
         function prev() { nav.goPrev(); }
 
-        // PayPal's client now lives in `src/assets/js/payments/paypal-gateway.js`,
-        // wired through the payment host contract like every other gateway.
-        // This component names no gateway.
-        //
-        // Removed with it: the `api` injection and `selectedMethodObj`. Both
-        // existed only to serve the PayPal branches — `selectedMethodObj` read
-        // the method's `mode` to decide between popup and redirect, which is
-        // now the gateway's own business.
+        const api = inject('api');
+
+        /** True when the selected gateway is PayPal — drives the alternate
+         *  button area and the PayPal-specific click flow. */
+        const isPayPalSelected = computed(
+            () => 'paypal' === String(selectedPaymentMethod.value)
+        );
+
+        /** Resolved payment-method object for the current selection. The
+         *  released PaymentService emits each method with a `mode` field
+         *  (`'popup'` | `'redirect'` for PayPal, `'on_site'` for on-site).
+         *  Lookup is by id against `state.config.payment_methods`. */
+        const selectedMethodObj = computed(() => {
+            const methods = (state.config && state.config.payment_methods) || [];
+            return methods.find(m => String(m.id) === String(selectedPaymentMethod.value)) || null;
+        });
+
+        /** True only when PayPal is selected AND the configured mode is
+         *  `popup`. Drives the empty `#paypal-button-container` (SDK render
+         *  target) and hides the normal Book button. PayPal-redirect mode
+         *  keeps the normal Book button (legacy parity — clicking it runs
+         *  the validate → redirect_url flow in `book()`). */
+        const isPayPalPopupSelected = computed(
+            () => isPayPalSelected.value
+                && selectedMethodObj.value
+                && 'popup' === String(selectedMethodObj.value.mode)
+                // Nothing to pay → no PayPal button; the normal Book button finalises the
+                // free booking inline.
+                && payableNow.value > 0
+        );
+
+        /**
+         * True while the PayPal JS SDK is initializing (popup mode only).
+         * Starts false in M3 (stub). M4 flips this to true on mount when
+         * popup mode is configured, then back to false once SDK is ready
+         * and has rendered into #paypal-button-container.
+         */
+        const paypalButtonLoading = ref(false);
+
+        /**
+         * Render the PayPal JS SDK buttons into `#paypal-button-container` —
+         * port of legacy `bookingpress_after_selecting_payment_method_data`
+         * (booking-form.js:1772-1850). Invoked only when PayPal popup mode
+         * is the active selection. The SDK script is enqueued server-side
+         * by `bookingpress_paypal_scripts_add` when popup mode is on, so
+         * `window.paypal` is expected to exist by the time this runs.
+         *
+         * Defensive: no-ops if the SDK is missing, the container has not
+         * mounted yet, or `paypal.Buttons` throws during init.
+         */
+        function renderPayPalButtons() {
+            if (typeof window === 'undefined' || !window.paypal || typeof window.paypal.Buttons !== 'function') {
+                return;
+            }
+            const container = document.getElementById('paypal-button-container');
+            if (!container) return;
+            // Wipe any previous render before re-mounting — re-entrant safe.
+            container.innerHTML = '';
+            try {
+                window.paypal.Buttons({
+                    createOrder: async () => {
+                        // Clear any prior error before a fresh attempt.
+                        submission.submitError.value = '';
+                        try {
+                            // Mirror useSubmission.js — send the full appointment_step_form_data
+                            // bucket plus the resolved service price hint so the server's
+                            // anti-tamper price check matches the picked service.
+                            const selectedId = parseInt(state.appointment_step_form_data.selected_service || 0, 10);
+                            const svc = state.services.find(s => parseInt(s.serviceId, 10) === selectedId);
+                            const full = svc ? effectivePrice(state, svc.servicePrice, svc.serviceId) : 0;
+                            // Charge the amount payable now (deposit when active; full otherwise).
+                            const price = payableAmount(state, full, selectedId);
+                            const payload = {
+                                ...state.appointment_step_form_data,
+                                service_price_without_currency: price,
+                            };
+
+
+                            let cancelled = false;
+                            bus && bus.emit('bp-v3:before-submit', {
+                                instanceId: state.instanceId,
+                                payload,
+                                cancel() { cancelled = true; },
+                            });
+                            if (cancelled) {
+                                submission.submitError.value = 'Submission was cancelled by an add-on.';
+                                return 0;
+                            }
+
+                            const resp = await api.paypalValidate(payload);
+                            if (resp && resp.ok && resp.data && resp.data.order_id) {
+                                if (resp.data.paypal_success_url) state.paypal_success_url = resp.data.paypal_success_url;
+                                if (resp.data.paypal_cancel_url) state.paypal_cancel_url = resp.data.paypal_cancel_url;
+                                if (resp.data.entry_id) state.paypal_entry_id = resp.data.entry_id;
+                                if (resp.data.entry_token) state.paypal_entry_token = resp.data.entry_token;
+                                return resp.data.order_id;
+                            }
+                            // Surface the structured server error verbatim — the user
+                            // needs to see why the booking did NOT get staged.
+                            const msg = (resp && resp.error && resp.error.message) || 'Failed to create PayPal order';
+                            submission.submitError.value = msg;
+                            return 0;
+                        } catch (e) {
+                            submission.submitError.value = (e && e.message) || 'Failed to create PayPal order';
+                            return 0;
+                        }
+                    },
+                    onCancel: function () {
+                        // Legacy parity: PayPal popup cancel is a soft no-op — the
+                        // stage-1 entry stays as pending_payment and the user can
+                        // retry. We surface a hint so they're not confused.
+                        submission.submitError.value = 'PayPal payment was cancelled. You can retry below.';
+                    },
+                    onApprove: (data, actions) => {
+                        return actions.order.capture().then(async (orderData) => {
+                            try {
+                                // The server identifies the entry via PayPal's verified
+                                // reference_id; the entry token binds that id to this staged booking.
+                                const resp = await api.paypalConfirm({
+                                    bookingpress_payment_res: orderData,
+                                    entry_token: state.paypal_entry_token || '',
+                                });
+                                if (resp && resp.ok) {
+                                    // finalize_booking() returns `redirect_data` (the v3
+                                    // envelope key) alongside the legacy `redirect_url`
+                                    // fallback. Prefer the server-issued URL — the entry
+                                    // is now a real booking. Fall back to the validate
+                                    // success_url only if finalize did not provide one.
+                                    const url = (resp.data && (resp.data.redirect_data || resp.data.redirect_url)) || state.paypal_success_url || '';
+                                    if (url) {
+                                        submission.redirectUrl.value = url;
+                                        submission.submitOk.value = true;
+                                        state.submitOk = true;
+                                        state.redirectUrl = url;
+                                        window.location.href = url;
+                                    } else {
+                                        // Booking finalised but no redirect URL — surface a
+                                        // non-error message so the user knows the payment
+                                        // succeeded.
+                                        submission.submitOk.value = true;
+                                        state.submitOk = true;
+                                    }
+                                } else {
+                                    // Server REFUSED to finalize — strict mode: no booking
+                                    // is treated as successful. Show the server's message
+                                    // so the user knows the payment did not finalize.
+                                    submission.submitError.value =
+                                        (resp && resp.error && resp.error.message)
+                                        || 'Payment could not be confirmed. Please contact the site owner.';
+                                }
+                            } catch (e) {
+                                submission.submitError.value = (e && e.message) || 'Payment failed';
+                            }
+                        });
+                    },
+                    style: { layout: 'vertical', color: 'gold', shape: 'pill', label: 'paypal', fundingicons: false },
+                }).render('#paypal-button-container');
+            } catch (e) {
+                // SDK threw during init — leave container empty; the user can
+                // re-select to retry. We do NOT silently fall back to a fake
+                // "Book" button (that was the v5 bug).
+                console.warn('[bp-v3 SummaryStep] paypal.Buttons render threw:', e);
+            }
+        }
+
+        /** Inject the PayPal Standard ("Legacy") auto-submit form returned by
+         *  `paypal-redirect-prepare` and hand the browser off to paypal.com.
+         *  The server markup includes a trailing <script> that self-submits, but
+         *  HTML assigned via innerHTML never executes its <script>, so we locate
+         *  the form and submit it explicitly. */
+        function submitPayPalRedirectForm(html) {
+            if (typeof document === 'undefined' || !html) return false;
+            const holder = document.createElement('div');
+            holder.style.display = 'none';
+            holder.innerHTML = String(html);
+            document.body.appendChild(holder);
+            const form = holder.querySelector('form')
+                || document.getElementById('bookingpress_paypal_form');
+            if (form && typeof form.submit === 'function') {
+                form.submit();
+                return true;
+            }
+            return false;
+        }
+
+        /** Clear any previously-rendered SDK content from the container.
+         *  Used when the user switches away from PayPal popup mode. */
+        function clearPayPalContainer() {
+            if (typeof document === 'undefined') return;
+            const c = document.getElementById('paypal-button-container');
+            if (c) c.innerHTML = '';
+        }
+
+        // Trigger SDK render after Vue has updated the DOM (the container
+        // is gated by `isPayPalPopupSelected` in the template, so it does
+        // not exist until the watcher fires).
+        watch(isPayPalPopupSelected, (val) => {
+            if (val) {
+                nextTick(() => { renderPayPalButtons(); });
+            } else {
+                clearPayPalContainer();
+            }
+        });
+        onMounted(() => {
+            if (isPayPalPopupSelected.value) {
+                nextTick(() => { renderPayPalButtons(); });
+            }
+        });
 
         // Toast error surfaced when the user clicks "Book Appointment"
         // without satisfying a readiness gate — released-form parity with
@@ -342,9 +542,51 @@ export default {
 
             clearError();
 
+            // PayPal REDIRECT ("Legacy") branch: the server stages the booking as
+            // `pending_payment`, then we ask it to build the PayPal Standard
+            // auto-submit form and hand the browser off to paypal.com. The booking
+            // is finalized asynchronously by the IPN listener once PayPal confirms
+            // the payment. (Popup mode never reaches book() — its SDK smart button
+            // in #paypal-button-container drives createOrder/onApprove instead.)
+            if (isPayPalSelected.value) {
+                const env = await submission.submit();
+                // submission.submit() returns the raw envelope for the
+                // pending_payment variant (and `false` / `true` for the others).
+                if (env && typeof env === 'object' && 'entry_id' in env) {
+                    try {
+                        const resp = await api.paypalRedirectPrepare({
+                            entry_id: env.entry_id,
+                            entry_token: env.entry_token || '',
+                        });
+                        // Success: inject the returned auto-submit form and redirect.
+                        if (resp && resp.ok && resp.data && resp.data.redirect_data) {
+                            if (submitPayPalRedirectForm(resp.data.redirect_data)) {
+                                submission.submitOk.value = true;
+                                state.submitOk = true;
+                                return;
+                            }
+                            submission.submitError.value =
+                                'Could not open PayPal. Please try again or contact the site owner.';
+                            return;
+                        }
+                        // Non-OK — surface the server error in the page toast so the
+                        // user knows the booking is not yet paid for.
+                        const msg = (resp && resp.error && resp.error.message)
+                            || 'PayPal payment is not available right now. Please contact the site owner.';
+                        submission.submitError.value = msg;
+                    } catch (e) {
+                        submission.submitError.value =
+                            (e && e.message) || 'PayPal request failed.';
+                    }
+                } else if (env && typeof env === 'object') {
+                    // pending_payment envelope arrived without entry_id — surface it
+                    // so the user is not silently stuck with a non-advancing form.
+                    submission.submitError.value = 'Booking could not be staged. Please try again.';
+                }
+                return;
+            }
+
             // Default flow (on-site / zero-price): the server finalises inline.
-            // A gateway that needs to take the submission over intercepts
-            // `bp-v3:before-submit` and cancels silently; it never reaches here.
             await submission.submit();
         }
 
@@ -436,6 +678,9 @@ export default {
             pmRov,
             pmHeadingId,
             showPaymentBlock,
+            isPayPalSelected,
+            isPayPalPopupSelected,
+            paypalButtonLoading,
             errorMsg,
             ICON_CHECKMARK,
             ICON_ARROW_LEFT,
@@ -529,10 +774,10 @@ export default {
                   <template v-if="summaryServiceNames.length"><span v-for="(nm, i) in summaryServiceNames" :key="i" class="bpa-front-bs-sm__svc-name">{{ nm }}</span></template>
                   <template v-else>—</template>
                 </div>
-                <div class="bpa-front-bs-sm__item-val" >{{ appointmentDateTimeLabel || '—' }}</div>
-                <div class="bp-v3-slot" data-bp-v3-slot="summary-step:after-datetime-inner" :data-bp-v3-instance="state.instanceId"></div>
+                <div
+                  class="bpa-front-bs-sm__item-val"
+                >{{ appointmentDateTimeLabel || '—' }}</div>
               </div>
-            <div class="bp-v3-slot bpa-front-module--bs-summary-content-item" data-bp-v3-slot="summary-step:after-datetime" :data-bp-v3-instance="state.instanceId"></div>
             </div>
           </div>
 
@@ -608,7 +853,7 @@ export default {
         <!-- Payment methods — only when there's a price to pay and at least one gateway is enabled. -->
         <div v-if="showPaymentBlock" class="bpa-front-module-container bpa-front-module--payment-methods">
           <div class="bpa-front-module--pm-head">
-            <div class="bpa-front-module-heading" role="heading" aria-level="3" :id="pmHeadingId">{{ state.strings.payment_method_label }} <span class="bp-v3-slot" style="display:inline-block" data-bp-v3-slot="summary-step:after-payment-method-title" :data-bp-v3-instance="state.instanceId"></span></div>
+            <div class="bpa-front-module-heading" role="heading" aria-level="3" :id="pmHeadingId">{{ state.strings.payment_method_label }}</div>
           </div>
           <div class="bpa-front-module--pm-body">
             <div class="bpa-front--pm-body-items" role="radiogroup" :aria-labelledby="pmHeadingId">
@@ -704,18 +949,18 @@ export default {
           >
             <span v-html="ICON_ARROW_LEFT"></span>&nbsp;{{ state.strings.goback_button }}
           </button>
-          <!-- Normal Book button. Hidden only while a GATEWAY has taken
-               over the action control through the payment host's
-               \`mountAction\` (PayPal Smart Buttons). This form names no
-               gateway: it renders its button unless something claimed the
-               slot below. -->
+          <!-- Normal Book button — shown for on-site / zero-price AND
+               for PayPal-redirect mode (legacy parity: redirect mode
+               keeps the standard book button, clicking it submits and
+               follows \`redirect_url\` from \`api.paypalValidate\`). Hidden
+               only when PayPal *popup* mode is the active selection. -->
           <!-- Book button is always clickable (gated only by the
                in-flight submission flag) so the @click handler can run
                client-side validation and surface a toast for missing
                selections (legacy parity — released form does the same
                via bookingpress_step_navigation). -->
           <button
-            v-if="!state.gatewayOwnsAction"
+            v-if="!isPayPalPopupSelected"
             type="button"
             :class="['bpa-front-btn', 'bpa-front-btn__medium', 'bpa-front-btn--primary', 'summery-book-appointment-btn', 'bpa_focusable', submission.isSubmitting.value ? 'bpa-front-btn--is-loader' : '']"
             :aria-label="state.strings.book_button"
@@ -729,18 +974,16 @@ export default {
               <div></div>
             </div>
           </button>
-          <!-- Gateway action slot — where a gateway that owns its own
-               control draws it (PayPal Smart Buttons). Rendered
-               UNCONDITIONALLY and left empty otherwise: a gateway cannot
-               render into a node that does not exist yet, and gating this
-               on the same flag the button uses would deadlock the two.
-               No hand-rolled fallback button here — that was the v5 bug
+          <!-- PayPal popup container — empty SDK render target. The
+               \`renderPayPalButtons()\` watcher mounts \`paypal.Buttons\`
+               into this div on nextTick after Vue creates it. No
+               hand-rolled fallback button here — that was the v5 bug
                where a button with the \`summery-book-appointment-btn\`
                class stayed in the DOM and shadowed the SDK render. -->
           <div
-            class="bp-v3-slot bpa-front-paypal-btn-container"
-            data-bp-v3-slot="summary-step:action"
-            :data-bp-v3-instance="state.instanceId"
+            v-else
+            id="paypal-button-container"
+            class="bpa-front-paypal-btn-container"
           ></div>
         </div>
       </div>

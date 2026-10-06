@@ -796,10 +796,6 @@ class AvailabilityService implements AvailabilityServiceInterface {
 			}
 			$bs = $this->resolve_window_ts( $date, $br['start'] );
 			$be = $this->resolve_window_ts( $date, $br['end'] );
-			if ( $end_ts > $start_ts && gmdate( 'Y-m-d', $end_ts ) !== gmdate( 'Y-m-d', $start_ts ) && $bs < $start_ts ) {
-				$bs += DAY_IN_SECONDS;
-				$be += DAY_IN_SECONDS;
-			}
 			if ( false === $bs || false === $be || $be <= $bs ) {
 				continue;
 			}

@@ -31,8 +31,6 @@ const initAppointmentLoader = () => {
 
     let AppointmentMethods = wp.hooks.applyFilters('bookingpress_appointment_methods', {
         open_add_appointment_modal: function () {
-            window.BookingPressAppointmentDialog.appointment_formdata.appointment_update_id = 0;
-            window.BookingPressAppointmentDialog.appointment_formdata.is_allow_edit_past_appointment = 0;
             window.BookingPressAppointmentDialog.openAppointmentDialog();
         },
         bookingpress_share_url_modal ( currentElement ) {

@@ -7,7 +7,6 @@
     use BookingPress\admin\Header;
 ?>
 <div id="bookingpress_header_wrapper">
-    
 <?php  
     if( 'lite_wizard' != $request_module ){
 ?>

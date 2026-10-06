@@ -71,14 +71,6 @@ const PROGRESSIVE_AHEAD = 2;
  * @returns {object} The (possibly reshaped) body.
  */
 function applyTimeslotRequestFilter(body, state, kind) {
-  // Selected staff related chagne : fixed the timeslot not updates: after auto fill the from step (staff -> service) update time slots in that case
-  const fd = (state && state.appointment_step_form_data) || {};
-  if (!fd.is_any_staff_selected) {
-    const staffId = parseInt(fd.selected_staff_member_id || 0, 10);
-    if (staffId > 0 && !body.selected_staff) {
-      body.selected_staff = String(staffId);
-    }
-  }
   const hooks = (typeof window !== 'undefined' && window.wp && window.wp.hooks) || null;
   if (hooks && typeof hooks.applyFilters === 'function') {
     const out = hooks.applyFilters('bookingpress_form_v3_timeslot_request', body, {
@@ -173,14 +165,11 @@ export function useTimeslots(state, api, bus) {
     const fd = state.appointment_step_form_data || {};
     const suffix = dayServiceCartCacheSignature();
     const addonSignature = applyTimeslotCacheSignature(state);
-    let staffSuffix = ''; // Selected staff related chagne : fixed the timeslot not updates
-    if (!fd.is_any_staff_selected) {
+    const contextSuffix = [suffix, addonSignature].filter(Boolean).join('|');
+    if (isSelectedDayService(state) && !fd.is_any_staff_selected) {
       const staffId = parseInt(fd.selected_staff_member_id || 0, 10);
-      if (staffId > 0 && (!addonSignature || !addonSignature.includes('staff:'))) { // Selected staff related chagne : fixed the timeslot not updates
-        staffSuffix = `staff:${staffId}`;
-      }
+      if (staffId > 0) return `${base}|staff:${staffId}${contextSuffix ? '|' + contextSuffix : ''}`;
     }
-    const contextSuffix = [suffix, staffSuffix, addonSignature].filter(Boolean).join('|');
     return `${base}${contextSuffix ? '|' + contextSuffix : ''}`;
   }
 

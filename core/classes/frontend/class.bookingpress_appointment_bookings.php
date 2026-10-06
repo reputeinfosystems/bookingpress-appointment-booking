@@ -7061,18 +7061,6 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
          * @return void
          */
         function bookingpress_booking_calendar_options($atts, $content, $tag) {
-
-            if( class_exists('BookingPressPro\Vue3\ProRouting') && BookingPressPro\Vue3\ProRouting::should_load_complete_v3() ) {
-                // Vue3: no Vue2 runtime to hydrate the markup below, so render static calendar links instead.
-                if( ! class_exists('BookingPressPro\Vue3\CalendarIntegration') ){
-                    return '';
-                }
-                global $BookingPress;
-                $BookingPress->set_front_css( 1 );
-                $BookingPress->bookingpress_load_booking_form_custom_css();
-                return BookingPressPro\Vue3\CalendarIntegration::render_shortcode( $atts );
-            }
-
             global $wpdb, $tbl_bookingpress_appointment_bookings, $tbl_bookingpress_entries;
             $defaults = array(
                 'gateways'  => 'google,yahoo,outlook,ical',

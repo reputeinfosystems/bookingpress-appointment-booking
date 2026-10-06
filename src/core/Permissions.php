@@ -50,8 +50,6 @@ class Permissions {
             'bookingpress_customize' => array(
                 'save_form_fields',
                 'save_mybooking_settings',
-                'save_gift_card_settings',
-                'save_package_settings',
                 'retrieve_form_fields',
                 'update_field_position',
                 'save_form_settings',

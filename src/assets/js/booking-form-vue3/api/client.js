@@ -35,7 +35,6 @@ export function createApiClient(cfg) {
       const res = await fetch(`${root}/refresh-nonce`, {
         method: 'POST',
         credentials: 'same-origin',
-        cache: 'no-store',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(refreshPayload),
       });
@@ -84,15 +83,7 @@ export function createApiClient(cfg) {
       json = { ok: false, error: { code: 'bp_v3_invalid_json', message: 'Server returned non-JSON.' } };
     }
 	  
-	 const failureCode = (json && (json.code || (json.error && json.error.code))) || '';
-	 const isStaleAuth = (
-	   failureCode === 'rest_cookie_invalid_nonce'
-	   || failureCode === 'bp_v3_rest_invalid_nonce'
-	   || failureCode === 'bp_v3_invalid_form_nonce'
-	   || failureCode === 'bp_v3_invalid_instance'
-	 );
-
-	 if (!res.ok && isStaleAuth && !_retried) {
+	 if (res.status === 403 && json && (json.code === 'rest_cookie_invalid_nonce' || json.code === 'bp_v3_invalid_form_nonce' ||  json.code === 'bp_v3_invalid_instance') && !_retried) {
       const refreshed = await refreshWpNonce();
       if (refreshed) return post(route, body, true);
     }
