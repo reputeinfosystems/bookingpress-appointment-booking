@@ -72,6 +72,10 @@ if (! class_exists('bookingpress_fileupload_class') ) {
                 }
             }
 
+            if ( ! in_array( 'webp', $type_img, true ) ) {
+                $type_img[] = 'webp';
+            }
+
             $this->image_exts = $type_img;
 
             $this->capabilities = array( 'bookingpress' );

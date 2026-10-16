@@ -355,6 +355,7 @@ const initNewAppointmentDialog = () => {
             this.openAddNewAppointmentModel = false;
         },
         saveAppointmentBooking() {
+            const vm = this;
             const form = this.$refs.appointment_formdata;
 
             if (!form || typeof form.validate !== 'function') {
@@ -363,7 +364,7 @@ const initNewAppointmentDialog = () => {
             }
 
             form.validate((valid) => {
-                valid = wp.hooks.applyFilters('bookingpress_modify_request_after_validation', valid);
+                valid = wp.hooks.applyFilters('bookingpress_modify_request_after_validation', valid, this);
 
                 if (valid) {
                     this.is_disabled = true;
@@ -385,7 +386,7 @@ const initNewAppointmentDialog = () => {
                                 this.is_disabled = false;
                                 this.is_display_save_loader = '0';
 
-                                this.closeAppointmentBookingModal();
+                                vm.closeAppointmentBookingModal();
 
                                 if( document.body.classList.contains('bookingpress_page_bookingpress-calendar') ){
                                     let new_appointment_details = {
@@ -395,6 +396,13 @@ const initNewAppointmentDialog = () => {
                                     BookingPressCalendarApp.appendData(new_appointment_details);
                                 } else if( typeof window.AppointmentLoader !== 'undefined' && typeof window.AppointmentLoader.loadAppointments === 'function' ){
                                     window.AppointmentLoader.loadAppointments();
+                                }
+
+                                if( "undefined" != typeof rest_response.data.required_action && rest_response.data.required_action === 'update_status' ){
+                                    // Handle the update status action here if needed
+                                    window.BookingPressCalendarApp.updateBooking(rest_response.data.appointment_id, {
+                                        status: rest_response.data.new_status
+                                    });
                                 }
 
                                 this.$notify({
@@ -412,7 +420,7 @@ const initNewAppointmentDialog = () => {
                                     duration: BookingPressConfig.notification_timeout
                                 });
                             }
-                            this.closeAppointmentBookingModal();
+                            vm.closeAppointmentBookingModal();
                         })
                         .catch(error => {
                             this.is_disabled = false;

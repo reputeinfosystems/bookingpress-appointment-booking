@@ -27,9 +27,10 @@ if (! class_exists('bookingpress_payment') ) {
         /**
          * Ajax request for change payment status
          *
-         * @return void
+         * @param  bool $return Return the response instead of sending it ( used by REST routes )
+         * @return void|array
          */
-        function bookingpress_change_payment_status_func(){
+        function bookingpress_change_payment_status_func( $return = false ){
 			global $wpdb, $BookingPress, $tbl_bookingpress_payment_logs;
 
             $bpa_check_authorization = $this->bpa_check_authentication( 'change_payment_status', true, 'bpa_wp_nonce' );
@@ -42,6 +43,9 @@ if (! class_exists('bookingpress_payment') ) {
                 $response['title'] = esc_html__( 'Error', 'bookingpress-appointment-booking');
                 $response['msg'] = $bpa_error_msg;
 
+                if( true === $return ){
+                    return $response;
+                }
                 wp_send_json( $response );
                 die;
             }
@@ -60,6 +64,9 @@ if (! class_exists('bookingpress_payment') ) {
 				$response['msg'] = esc_html__('Payment status change successfully', 'bookingpress-appointment-booking');
 			}
 
+			if( true === $return ){
+				return $response;
+			}
 			echo wp_json_encode($response);
 			exit;
 		}
@@ -151,9 +158,10 @@ if (! class_exists('bookingpress_payment') ) {
         /**
          * Ajax request for approve appointment
          *
-         * @return void
+         * @param  bool $return Return the response instead of sending it ( used by REST routes )
+         * @return void|array
          */
-        function bookingpress_approve_appointment()
+        function bookingpress_approve_appointment( $return = false )
         {
             global $wpdb, $tbl_bookingpress_payment_logs, $tbl_bookingpress_appointment_bookings, $bookingpress_email_notifications;
             $response              = array();
@@ -168,6 +176,9 @@ if (! class_exists('bookingpress_payment') ) {
                 $response['title'] = esc_html__( 'Error', 'bookingpress-appointment-booking');
                 $response['msg'] = $bpa_error_msg;
 
+                if( true === $return ){
+                    return $response;
+                }
                 wp_send_json( $response );
                 die;
             }
@@ -199,6 +210,9 @@ if (! class_exists('bookingpress_payment') ) {
             $response['title']   = esc_html__('Success', 'bookingpress-appointment-booking');
             $response['msg']     = esc_html__('Appointment Approved Successfully', 'bookingpress-appointment-booking');
 
+            if( true === $return ){
+                return $response;
+            }
             echo wp_json_encode($response);
             exit();
         }
@@ -689,9 +703,10 @@ if (! class_exists('bookingpress_payment') ) {
         /**
          * Ajax request for get payments details
          *
-         * @return void
+         * @param  bool $return Return the response instead of sending it ( used by REST routes )
+         * @return void|array
          */
-        function bookingpress_get_payments_details(){
+        function bookingpress_get_payments_details( $return = false ){
             global $wpdb, $tbl_bookingpress_payment_logs, $BookingPress, $tbl_bookingpress_customers, $tbl_bookingpress_appointment_bookings, $bookingpress_global_options;
 
             $bpa_check_authorization = $this->bpa_check_authentication( 'retrieve_payments', true, 'bpa_wp_nonce' );
@@ -704,6 +719,9 @@ if (! class_exists('bookingpress_payment') ) {
                 $response['title'] = esc_html__( 'Error', 'bookingpress-appointment-booking');
                 $response['msg'] = $bpa_error_msg;
 
+                if( true === $return ){
+                    return $response;
+                }
                 wp_send_json( $response );
                 die;
             }
@@ -872,6 +890,9 @@ if (! class_exists('bookingpress_payment') ) {
 
             $data['items'] = $payment_logs_data;
             $data['total'] = count($total_payment_logs);
+            if( true === $return ){
+                return $data;
+            }
             wp_send_json($data);
         }
         
@@ -921,15 +942,16 @@ if (! class_exists('bookingpress_payment') ) {
         /**
          * Payment module bulk actions
          *
-         * @return void
+         * @param  bool $return Return the response instead of sending it ( used by REST routes )
+         * @return void|array
          */
-        function bookingpress_payment_log_bulk_action()
+        function bookingpress_payment_log_bulk_action( $return = false )
         {
             global $BookingPress;
             $response              = array();
 
             $bpa_check_authorization = $this->bpa_check_authentication( 'delete_payments', true, 'bpa_wp_nonce' );
-            
+
             if( preg_match( '/error/', $bpa_check_authorization ) ){
                 $bpa_auth_error = explode( '^|^', $bpa_check_authorization );
                 $bpa_error_msg = !empty( $bpa_auth_error[1] ) ? $bpa_auth_error[1] : esc_html__( 'Sorry. Something went wrong while processing the request', 'bookingpress-appointment-booking');
@@ -938,6 +960,9 @@ if (! class_exists('bookingpress_payment') ) {
                 $response['title'] = esc_html__( 'Error', 'bookingpress-appointment-booking');
                 $response['msg'] = $bpa_error_msg;
 
+                if( true === $return ){
+                    return $response;
+                }
                 wp_send_json( $response );
                 die;
             }
@@ -961,6 +986,9 @@ if (! class_exists('bookingpress_payment') ) {
                         }
                     }
                 }
+            }
+            if( true === $return ){
+                return $response;
             }
             wp_send_json($response);
         }

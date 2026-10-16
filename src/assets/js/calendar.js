@@ -6724,10 +6724,37 @@ function getTimeBookingSlicesForDay(booking, day) {
   }
   return result;
 }
-function getTimeBookingsForDay(bookings, day) {
-  return bookings.flatMap((booking) => getTimeBookingSlicesForDay(booking, day));
+function getLocalDayKey(date) {
+  return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
 }
-function useBookings(gridConfig) {
+function buildTimeBookingDayIndex(bookings) {
+  const index = /* @__PURE__ */ new Map();
+  const add = (day, booking) => {
+    const slices = getTimeBookingSlicesForDay(booking, day);
+    if (slices.length === 0) {
+      return;
+    }
+    const key = getLocalDayKey(day);
+    const dayBookings = index.get(key);
+    if (dayBookings) {
+      dayBookings.push(...slices);
+    } else {
+      index.set(key, slices);
+    }
+  };
+  for (const booking of bookings) {
+    add(booking.start, booking);
+    if (!isSameDay(booking.start, booking.end)) {
+      add(booking.end, booking);
+    }
+  }
+  return index;
+}
+function getTimeBookingsForDayFromIndex(index, day) {
+  var _a;
+  return ((_a = index.get(getLocalDayKey(day))) == null ? void 0 : _a.slice()) ?? [];
+}
+function useBookings() {
   const timeBookings = shallowRef([]);
   const allDayBookings = shallowRef([]);
   function upsertBookings(existing, incoming) {
@@ -6796,35 +6823,12 @@ function useBookings(gridConfig) {
   function removeAllDayBooking(id) {
     allDayBookings.value = allDayBookings.value.filter((b) => b.id !== id);
   }
+  const timeBookingsByDay = computed(() => buildTimeBookingDayIndex(timeBookings.value));
   function getBookingsForDay(day) {
-    return getTimeBookingsForDay(timeBookings.value, day);
+    return getTimeBookingsForDayFromIndex(timeBookingsByDay.value, day);
   }
   function getAllDayLayoutForWeek(days) {
     return computeAllDayLayout(allDayBookings.value, days);
-  }
-  const columnLayoutCache = /* @__PURE__ */ new Map();
-  function getColumnLayoutCached(day) {
-    const dayBookings = getBookingsForDay(day);
-    const config = gridConfig();
-    const configKey = [
-      config.startMinute ?? config.startHour,
-      config.endMinute ?? config.endHour,
-      config.hourHeight,
-      config.snapInterval,
-      config.columnMinWidth
-    ].join("|");
-    const key = `${day.toISOString().slice(0, 10)}:${configKey}:${dayBookings.map((b) => `${b.id}|${b.start.getTime()}|${b.end.getTime()}`).join(",")}`;
-    if (columnLayoutCache.has(key)) return columnLayoutCache.get(key);
-    const layout = computeColumnLayout(dayBookings, gridConfig());
-    columnLayoutCache.set(key, layout);
-    if (columnLayoutCache.size > 100) {
-      const firstKey = columnLayoutCache.keys().next().value;
-      columnLayoutCache.delete(firstKey);
-    }
-    return layout;
-  }
-  function invalidateLayoutCache() {
-    columnLayoutCache.clear();
   }
   return {
     timeBookings,
@@ -6841,9 +6845,7 @@ function useBookings(gridConfig) {
     removeTimeBooking,
     removeAllDayBooking,
     getBookingsForDay,
-    getColumnLayoutCached,
-    getAllDayLayoutForWeek,
-    invalidateLayoutCache
+    getAllDayLayoutForWeek
   };
 }
 function snapMinutes(minutes, interval) {
@@ -7149,22 +7151,45 @@ function normalizeFilterValues$1(value) {
 function formatLabel$1(value) {
   return value.replace(/[_-]+/g, " ").replace(/([a-z])([A-Z])/g, "$1 $2").trim().replace(/\s+/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
+const lookupKeyCache$1 = /* @__PURE__ */ new Map();
 function normalizeLookupKey$2(value) {
-  return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, "");
+  let normalized = lookupKeyCache$1.get(value);
+  if (normalized === void 0) {
+    normalized = value.trim().toLowerCase().replace(/[^a-z0-9]+/g, "");
+    if (lookupKeyCache$1.size >= 5e3) {
+      lookupKeyCache$1.clear();
+    }
+    lookupKeyCache$1.set(value, normalized);
+  }
+  return normalized;
+}
+const aliasIndexCache$1 = /* @__PURE__ */ new WeakMap();
+function getAliasIndex$1(source) {
+  let index = aliasIndexCache$1.get(source);
+  if (!index) {
+    index = /* @__PURE__ */ new Map();
+    let position = 0;
+    for (const [entryKey, entryValue] of Object.entries(source)) {
+      const normalizedEntryKey = normalizeLookupKey$2(entryKey);
+      if (normalizedEntryKey && !index.has(normalizedEntryKey)) {
+        index.set(normalizedEntryKey, { position, value: entryValue });
+      }
+      position++;
+    }
+    aliasIndexCache$1.set(source, index);
+  }
+  return index;
 }
 function getValueByAliases$2(source, keys) {
-  for (const [entryKey, entryValue] of Object.entries(source)) {
-    const normalizedEntryKey = normalizeLookupKey$2(entryKey);
-    if (!normalizedEntryKey) {
-      continue;
-    }
-    for (const key of keys) {
-      if (normalizedEntryKey === normalizeLookupKey$2(key)) {
-        return entryValue;
-      }
+  const index = getAliasIndex$1(source);
+  let match;
+  for (const key of keys) {
+    const entry = index.get(normalizeLookupKey$2(key));
+    if (entry && (!match || entry.position < match.position)) {
+      match = entry;
     }
   }
-  return void 0;
+  return match == null ? void 0 : match.value;
 }
 function readTextValue$1(sources, keys) {
   for (const source of sources) {
@@ -7291,7 +7316,16 @@ function buildFallbackSelection(source, metadata) {
     categoryName
   };
 }
+const serviceSummaryCache = /* @__PURE__ */ new WeakMap();
 function resolveBookingServiceSummary(source) {
+  let summary = serviceSummaryCache.get(source);
+  if (!summary) {
+    summary = computeBookingServiceSummary(source);
+    serviceSummaryCache.set(source, summary);
+  }
+  return summary;
+}
+function computeBookingServiceSummary(source) {
   const metadata = isPlainObject$5(source.metadata) ? source.metadata : null;
   const rawServicesData = source.servicesData ?? (isPlainObject$5(source) ? getValueByAliases$2(source, ["servicesData", "services_data"]) : void 0) ?? (metadata ? getValueByAliases$2(metadata, ["servicesData", "services_data"]) : void 0);
   const parsedItems = normalizeServiceSelections(rawServicesData);
@@ -7379,22 +7413,45 @@ function isZeroLikeStaffId(value) {
 function formatLabel(value) {
   return value.replace(/[_-]+/g, " ").replace(/([a-z])([A-Z])/g, "$1 $2").trim().replace(/\s+/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
+const lookupKeyCache = /* @__PURE__ */ new Map();
 function normalizeLookupKey$1(value) {
-  return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, "");
+  let normalized = lookupKeyCache.get(value);
+  if (normalized === void 0) {
+    normalized = value.trim().toLowerCase().replace(/[^a-z0-9]+/g, "");
+    if (lookupKeyCache.size >= 5e3) {
+      lookupKeyCache.clear();
+    }
+    lookupKeyCache.set(value, normalized);
+  }
+  return normalized;
+}
+const aliasIndexCache = /* @__PURE__ */ new WeakMap();
+function getAliasIndex(source) {
+  let index = aliasIndexCache.get(source);
+  if (!index) {
+    index = /* @__PURE__ */ new Map();
+    let position = 0;
+    for (const [entryKey, entryValue] of Object.entries(source)) {
+      const normalizedEntryKey = normalizeLookupKey$1(entryKey);
+      if (normalizedEntryKey && !index.has(normalizedEntryKey)) {
+        index.set(normalizedEntryKey, { position, value: entryValue });
+      }
+      position++;
+    }
+    aliasIndexCache.set(source, index);
+  }
+  return index;
 }
 function getValueByAliases$1(source, keys) {
-  for (const [entryKey, entryValue] of Object.entries(source)) {
-    const normalizedEntryKey = normalizeLookupKey$1(entryKey);
-    if (!normalizedEntryKey) {
-      continue;
-    }
-    for (const key of keys) {
-      if (normalizedEntryKey === normalizeLookupKey$1(key)) {
-        return entryValue;
-      }
+  const index = getAliasIndex(source);
+  let match;
+  for (const key of keys) {
+    const entry = index.get(normalizeLookupKey$1(key));
+    if (entry && (!match || entry.position < match.position)) {
+      match = entry;
     }
   }
-  return void 0;
+  return match == null ? void 0 : match.value;
 }
 function readTextValue(sources, keys) {
   for (const source of sources) {
@@ -7598,7 +7655,16 @@ function buildFallbackAssignments(source, metadata) {
     staffName
   }];
 }
+const staffSummaryCache = /* @__PURE__ */ new WeakMap();
 function resolveBookingStaffSummary(source) {
+  let summary = staffSummaryCache.get(source);
+  if (!summary) {
+    summary = computeBookingStaffSummary(source);
+    staffSummaryCache.set(source, summary);
+  }
+  return summary;
+}
+function computeBookingStaffSummary(source) {
   const sourceRecord = isPlainObject$4(source) ? source : null;
   const metadata = isPlainObject$4(source.metadata) ? source.metadata : null;
   const rawStaffData = source.StaffData ?? source.staffData ?? (sourceRecord ? getValueByAliases$1(sourceRecord, ["StaffData", "staffData", "staff_data"]) : void 0) ?? (metadata ? getValueByAliases$1(metadata, ["StaffData", "staffData", "staff_data"]) : void 0);
@@ -12703,9 +12769,10 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
         cancelPendingBookingPointerInteraction();
       }
     );
+    const bookingsByDay = computed(() => buildTimeBookingDayIndex(props.bookings));
     const dayLayouts = computed(() => {
       return props.weekDays.map((date, dayIndex) => {
-        const dayBookings = getTimeBookingsForDay(props.bookings, date);
+        const dayBookings = getTimeBookingsForDayFromIndex(bookingsByDay.value, date);
         const visibleBookings = activeDrag.value ? dayBookings.filter((booking) => {
           var _a;
           return booking.id !== ((_a = activeDrag.value) == null ? void 0 : _a.bookingId);
@@ -13106,7 +13173,7 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const BpaTimelineView = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["__scopeId", "data-v-c32945a8"]]);
+const BpaTimelineView = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["__scopeId", "data-v-f366d26a"]]);
 const _hoisted_1$4 = { class: "timeline-belt-title" };
 const _hoisted_2$3 = ["aria-expanded", "aria-label", "disabled"];
 const _hoisted_3$3 = ["onClick"];
@@ -14000,7 +14067,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
       injectedConfig.popover,
       interactionConfig.value
     ));
-    const bookings = useBookings(() => activeGridConfig.value);
+    const bookings = useBookings();
     let dataMutationQueue = Promise.resolve();
     const currentMonthKey = computed(() => formatMonthKey(calendar2.currentDate.value));
     const filteredTimeBookings = computed(() => bookings.timeBookings.value.filter(matchesTimeBookingFilters));
@@ -14509,7 +14576,6 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
           if (previousBooking) {
             bookings.replaceTimeBookings([buildUpdatedTimeBooking(previousBooking, { start: newStart, end: newEnd })]);
           }
-          bookings.invalidateLayoutCache();
           frozenGridConfig.value = null;
           const updatedBooking = findTimeBookingById(bookingId);
           dispatchCalendarInteractionEvent(RESIZE_STOP_EVENT_NAME, {
@@ -14613,7 +14679,6 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
       if (previousBooking) {
         bookings.replaceTimeBookings([buildUpdatedTimeBooking(previousBooking, { start: newStart, end: newEnd })]);
       }
-      bookings.invalidateLayoutCache();
       frozenGridConfig.value = null;
       const updatedBooking = findTimeBookingById(bookingId);
       dispatchCalendarInteractionEvent(DRAG_STOP_EVENT_NAME, {
@@ -14732,7 +14797,6 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
       if (previousBooking) {
         bookings.replaceTimeBookings([buildUpdatedTimeBooking(previousBooking, { start: newStart, end: newEnd })]);
       }
-      bookings.invalidateLayoutCache();
       frozenGridConfig.value = null;
       const updatedBooking = findTimeBookingById(bookingId);
       dispatchCalendarInteractionEvent(RESIZE_STOP_EVENT_NAME, {
@@ -14851,72 +14915,63 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
       if (typeof window === "undefined") {
         return Promise.resolve();
       }
+      const scheduler = window.scheduler;
+      if (typeof (scheduler == null ? void 0 : scheduler.yield) === "function") {
+        return scheduler.yield();
+      }
       return new Promise((resolve) => {
-        if (typeof window.requestAnimationFrame === "function") {
-          window.requestAnimationFrame(() => resolve());
-          return;
-        }
         window.setTimeout(resolve, 0);
       });
     }
-    function commitNormalizedChunk(normalized, mode, commitState) {
-      if (mode === "append" || commitState.hasCommitted) {
+    async function normalizeRawEntriesInChunks(rawEntries) {
+      const normalized = {
+        timeBookings: [],
+        allDayBookings: []
+      };
+      const chunkSize = getLoadChunkSize(rawEntries.length);
+      for (let index = 0; index < rawEntries.length; index += chunkSize) {
+        const chunk = normalizeRawEntries(rawEntries.slice(index, index + chunkSize));
+        normalized.timeBookings.push(...chunk.timeBookings);
+        normalized.allDayBookings.push(...chunk.allDayBookings);
+        if (index + chunkSize < rawEntries.length) {
+          await yieldToBrowser();
+        }
+      }
+      return normalized;
+    }
+    async function normalizeAllDayBookingsInChunks(allDayBookings) {
+      const normalized = [];
+      const chunkSize = getLoadChunkSize(allDayBookings.length);
+      for (let index = 0; index < allDayBookings.length; index += chunkSize) {
+        normalized.push(...allDayBookings.slice(index, index + chunkSize).map(normalizeAllDayBooking));
+        if (index + chunkSize < allDayBookings.length) {
+          await yieldToBrowser();
+        }
+      }
+      return normalized;
+    }
+    async function processIncomingDataInChunks(data, mode) {
+      if (mode === "replace") {
+        bookings.setTimeBookings([]);
+        bookings.setAllDayBookings([]);
+      }
+      let normalized;
+      if (Array.isArray(data)) {
+        normalized = await normalizeRawEntriesInChunks(data);
+      } else {
+        const dataset = data ?? {};
+        normalized = await normalizeRawEntriesInChunks(dataset.timeBookings || []);
+        normalized.allDayBookings = normalized.allDayBookings.concat(
+          await normalizeAllDayBookingsInChunks(dataset.allDayBookings || [])
+        );
+      }
+      if (mode === "append") {
         bookings.appendTimeBookings(normalized.timeBookings);
         bookings.appendAllDayBookings(normalized.allDayBookings);
       } else {
         bookings.setTimeBookings(normalized.timeBookings);
         bookings.setAllDayBookings(normalized.allDayBookings);
       }
-      bookings.invalidateLayoutCache();
-      commitState.hasCommitted = true;
-    }
-    async function processRawEntriesInChunks(rawEntries, mode, commitState) {
-      if (rawEntries.length === 0) {
-        return;
-      }
-      const chunkSize = getLoadChunkSize(rawEntries.length);
-      for (let index = 0; index < rawEntries.length; index += chunkSize) {
-        const chunk = rawEntries.slice(index, index + chunkSize);
-        commitNormalizedChunk(normalizeRawEntries(chunk), mode, commitState);
-        if (index + chunkSize < rawEntries.length) {
-          await yieldToBrowser();
-        }
-      }
-    }
-    async function processAllDayBookingsInChunks(allDayBookings, mode, commitState) {
-      if (allDayBookings.length === 0) {
-        return;
-      }
-      const chunkSize = getLoadChunkSize(allDayBookings.length);
-      for (let index = 0; index < allDayBookings.length; index += chunkSize) {
-        const chunk = allDayBookings.slice(index, index + chunkSize);
-        commitNormalizedChunk(
-          {
-            timeBookings: [],
-            allDayBookings: chunk.map(normalizeAllDayBooking)
-          },
-          mode,
-          commitState
-        );
-        if (index + chunkSize < allDayBookings.length) {
-          await yieldToBrowser();
-        }
-      }
-    }
-    async function processIncomingDataInChunks(data, mode) {
-      if (mode === "replace") {
-        bookings.setTimeBookings([]);
-        bookings.setAllDayBookings([]);
-        bookings.invalidateLayoutCache();
-      }
-      const commitState = { hasCommitted: false };
-      if (Array.isArray(data)) {
-        await processRawEntriesInChunks(data, mode, commitState);
-        return;
-      }
-      const dataset = data ?? {};
-      await processRawEntriesInChunks(dataset.timeBookings || [], mode, commitState);
-      await processAllDayBookingsInChunks(dataset.allDayBookings || [], mode, commitState);
     }
     function queueDataMutation(mutation) {
       dataMutationQueue = dataMutationQueue.then(() => processDataMutation(mutation)).catch((error) => {
@@ -14947,7 +15002,6 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
         bookings.setTimeBookings(normalized.timeBookings);
         bookings.setAllDayBookings(normalized.allDayBookings);
       }
-      bookings.invalidateLayoutCache();
     }
     function formatDateForRawEntry(date) {
       const year = date.getFullYear();
@@ -15284,7 +15338,6 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
         }
         bookings.replaceTimeBookings([updated]);
       }
-      bookings.invalidateLayoutCache();
       syncActivePopoverAfterBookingUpdate(bookingId);
     }
     function getInitialBookingFilters(config) {
@@ -15599,22 +15652,27 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
         (sel) => bookingValues.some((book) => String(book) === String(sel ?? ""))
       );
     }
-    function getBookingFilterValue(fieldId, booking) {
+    const bookingFilterValuesCache = /* @__PURE__ */ new WeakMap();
+    function resolveBookingFilterValues(booking) {
       var _a, _b, _c;
+      const cached = bookingFilterValuesCache.get(booking);
+      if (cached) {
+        return cached;
+      }
       const summary = resolveBookingServiceSummary(booking);
       const staffSummary = resolveBookingStaffSummary(booking);
-      switch (fieldId) {
-        case "service":
-          return summary.serviceValues.length > 1 ? summary.serviceValues : summary.serviceValues[0] ?? null;
-        case "status":
-          return "status" in booking ? normalizeFilterValue2(booking.status) : normalizeFilterValue2((_a = booking.metadata) == null ? void 0 : _a.status);
-        case "employee":
-          return staffSummary.staffValues.length > 1 ? staffSummary.staffValues : staffSummary.staffValues[0] ?? null;
-        case "location":
-          return normalizeFilterValue2(((_b = booking.metadata) == null ? void 0 : _b.locationId) ?? ((_c = booking.metadata) == null ? void 0 : _c.location));
-        case "category":
-          return summary.categoryValues.length > 1 ? summary.categoryValues : summary.categoryValues[0] ?? null;
-      }
+      const values = {
+        service: summary.serviceValues.length > 1 ? summary.serviceValues : summary.serviceValues[0] ?? null,
+        status: "status" in booking ? normalizeFilterValue2(booking.status) : normalizeFilterValue2((_a = booking.metadata) == null ? void 0 : _a.status),
+        employee: staffSummary.staffValues.length > 1 ? staffSummary.staffValues : staffSummary.staffValues[0] ?? null,
+        location: normalizeFilterValue2(((_b = booking.metadata) == null ? void 0 : _b.locationId) ?? ((_c = booking.metadata) == null ? void 0 : _c.location)),
+        category: summary.categoryValues.length > 1 ? summary.categoryValues : summary.categoryValues[0] ?? null
+      };
+      bookingFilterValuesCache.set(booking, values);
+      return values;
+    }
+    function getBookingFilterValue(fieldId, booking) {
+      return resolveBookingFilterValues(booking)[fieldId];
     }
     function matchesTimeBookingFilters(booking) {
       var _a, _b, _c, _d, _e;
@@ -15702,7 +15760,6 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
     watch(
       () => calendar2.currentDate.value,
       () => {
-        bookings.invalidateLayoutCache();
         clearExpandedDays();
       }
     );
@@ -16003,7 +16060,7 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const BpaCalendarView = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-8543eeb6"]]);
+const BpaCalendarView = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-145a5223"]]);
 const _sfc_main$1 = /* @__PURE__ */ defineComponent({
   __name: "BpaCalendarApp",
   props: {

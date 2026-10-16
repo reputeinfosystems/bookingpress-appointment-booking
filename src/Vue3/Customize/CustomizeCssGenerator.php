@@ -256,6 +256,14 @@ class CustomizeCssGenerator {
 			. ' { color: ' . $primary . ' !important;'
 			. ' background-color: ' . $primary_fill_light . ' !important; }';
 
+		$css .= '.bp-select-dropdown:not(.bp-dropdown__popper) .bp-select-dropdown__list .bp-select-dropdown__item.is-selected::before'
+			. ' { color: ' . $primary . ' !important;}';
+
+		$css .= '.bp-radio__original:focus-visible + .bp-radio__inner,'
+			. '.bp-checkbox input:focus-visible + .bp-checkbox__inner
+			'
+			. '{ outline: 2px solid ' . $primary . ' !important;}';
+
 		// Hovering (non-selected) item background.
 		$css .= '.bp-select-dropdown__item.is-hovering,'
 			. '.bp-select-dropdown__item:hover'

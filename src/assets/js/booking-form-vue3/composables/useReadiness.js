@@ -24,6 +24,7 @@ export function useReadiness(state) {
     if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) return false;
     if (isSelectedDayService(state)) return true;
     if (!/^\d{2}:\d{2}(:\d{2})?$/.test(t)) return false;
+    if( state.proValidateDateTime === false ) return false; //validate it from outside
     return true;
   });
 

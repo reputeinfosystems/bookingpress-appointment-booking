@@ -295,6 +295,27 @@ class Hooks {
 	const FILTER_SLOT_DURATION = 'bookingpress_form_v3_slot_duration';
 
 	/**
+	 * Evaluate only EXPLICIT slot start timestamps instead of the regular grid.
+	 *
+	 * Fired in `AvailabilityService::build_slots()` before the per-slot loop.
+	 * Return an array of start timestamps (same reference frame as
+	 * `strtotime( "$date H:i:s" )`) to evaluate only those starts — each still
+	 * has to fit the working window and pass the break, past-time, booked-range
+	 * and capacity checks; a start outside the window is simply not returned.
+	 * Return `null` (the default) to build the regular grid.
+	 *
+	 * Lets a consumer ask "is this exact range bookable?" for starts that may not
+	 * fall on the configured grid — e.g. the Multi Service add-on checks each
+	 * service segment of a combined slot (09:00 + 30 min = 09:30) against one
+	 * staff member's own schedule and bookings.
+	 *
+	 * Filter signature: `(null|int[] $starts, int $service_id, string $date, array $context): null|int[]`
+	 *
+	 * Lite registers no callback, so a Lite-only install is unchanged.
+	 */
+	const FILTER_SLOT_STARTS = 'bookingpress_form_v3_slot_starts';
+
+	/**
 	 * Reshape the booked time-ranges that block slots on a date, before they are
 	 * applied to per-slot availability/capacity.
 	 *

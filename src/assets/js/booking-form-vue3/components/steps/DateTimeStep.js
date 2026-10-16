@@ -302,6 +302,10 @@ export default {
         setError(state.strings.no_appointment_time_error);
         return;
       }
+      if( state.proValidateDateTime === false) {
+        setError(state.proValidateDateTimeErrorMsg || state.strings.no_appointment_date_error);
+        return;
+      }
       clearError();
       nav.goNext();
     }

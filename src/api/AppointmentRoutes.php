@@ -682,6 +682,7 @@ class AppointmentRoutes extends Base {
         global $wpdb, $bookingpress_dashboard;
 
         $_REQUEST['_wpnonce'] = wp_create_nonce( 'bpa_wp_nonce' ); //phpcs:ignore
+        $_REQUEST['update_appointment_id'] = $update_appointment_id; //phpcs:ignore
 
         $response = $bookingpress_dashboard->bookingpress_change_upcoming_appointment_status( $update_appointment_id, $new_status, true );
 
@@ -708,7 +709,8 @@ class AppointmentRoutes extends Base {
         $bookingpress_default_time_format       = $bookingpress_global_options_arr['wp_default_time_format'];
         $bookingpress_default_date_time_format  = $bookingpress_default_date_format . ' ' . $bookingpress_default_time_format;
 
-        $_POST['appointment_data'] = wp_json_encode( $appointment_data ); //phpcs:ignore
+        //$_POST['appointment_data'] = wp_json_encode( $appointment_data ); //phpcs:ignore
+        $_POST['appointment_data'] = wp_slash( wp_json_encode( $appointment_data ) ); //phpcs:ignore        
         $_REQUEST['_wpnonce'] = wp_create_nonce( 'bpa_wp_nonce' ); //phpcs:ignore
 
         $response = $bookingpress_calendar->bookingpress_save_appointment_booking_func( false, true );
@@ -805,8 +807,8 @@ class AppointmentRoutes extends Base {
                 'customerName'  => $bookingpress_customer_name,
                 'customerId'    => $appointment_detail['bookingpress_customer_id'],
                 'start_date'    => $appointment_detail['bookingpress_appointment_date'],
-                'booking_date'  => date_i18n($bookingpress_default_date_format, strtotime($appointment_detail['bookingpress_appointment_date'])),
-                'booking_time'  => date('H:i', strtotime($appointment_detail['bookingpress_appointment_time'])) . ' - ' . date('H:i', strtotime($appointment_detail['bookingpress_appointment_end_time'])),
+                //'booking_date'  => date_i18n($bookingpress_default_date_format, strtotime($appointment_detail['bookingpress_appointment_date'])),
+                //'booking_time'  => date('H:i', strtotime($appointment_detail['bookingpress_appointment_time'])) . ' - ' . date('H:i', strtotime($appointment_detail['bookingpress_appointment_end_time'])),
                 'end_date'      => ( !empty( $appointment_detail['bookingpress_appointment_end_date'] ) && $appointment_detail['bookingpress_appointment_end_date'] != '0000-00-00' ) ? $appointment_detail['bookingpress_appointment_end_date'] : $appointment_detail['bookingpress_appointment_date'],
                 'start_time'    => date('H:i', strtotime($appointment_detail['bookingpress_appointment_time'])),
                 'end_time'      => date('H:i', strtotime($appointment_detail['bookingpress_appointment_end_time'])),
@@ -821,6 +823,12 @@ class AppointmentRoutes extends Base {
             ];
         }
         $response['appointment_details'] = $all_appointment_details;
+
+        if( empty( $all_appointment_details ) && !empty( $appointment_data['appointment_update_id']) ) {
+            $response['required_action'] = 'update_status';
+            $response['new_status'] = $wpdb->get_var( $wpdb->prepare( "SELECT bookingpress_appointment_status FROM {$tbl_bookingpress_appointment_bookings} WHERE bookingpress_appointment_booking_id = %d", intval( $appointment_data['appointment_update_id'] ) ) );
+            $response['appointment_id'] = intval( $appointment_data['appointment_update_id'] );
+        }
     
 
         $result = [

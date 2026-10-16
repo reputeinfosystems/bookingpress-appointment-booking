@@ -186,6 +186,7 @@ class Appointments extends Base{
             BOOKINGPRESS_VERSION
         );
 
+        do_action( 'bookingpress_enqueue_additional_assets' );
     }
 
     public static function render_page(){

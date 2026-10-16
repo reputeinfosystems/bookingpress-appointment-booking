@@ -515,7 +515,7 @@ if (! class_exists('bookingpress_customize') ) {
             if (isset($_POST['old_index']) && isset($_POST['new_index']) ) { // phpcs:ignore WordPress.Security.NonceVerification
                 if ($bookingpress_new_index > $bookingpress_old_index ) {
                     $condition = 'BETWEEN ' . $bookingpress_old_index . ' AND ' . $bookingpress_new_index;
-                    $fields    = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . $tbl_bookingpress_form_fields . ' WHERE bookingpress_field_position BETWEEN %d AND %d order by bookingpress_field_position ASC', $bookingperss_old_index, $bookingpress_new_index ), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Reason: $tbl_bookingpress_form_fields is table name defined globally. False Positive alarm
+                    $fields    = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . $tbl_bookingpress_form_fields . ' WHERE bookingpress_field_position BETWEEN %d AND %d order by bookingpress_field_position ASC', $bookingpress_old_index, $bookingpress_new_index ), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Reason: $tbl_bookingpress_form_fields is table name defined globally. False Positive alarm
                     foreach ( $fields as $field ) {
                         $position = $field['bookingpress_field_position'] - 1;
                         $position = ( $field['bookingpress_field_position'] == $bookingpress_old_index ) ? $bookingpress_new_index : $position;
@@ -705,9 +705,18 @@ if (! class_exists('bookingpress_customize') ) {
 
                 wp_cache_delete( 'bpa_appointment_booking_form_fields_data_' );
 
+                $all_db_fields = $wpdb->get_results("SELECT bookingpress_form_field_id, bookingpress_form_field_name FROM {$tbl_bookingpress_form_fields}", ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+                $field_id_map = array();
+                if (!empty($all_db_fields)) {
+                    foreach ($all_db_fields as $db_f) {
+                        $field_id_map[$db_f['bookingpress_form_field_name']] = intval($db_f['bookingpress_form_field_id']);
+                    }
+                }
+
                 $response['variant'] = 'success';
                 $response['title']   = esc_html__('Success', 'bookingpress-appointment-booking');
                 $response['msg']     = esc_html__('Field Settings Data Saved Successfully', 'bookingpress-appointment-booking');
+                $response['field_id_map'] = $field_id_map;
             }
 
             echo wp_json_encode($response);

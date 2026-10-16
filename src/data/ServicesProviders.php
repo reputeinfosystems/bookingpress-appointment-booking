@@ -47,7 +47,16 @@ class ServicesProviders {
     public static function get_service_category_id( $service_id ){
         global $wpdb, $tbl_bookingpress_services;
 
-        $service = $wpdb->get_row( $wpdb->prepare( "SELECT bookingpress_category_id FROM {$tbl_bookingpress_services} WHERE bookingpress_service_id = %d", $service_id ), ARRAY_A );
+        //$service = $wpdb->get_row( $wpdb->prepare( "SELECT bookingpress_category_id FROM {$tbl_bookingpress_services} WHERE bookingpress_service_id = %d", $service_id ), ARRAY_A );
+        $service_args = [
+            'columns' => 'bookingpress_category_id',
+            'table' => $tbl_bookingpress_services,
+            'where' => $wpdb->prepare( " WHERE bookingpress_service_id = %d", $service_id ),
+            'is_single' => true,
+            'type' => ARRAY_A
+        ];
+
+        $service = \BookingPressDb::bpa_fetch_records( $service_args );
 
         return intval( $service['bookingpress_category_id'] );
     }
@@ -55,7 +64,16 @@ class ServicesProviders {
     public static function get_service_color_scheme( $service_id ){
         global $wpdb, $tbl_bookingpress_services;
 
-        $service = $wpdb->get_row( $wpdb->prepare( "SELECT bookingpress_color_scheme FROM {$tbl_bookingpress_services} WHERE bookingpress_service_id = %d", $service_id ), ARRAY_A );
+        //$service = $wpdb->get_row( $wpdb->prepare( "SELECT bookingpress_color_scheme FROM {$tbl_bookingpress_services} WHERE bookingpress_service_id = %d", $service_id ), ARRAY_A );
+        $service_args = [
+            'columns' => 'bookingpress_color_scheme',
+            'table' => $tbl_bookingpress_services,
+            'where' => $wpdb->prepare( " WHERE bookingpress_service_id = %d", $service_id ),
+            'is_single' => true,
+            'type' => ARRAY_A
+        ];
+
+        $service = \BookingPressDb::bpa_fetch_records( $service_args );
 
         return $service['bookingpress_color_scheme'];
     }

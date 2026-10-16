@@ -190,6 +190,7 @@ const initRescheduleDialog = () => {
                     appointment_booked_date: selected_value,
                     appointment_selected_service: vm.reschedule_formdata.booking_service_id,
                     appointment_update_id: vm.reschedule_formdata.booking_id,
+                    appointment_is_past: vm.reschedule_formdata.is_past,
                 }
             };
 
@@ -426,6 +427,7 @@ window.addEventListener( 'bookingpress:appointment-popover-reschedule', (event) 
         window.BookingPressRescheduleDialog.reschedule_formdata.formatted_booking_time = booking.metadata.formatted_booking_time;
         window.BookingPressRescheduleDialog.reschedule_formdata.booking_service_id = booking.serviceId;
         window.BookingPressRescheduleDialog.reschedule_formdata.booking_customer_id = booking.metadata.customerId;
+        window.BookingPressRescheduleDialog.reschedule_formdata.is_past = booking.isPast;
 
         window.BookingPressRescheduleDialog.is_display_time = true;
 

@@ -136,29 +136,31 @@ if (! class_exists('bookingpress_dashboard') ) {
          * @param  mixed $appointment_new_status   New status for update appointment
          * @return void
          */
-        function bookingpress_change_upcoming_appointment_status( $update_appointment_id = '', $appointment_new_status = '', $return_data = false )
+        function bookingpress_change_upcoming_appointment_status( $update_appointment_id = '', $appointment_new_status = '', $return_data = false , $skip_auth = false)
         {
             global $wpdb, $BookingPress, $tbl_bookingpress_appointment_bookings, $tbl_bookingpress_payment_logs, $bookingpress_email_notifications;
             
             $response            = array();
-            
-            $bpa_check_authorization = $this->bpa_check_authentication( 'update_upcoming_appointments', true, 'bpa_wp_nonce' );
-            
-            if( preg_match( '/error/', $bpa_check_authorization ) ){
-                $bpa_auth_error = explode( '^|^', $bpa_check_authorization );
-                $bpa_error_msg = !empty( $bpa_auth_error[1] ) ? $bpa_auth_error[1] : esc_html__( 'Sorry. Something went wrong while processing the request', 'bookingpress-appointment-booking');
 
-                $response['variant'] = 'error';
-                $response['title'] = esc_html__( 'Error', 'bookingpress-appointment-booking');
-                $response['msg'] = $bpa_error_msg;
+            if ( ! $skip_auth ) {
+                $bpa_check_authorization = $this->bpa_check_authentication( 'update_upcoming_appointments', true, 'bpa_wp_nonce' );
+                
+                if( preg_match( '/error/', $bpa_check_authorization ) ){
+                    $bpa_auth_error = explode( '^|^', $bpa_check_authorization );
+                    $bpa_error_msg = !empty( $bpa_auth_error[1] ) ? $bpa_auth_error[1] : esc_html__( 'Sorry. Something went wrong while processing the request', 'bookingpress-appointment-booking');
 
-                if( $return_data ) {
-                    return $response;
-                } else {
-                    wp_send_json( $response );
+                    $response['variant'] = 'error';
+                    $response['title'] = esc_html__( 'Error', 'bookingpress-appointment-booking');
+                    $response['msg'] = $bpa_error_msg;
+
+                    if( $return_data ) {
+                        return $response;
+                    } else {
+                        wp_send_json( $response );
+                        die;
+                    }
                     die;
                 }
-                die;
             }
             
             $appointment_update_id  = ! empty($_REQUEST['update_appointment_id']) ? intval($_REQUEST['update_appointment_id']) : $update_appointment_id;

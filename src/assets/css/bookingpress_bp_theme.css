@@ -12829,6 +12829,9 @@
     transition: border-color .2s cubic-bezier(.645, .045, .355, 1);
     width: 100%
 }
+.bpa-frontend-main-container .bp-input__inner{
+    height: 40px !important;
+}
 
 .bp-input__prefix,
 .bp-input__suffix {

@@ -16,17 +16,16 @@ class Header extends Base{
             'bookingpress',
             'bookingpress-calendar',
             'bookingpress_appointments',
+            'bookingpress_payments',
             'bookingpress_addons',
             'bookingpress_customers',
             'bookingpress_growth_tools',
             'bookingpress_settings',
+            'bookingpress_services',
             'bookingpress_notifications',
-            //'bookingpress_customize',
+            'bookingpress_lite_wizard',
+            'bookingpress_customize',
         ];
-
-        if( ( !empty( $_GET['page'] ) && 'bookingpress_customize' == $_GET['page'] && (empty( $_GET['action'] ) || $_GET['action'] != 'form_fields') ) ){
-            $scoped_hooks[] = 'bookingpress_customize';
-        }
 
         return apply_filters( 'bookingpress_scoped_pages', $scoped_hooks );
 
@@ -65,7 +64,7 @@ class Header extends Base{
     }
 
     public static function bookingpress_get_sales_data(){
-            
+
         $fetch_sale_detais = get_transient( 'bookingpress_retrieve_sale_details' );
         if( false == $fetch_sale_detais ){
 
@@ -78,7 +77,7 @@ class Header extends Base{
                 $details = wp_remote_retrieve_body( $fetch_dates );
                 $sale_details = json_decode( $details, true );
 
-                set_transient( 'bookingpress_retrieve_sale_details', $sale_details, ( HOUR_IN_SECONDS * 12 ) );
+                set_transient( 'bookingpress_retrieve_sale_details', $sale_details, ( DAY_IN_SECONDS ) );
             }
         } else {
             $sale_details = $fetch_sale_detais;
@@ -91,7 +90,7 @@ class Header extends Base{
 
         $scoped_pages = self::bookingpress_scoped_pages();
 
-        if( !empty( $_REQUEST['page'] ) && !in_array( $_REQUEST['page'], $scoped_pages ) ){
+        if( !empty( $_REQUEST['page'] ) && ( !in_array( $_REQUEST['page'], $scoped_pages ) || 'bookingpress_lite_wizard' === $_REQUEST['page'] ) ){
             return;
         }
 
@@ -148,6 +147,7 @@ class Header extends Base{
 
         $config = [
             'ajax_url' => admin_url( 'admin-ajax.php' ),
+            'admin_url' => admin_url(),
             'rest_url' => rest_url( 'bookingpress-app/v1' ),
             'rest_nonce' => wp_create_nonce( 'wp_rest' ),
             'notification_timeout' => 1500, //1.5 seconds

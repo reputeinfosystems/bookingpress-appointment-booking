@@ -143,8 +143,10 @@ const initHelperIconWrapper = () => {
                 debug_log_settings: "https://www.bookingpressplugin.com/documents/debug-log-settings/"
             };
 
-            vm.read_more_link =
-                map[module] || "https://www.bookingpressplugin.com/";
+            vm.read_more_link = map[module] || "https://www.bookingpressplugin.com/";
+            const read_more_data = { read_more_link: vm.read_more_link};
+            wp.hooks.doAction('bookingpress_modify_readmore_link',read_more_data,module);
+            vm.read_more_link = read_more_data.read_more_link;
         },
 
         bpa_fab_floating_action_btn() {
@@ -353,7 +355,8 @@ const initHelperIconWrapper = () => {
             const bpa_get_url_param = new URLSearchParams(window.location.search);
             const bpa_get_page = bpa_get_url_param.get('page');
             const bpa_get_action = bpa_get_url_param.get('action');
-
+            const help_module = document.querySelector('#bookingpress_help_icon_wrapper')?.getAttribute('data-request-module');
+            
             const closeFab = () => {
                 vm.bpa_fab_floating_btn = 0;
             };
@@ -477,6 +480,10 @@ const initHelperIconWrapper = () => {
                     vm.openNeedHelper('list_debug_log_settings', 'Debug Log Settings');
                 }
 
+                closeFab();
+            } else if (help_module) {
+                vm.request_module = help_module;
+                wp.hooks.doAction('bpa_add_extra_tab_outside_func', vm, bpa_get_page);
                 closeFab();
             }
         }

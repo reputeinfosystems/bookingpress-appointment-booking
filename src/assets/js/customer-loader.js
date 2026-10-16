@@ -424,9 +424,8 @@ const initCustomerWrapper = () => {
             })
             .then(res => res.json())
             .then((response) => {
-                vm.toggleBusy();
-
                 if (response.variant === 'error') {
+                    vm.toggleBusy();
                     vm.$notify({
                         title:       response.title,
                         message:     response.msg,
@@ -435,8 +434,19 @@ const initCustomerWrapper = () => {
                         duration:    BookingPressConfig.notification_duration || 3000,
                     });
                 } else {
-                    vm.items      = response.items;
-                    vm.totalItems = parseInt(response.total);
+                    let totalItems = parseInt(response.total || 0);
+                    let items = response.items || [];
+
+                    if (items.length === 0 && totalItems > 0 && vm.currentPage > 1) {
+                        let maxPage = Math.ceil(totalItems / parseInt(vm.perPage));
+                        vm.currentPage = maxPage > 0 ? maxPage : 1;
+                        vm.loadCustomers();
+                        return;
+                    }
+
+                    vm.toggleBusy();
+                    vm.items      = items;
+                    vm.totalItems = totalItems;
                 }
             })
             .catch((error) => {
@@ -565,9 +575,11 @@ const initCustomerWrapper = () => {
                                 customClass: rest_response.variant + '_notification',
                                 duration: BookingPressConfig.notification_timeout
                             });
+                            if (this.multipleSelection.length >= this.items.length && this.currentPage > 1) {
+                                this.currentPage--;
+                            }
                             this.loadCustomers();
                             this.multipleSelection = [];
-                            this.totalItems = this.items.length;
                         } else {
                             this.$notify({
                                 title: 'Error',
@@ -627,6 +639,9 @@ const initCustomerWrapper = () => {
                         customClass: rest_response.variant + '_notification',
                         duration: BookingPressConfig.notification_timeout
                     });
+                    if (this.items.length === 1 && this.currentPage > 1) {
+                        this.currentPage--;
+                    }
                     this.loadCustomers();
                 } else {
                     this.$notify({

@@ -24,7 +24,8 @@ if( !defined( 'BookingPressDb' ) ){
                 'where'     => 'WHERE 1=1',
                 'type'      => OBJECT,
                 'order_by'  => '',
-                'is_single' => false
+                'is_single' => false,
+                'is_count'  => false
             ];
 
             $args = wp_parse_args( $args, $defaults );
@@ -36,9 +37,16 @@ if( !defined( 'BookingPressDb' ) ){
             $fetch_func = 'get_results';
             if( true === $args['is_single'] ){
                 $fetch_func = 'get_row';
+            } else if( true === $args['is_count'] ){
+                $fetch_func = 'get_var';
             }
             $query_string = trim( "SELECT {$args['columns']} FROM {$args['table']} {$args['where']} {$args['order_by']}" );
-            $result = $wpdb->$fetch_func($query_string, $args['type']);
+            if( 'get_var' === $fetch_func ){
+                // get_var()'s second parameter is a column offset, not an output type.
+                $result = $wpdb->get_var( $query_string );
+            } else {
+                $result = $wpdb->$fetch_func($query_string, $args['type']);
+            }
             
             if( is_null( $result ) ){
                 $result = [];

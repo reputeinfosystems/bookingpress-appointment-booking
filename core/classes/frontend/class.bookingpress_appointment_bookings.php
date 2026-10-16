@@ -3728,9 +3728,9 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
         function bookingpress_appointment_service_func( $atts, $content, $tag )
         {
             global $wpdb, $BookingPress, $tbl_bookingpress_appointment_bookings, $tbl_bookingpress_entries;
-            $BookingPress->set_front_css(1);
-            $BookingPress->set_front_js(1);
-            $BookingPress->bookingpress_load_booking_form_custom_css();
+            //$BookingPress->set_front_css(1);
+            //$BookingPress->set_front_js(1);
+            //$BookingPress->bookingpress_load_booking_form_custom_css();
             $bookingpress_short_atts = array(
             'appointment_id' => 0,
             );
@@ -3841,8 +3841,8 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
         function bookingpress_appointment_datetime_func( $atts, $content, $tag )
         {
             global $wpdb, $BookingPress, $tbl_bookingpress_appointment_bookings, $tbl_bookingpress_entries,$bookingpress_global_options;
-            $BookingPress->set_front_css(1);
-            $BookingPress->set_front_js(1);
+            //$BookingPress->set_front_css(1);
+            //$BookingPress->set_front_js(1);
             $BookingPress->bookingpress_load_booking_form_custom_css();
 
             $bookingpress_short_atts = array(
@@ -4015,9 +4015,9 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
          */
         function bookingpress_booking_id_func($atts, $content, $tag){
             global $wpdb, $BookingPress, $tbl_bookingpress_appointment_bookings, $tbl_bookingpress_entries, $tbl_bookingpress_payment_logs;
-            $BookingPress->set_front_css(1);
-            $BookingPress->set_front_js(1);
-            $BookingPress->bookingpress_load_booking_form_custom_css();
+            //$BookingPress->set_front_css(1);
+            //$BookingPress->set_front_js(1);
+            //$BookingPress->bookingpress_load_booking_form_custom_css();
 
             $bookingpress_short_atts = array(
                 'appointment_id' => 0,
@@ -4091,9 +4091,9 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
         function bookingpress_appointment_customername_func( $atts, $content, $tag )
         {
             global $wpdb, $BookingPress, $tbl_bookingpress_appointment_bookings, $tbl_bookingpress_entries;
-            $BookingPress->set_front_css(1);
+            /* $BookingPress->set_front_css(1);
             $BookingPress->set_front_js(1);
-            $BookingPress->bookingpress_load_booking_form_custom_css();
+            $BookingPress->bookingpress_load_booking_form_custom_css(); */
 
             $bookingpress_short_atts = array(
             'appointment_id' => 0,
@@ -4207,9 +4207,9 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
         function bookingpress_company_avatar_func()
         {
             global $BookingPress;
-            $BookingPress->set_front_css(1);
+            /* $BookingPress->set_front_css(1);
             $BookingPress->set_front_js(1);
-            $BookingPress->bookingpress_load_booking_form_custom_css();
+            $BookingPress->bookingpress_load_booking_form_custom_css(); */
 
             $content                         = '';
             $bookingpress_company_avatar_url = $BookingPress->bookingpress_get_settings('company_avatar_url', 'company_setting');
@@ -4230,9 +4230,9 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
         function bookingpress_company_name_func()
         {
             global $BookingPress;
-            $BookingPress->set_front_css(1);
+            /* $BookingPress->set_front_css(1);
             $BookingPress->set_front_js(1);
-            $BookingPress->bookingpress_load_booking_form_custom_css();
+            $BookingPress->bookingpress_load_booking_form_custom_css(); */
 
             $content                   = '';
             $bookingpress_company_name = $BookingPress->bookingpress_get_settings('company_name', 'company_setting');
@@ -4252,9 +4252,9 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
         function bookingpress_company_website_func()
         {
             global $BookingPress;
-            $BookingPress->set_front_css(1);
+            /* $BookingPress->set_front_css(1);
             $BookingPress->set_front_js(1);
-            $BookingPress->bookingpress_load_booking_form_custom_css();
+            $BookingPress->bookingpress_load_booking_form_custom_css(); */
 
             $content                      = '';
             $bookingpress_company_website = $BookingPress->bookingpress_get_settings('company_website', 'company_setting');
@@ -4275,9 +4275,9 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
         function bookingpress_company_address_func()
         {
             global $BookingPress;
-            $BookingPress->set_front_css(1);
+            /* $BookingPress->set_front_css(1);
             $BookingPress->set_front_js(1);
-            $BookingPress->bookingpress_load_booking_form_custom_css();
+            $BookingPress->bookingpress_load_booking_form_custom_css(); */
 
             $content                      = '';
             $bookingpress_company_address = $BookingPress->bookingpress_get_settings('company_address', 'company_setting');
@@ -4297,9 +4297,9 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
         function bookingpress_company_phone_func()
         {
             global $BookingPress;
-            $BookingPress->set_front_css(1);
+            /* $BookingPress->set_front_css(1);
             $BookingPress->set_front_js(1);
-            $BookingPress->bookingpress_load_booking_form_custom_css();
+            $BookingPress->bookingpress_load_booking_form_custom_css(); */
 
             $content                      = '';
             $bookingpress_company_phone   = $BookingPress->bookingpress_get_settings('company_phone_number', 'company_setting');
@@ -7062,16 +7062,18 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
          */
         function bookingpress_booking_calendar_options($atts, $content, $tag) {
 
-            if( class_exists('BookingPressPro\Vue3\ProRouting') && BookingPressPro\Vue3\ProRouting::should_load_complete_v3() ) {
+            return BookingPress\Vue3\CalendarIntegration::render_shortcode( $atts );
+
+            /* if( class_exists('BookingPressPro\Vue3\ProRouting') && BookingPressPro\Vue3\ProRouting::should_load_complete_v3() ) {
                 // Vue3: no Vue2 runtime to hydrate the markup below, so render static calendar links instead.
-                if( ! class_exists('BookingPressPro\Vue3\CalendarIntegration') ){
+                if( ! class_exists('BookingPress\Vue3\CalendarIntegration') ){
                     return '';
                 }
                 global $BookingPress;
                 $BookingPress->set_front_css( 1 );
                 $BookingPress->bookingpress_load_booking_form_custom_css();
-                return BookingPressPro\Vue3\CalendarIntegration::render_shortcode( $atts );
-            }
+                return BookingPress\Vue3\CalendarIntegration::render_shortcode( $atts );
+            } */
 
             global $wpdb, $tbl_bookingpress_appointment_bookings, $tbl_bookingpress_entries;
             $defaults = array(

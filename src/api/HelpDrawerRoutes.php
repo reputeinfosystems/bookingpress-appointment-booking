@@ -57,7 +57,7 @@ class HelpDrawerRoutes extends Base {
                     'body'    => array(
                         'action' => 'get_documentation',
                         'module' => $help_module,
-                        'page'   => $help_page,
+                        'page'   => 'list_' . $help_module,
                     ),
                     'timeout' => 45,
                 );

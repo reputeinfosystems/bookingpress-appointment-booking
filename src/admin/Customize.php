@@ -127,10 +127,6 @@ class Customize extends Base {
             return;
         }
 
-        if( ( !empty( $_GET['page'] ) && 'bookingpress_customize' == $_GET['page'] && (!empty( $_GET['action'] ) && $_GET['action'] == 'form_fields') ) ){
-            return;
-        }
-
         wp_enqueue_style(
 			'bookingpress-bp-theme',
 			BOOKINGPRESS_URL . '/src/assets/css/bookingpress_bp_theme.css',
@@ -198,7 +194,15 @@ class Customize extends Base {
 
     public static function render_page() {
         $action = ! empty( $_REQUEST['action'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['action'] ) ) : 'forms';
-        self::render_view( 'Customize_form', [ 'title' => esc_html__( 'Customize', 'bookingpress-appointment-booking' ),] );
+        if ( 'form_fields' === $action ) {
+            if ( class_exists( '\BookingPressPro\admin\Customize' ) && method_exists( '\BookingPressPro\admin\Customize', 'render_field_customization' ) ) {
+                \BookingPressPro\admin\Customize::render_field_customization();
+            } else {
+                self::render_view( 'Customize_field', [ 'title' => esc_html__( 'Field Settings', 'bookingpress-appointment-booking' ) ] );
+            }
+        } else {
+            self::render_view( 'Customize_form', [ 'title' => esc_html__( 'Customize', 'bookingpress-appointment-booking' ) ] );
+        }
     }
 
 }

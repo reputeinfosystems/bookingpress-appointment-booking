@@ -132,37 +132,116 @@ export const customizePageMethods = {
             wp.hooks.doAction( 'bookingpress_before_save_field_settings_method',vm);
         }
 
-        bookingpressRestRequest('/customize/field-settings/save',{
-                field_settings: vm.field_settings_fields,
+        // Ensure synchronize with the active Vue instance
+        let fields_to_save = vm.field_settings_fields;
+        if (typeof window !== 'undefined') {
+            if (window.app && Array.isArray(window.app.field_settings_fields) && window.app.field_settings_fields.length > 0) {
+                fields_to_save = window.app.field_settings_fields;
+                vm.field_settings_fields = window.app.field_settings_fields;
+            } else if (window.CustomizeLoader && Array.isArray(window.CustomizeLoader.field_settings_fields) && window.CustomizeLoader.field_settings_fields.length > 0) {
+                fields_to_save = window.CustomizeLoader.field_settings_fields;
+                vm.field_settings_fields = window.CustomizeLoader.field_settings_fields;
             }
-        )
-        .then(response => {
+        }
 
-            if (response.variant === 'error') {
-                bookingpressShowError(vm, response);
-                return;
-            }
+        // field_position is sequenced 1..N based on current array order
+        if (Array.isArray(fields_to_save)) {
+            fields_to_save = fields_to_save.filter(field => field && typeof field === 'object');
+            fields_to_save.forEach((field, idx) => {
+                let root_pos = idx + 1;
+                field.field_position = root_pos;
+                if (field.field_options && Array.isArray(field.field_options.inner_fields)) {
+                    field.field_options.inner_fields.forEach((inner_field, in_idx) => {
+                        if (inner_field && typeof inner_field === 'object') {
+                            inner_field.innerIndex = in_idx;
+                            inner_field.field_position = parseFloat((root_pos + ((in_idx + 1) * 0.1)).toFixed(2));
+                            if (inner_field.field_options && Array.isArray(inner_field.field_options.inner_fields)) {
+                                inner_field.field_options.inner_fields.forEach((sub_inner, sub_idx) => {
+                                    if (sub_inner && typeof sub_inner === 'object') {
+                                        sub_inner.innerIndex = sub_idx;
+                                        sub_inner.field_position = parseFloat((root_pos + ((in_idx + 1) * 0.1) + ((sub_idx + 1) * 0.01)).toFixed(3));
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+            vm.field_settings_fields = fields_to_save;
+        }
 
-            if (typeof wp !== 'undefined' && wp.hooks) {
-                wp.hooks.doAction(
-                    'bookingpress_after_save_field_settings_method',
-                    vm,
-                    response
-                );
-            }
+        let post_data = {
+            field_settings: fields_to_save,
+        };
+        if (typeof vm.custom_form_language_data !== 'undefined') {
+            post_data.language_data = vm.custom_form_language_data;
+        }
+        if (typeof vm.bpa_deleted_fields !== 'undefined' && Array.isArray(vm.bpa_deleted_fields) && vm.bpa_deleted_fields.length > 0) {
+            post_data.deleted_fields = vm.bpa_deleted_fields;
+            post_data.deletedFields = vm.bpa_deleted_fields;
+        }
 
-        })
-        .catch(error => {
-            if (error && error.message) {
-                vm.$notify({
-                    title: error.title || '',
-                    message: error.message,
-                    type: 'error',
-                    customClass: 'error_notification',
-                    duration: BookingPressConfig.notification_timeout,
-                });
-            }
-        });
+        console.log('%c[BPA Custom Fields Save] "Save Changes" clicked (bpa_save_field_settings_data)', 'background: #005f73; color: #fff; font-size: 12px; font-weight: bold;');
+        console.log('[BPA Custom Fields Save] Current vm.field_settings_fields in Vue state:', JSON.parse(JSON.stringify(vm.field_settings_fields || [])));
+        console.log('[BPA Custom Fields Save] Exact post_data payload being sent to /customize/field-settings/save:', JSON.parse(JSON.stringify(post_data)));
+        console.log('[BPA Custom Fields Save] Summary of fields being sent to server:', (post_data.field_settings || []).map(f => ({
+            id: f.id,
+            label: f.label,
+            field_name: f.field_name,
+            field_position: f.field_position
+        })));
+
+        return bookingpressRestRequest('/customize/field-settings/save', post_data)
+            .then(response => {
+
+                if (response.variant === 'error') {
+                    bookingpressShowError(vm, response);
+                } else if (response && response.field_id_map) {
+                    const updateFieldIds = (fields) => {
+                        if (!Array.isArray(fields)) return;
+                        fields.forEach(field => {
+                            if (field && field.field_name && response.field_id_map[field.field_name]) {
+                                field.id = response.field_id_map[field.field_name];
+                            }
+                            if (field && field.field_options && Array.isArray(field.field_options.inner_fields)) {
+                                updateFieldIds(field.field_options.inner_fields);
+                            }
+                        });
+                    };
+                    updateFieldIds(vm.field_settings_fields);
+                    if (typeof window !== 'undefined') {
+                        if (window.app && Array.isArray(window.app.field_settings_fields)) {
+                            updateFieldIds(window.app.field_settings_fields);
+                        }
+                        if (window.CustomizeLoader && Array.isArray(window.CustomizeLoader.field_settings_fields)) {
+                            updateFieldIds(window.CustomizeLoader.field_settings_fields);
+                        }
+                    }
+                }
+
+                if (typeof wp !== 'undefined' && wp.hooks) {
+                    wp.hooks.doAction(
+                        'bookingpress_after_save_field_settings_method',
+                        vm,
+                        response
+                    );
+                }
+
+                return response;
+
+            })
+            .catch(error => {
+                if (error && error.message) {
+                    vm.$notify({
+                        title: error.title || '',
+                        message: error.message,
+                        type: 'error',
+                        customClass: 'error_notification',
+                        duration: BookingPressConfig.notification_timeout,
+                    });
+                }
+                throw error;
+            });
     },
 
     bpa_save_field_my_booking_data() {
@@ -227,6 +306,18 @@ export const customizePageMethods = {
                     if (rest_response.variant === 'error') {
                         bookingpressShowError(vm, rest_response);
                         return;
+                    }
+
+                    if (Array.isArray(vm.bpa_deleted_fields)) {
+                        vm.bpa_deleted_fields = [];
+                    }
+                    if (typeof window !== 'undefined') {
+                        if (window.app && Array.isArray(window.app.bpa_deleted_fields)) {
+                            window.app.bpa_deleted_fields = [];
+                        }
+                        if (window.CustomizeLoader && Array.isArray(window.CustomizeLoader.bpa_deleted_fields)) {
+                            window.CustomizeLoader.bpa_deleted_fields = [];
+                        }
                     }
 
                     vm.$notify({
@@ -464,36 +555,92 @@ export const customizePageMethods = {
                 }
             });
     },
-
-    endDragposistion() {
+    // Customize Fields Settings 
+    bookingpress_load_field_settings_data() {
         const vm = this;
+        vm.is_display_loader = '1';
 
-        if (
-            typeof vm.drag_data.field_pos_update_id === 'undefined' ||
-            typeof vm.drag_data.old_index === 'undefined' ||
-            typeof vm.drag_data.new_index === 'undefined'
-        ) {
+        return bookingpressRestRequest('/customize/field-settings')
+            .then(response => {
+                vm.is_display_loader = '0';
+
+                if (response.variant === 'error') {
+                    bookingpressShowError(vm, response);
+                    return;
+                }
+
+                vm.field_settings_fields = response.field_settings || [];
+
+                if (typeof window !== 'undefined') {
+                    if (window.app && window.app !== vm) {
+                        window.app.field_settings_fields = vm.field_settings_fields;
+                    }
+                    if (window.CustomizeLoader && window.CustomizeLoader !== vm) {
+                        window.CustomizeLoader.field_settings_fields = vm.field_settings_fields;
+                    }
+                }
+
+                if (typeof wp !== 'undefined' && wp.hooks) {
+                    wp.hooks.doAction('bookingpress_after_load_field_settings_data', vm, response);
+                }
+
+                setTimeout(function() {
+                    if (typeof BPASortable !== 'undefined') {
+                        new BPASortable();
+                    }
+                }, 300);
+            })
+            .catch(error => {
+                vm.is_display_loader = '0';
+                if (error && error.message) {
+                    vm.$notify({
+                        title: error.title || 'Error',
+                        message: error.message,
+                        type: 'error',
+                        customClass: 'error_notification',
+                        duration: BookingPressConfig.notification_timeout
+                    });
+                }
+            });
+    },
+
+    endDragposistion(evt) {
+        const vm = this;
+        vm.dragging = false;
+
+        let old_index = (evt && typeof evt.oldIndex !== 'undefined') ? evt.oldIndex : (vm.drag_data ? vm.drag_data.old_index : undefined);
+        let new_index = (evt && typeof evt.newIndex !== 'undefined') ? evt.newIndex : (vm.drag_data ? vm.drag_data.new_index : undefined);
+        let field_pos_update_id = (evt && evt.item && evt.item.getAttribute) ? evt.item.getAttribute('data-id') : (vm.drag_data ? vm.drag_data.field_pos_update_id : undefined);
+
+        if (Array.isArray(vm.field_settings_fields)) {
+            vm.field_settings_fields.forEach((field, index) => {
+                if (field) {
+                    field.field_position = index + 1;
+                }
+            });
+        }
+
+        if (typeof window !== 'undefined' && window.app && window.app !== vm) {
+            window.app.field_settings_fields = vm.field_settings_fields;
+        }
+
+        if (typeof old_index === 'undefined' || typeof new_index === 'undefined' || old_index === new_index) {
             return;
         }
 
         const postData = {
-            field_pos_update_id: vm.drag_data.field_pos_update_id,
-            old_index: vm.drag_data.old_index,
-            new_index: vm.drag_data.new_index,
+            field_pos_update_id: field_pos_update_id,
+            old_index: old_index,
+            new_index: new_index,
         };
 
-        bookingpressRestRequest( '/customize/field-position',postData)
+        bookingpressRestRequest( '/customize/field-position', postData)
         .then(response => {
-
             if (response.variant === 'error') {
                 bookingpressShowError(vm, response);
             }
-
-            vm.bookingpress_load_field_settings_data();
-
         })
         .catch(error => {
-
             vm.$notify({
                 title: 'Error',
                 message: 'Something went wrong..',
@@ -501,7 +648,6 @@ export const customizePageMethods = {
                 customClass: 'error_notification',
                 duration: BookingPressConfig.notification_timeout
             });
-
         });
     },
 
@@ -513,7 +659,7 @@ export const customizePageMethods = {
             !e.draggedContext ||
             !e.draggedContext.element
         ) {
-            return;
+            return true;
         }
 
         const field_pos_update_id = e.draggedContext.element.id;
@@ -525,14 +671,18 @@ export const customizePageMethods = {
             old_index: old_index,
             new_index: new_index,
         };
+
+        return true;
     },
 
-    closeFieldSettings() {
+    closeFieldSettings(field_name) {
         const field_settings = this.field_settings_fields;
 
-        field_settings.forEach(item => {
-            item.is_edit = 0;
-        });
+        if (field_settings && Array.isArray(field_settings)) {
+            field_settings.forEach(item => {
+                item.is_edit = false;
+            });
+        }
     },
 
     open_custom_css_modal() {

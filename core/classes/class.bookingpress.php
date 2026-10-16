@@ -174,7 +174,7 @@ if (! class_exists('BookingPress') ) {
 
         }
 
-        function bookingpress_download_wizard_product_func(){
+        function bookingpress_download_wizard_product_func( $is_api = false ){
 
             
             global $wpdb, $BookingPress, $bookingpress_growth_tools;
@@ -187,6 +187,9 @@ if (! class_exists('BookingPress') ) {
                 $final_response['variant']        = 'error';
                 $final_response['title']          = esc_html__('Error', 'bookingpress-appointment-booking');
                 $final_response['msg']            = esc_html__('Sorry, Your request can not be processed due to security reason.', 'bookingpress-appointment-booking');
+                if ( $is_api ) {
+                    return $final_response;
+                }
                 echo wp_json_encode($final_response);
                 exit;
             }
@@ -333,6 +336,9 @@ if (! class_exists('BookingPress') ) {
 			$final_response['title']          = esc_html__('Success', 'bookingpress-appointment-booking');
 			$final_response['msg']            = esc_html__('Wizard finished successfully', 'bookingpress-appointment-booking');
 
+			if ( $is_api ) {
+				return $final_response;
+			}
 			echo wp_json_encode($final_response);
             die;
         }
@@ -408,7 +414,7 @@ if (! class_exists('BookingPress') ) {
                     $details = wp_remote_retrieve_body( $fetch_dates );
                     $sale_details = json_decode( $details, true );
 
-                    set_transient( 'bookingpress_retrieve_sale_details', $sale_details, ( HOUR_IN_SECONDS * 12 ) );
+                    set_transient( 'bookingpress_retrieve_sale_details', $sale_details, ( DAY_IN_SECONDS ) );
                 }
             } else {
                 $sale_details = $fetch_sale_detais;
@@ -434,7 +440,7 @@ if (! class_exists('BookingPress') ) {
                     $details = wp_remote_retrieve_body( $fetch_dates );
                     $date_details = json_decode( $details, true );
 
-                    set_transient( 'bookingpress_retrieve_bf_sale_dates', $date_details, ( HOUR_IN_SECONDS * 12 ) );
+                    set_transient( 'bookingpress_retrieve_bf_sale_dates', $date_details, ( DAY_IN_SECONDS ) );
                 }
             } else {
                 $date_details = $fetch_dates_transient;
@@ -464,7 +470,7 @@ if (! class_exists('BookingPress') ) {
                     $details = wp_remote_retrieve_body( $fetch_dates );
                     $date_details = json_decode( $details, true );
 
-                    set_transient( 'bookingpress_retrieve_bf_sale_dates', $date_details, ( HOUR_IN_SECONDS * 12 ) );
+                    set_transient( 'bookingpress_retrieve_bf_sale_dates', $date_details, ( DAY_IN_SECONDS ) );
                 }
             } else {
                 $date_details = $fetch_dates_transient;
@@ -504,7 +510,7 @@ if (! class_exists('BookingPress') ) {
          *
          * @return void
          */
-        function bookingpress_skip_wizard_func(){
+        function bookingpress_skip_wizard_func( $is_api = false ){
 			global $wpdb, $BookingPress;
 			$response              = array();
             $wpnonce               = isset($_REQUEST['_wpnonce']) ? sanitize_text_field($_REQUEST['_wpnonce']) : '';
@@ -513,6 +519,9 @@ if (! class_exists('BookingPress') ) {
                 $response['variant']        = 'error';
                 $response['title']          = esc_html__('Error', 'bookingpress-appointment-booking');
                 $response['msg']            = esc_html__('Sorry, Your request can not be processed due to security reason.', 'bookingpress-appointment-booking');
+                if ( $is_api ) {
+                    return $response;
+                }
                 echo wp_json_encode($response);
                 exit;
             }
@@ -523,6 +532,9 @@ if (! class_exists('BookingPress') ) {
 			$response['title']          = esc_html__('Success', 'bookingpress-appointment-booking');
 			$response['msg']            = esc_html__('Wizard skipped successfully', 'bookingpress-appointment-booking');
 
+			if ( $is_api ) {
+				return $response;
+			}
 			echo wp_json_encode($response);
 			exit;
 		}
@@ -532,7 +544,7 @@ if (! class_exists('BookingPress') ) {
          *
          * @return void
          */
-        function bookingpress_save_lite_wizard_settings_func(){
+        function bookingpress_save_lite_wizard_settings_func( $is_api = false ){
             global $wpdb, $BookingPress, $tbl_bookingpress_default_workhours, $tbl_bookingpress_services, $tbl_bookingpress_customize_settings;
 			
 			$response              = array();
@@ -542,6 +554,9 @@ if (! class_exists('BookingPress') ) {
                 $response['variant']        = 'error';
                 $response['title']          = esc_html__('Error', 'bookingpress-appointment-booking');
                 $response['msg']            = esc_html__('Sorry, Your request can not be processed due to security reason.', 'bookingpress-appointment-booking');
+                if ( $is_api ) {
+                    return $response;
+                }
                 echo wp_json_encode($response);
                 exit;
             }
@@ -806,6 +821,9 @@ if (! class_exists('BookingPress') ) {
                 $response['msg']            = esc_html__('Data saved successfully', 'bookingpress-appointment-booking');
 			}
 			
+			if ( $is_api ) {
+				return $response;
+			}
 			echo wp_json_encode($response);
 			exit;
         }
@@ -2241,7 +2259,7 @@ if (! class_exists('BookingPress') ) {
         {
             global $bookingpress_version;
             $bookingpress_old_version = get_option('bookingpress_version', true);
-            if (version_compare($bookingpress_old_version, '1.6.7', '<') ) {
+            if (version_compare($bookingpress_old_version, '1.6.8', '<') ) {
                 $bookingpress_load_upgrade_file = BOOKINGPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $bookingpress_load_upgrade_file;
                 $this->bookingpress_send_anonymous_data_cron();
@@ -2330,7 +2348,8 @@ if (! class_exists('BookingPress') ) {
                     'dashboard',
                     'addons',
                     'growth_tools',
-                    'settings',
+                    'settings',         
+                    'appointments'           
                     //'customize',
                 ];
 
@@ -2340,10 +2359,6 @@ if (! class_exists('BookingPress') ) {
 
                 if (!function_exists('is_plugin_active')) {
                     include_once ABSPATH . 'wp-admin/includes/plugin.php';
-                }
-
-                if( ! is_plugin_active( 'bookingpress-appointment-booking-pro/bookingpress-appointment-booking-pro.php' ) ){
-                    $excluded_slugs[] = 'appointments';
                 }
 
                 $excluded_slugs = apply_filters('bookingpress_additional_module_exculde', $excluded_slugs );
@@ -4902,7 +4917,7 @@ if (! class_exists('BookingPress') ) {
             $bookingpress_is_wizard_complete = get_option('bookingpress_lite_wizard_complete');
 
             if(empty($bookingpress_is_wizard_complete) || $bookingpress_is_wizard_complete == 0){
-                $bookingpress_menu_hook = add_menu_page(esc_html__('BookingPress', 'bookingpress-appointment-booking'), esc_html__('BookingPress', 'bookingpress-appointment-booking'), 'bookingpress', $bookingpress_slugs->bookingpress_lite_wizard, array( $this, 'route' ), BOOKINGPRESS_IMAGES_URL . '/bookingpress_menu_icon.png', $place);
+                $bookingpress_menu_hook = add_menu_page(esc_html__('BookingPress', 'bookingpress-appointment-booking'), esc_html__('BookingPress', 'bookingpress-appointment-booking'), 'bookingpress', $bookingpress_slugs->bookingpress_lite_wizard, [ \BookingPress\admin\Wizard::class, 'render_page' ], BOOKINGPRESS_IMAGES_URL . '/bookingpress_menu_icon.png', $place);
             }else{
                 $bookingpress_menu_hook = add_menu_page(esc_html__('BookingPress', 'bookingpress-appointment-booking'), esc_html__('BookingPress', 'bookingpress-appointment-booking'), 'bookingpress', $bookingpress_slugs->bookingpress, [ \BookingPress\admin\Dashboard::class, 'render_page' ], BOOKINGPRESS_IMAGES_URL . '/bookingpress_menu_icon.png', $place);
             }
@@ -4913,20 +4928,22 @@ if (! class_exists('BookingPress') ) {
             
             add_submenu_page($bookingpress_slugs->bookingpress, esc_html__('Calendar', 'bookingpress-appointment-booking'), esc_html__('Calendar', 'bookingpress-appointment-booking'), 'bookingpress_calendar', $bookingpress_slugs->bookingpress_calendar, [ $class_instance, 'render_page' ] );
 
-            if( !is_plugin_active( 'bookingpress-appointment-booking-pro/bookingpress-appointment-booking-pro.php') ){
+            /* if( !is_plugin_active( 'bookingpress-appointment-booking-pro/bookingpress-appointment-booking-pro.php') ){ */
                 add_submenu_page($bookingpress_slugs->bookingpress, esc_html__('Appointments', 'bookingpress-appointment-booking'), esc_html__('Appointments', 'bookingpress-appointment-booking'), 'bookingpress_appointments', $bookingpress_slugs->bookingpress_appointments, [ \BookingPress\admin\Appointments::class, 'render_page' ] );
-            }
+            /* } */
 
-            add_submenu_page($bookingpress_slugs->bookingpress, esc_html__('Payments', 'bookingpress-appointment-booking'), esc_html__('Payments', 'bookingpress-appointment-booking'), 'bookingpress_payments', $bookingpress_slugs->bookingpress_payments, array( $this, 'route' ));
+            $payments_class_instance = ( class_exists( '\BookingPressPro\admin\Payments' ) ) ? \BookingPressPro\admin\Payments::class : \BookingPress\admin\Payments::class;
+            add_submenu_page($bookingpress_slugs->bookingpress, esc_html__('Payments', 'bookingpress-appointment-booking'), esc_html__('Payments', 'bookingpress-appointment-booking'), 'bookingpress_payments', $bookingpress_slugs->bookingpress_payments, [ $payments_class_instance, 'render_page' ] );
 
             add_submenu_page($bookingpress_slugs->bookingpress, esc_html__('Customers', 'bookingpress-appointment-booking'), esc_html__('Customers', 'bookingpress-appointment-booking'), 'bookingpress_customers', $bookingpress_slugs->bookingpress_customers, [ \BookingPress\admin\Customer::class, 'render_page'] );
 
-            add_submenu_page($bookingpress_slugs->bookingpress, esc_html__('Services', 'bookingpress-appointment-booking'), esc_html__('Services', 'bookingpress-appointment-booking'), 'bookingpress_services', $bookingpress_slugs->bookingpress_services, array( $this, 'route' ));
+            $services_class_instance = ( class_exists( '\BookingPressPro\admin\Services' ) ) ? \BookingPressPro\admin\Services::class : \BookingPress\admin\Services::class;
+            add_submenu_page($bookingpress_slugs->bookingpress, esc_html__('Services', 'bookingpress-appointment-booking'), esc_html__('Services', 'bookingpress-appointment-booking'), 'bookingpress_services', $bookingpress_slugs->bookingpress_services, [ $services_class_instance, 'render_page' ]);
 
             $notifications_class_instance = ( class_exists( '\BookingPressPro\admin\Notifications' ) ) ? \BookingPressPro\admin\Notifications::class : \BookingPress\admin\Notifications::class;
             add_submenu_page($bookingpress_slugs->bookingpress, esc_html__('Notifications', 'bookingpress-appointment-booking'), esc_html__('Notifications', 'bookingpress-appointment-booking'), 'bookingpress_notifications', $bookingpress_slugs->bookingpress_notifications, [ $notifications_class_instance, 'render_page' ]);
 
-            $customie_class_callback = ( !empty( $_GET['page'] ) && 'bookingpress_customize' == $_GET['page'] && (empty( $_GET['action'] ) || $_GET['action'] != 'form_fields') ) ? [ \BookingPress\admin\Customize::class, 'render_page' ] : [ $this, 'route' ];
+            $customie_class_callback = [ \BookingPress\admin\Customize::class, 'render_page' ];
 
             add_submenu_page($bookingpress_slugs->bookingpress, esc_html__('Customize', 'bookingpress-appointment-booking'), esc_html__('Customize', 'bookingpress-appointment-booking'), 'bookingpress_customize', $bookingpress_slugs->bookingpress_customize,  $customie_class_callback );
 
@@ -5088,6 +5105,8 @@ if (! class_exists('BookingPress') ) {
                 'bookingpress_addons',
                 'bookingpress_growth_tools',
                 'bookingpress_settings',
+                'bookingpress_services',
+                'bookingpress_appointments',
             ];
 
             if( ( !empty( $_GET['page'] ) && 'bookingpress_customize' == $_GET['page'] && (empty( $_GET['action'] ) || $_GET['action'] != 'form_fields') ) ){
@@ -5098,10 +5117,6 @@ if (! class_exists('BookingPress') ) {
                 include_once ABSPATH . 'wp-admin/includes/plugin.php';
             }
 
-            if( !is_plugin_active( 'bookingpress-appointment-booking-pro/bookingpress-appointment-booking-pro.php' ) ){
-                $excluded_slugs[] = 'bookingpress_appointments';
-            }
-            
             /* Add CSS file only for plugin pages. */
             if (isset($_REQUEST['page']) && !in_array( $_REQUEST['page'], $excluded_slugs ) && in_array(sanitize_text_field($_REQUEST['page']), (array) $bookingpress_slugs) ) {
                 wp_enqueue_style('bookingpress_element_css');
@@ -5336,7 +5351,9 @@ if (! class_exists('BookingPress') ) {
 
             $bookingress_load_js_css_all_pages = $this->bookingpress_get_settings('load_js_css_all_pages', 'general_setting');
 
-            if ($this->bookingpress_is_front_page() || ( $bookingress_load_js_css_all_pages == 'true' ) || ( $force_enqueue == 1 ) ) {
+            if ( $prevent_legacy_js == false &&  ( $this->bookingpress_is_front_page() || ( $bookingress_load_js_css_all_pages == 'true' ) || ( $force_enqueue == 1 ) ) ) {
+
+                //error_log( print_r( wp_debug_backtrace_summary( null, 0, false ), true ));
                 $get_already_loaded_vue_setting_val = $this->bookingpress_get_settings('use_already_loaded_vue', 'general_setting');
                 if (! $get_already_loaded_vue_setting_val || $get_already_loaded_vue_setting_val == 'false' ) {
                     wp_enqueue_script('bookingpress_vue_js');
@@ -5449,6 +5466,8 @@ if (! class_exists('BookingPress') ) {
                 'bookingpress_addons',
                 'bookingpress_growth_tools',
                 'bookingpress_settings',
+                'bookingpress_services',
+                'bookingpress_appointments',
             ];
 
             if( ( !empty( $_GET['page'] ) && 'bookingpress_customize' == $_GET['page'] && (empty( $_GET['action'] ) || $_GET['action'] != 'form_fields') ) ){
@@ -5461,9 +5480,9 @@ if (! class_exists('BookingPress') ) {
                 include_once ABSPATH . 'wp-admin/includes/plugin.php';
             }
 
-            if( !is_plugin_active( 'bookingpress-appointment-booking-pro/bookingpress-appointment-booking-pro.php' ) ){
+            /* if( !is_plugin_active( 'bookingpress-appointment-booking-pro/bookingpress-appointment-booking-pro.php' ) ){
                 $excluded_slugs[] = 'bookingpress_appointments';
-            }
+            } */
 
             if (isset($_REQUEST['page']) && !in_array( $_REQUEST['page'], $excluded_slugs ) && in_array(sanitize_text_field($_REQUEST['page']), (array) $bookingpress_slugs) ) {
 
@@ -5483,6 +5502,8 @@ if (! class_exists('BookingPress') ) {
                 'bookingpress_addons',
                 'bookingpress_growth_tools',
                 'bookingpress_settings',
+		        'bookingpress_services',
+                'bookingpress_appointments',
                 //'bookingpress_customize',
             ];
             if( ( !empty( $_GET['page'] ) && 'bookingpress_customize' == $_GET['page'] && (empty( $_GET['action'] ) || $_GET['action'] != 'form_fields') ) ){
@@ -9773,41 +9794,20 @@ if (! class_exists('BookingPress') ) {
                         $inactivated_modules[] = $value;
                     }                    
                 }
-                
-                $bookingpress_addon_url = 'https://bookingpressplugin.com/bpa_misc/addons_list_v2.php';
-                $bookingpress_addons_res = wp_remote_post(
-                    $bookingpress_addon_url,
-                    array(
-                        'method'    => 'POST',
-                        'timeout'   => 45,
-                        'sslverify' => false,
-                        'body'      => array(
-                            'bookingpress_addon_list' => 1,
-                        ),
-                    )
-                );
+
                 $active_addon_list = $inactive_addon_list =  array();
-                if ( ! is_wp_error( $bookingpress_addons_res ) ) {
-                    $bookingpress_body_res = base64_decode( $bookingpress_addons_res['body'] );
-                    if ( ! empty( $bookingpress_body_res ) ) {
-                        $bookingpress_body_res = json_decode( $bookingpress_body_res, true );
-                        foreach ( $bookingpress_body_res as $bookingpress_body_key => $bookingpress_body_data_arr ) {  
-                            foreach ( $bookingpress_body_data_arr as $bookingpress_body_data_key => $bookingpress_body_val ) {
-                                if(!empty($bookingpress_body_val['addon_installer'])) {
-                                    if(file_exists( WP_PLUGIN_DIR . '/'.$bookingpress_body_val['addon_installer'])) {        
-                                        $is_addon_active = is_plugin_active($bookingpress_body_val['addon_installer']);
-                                        if($is_addon_active) {
-                                            $active_addon_list[$bookingpress_body_val['addon_name']] = $bookingpress_body_val['addon_version'];
-                                        } else {
-                                            $inactive_addon_list[$bookingpress_body_val['addon_name']] = $bookingpress_body_val['addon_version'];
-                                        } 
-                                    }
-                                }
-                            }
+                $bookingpress_body_res = \BookingPress\api\AddonsRoutes::get_bookingpress_addon_list();
+
+                if( is_array( $bookingpress_body_res ) ){
+                    foreach( $bookingpress_body_res as $bvav_installer => $bvav_details ){
+                        if( is_plugin_active( $bvav_installer ) ){
+                            $active_addon_list[ $bvav_details['Name'] ] = $bvav_details['Version'];
+                        } else {
+                            $inactive_addon_list[ $bvav_details['Name'] ] = $bvav_details['Version'];
                         }
                     }
-                } 
-                
+                }
+
                 $bookingpress_total_services = $wpdb->get_var( "SELECT count(bookingpress_service_id) FROM {$tbl_bookingpress_services}"); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $tbl_bookingpress_services is a table name. false alarm 
 
                 $bookingpress_total_customers = $wpdb->get_var( "SELECT count(bookingpress_customer_id) FROM {$tbl_bookingpress_customers}"); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $bookingpress_customers is a table name. false alarm 

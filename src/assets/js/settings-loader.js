@@ -171,7 +171,7 @@ const initSettingsWrapper = () => {
                     vm.isloading = false;
                     vm.toggleBusy();
 
-                    wp.hooks.doAction( 'bookingpress_settings_response', vm, rest_response );
+                    wp.hooks.doAction( 'bookingpress_settings_response', vm, rest_response, form_name, setting_type );
                 })
                 .catch(error => {
                     vm.is_disabled = false;
@@ -1177,9 +1177,19 @@ const initSettingsWrapper = () => {
                 return response.json();
             })
             .then(function(data) {
+                let totalItems = parseInt(data.total || 0);
+                let items = data.items || [];
+
+                if (items.length === 0 && totalItems > 0 && vm.currentPage > 1) {
+                    let maxPage = Math.ceil(totalItems / parseInt(vm.perPage));
+                    vm.currentPage = maxPage > 0 ? maxPage : 1;
+                    vm.bookingpess_view_log(log_type, 'pagination');
+                    return;
+                }
+
                 vm.is_display_loader_view = '0';
-                vm.items = data.items;
-                vm.totalItems = data.total;
+                vm.items = items;
+                vm.totalItems = totalItems;
             })
             .catch(function(error) {
                 console.log(error);

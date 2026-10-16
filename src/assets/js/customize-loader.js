@@ -120,11 +120,23 @@ const initCustomizeWrapper = () => {
                 package_booking_form_settings: moduleData.package_booking_form_settings || {},
                 waiting_list_container_data: moduleData.waiting_list_container_data || {},
                 recurring_appointment_container_data: moduleData.recurring_appointment_container_data || {},
+                customer_fields: moduleData.customer_fields || [],
+                bookingpress_custom_field_active_tab: moduleData.bookingpress_custom_field_active_tab || 'form',
+                bookingpress_preset_fields: moduleData.bookingpress_preset_fields || [],
+                bookingpress_form_fields_data: moduleData.bookingpress_form_fields_data || [],
+                bpa_sortable_data: moduleData.bpa_sortable_data || [],
+                bpa_deleted_fields: moduleData.bpa_deleted_fields || [],
+                bpa_password_field_exists: moduleData.bpa_password_field_exists || '',
+                bookingpress_service_data: moduleData.bookingpress_service_data || [],
+                bookingpress_staff_data: moduleData.bookingpress_staff_data || [],
+                bookingpress_location_data: moduleData.bookingpress_location_data || [],
+                is_bring_anyone_activated: moduleData.is_bring_anyone_activated || 0,
             };
         },
 
         mounted() {
             const vm = this;
+            window.app = vm;
             if (window.screen.width >= 1200) {
                 vm.current_screen_size = 'desktop';
             } else if (
@@ -207,5 +219,6 @@ const initCustomizeWrapper = () => {
 
     if (customizeRoot) {
         window.CustomizeLoader = BookingPressCustomize.mount(customizeRoot);
+        window.app = window.CustomizeLoader;
     }
 };

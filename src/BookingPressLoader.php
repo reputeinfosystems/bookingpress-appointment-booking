@@ -26,9 +26,15 @@ use BookingPress\admin\Customer;
 use BookingPress\admin\Customize;
 use BookingPress\admin\GrowthTools;
 use BookingPress\admin\Settings;
+use BookingPress\admin\Services;
+use BookingPress\api\ServicesRoutes;
 use BookingPress\admin\Notifications;
+use BookingPress\admin\Wizard;
 use BookingPress\api\NotificationRoutes;
 use BookingPress\api\CustomizeFormRoutes;
+use BookingPress\api\WizardRoutes;
+use BookingPress\admin\Payments;
+use BookingPress\api\PaymentRoutes;
 
 use BookingPress\frontend\BookingForm;
 
@@ -72,10 +78,8 @@ class BookingPressLoader{
             \BookingPress\admin\AdminMenu::init();
         }
 
-        if( !is_plugin_active( 'bookingpress-appointment-booking-pro/bookingpress-appointment-booking-pro.php' ) ){
-            Appointments::init();
-            new AppointmentRoutes();
-        }
+        Appointments::init();
+        new AppointmentRoutes();        
 
         Header::init();
         Calendar::init();
@@ -85,10 +89,14 @@ class BookingPressLoader{
         Customize::init();
         GrowthTools::init();
         Settings::init();
+        Services::init();
         Notifications::init();
+        Wizard::init();
+        Payments::init();
         new CalendarRoutes();
         new CustomerRoutes();
         new TimeRoutes();
+        new WizardRoutes();
         
         new DashboardRoutes();
         new AddonsRoutes();
@@ -97,8 +105,10 @@ class BookingPressLoader{
         new GrowthToolsRoutes();
         new SettingsRoutes();
         new HelpDrawerRoutes();
+        new ServicesRoutes();
         new NotificationRoutes();
-	
+        new PaymentRoutes();
+
 	    BookingForm::init();
         
     }

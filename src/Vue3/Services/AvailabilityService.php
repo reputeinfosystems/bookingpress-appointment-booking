@@ -871,7 +871,19 @@ class AvailabilityService implements AvailabilityServiceInterface {
 			}
 		);
 
+		// Explicit starts (Hooks::FILTER_SLOT_STARTS): walk the window minute by
+		// minute and evaluate only the requested starts. Inert by default (null).
+		$explicit_starts = apply_filters( Hooks::FILTER_SLOT_STARTS, null, (int) $service_id, (string) $date, $context );
+		$explicit_set    = null;
+		if ( is_array( $explicit_starts ) ) {
+			$explicit_set = array_fill_keys( array_map( 'intval', $explicit_starts ), true );
+			$step_min     = 1;
+		}
+
 		for ( $ts = $start_ts; $ts + $duration_min * 60 <= $end_ts; $ts += $step_min * 60 ) {
+			if ( null !== $explicit_set && ! isset( $explicit_set[ $ts ] ) ) {
+				continue;
+			}
 			$slot_start  = gmdate( 'H:i', $ts );
 			$slot_end_ts = $ts + $duration_min * 60;
 			$slot_end    = gmdate( 'H:i', $slot_end_ts );

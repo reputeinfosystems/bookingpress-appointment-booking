@@ -116,11 +116,21 @@ function createMyBookingsComponent(cfg) {
                             </div>
                           </div>
                           <!-- Show extras for single-service bookings only. -->
-                          <div class="bpa-vac-bd__extras bpa-front-mb-v3-extras" v-if="hasExtras(scope.row) && !isMultiService(scope.row)">
+                          <!-- Legacy markup (bpa-vac-extra__row / bpa-ec--*): name, qty and
+                               duration on the left, total on the same row at the right. -->
+                          <div class="bpa-ma-vac--extras bpa-front-mb-v3-extras" v-if="hasExtras(scope.row) && !isMultiService(scope.row)">
                             <div class="bpa-ma-vac-sec-title">{{ strings.extras || 'Service Extras' }}:</div>
-                            <div class="bpa-vac-pd__item" v-for="(ex, exi) in scope.row.extras_details" :key="exi">
-                              <div class="bpa-vac-pd__label">{{ ex.extra_service_name }} <span v-if="ex.extra_service_selected_qty">x {{ ex.extra_service_selected_qty }}</span></div>
-                              <div class="bpa-vac-pd__val">{{ ex.extra_service_total_price_with_currency }}</div>
+                            <div class="bpa-vac-extra__row" v-for="(ex, exi) in scope.row.extras_details" :key="exi">
+                              <div class="bpa-vac__extra__col">
+                                <div class="bpa-ec--title" :aria-label="ex.extra_service_name + ' ' + ex.extra_service_selected_qty + ' ' + (ex.extra_service_duration || '')">
+                                  {{ ex.extra_service_name }}
+                                  <div class="bpa-ec__qty" v-if="ex.extra_service_selected_qty">x {{ ex.extra_service_selected_qty }}</div>
+                                  <div class="bpa-ec__duration" v-if="ex.extra_service_duration">({{ ex.extra_service_duration }})</div>
+                                </div>
+                              </div>
+                              <div class="bpa-vac__extra__col">
+                                <div class="bpa-ec--price" :aria-label="ex.extra_service_total_price_with_currency">{{ ex.extra_service_total_price_with_currency }}</div>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -665,6 +675,15 @@ function createMyBookingsComponent(cfg) {
       // (bookingpress_modify_my_appointment_data): is_multi_service_booking,
       // bookingpress_multiple_service_name/_extra_name/_total and
       // appointment_details_arr. Absent on Lite / non-MS rows → gates false.
+      // Legacy parity: Pro's `bookingpress_modify_my_appointments_data` sets
+      // `formatted_time` to the booked length (end − start, e.g. "1 Hour 30 Mins"
+      // with extras); fall back to the stored service duration otherwise.
+      durationText(row) {
+        if (row && row.display_formatted_time && row.formatted_time) {
+          return row.formatted_time;
+        }
+        return ((row && row.bookingpress_service_duration_val) || '') + ' ' + ((row && row.bookingpress_service_duration_label) || '');
+      },
       isMultiService(row) {
         return !!row && String(row.is_multi_service_booking) === '1';
       },
@@ -1098,8 +1117,18 @@ function createMyBookingsComponent(cfg) {
               this.totalRecords = 0;
               return;
             }
-            this.items = Array.isArray(data && data.items) ? data.items : [];
-            this.totalRecords = parseInt((data && data.total_records) || 0, 10) || 0;
+            let items = Array.isArray(data && data.items) ? data.items : [];
+            let totalRecords = parseInt((data && data.total_records) || 0, 10) || 0;
+
+            if (items.length === 0 && totalRecords > 0 && this.currentPage > 1) {
+              let maxPage = Math.ceil(totalRecords / parseInt(this.perPage));
+              this.currentPage = maxPage > 0 ? maxPage : 1;
+              this.loadAppointments(this.currentPage);
+              return;
+            }
+
+            this.items = items;
+            this.totalRecords = totalRecords;
             const cd = (data && data.customer_details) || {};
             const serverAvatarUrl = cd.bookingpress_avatar_url || '';
             this.customer = {
@@ -1315,7 +1344,7 @@ function createMyBookingsComponent(cfg) {
                           <div class="bpa-mob--service-title">{{ isMultiService(scope.row) && scope.row.bookingpress_multiple_service_name ? scope.row.bookingpress_multiple_service_name : scope.row.bookingpress_service_name }}</div>
                           <div class="bpa-mob--date-time-details">
                             <div class="bpa-mob-dtd__date-val">{{ scope.row.bookingpress_appointment_formatted_date }} {{ scope.row.bookingpress_appointment_formatted_start_time }}</div>
-                            <div class="bpa-mob-dtd__time-val"><bp-ui-icon class="bp-icon-clock"></bp-ui-icon> {{ scope.row.bookingpress_service_duration_val }} {{ scope.row.bookingpress_service_duration_label }}</div>
+                            <div class="bpa-mob-dtd__time-val"><bp-ui-icon class="bp-icon-clock"></bp-ui-icon> {{ durationText(scope.row) }}</div>
                           </div>
                         </div>
                       </div>
@@ -1353,7 +1382,7 @@ function createMyBookingsComponent(cfg) {
                     <template #default="scope">
                       <div class="bpa-ma-date-time-details">
                         <div class="bpa-ma-dt__date-val">{{ scope.row.bookingpress_appointment_formatted_date }} {{ scope.row.bookingpress_appointment_formatted_start_time }}</div>
-                        <div class="bpa-ma-dt__time-val"><bp-ui-icon class="bp-icon-clock"></bp-ui-icon>{{ scope.row.bookingpress_service_duration_val }} {{ scope.row.bookingpress_service_duration_label }}</div>
+                        <div class="bpa-ma-dt__time-val"><bp-ui-icon class="bp-icon-clock"></bp-ui-icon>{{ durationText(scope.row) }}</div>
                       </div>
                     </template>
                   </bp-ui-table-column>

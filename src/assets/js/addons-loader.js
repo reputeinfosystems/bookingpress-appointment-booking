@@ -48,11 +48,11 @@ const initAddonsWrapper = () => {
             })
             .then(res => res.json())
             .then((response) => {
-                vm.bpa_lite_addons_new.features = response.addons_response.features || {};
-                vm.bpa_lite_addons_new.payment_gateways = response.addons_response.payment_gateways || {};
-                vm.bpa_lite_addons_new.integrations = response.addons_response.integrations || {};
+                vm.bpa_lite_addons_new.features = response.data.addons_response.features || {};
+                vm.bpa_lite_addons_new.payment_gateways = response.data.addons_response.payment_gateways || {};
+                vm.bpa_lite_addons_new.integrations = response.data.addons_response.integrations || {};
                 vm.is_display_loader = '0';
-                vm.appendAddonCss(response.css || '');                 
+                vm.appendAddonCss(response.data.css || '');                
             })
             .catch((err) => {
                 vm.is_display_loader = '0';

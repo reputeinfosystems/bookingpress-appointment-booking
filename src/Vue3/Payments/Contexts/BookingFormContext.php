@@ -348,6 +348,11 @@ class BookingFormContext implements PaymentContextInterface {
 			$currency
 		);
 
+		$payment_group = (array) apply_filters( Hooks::FILTER_SUBMIT_PAYMENT_GROUP, array( 'mode' => 'per_booking' ), array(
+			'entry'           => $entry,
+			'payment_payload' => array(),
+		) );
+
 		return new PaymentReference(
 			array(
 				'context_id'   => self::ID,
@@ -365,7 +370,7 @@ class BookingFormContext implements PaymentContextInterface {
 					'last_name'  => isset( $entry['bookingpress_customer_lastname'] ) ? (string) $entry['bookingpress_customer_lastname'] : '',
 					'phone'      => isset( $entry['bookingpress_customer_phone'] ) ? (string) $entry['bookingpress_customer_phone'] : '',
 				),
-				'group_mode'   => has_filter( Hooks::FILTER_SUBMIT_PAYMENT_GROUP )
+				'group_mode'   => ( isset( $payment_group['mode'] ) && 'shared' === (string) $payment_group['mode'] )
 					? PaymentReference::GROUP_SHARED
 					: PaymentReference::GROUP_PER_BOOKING,
 				// Server-side only; never in to_client_array(). Gateways that

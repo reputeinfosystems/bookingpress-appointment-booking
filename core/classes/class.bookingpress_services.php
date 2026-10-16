@@ -114,9 +114,10 @@ if (! class_exists('bookingpress_services') ) {
                 'categoryRules'              => array(
                     'service_category_name' => array(
                         array(
-                            'required' => true,
-                            'message'  => esc_html__('Please enter category name', 'bookingpress-appointment-booking'),
-                            'trigger'  => 'blur',
+                            'required'   => true,
+                            'message'    => esc_html__('Please enter category name', 'bookingpress-appointment-booking'),
+                            'trigger'    => 'blur',
+                            'whitespace' => true,
                         ),
                     ),
                 ),
@@ -287,7 +288,12 @@ if (! class_exists('bookingpress_services') ) {
          */
         function bookingpress_service_dynamic_view_load_func()
         {
-            $bookingpress_load_file_name = BOOKINGPRESS_VIEWS_DIR . '/services/manage_services.php';
+            $bookingpress_v3_view = BOOKINGPRESS_DIR . '/src/views/Services.php';
+            if ( file_exists( $bookingpress_v3_view ) ) {
+                $bookingpress_load_file_name = $bookingpress_v3_view;
+            } else {
+                $bookingpress_load_file_name = BOOKINGPRESS_VIEWS_DIR . '/services/manage_services.php';
+            }
             $bookingpress_load_file_name = apply_filters('bookingpress_modify_service_view_file_path', $bookingpress_load_file_name);
 
             include $bookingpress_load_file_name;

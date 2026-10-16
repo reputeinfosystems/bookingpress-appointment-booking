@@ -1899,11 +1899,34 @@ class SubmissionService implements SubmissionServiceInterface {
 			$base = home_url( '/' );
 		}
 
+		$entry_data    = $this->entries->find( $entry_id );
+
+		$payment_group = (array) apply_filters( Hooks::FILTER_SUBMIT_PAYMENT_GROUP, array( 'mode' => 'per_booking' ), array(
+			'entry'           => $entry_data,
+			'payment_payload' => array(),
+		) );
+
+		// Shared (Cart / Recurring) orders resolve on the thank-you page by order id,
+		// which it only does when the matching flag is present — mirrors the
+		// CartFeature / RecurringFeature FILTER_SUBMIT_ENVELOPE rewrites.
+		$redirect_args = array();
+		if ( isset( $payment_group['mode'] ) && 'shared' === (string) $payment_group['mode'] ) {
+			$entry_id = (int) $entry_data['bookingpress_order_id'];
+			if ( ! empty( $entry_data['bookingpress_is_recurring'] ) ) {
+				$redirect_args['is_recurring'] = 1;
+			} else {
+				$redirect_args['is_cart'] = 1;
+			}
+		}
+
 		$entry_hash = md5( (string) $entry_id );
 		$url = add_query_arg(
-			array(
-				'appointment_id' => base64_encode( (string) $entry_id ),
-				'bp_tp_nonce'    => wp_create_nonce( 'bpa_nonce_url-' . $entry_hash ),
+			array_merge(
+				array(
+					'appointment_id' => base64_encode( (string) $entry_id ),
+					'bp_tp_nonce'    => wp_create_nonce( 'bpa_nonce_url-' . $entry_hash ),
+				),
+				$redirect_args
 			),
 			$base
 		);

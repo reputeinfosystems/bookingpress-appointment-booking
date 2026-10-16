@@ -343,7 +343,9 @@ const initAppointmentLoader = () => {
                 appt_nonce: BookingPressConfig._wpnonce
             };
 
-            fetch(rest_url + '/appointments', {
+            let endpoint = wp.hooks.applyFilters('bookingpress_appointments_rest_endpoint', '/appointments', bodyParam, vm);
+
+            fetch(rest_url + endpoint, {
                 method: 'POST',
                 credentials: 'same-origin',
                 headers: {
@@ -354,11 +356,23 @@ const initAppointmentLoader = () => {
             })
             .then(response => response.json())
             .then(rest_response => {
-                vm.toggleBusy();
                 if (rest_response.success) {
-                    vm.items = rest_response.data.items;
-                    vm.totalItems = Number( rest_response.data.totalItems || 0 );
+                    let totalItems = Number( rest_response.data.totalItems || 0 );
+                    let items = rest_response.data.items || [];
+
+                    if (items.length === 0 && totalItems > 0 && vm.currentPage > 1) {
+                        let maxPage = Math.ceil(totalItems / parseInt(vm.perPage));
+                        vm.currentPage = maxPage > 0 ? maxPage : 1;
+                        vm.loadAppointments();
+                        return;
+                    }
+
+                    vm.toggleBusy();
+                    vm.items = items;
+                    vm.totalItems = totalItems;
                     vm.form_field_data = rest_response.data.form_field_data;
+                } else {
+                    vm.toggleBusy();
                 }
 
                 wp.hooks.doAction( 'bookingpress_modify_appointment_success_response_data', rest_response, vm );
@@ -443,7 +457,15 @@ const initAppointmentLoader = () => {
                 new_status: new_status
             };
 
-            scope_row.change_status_loader = 1;
+            //scope_row.change_status_loader = 1;
+            let rowIndex;
+            console.log( this.items );
+            this.items.forEach((currentValue, index) => {
+                if(appointment_id == currentValue.appointment_id){
+                    this.items[index].change_status_loader = 1;
+                    rowIndex = index;
+                }
+            });
 
             fetch( rest_url + '/appointment/update-status', {
                 method: 'POST',
@@ -457,7 +479,7 @@ const initAppointmentLoader = () => {
             })
             .then(response => response.json())
             .then(rest_response => {
-                scope_row.change_status_loader = 0;
+                //scope_row.change_status_loader = 0;
                 if( "undefined" != typeof rest_response.data && "undefined" != typeof rest_response.data.variant && 'error' == rest_response.data.variant ){
                     this.$notify({
                         title: rest_response.data.title,
@@ -465,9 +487,11 @@ const initAppointmentLoader = () => {
                         type: 'error',
                         customClass: 'error_notification',
                         duration: BookingPressConfig.notification_timeout
-                    });
+                    });                    
                 }
-
+                if( "undefined" != typeof rowIndex && "undefined" != typeof this.items && "undefined" != typeof this.items[rowIndex] ){
+                    this.items[rowIndex].change_status_loader = 0;
+                }
                 if( 'undefined' != typeof rest_response.data && ('0' == rest_response.data || 0 == rest_response.data) ){
                     this.$notify({
                         title: 'Error',
@@ -492,7 +516,7 @@ const initAppointmentLoader = () => {
                 }
             })
             .catch(error => {
-                scope_row.change_status_loader = 0;
+                //scope_row.change_status_loader = 0;
                 console.error('Error updating appointment status:', error);
             });
         },
@@ -517,6 +541,15 @@ const initAppointmentLoader = () => {
                 document.body.style.paddingRight = "0px";
             }
             document.body.style.overflow = 'auto';
+        },
+        bpa_handle_share_url_service_change() {
+            const vm = this;
+
+            if (typeof vm.bpa_change_share_url_service === 'function') {
+                vm.bpa_change_share_url_service();
+            } else {
+                vm.bpa_enable_service_share();
+            }
         },
         bpa_enable_service_share(){
             const vm = this;
@@ -548,8 +581,16 @@ const initAppointmentLoader = () => {
         bookingpress_generate_share_url(){
             const vm = this;
 
+            let selectedExtras = [];
+            if ( vm.bookingpress_loaded_extras && vm.bookingpress_loaded_extras[vm.share_url_form.selected_service_id] ) {
+                selectedExtras = vm.bookingpress_loaded_extras[vm.share_url_form.selected_service_id];
+            }
+
             let shareAppointmentUrlData = {
-                share_url_form_data: vm.share_url_form,
+                share_url_form_data: {
+                    ...vm.share_url_form,
+                    selected_extras: selectedExtras
+                }
             };
 
             fetch( rest_url + '/generate-share-url', {
@@ -633,6 +674,10 @@ const initAppointmentLoader = () => {
         },
         editAppointmentData( index, row ){
             const vm = this;
+            // An add-on can lock editing for a row (e.g. Multi Service: different staff per service).
+            if ( row && 1 == row.is_edit_disabled ) {
+                return;
+            }
             let edit_id = row.appointment_id;
 
             window.BookingPressAppointmentDialog.appointment_formdata.appointment_update_id = edit_id;
@@ -715,7 +760,11 @@ const initAppointmentLoader = () => {
                                     customClass: 'success_notification',
                                     duration: BookingPressConfig.notification_timeout
                                 });
+                                let isLastPageAllDeleted = (vm.multipleSelection.length >= vm.items.length && vm.currentPage > 1);
                                 vm.closeBulkAction();
+                                if (isLastPageAllDeleted) {
+                                    vm.currentPage--;
+                                }
                                 vm.loadAppointments();
                             } else if( response.data.variant == 'error' ){
                                 vm.$notify({
@@ -739,6 +788,10 @@ const initAppointmentLoader = () => {
                             console.error('Error performing bulk action:', error);
                         });
                     }
+                    else
+                    {    
+                        wp.hooks.doAction( 'bookingpress_appointment_dynamic_bulk_action_v3', vm );
+                    }
                 }
             }
         },
@@ -747,6 +800,29 @@ const initAppointmentLoader = () => {
             this.$refs.multipleTable.clearSelection();
             this.bulk_action = 'bulk_action';
         },
+        bpa_can_manage_appointment_actions() {
+            return true;
+        },
+        bpa_is_multi_service_booking() {
+            return false;
+        },
+
+        bpa_show_service_detail() {
+            return true;
+        },
+
+        bpa_get_appointment_price(row) {
+            return row.appointment_payment;
+        },
+
+        canShowTableActions(row) {
+            return true; 
+        },
+
+        canShowEditAction(row) {
+            return true;
+        },
+
         deleteAppointment(index, row) {
             const vm = this;
             let delete_id = row.appointment_id;
@@ -775,6 +851,9 @@ const initAppointmentLoader = () => {
                         customClass: 'success_notification',
                         duration: BookingPressConfig.notification_timeout
                     });
+                    if (vm.items.length === 1 && vm.currentPage > 1) {
+                        vm.currentPage--;
+                    }
                     vm.loadAppointments();
                 } else {
                     vm.$notify({
@@ -943,7 +1022,7 @@ const initAppointmentLoader = () => {
                                 document.getElementById('bpa-page-loading-loader-3').remove();
                                 document.getElementById('bpa-main-container-3').style.display = 'block';
                             }
-                            jQuery("#bpa-loader-div").show();
+                            jQuery(".bpa-loader-div-appointment").show();
                         }
                     }, 2000);
                 }
@@ -968,6 +1047,50 @@ const initAppointmentLoader = () => {
             });
 
             this.loadAppointments();
+
+            // Fix: Prevent bp-ui-popconfirm from flashing to top-left on close.
+            const bpaHidePopconfirmPopper = function(popper) {
+                if (!popper) return;
+                popper.style.setProperty('opacity', '0', 'important');
+                popper.style.setProperty('pointer-events', 'none', 'important');
+                // Clean up after the close animation completes (300ms + buffer)
+                setTimeout(function() {
+                    popper.style.removeProperty('opacity');
+                    popper.style.removeProperty('pointer-events');
+                }, 600);
+            };
+
+            const bpaFixPopconfirmClick = function(e) {
+                if (!e || !e.target) return;
+                const btn = e.target.closest('.bp-ui-popconfirm__cancel, .bp-ui-popconfirm__confirm');
+                if (btn) {
+                    const popper = btn.closest('.bp-popper.bp-popconfirm');
+                    bpaHidePopconfirmPopper(popper);
+                }
+            };
+            document.addEventListener('click', bpaFixPopconfirmClick, true);
+
+            const bpaFixPopconfirmScroll = function() {
+                document.querySelectorAll('.bp-popper.bp-popconfirm').forEach(function(popper) {
+                    if (window.getComputedStyle(popper).display !== 'none') {
+                        bpaHidePopconfirmPopper(popper);
+                    }
+                });
+            };
+            window.addEventListener('scroll', bpaFixPopconfirmScroll, { passive: true, capture: true });
+            window.addEventListener('wheel', bpaFixPopconfirmScroll, { passive: true, capture: true });
+            document.addEventListener('scroll', bpaFixPopconfirmScroll, { passive: true, capture: true });
+
+            // Auto-close open popconfirms when user scrolls the page or container
+            const bpaCloseOpenPoppers = () => {
+                const openPoppers = document.querySelectorAll('.bp-popper.bp-ui-popconfirm, .bp-popover.bp-ui-popconfirm, .el-popconfirm');
+                if (openPoppers.length > 0) {
+                    document.body.click();
+                }
+            };
+            window.addEventListener('scroll', bpaCloseOpenPoppers, { passive: true, capture: true });
+            window.addEventListener('wheel', bpaCloseOpenPoppers, { passive: true, capture: true });
+            document.addEventListener('scroll', bpaCloseOpenPoppers, { passive: true, capture: true }); 
         }
     };
 

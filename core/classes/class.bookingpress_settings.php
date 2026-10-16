@@ -81,45 +81,19 @@ if (! class_exists('bookingpress_settings') ) {
                 $bvava_data = [];
                 $bvavd_data = [];
 
-                $bvav_url = 'https://bookingpressplugin.com/bpa_misc/addons_list_v2.php';
-                $bvav_resp = wp_remote_post(
-                    $bvav_url,
-                    array(
-                        'method'    => 'POST',
-                        'timeout'   => 45,
-                        'sslverify' => false,
-                        'body'      => array(
-                            'bookingpress_addon_list' => 1,
-                        ),
-                    )
-                );
-                
-                if ( ! is_wp_error( $bvav_resp ) ) {
-                    $bvav_data = base64_decode( $bvav_resp['body'] );
-                    if( !empty( $bvav_data ) ){
-                        $bvav_response = json_decode( $bvav_data, true );
-                        if( is_array( $bvav_response ) ){
-                            $bvav_filtered = array_values( $bvav_response );
-                            $bvallav = array_merge( ...$bvav_filtered );
-                            
-                            if( !empty( $bvallav ) ){
-                                foreach( $bvallav as $bvav_details ){
-                                    $bvav_installer = $bvav_details['addon_installer'];
-    
-                                    if( file_exists( WP_PLUGIN_DIR . '/' . $bvav_installer ) ){
-                                        $bvavpdata = get_plugin_data( WP_PLUGIN_DIR . '/' . $bvav_installer );
-                                        $bvavactv = is_plugin_active( $bvav_installer );
-                                        if( $bvavactv ){
-                                            $bvava_data[ $bvav_details['addon_name'] ] = $bvavpdata['Version'];
-                                        } else {
-                                            $bvavd_data[ $bvav_details['addon_name'] ] = $bvavpdata['Version'];
-                                        }
-                                    }
-                                }
-                            }
+                $bvav_response = \BookingPress\api\AddonsRoutes::get_bookingpress_addon_list();
+
+                if( is_array( $bvav_response ) ){
+                    foreach( $bvav_response as $bvav_installer => $bvav_details ){
+                        if( is_plugin_active( $bvav_installer ) ){
+                            $bvava_data[ $bvav_details['Name'] ] = $bvav_details['Version'];
+                        } else {
+                            $bvavd_data[ $bvav_details['Name'] ] = $bvav_details['Version'];
                         }
                     }
                 }
+                
+                
                 $bvav_setup_data = [
                     'bvlv' => $bvlv,
                     'bvpv' => $bvpv.static::$checksum,
@@ -130,6 +104,7 @@ if (! class_exists('bookingpress_settings') ) {
                 ];
 
                 $bpa_validation_data = wp_json_encode( $bvav_setup_data );
+
 
                 $bpa_validation_url = 'https://bookingpressplugin.com/bpa_misc/validate_plugin_setup.php';
                 $bpa_validate_setup_req = wp_remote_post(

@@ -63,7 +63,10 @@ class CalendarRoutes extends Base {
                 $phone_field_label = $field_data->bookingpress_field_label;
             }
         }
-        
+
+        /** Formatted prices keyed by raw paid amount. The formatter reloads the global options on every call, and a month has only a few distinct amounts. */
+        $formatted_price_cache = [];
+
         foreach( $bookings_data as $booking ){
 
             $bookingpress_customer_name = '';
@@ -116,13 +119,18 @@ class CalendarRoutes extends Base {
             $booking_metadata['formatted_booking_date'] = $formatted_date;
             $booking_metadata['formatted_booking_time'] = $formatted_time;
 
+            $paid_amount_key = isset( $booking['bookingpress_paid_amount'] ) ? (string) $booking['bookingpress_paid_amount'] : 'null';
+            if( !array_key_exists( $paid_amount_key, $formatted_price_cache ) ){
+                $formatted_price_cache[ $paid_amount_key ] = $BookingPress->bookingpress_price_formatter_with_currency_symbol( $booking['bookingpress_paid_amount'] );
+            }
+
             $json_data[] = [
                 'id'            => $booking['bookingpress_appointment_booking_id'],
                 'customerName'  => $bookingpress_customer_name,
                 'customerId'    => $booking['bookingpress_customer_id'],
                 'start_date'    => $booking['bookingpress_appointment_date'],
-                'booking_date'  => date_i18n($bookingpress_default_date_format, strtotime($booking['bookingpress_appointment_date'])),
-                'booking_time'  => date('H:i', strtotime($booking['bookingpress_appointment_time'])) . ' - ' . date('H:i', strtotime($booking['bookingpress_appointment_end_time'])),
+                //'booking_date'  => date_i18n($bookingpress_default_date_format, strtotime($booking['bookingpress_appointment_date'])),
+                //'booking_time'  => date('H:i', strtotime($booking['bookingpress_appointment_time'])) . ' - ' . date('H:i', strtotime($booking['bookingpress_appointment_end_time'])),
                 'end_date'      => ( !empty( $booking['bookingpress_appointment_end_date'] ) && $booking['bookingpress_appointment_end_date'] != '0000-00-00' ) ? $booking['bookingpress_appointment_end_date'] : $booking['bookingpress_appointment_date'],
                 'start_time'    => date('H:i', strtotime($booking['bookingpress_appointment_time'])),
                 'end_time'      => date('H:i', strtotime($booking['bookingpress_appointment_end_time'])),
@@ -131,7 +139,8 @@ class CalendarRoutes extends Base {
                 'status'        => $booking['bookingpress_appointment_status'],
                 'isPast'        => strtotime( $booking['bookingpress_appointment_date'] . ' ' . $booking['bookingpress_appointment_time'] ) < current_time('timestamp') ? true : false,
                 'category'      => ServicesProviders::get_service_category_id( $booking['bookingpress_service_id'] ),
-                'price'         => $BookingPress->bookingpress_price_formatter_with_currency_symbol( $booking['bookingpress_paid_amount'] ),
+                //'price'         => $BookingPress->bookingpress_price_formatter_with_currency_symbol( $booking['bookingpress_paid_amount'] ),
+                'price'         => $formatted_price_cache[ $paid_amount_key ],
                 'theme'         => $color_scheme_data,
                 'metadata'      => $booking_metadata
             ];
@@ -239,8 +248,8 @@ class CalendarRoutes extends Base {
             'customerName'  => $bookingpress_customer_name,
             'customerId'    => $booking['bookingpress_customer_id'],
             'start_date'    => $booking['bookingpress_appointment_date'],
-            'booking_date'  => date_i18n($bookingpress_default_date_format, strtotime($booking['bookingpress_appointment_date'])),
-            'booking_time'  => date('H:i', strtotime($booking['bookingpress_appointment_time'])) . ' - ' . date('H:i', strtotime($booking['bookingpress_appointment_end_time'])),
+            //'booking_date'  => date_i18n($bookingpress_default_date_format, strtotime($booking['bookingpress_appointment_date'])),
+            //'booking_time'  => date('H:i', strtotime($booking['bookingpress_appointment_time'])) . ' - ' . date('H:i', strtotime($booking['bookingpress_appointment_end_time'])),
             'end_date'      => ( !empty( $booking['bookingpress_appointment_end_date'] ) && $booking['bookingpress_appointment_end_date'] != '0000-00-00' ) ? $booking['bookingpress_appointment_end_date'] : $booking['bookingpress_appointment_date'],
             'start_time'    => date('H:i', strtotime($booking['bookingpress_appointment_time'])),
             'end_time'      => date('H:i', strtotime($booking['bookingpress_appointment_end_time'])),
