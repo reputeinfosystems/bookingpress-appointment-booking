@@ -410,6 +410,10 @@ class AvailabilityService implements AvailabilityServiceInterface {
 			return array();
 		}
 
+		if ( $this->day_range_has_external_block( $service_id, $date, $duration, $context ) ) {
+			return array();
+		}
+
 		$rows = array(
 			array(
 				'is_day_service'      => 1,
@@ -523,6 +527,47 @@ class AvailabilityService implements AvailabilityServiceInterface {
 		}
 
 		return (bool) $has_overlap;
+	}
+
+	/**
+	 * Block day-service starts whose occupied date range touches an external
+	 * calendar busy event (Google / Outlook / Apple calendar add-ons).
+	 *
+	 * Day-service counterpart of the merge_external_booked_ranges() call in
+	 * build_slots(), which the day path never reaches. Legacy parity: for a
+	 * `d` service any external event touching a date disables that date, so
+	 * each date in the range is checked for any overlapping busy range.
+	 * Checked AFTER day_range_has_booking_overlap() so the Pro capacity
+	 * consumers of FILTER_DAY_SERVICE_BOOKING_OVERLAP cannot discard it.
+	 *
+	 * @param int    $service_id
+	 * @param string $start_date
+	 * @param int    $duration   Range length in days.
+	 * @param array  $context
+	 *
+	 * @return bool
+	 */
+	private function day_range_has_external_block( $service_id, $start_date, $duration, array $context = array() ) {
+		if ( ! has_filter( 'bookingpress_modify_booked_appointment_data' ) ) {
+			return false;
+		}
+
+		for ( $i = 0; $i < $duration; $i++ ) {
+			$range_date = gmdate( 'Y-m-d', strtotime( $start_date . ' +' . $i . ' days' ) );
+			$day_start  = strtotime( $range_date . ' 00:00:00' );
+			$day_end    = strtotime( $range_date . ' 23:59:59' ) + 1;
+
+			$ranges = $this->merge_external_booked_ranges( array(), (int) $service_id, $range_date, 1, $context );
+			foreach ( $ranges as $range ) {
+				// Half-open overlap: an all-day event ending at the next
+				// day's 00:00 must not block that next day.
+				if ( $range['start_ts'] < $day_end && $range['end_ts'] > $day_start ) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	/**

@@ -518,7 +518,7 @@ class CustomizeCssGenerator {
 			. $scope . ' .bpa-front-tabs .bpa-front--dt__time-slots .bpa-front--dt__ts-body .bpa-front--dt__ts-body--row .bpa-front--dt-ts__sub-heading,'
 			. $scope . ' .bpa-front-tabs .bpa-front--dt__calendar .vc-title,'
 			. $scope . ' .bpa-front-tabs .bpa-front-module--service-item .bpa-front-si-card .bpa-front-si__card-body .bpa-front-si__card-body--heading,'
-			. $scope . ' .bpa-front-tabs .bpa-front--dt__time-slots .bpa-front--dt__ts-body .bpa-front--dt__ts-body--row .bpa-front--dt__ts-body--items .bpa-front--dt__ts-body--item span,'
+			. $scope . ' .bpa-front-tabs .bpa-front--dt__time-slots .bpa-front--dt__ts-body .bpa-front--dt__ts-body--row .bpa-front--dt__ts-body--items .bpa-front--dt__ts-body--item span:not(.bpa-front--ts-next-day),'
 			. $scope . ' .bpa-front--dt__ts-sm-back-btn label,'
 			. $scope . ' .bpa-front-tabs .el-form-item__label span,'
 			. $scope . ' .bpa-front-tabs .bpa-front-module--booking-summary .bpa-front-module--bs-summary-content .bpa-front-module--bs-summary-content-item span,'

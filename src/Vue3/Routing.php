@@ -120,6 +120,12 @@ class Routing {
 			\BookingPress\Vue3\MyBookings\MyBookings::init();
 		}
 
+		// Vue 3 default for the `[bookingpress_appointment_cancellation_confirmation]`
+		// shortcode (legacy via `bookingpress_cancellation_confirmation_force_legacy`).
+		if ( class_exists( '\BookingPress\Vue3\CancellationConfirmation\CancellationConfirmation' ) ) {
+			\BookingPress\Vue3\CancellationConfirmation\CancellationConfirmation::init();
+		}
+
 		// Centralized frontend-form cache invalidation.
 		//
 		// Every admin save that affects what the Vue 3 booking form renders

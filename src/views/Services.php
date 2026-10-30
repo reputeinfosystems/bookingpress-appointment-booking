@@ -485,7 +485,6 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
                                                             <bp-ui-select class="bpa-form-control" v-model="service.service_duration_unit" popper-class="bpa-ui-select--is-with-modal" style="width: 100%;" :disabled="typeof service.enable_custom_service_duration !== 'undefined' ? (service.enable_custom_service_duration == true || service.enable_custom_service_duration == 'true') : false">
                                                                 <bp-ui-option key="m" label="<?php esc_html_e( 'Mins', 'bookingpress-appointment-booking' ); ?>" value="m"></bp-ui-option>
                                                                 <bp-ui-option key="h" label="<?php esc_html_e( 'Hours', 'bookingpress-appointment-booking' ); ?>" value="h"></bp-ui-option>
-                                                                <bp-ui-option key="d" label="<?php esc_html_e( 'Days', 'bookingpress-appointment-booking' ); ?>" value="d"></bp-ui-option>
                                                             </bp-ui-select>
                                                         </bp-ui-col>
                                                     </bp-ui-row>

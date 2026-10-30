@@ -41,7 +41,7 @@
 
     <div class="settings-app-root bookingpress_page_inner_wrapper" v-cloak id="settings-app-root">
         <bp-ui-main class="bpa-main-listing-card-container bpa-general-settings--main-container bpa-default-card bpa--is-page-scrollable-tablet" id="all-page-main-container">
-            <div class="bpa-back-loader-container" v-if="is_display_loader == '1'">
+            <div class="bpa-back-loader-container bpa-back-loader-inner-container" v-if="is_display_loader == '1'">
                 <div class="bpa-back-loader"></div>
             </div>
             <div class="bpa-back-loader-container" id="bpa-page-loading-loader">

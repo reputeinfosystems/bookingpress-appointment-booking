@@ -838,4 +838,369 @@ class AppointmentRoutes extends Base {
 
         return new \WP_REST_Response( $result, 200 );
     }
+
+    public static function bookingpress_ability_get_price_quote( $input = [] ){
+
+        global $BookingPress;
+
+        $service_id = $input['service_id'] ?? 0;
+
+        if( empty( $service_id ) ){
+            return new \WP_Error(
+                'invalid_service_id',
+                __( 'Invalid service ID.', 'bookingpress-appointment-booking' ),
+                [ 'status' => 400 ]
+            );
+        }
+
+        $repository = new \BookingPress\Vue3\Repositories\ServiceRepository();
+        $service = $repository->find( $service_id );
+
+        if( empty( $service ) ){
+            return new \WP_Error(
+                'service_not_found',
+                __( 'Service not found.', 'bookingpress-appointment-booking' ),
+                [ 'status' => 404 ]
+            );
+        }
+
+        //error_log( print_r( $service, true ));
+
+        $currency_code = ( new \BookingPress\Vue3\Repositories\SettingsRepository )->get( 'payment_default_currency', \BookingPress\Vue3\Repositories\SettingsRepository::GROUP_PAYMENT );
+
+        $return_data = [
+            'service_id' => $service_id,
+            'service_name' => $service['serviceName'] ?? '',
+            'price' => $service['servicePrice'] ?? 0,
+            'price_with_currency' => ( new \BookingPress\Vue3\Services\PricingService )->format_price( $service['servicePrice'] ?? 0 ),
+            'currency_code' => $currency_code,
+            'currency_symbol' => $BookingPress->bookingpress_get_currency_symbol( $currency_code )
+        ];
+
+        return [ 'price_details' => $return_data ];
+
+    }
+
+    public static function bookingpress_ability_cancel_appointment( $input = [] ){
+
+        global $wpdb, $tbl_bookingpress_appointment_bookings, $tbl_bookingpress_customers, $bookingpress_dashboard;
+
+        $appointment_id = $input['appointment_id'] ?? 0;
+        if( empty( $appointment_id ) ){
+            return new \WP_Error(
+                'invalid_appointment_id',
+                __( 'Invalid appointment ID.', 'bookingpress-appointment-booking' ),
+                [ 'status' => 400 ]
+            );
+        }
+
+        $appointment_scope = \BookingPress\abilities\BookingPressAbilities::bookingpress_appointment_scope();
+
+        if( empty( $appointment_scope ) || ! is_user_logged_in() ) {
+            return new \WP_Error(
+                'invalid_scope',
+                __( 'Invalid scope to get the appointment.', 'bookingpress-appointment-booking'),
+                [ 'status' => 403 ]
+            );
+        }
+
+        $where = $wpdb->prepare( " WHERE bookingpress_appointment_booking_id = %d", $appointment_id );
+
+        $appointment = $wpdb->get_row( "SELECT * FROM {$tbl_bookingpress_appointment_bookings} {$where}", ARRAY_A );
+
+        if( empty( $appointment ) ){
+            return new \WP_Error(
+                'appointment_not_found',
+                __( 'Appointment not found.', 'bookingpress-appointment-booking' ),
+                [ 'status' => 404 ]
+            );
+        }
+
+        if( 'customer' == $appointment_scope ) {
+
+            $existing_customer = ( new \BookingPress\Vue3\Repositories\CustomerRepository )->find_by_wp_user_id( get_current_user_id() );
+
+            if( empty( $existing_customer ) || $appointment['bookingpress_customer_id'] != $existing_customer['customerId'] ){
+                return new \WP_Error(
+                    'invalid_scope',
+                    __( 'You do not have permission to cancel this appointment.', 'bookingpress-appointment-booking' ),
+                    [ 'status' => 403 ]
+                );
+            }
+
+            /** Check if canceling is allowed for this appointment */
+            $cancel_allowed = ( new \BookingPress\Vue3\Repositories\CustomizeRepository )->get( 'allow_to_cancel_appointment', \BookingPress\Vue3\Repositories\CustomizeRepository::GROUP_BOOKING_MY_BOOKING );
+
+            if( 'true' !== $cancel_allowed ){
+                return new \WP_Error(
+                    'cancel_not_allowed',
+                    __( 'Appointment Cancellation is disabled for Customers.', 'bookingpress-appointment-booking' ),
+                    [ 'status' => 403 ]
+                );
+            }
+        }
+
+        $appointment_status = $appointment['bookingpress_appointment_status'] ?? '';
+
+        /** Appointment is neither pending nor confirmed. */
+        if( !in_array( (int) $appointment_status, [1,2]) ){
+            return new \WP_Error(
+                'invalid_status',
+                __( 'Appointment is neither pending nor confirmed so it cannot be canceled.', 'bookingpress-appointment-booking' ),
+                [ 'status' => 403 ]
+            );
+        }
+
+        $_REQUEST['_wpnonce'] = wp_create_nonce( 'bpa_wp_nonce' ); //phpcs:ignore
+
+        /** Customers do not have the 'update_upcoming_appointments' capability, so they use the My Bookings cancel flow which applies the cancellation time limit, refund and notification rules. */
+        if( 'customer' === $appointment_scope ) {
+            global $bookingpress_appointment_bookings;
+
+            $_REQUEST['cancel_id'] = $appointment_id; //phpcs:ignore
+
+            $response = $bookingpress_appointment_bookings->bookingpress_cancel_appointment( true );
+
+            if( 'success' !== ( $response['variant'] ?? '' ) ){
+                return new \WP_Error(
+                    'cancel_failed',
+                    ! empty( $response['msg'] ) ? $response['msg'] : __( 'The appointment could not be canceled.', 'bookingpress-appointment-booking' ),
+                    [ 'status' => 400 ]
+                );
+            }
+        } else {
+            $_REQUEST['update_appointment_id'] = $appointment_id; //phpcs:ignore
+
+            $response = $bookingpress_dashboard->bookingpress_change_upcoming_appointment_status( $appointment_id, 3, true );
+
+            if( 1 !== $response ){
+                return new \WP_Error(
+                    'cancel_failed',
+                    ( is_array( $response ) && ! empty( $response['msg'] ) ) ? $response['msg'] : __( 'The appointment could not be canceled.', 'bookingpress-appointment-booking' ),
+                    [ 'status' => 400 ]
+                );
+            }
+        }
+
+         return [
+            'success' => true,
+            'message' => __( 'Appointment has been successfully canceled.', 'bookingpress-appointment-booking' )
+        ];
+    }
+
+    public static function bookingpress_ability_create_appointment( $input = [] ) {
+
+        $service_id     = ! empty( $input['service_id'] ) ? intval( $input['service_id'] ) : 0;
+        $customer_id    = ! empty( $input['customer_id'] ) ? intval( $input['customer_id'] ) : 0;
+        $customer_email = ! empty( $input['customer_email'] ) ? sanitize_email( $input['customer_email'] ) : '';
+        $booking_date   = ! empty( $input['booking_date'] ) ? sanitize_text_field( $input['booking_date'] ) : '';
+        $booking_time   = ! empty( $input['booking_time'] ) ? sanitize_text_field( $input['booking_time'] ) : '';
+        $appointment_status = ! empty( $input['appointment_status'] ) ? intval( $input['appointment_status'] ) : 2; // pending
+
+        if ( empty( $service_id ) || empty( $booking_date ) || empty( $booking_time ) ) {
+            return new \WP_Error( 'invalid_input', __( 'Service ID, booking date, and booking time are required.', 'bookingpress-appointment-booking' ), [ 'status' => 400 ] );
+        }
+        if ( empty( $customer_id ) && empty( $customer_email ) ) {
+            return new \WP_Error( 'invalid_input', __( 'Customer ID or customer email is required.', 'bookingpress-appointment-booking' ), [ 'status' => 400 ] );
+        }
+
+        // 1. Resolve the customer safely
+        if ( empty( $customer_id ) ) {
+            $customer = ( new \BookingPress\Vue3\Repositories\CustomerRepository )->find_by_email( $customer_email );
+            if ( empty( $customer['customerId'] ) ) {
+                return new \WP_Error( 'customer_not_found', __( 'No customer found with this email address.', 'bookingpress-appointment-booking' ), [ 'status' => 404 ] );
+            }
+            $customer_id = intval( $customer['customerId'] );
+        }
+
+        // 2. Pre-check: is the requested start time actually available?
+        //    Replace with the method behind your get-available-time-slots ability.
+        /** The full input is passed on so the time slot filters see the same booking details as the booking. */
+        $slots = \BookingPress\api\TimeRoutes::bookingpress_ability_list_available_time_slots( array_merge( $input, [ 'service_id' => $service_id, 'date' => $booking_date ] ) );
+        if ( is_wp_error( $slots ) ) {
+            return new \WP_Error( 'slot_unavailable', $slots->get_error_message(), [ 'status' => 409 ] );
+        }
+        $start_times = wp_list_pluck( $slots['available_time_slots'] ?? [], 'start_time' );
+        if ( ! in_array( $booking_time, $start_times, true ) ) {
+            return new \WP_Error( 'slot_unavailable', __( 'This time slot is not available. Choose another slot.', 'bookingpress-appointment-booking' ), [ 'status' => 409 ] );
+        }
+
+        $appointment_data = [
+            'appointment_selected_service'      => $service_id,
+            'appointment_selected_customer'     => $customer_id,
+            'customer_email'                    => $customer_email,
+            'appointment_booked_date'           => $booking_date,
+            'appointment_booked_time'           => $booking_time,
+            'appointment_booked_end_time'       => self::get_selected_end_time( $service_id, $booking_time ),
+            'appointment_custom_timing'         => 0,
+            'appointment_status'                => $appointment_status,
+        ];
+
+        /**
+         * Filter the appointment data saved by the 'bookingpress/create-appointment' ability.
+         * Return a WP_Error to reject the booking.
+         *
+         * @since 1.6.9
+         * @param array $appointment_data Appointment data in the format of the admin appointment form.
+         * @param array $input            Ability input.
+         */
+        $appointment_data = apply_filters( 'bookingpress_ability_create_appointment_data', $appointment_data, $input );
+
+        if ( is_wp_error( $appointment_data ) ) {
+            return $appointment_data;
+        }
+
+        global $wpdb, $bookingpress_calendar, $tbl_bookingpress_appointment_bookings;
+
+        // 3. Safety net: turn BookingPress's die() on a double booking into an exception
+        $intercept = function ( $gateway = '', $message = '' ) {
+            if ( false !== strpos( (string) $message, 'already exists in double booking table' ) ) {
+                throw new \RuntimeException( 'bookingpress_double_booking' );
+            }
+        };
+
+        $orig_post    = $_POST;
+        $orig_request = $_REQUEST;
+
+        $_REQUEST['appointment_data'] = $_POST['appointment_data'] = $appointment_data;
+        $_POST['_wpnonce'] = $_REQUEST['_wpnonce'] = wp_create_nonce( 'bpa_wp_nonce' );
+
+        add_action( 'bookingpress_payment_log_entry', $intercept, 10, 2 );
+
+        try {
+            $response = $bookingpress_calendar->bookingpress_save_appointment_booking_func( false, true );
+        } catch ( \RuntimeException $e ) {
+            if ( 'bookingpress_double_booking' !== $e->getMessage() ) {
+                throw $e;
+            }
+            status_header( 200 ); // undo the 409 BookingPress already set
+            return new \WP_Error( 'slot_unavailable', __( 'This time slot is already booked. Choose another slot.', 'bookingpress-appointment-booking' ), [ 'status' => 409 ] );
+        } finally {
+            remove_action( 'bookingpress_payment_log_entry', $intercept, 10 );
+            $_POST    = $orig_post;
+            $_REQUEST = $orig_request;
+        }
+
+        // 4. Every remaining path returns an array or a WP_Error
+        if ( is_wp_error( $response ) ) {
+            return $response;
+        }
+        if ( ! is_array( $response ) || 'success' !== ( $response['variant'] ?? '' ) ) {
+            $msg = is_array( $response ) && ! empty( $response['msg'] ) ? $response['msg'] : __( 'The appointment could not be booked.', 'bookingpress-appointment-booking' );
+            return new \WP_Error( 'booking_failed', $msg, [ 'status' => 400 ] );
+        }
+
+        $payment_log_id = intval( $response['payment_log_id'] ?? 0 );
+        $appointment_id = intval( $wpdb->get_var( $wpdb->prepare(
+            "SELECT bookingpress_appointment_booking_id FROM {$tbl_bookingpress_appointment_bookings} WHERE bookingpress_payment_id = %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+            $payment_log_id
+        ) ) );
+
+        if ( empty( $appointment_id ) ) {
+            return new \WP_Error( 'appointment_id_not_found', __( 'The appointment was booked, but its ID could not be retrieved. Do not retry.', 'bookingpress-appointment-booking' ), [ 'status' => 500, 'payment_log_id' => $payment_log_id ] );
+        }
+
+        return [
+            'success'        => true,
+            'appointment_id' => $appointment_id,
+            'payment_log_id' => $payment_log_id,
+            'message'        => $response['msg'] ?? __( 'Appointment has been booked successfully.', 'bookingpress-appointment-booking' ),
+        ];
+    }
+
+    public static function bookingpress_ability_update_appointment_status( $input = [] ){
+
+        $appointment_id = !empty( $input['appointment_id'] ) ? intval( $input['appointment_id'] ) : 0;
+        $appointment_status = !empty( $input['appointment_status'] ) ? intval( $input['appointment_status'] ) : 0;
+
+        if( ! $appointment_id || ! $appointment_status ){
+            return new \WP_Error(
+                'invalid_input',
+                __( 'Appointment ID and appointment status are required.', 'bookingpress-appointment-booking' ),
+                [ 'status' => 400 ]
+            );
+        }
+
+        if( !\BookingPress\core\Permissions::user_can_do_action( 'update_upcoming_appointments') ){
+            return new \WP_Error(
+                'forbidden',
+                __( 'You do not have permission to update upcoming appointments.', 'bookingpress-appointment-booking' ),
+                [ 'status' => 403 ]
+            );
+        }
+
+        /** Check the current status of the apppointment */
+        $appointmentDetails = ( new \BookingPress\Vue3\Repositories\AppointmentRepository )->find( $appointment_id );
+
+        if( empty( $appointmentDetails ) ){
+            return new \WP_Error(
+                'not_found',
+                __( 'Appointment not found.', 'bookingpress-appointment-booking' ),
+                [ 'status' => 404 ]
+            );
+        }
+
+        $exisitng_status = $appointmentDetails['bookingpress_appointment_status'];
+
+        if( $exisitng_status == $appointment_status ){
+            return new \WP_Error(
+                'invalid_input',
+                __( 'The appointment is already in the specified status.', 'bookingpress-appointment-booking' ),
+                [ 'status' => 400 ]
+            );
+        }
+
+        global $wpdb, $bookingpress_dashboard;
+
+        $_REQUEST['_wpnonce'] = wp_create_nonce( 'bpa_wp_nonce' ); //phpcs:ignore
+        $_REQUEST['update_appointment_id'] = $appointment_id; //phpcs:ignore
+        $_REQUEST['update_appointment_status'] = $appointment_status; //phpcs:ignore
+
+        $response = $bookingpress_dashboard->bookingpress_change_upcoming_appointment_status( $appointment_id, $appointment_status, true );
+
+        if( is_wp_error( $response ) ){
+            return $response;
+        }
+
+        if( 1 == $response ){
+            return [
+                'success' => true,
+                'message' => __( 'Appointment status updated successfully.', 'bookingpress-appointment-booking' )
+            ];
+        }
+
+        /** 0 means another pending/approved appointment already occupies the same slot. */
+        return new \WP_Error(
+            'update_failed',
+            ( is_array( $response ) && ! empty( $response['msg'] ) ) ? $response['msg'] : __( 'The appointment status could not be updated. Another appointment may already be booked in the same time slot.', 'bookingpress-appointment-booking' ),
+            [ 'status' => 409 ]
+        );
+
+    }
+
+    protected static function get_selected_end_time( $service_id, $booking_time ){
+        $service = ( new \BookingPress\Vue3\Repositories\ServiceRepository )->find( $service_id );
+        if( empty( $service ) ){
+            return '';
+        }
+
+        $duration = !empty( $service['serviceDurationVal'] ) ? intval( $service['serviceDurationVal'] ) : 0;
+        if( empty( $duration ) ){
+            return '';
+        }
+
+        $duration_unit = !empty( $service['serviceDurationUnit'] ) ? $service['serviceDurationUnit'] : 'minutes';
+
+        $duration_min = ( 'h' == $duration_unit ) ? $duration * 60 : $duration;
+
+        $start_time = \DateTime::createFromFormat( 'H:i', $booking_time );
+        if( !$start_time ){
+            return '';
+        }
+
+        $end_time = clone $start_time;
+        $end_time->modify( '+' . $duration_min . ' minutes' );
+
+        return $end_time->format( 'H:i' );
+    }
 }

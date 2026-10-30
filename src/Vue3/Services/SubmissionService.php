@@ -1128,6 +1128,10 @@ class SubmissionService implements SubmissionServiceInterface {
 				return;
 			}
 			$wp_user_id  = (int) $created;
+
+			$user = new \WP_User($wp_user_id);
+			$user->add_role('bookingpress-customer');
+
 			$is_new_user = true;
 			if ( $send_notification && $wp_user_id > 0 ) {
 				wp_send_new_user_notifications( $wp_user_id );

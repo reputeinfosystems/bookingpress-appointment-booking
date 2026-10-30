@@ -8615,7 +8615,7 @@
   --bp-rate-icon-size: 18px;
   --bp-rate-icon-margin: 6px;
   --bp-rate-void-color: var(--bp-border-color-darker);
-  --bp-rate-fill-color: #f7ba2a;
+  --bp-rate-fill-color: #f7ba2a !important;
   --bp-rate-disabled-void-color: var(--bp-fill-color);
   --bp-rate-text-color: var(--bp-text-color-primary);
   --bp-rate-outline-color: var(--bp-color-primary-light-5);
@@ -8669,7 +8669,7 @@
   left: 0;
   display: inline-block;
   overflow: hidden;
-  color: var(--bp-rate-fill-color);
+  color: var(--bp-rate-fill-color) !important;
 }
 .bp-rate__decimal--box {
   position: absolute;

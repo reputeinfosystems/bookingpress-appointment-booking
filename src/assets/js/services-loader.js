@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     service_attachment_id: 0,
                 },
                 service_price_currency: scriptData.service_price_currency || '$',
-                price_number_of_decimals: scriptData.price_number_of_decimals || '2',
+                price_number_of_decimals: (scriptData.price_number_of_decimals !== undefined && scriptData.price_number_of_decimals !== '') ? scriptData.price_number_of_decimals : '2',
                 rules: Object.assign({
                     service_name: [
                         { required: true, message: __('Please enter service name', 'bookingpress-appointment-booking'), trigger: 'blur' },

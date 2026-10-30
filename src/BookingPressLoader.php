@@ -35,8 +35,10 @@ use BookingPress\api\CustomizeFormRoutes;
 use BookingPress\api\WizardRoutes;
 use BookingPress\admin\Payments;
 use BookingPress\api\PaymentRoutes;
+use BookingPress\abilities\BookingPressAbilities;
 
 use BookingPress\frontend\BookingForm;
+
 
 // Vue3 greenfield path - see docs/migration/BOOKINGPRESS_FORM_VUE3_GREENFIELD_PLAN.md
 use BookingPress\Vue3\Routing as Vue3Routing;
@@ -61,6 +63,11 @@ class BookingPressLoader{
         // here. They are harmless on Pro-active installs because they sit
         // under our own namespace.
         Vue3Routing::init();
+
+        global $wp_version;
+        if( version_compare( $wp_version, '7.1', '>=' ) ){
+            BookingPressAbilities::register_abilities();
+        }
 
         if( class_exists( 'BookingPressPro\BookingPressLoader' ) ){
             return;
@@ -110,6 +117,8 @@ class BookingPressLoader{
         new PaymentRoutes();
 
 	    BookingForm::init();
+
+        
         
     }
 

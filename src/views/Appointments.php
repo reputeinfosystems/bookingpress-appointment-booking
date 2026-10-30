@@ -1057,6 +1057,9 @@
                                                         <span class="bpa-form-label"><?php echo esc_html__('Share With', 'bookingpress-appointment-booking'); ?></span>
                                                     </template>
                                                     <label class="bpa-form-label bpa-custom-checkbox--is-label"> <bp-ui-checkbox v-model="share_url_form.email_sharing" label="<?php esc_html_e( 'Email', 'bookingpress-appointment-booking' ); ?>" @change="bpa_enable_service_share"></bp-ui-checkbox></label>
+                                                    <?php 
+                                                        do_action('bookingpress_add_more_sharing_url_options_for_appointment');
+                                                    ?>
                                                 </bp-ui-form-item>
                                             </bp-ui-col>
                                         </bp-ui-row>
@@ -1073,6 +1076,9 @@
                                             </bp-ui-col>
                                         </bp-ui-row>
                                     </div>
+                                    <?php 
+								        do_action('bookingpress_add_more_sharing_url_content_for_appointment');
+							        ?>
                                     <div class="bpa-form-body-row">
                                         <bp-ui-row>
                                             <bp-ui-col :xs="24" :sm="24" :md="24" :lg="24" :xl="24">

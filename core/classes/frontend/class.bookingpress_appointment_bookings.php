@@ -1175,9 +1175,35 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
         function bookingpress_appointment_cancellation_confirmation_func($atts, $content, $tag)  {
 
             global $wpdb, $BookingPress, $tbl_bookingpress_appointment_bookings, $tbl_bookingpress_entries,$bookingpress_global_options;
-            $BookingPress->set_front_css(1);
-            $BookingPress->set_front_js(1); 
+
+            /**
+             * Vue 3 is the default renderer (see CancellationConfirmation::default_use_vue3()).
+             * `bookingpress_cancellation_confirmation_force_legacy` returning true loads the
+             * legacy Vue 2 page; legacy is also used when WP Script Modules are unavailable.
+             *
+             * @param bool   $use_vue3 Whether to use the Vue 3 renderer.
+             * @param array  $atts     Shortcode attributes.
+             * @param string $tag      Shortcode tag.
+             */
+            $bookingpress_cc_use_vue3     = apply_filters( 'bookingpress_cancellation_confirmation_use_vue3', false, $atts, $tag );
+            $bookingpress_cc_force_legacy = apply_filters( 'bookingpress_cancellation_confirmation_force_legacy', false, $atts, $tag );
+            $bookingpress_cc_vue3         = $bookingpress_cc_use_vue3
+                && ! $bookingpress_cc_force_legacy
+                && class_exists( '\BookingPress\Vue3\CancellationConfirmation\CancellationConfirmation' )
+                && \BookingPress\Vue3\CancellationConfirmation\CancellationConfirmation::is_supported();
+
+            if ( $bookingpress_cc_vue3 ) {
+                \BookingPress\Vue3\CancellationConfirmation\CancellationConfirmation::enqueue_styles();
+            } else {
+                $BookingPress->set_front_css(1);
+                $BookingPress->set_front_js(1);
+            }
             $BookingPress->bookingpress_load_booking_form_custom_css();
+
+            // Vue 3 mounts on this markup as an in-DOM template: Element 2 tags are
+            // emitted as their rendered HTML, static sections get `v-pre`.
+            $bookingpress_cc_vpre   = $bookingpress_cc_vue3 ? ' v-pre' : '';
+            $bookingpress_cc_vcloak = $bookingpress_cc_vue3 ? ' v-cloak' : '';
             $bookingpress_uniq_id = uniqid();
             $appointment_id = 0;
 
@@ -1215,10 +1241,15 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                     $booked_appointment_datetime = apply_filters( 'bookingpress_appointment_change_to_client_timezone', $booked_appointment_datetime, $bookingpress_appointment_data['bookingpress_appointment_timezone'], $bookingpress_appointment_data );
                     $bpa_appointment_date_time = date($bookingpress_default_date_time_format, strtotime($booked_appointment_datetime));
 
-                    $content .=' <el-main class="bpa-appointment-cancellation_container" id="bookingpress_appointment_cancellation_form_'.$bookingpress_uniq_id.'">
+                    if ( $bookingpress_cc_vue3 ) {
+                        $content .= ' <main class="el-main bpa-appointment-cancellation_container" id="bookingpress_appointment_cancellation_form_'.$bookingpress_uniq_id.'" data-bp-cc-instance="'.$bookingpress_uniq_id.'">';
+                    } else {
+                        $content .= ' <el-main class="bpa-appointment-cancellation_container" id="bookingpress_appointment_cancellation_form_'.$bookingpress_uniq_id.'">';
+                    }
+                    $content .='
                     <div class="bpa-front-thankyou-module-container bpa-front-cancel-confirmation-container" tabindex="1">
-                    <div class="bpa-front-cc__error-toast-notification" v-if="bookingpress_cancel_variant == \'error\'" v-html="bookingpress_cancel_msg"></div>
-                    <div class="bpa-front-tmc__head">
+                    <div class="bpa-front-cc__error-toast-notification" v-if="bookingpress_cancel_variant == \'error\'" v-html="bookingpress_cancel_msg"'.$bookingpress_cc_vcloak.'></div>
+                    <div class="bpa-front-tmc__head"'.$bookingpress_cc_vpre.'>
                         <svg width="100" height="100" viewBox="0 0 100 100" fill="none" class="bpa-front-tmc__vector--confirmation" xmlns="http://www.w3.org/2000/svg">
                             <path fill-rule="evenodd" clip-rule="evenodd"
                                 d="M90.7002 85.4609C84.4375 93.0097 72.3956 90.9929 62.8277 93.3709C53.5335 95.6809 44.3866 102.22 35.2915 99.2322C26.2099 96.2487 22.8396 85.5958 16.7964 78.2483C10.8588 71.029 1.14803 65.6955 0.0978856 56.4422C-0.951171 47.1985 6.67152 39.5221 11.4957 31.5412C15.8676 24.3085 20.1527 17.1388 26.9344 12.0453C34.1982 6.58966 42.3994 1.52536 51.5153 1.48363C60.7 1.44158 68.4886 7.22002 76.4135 11.8188C84.8089 16.6906 95.7104 20.0478 99.0838 29.0876C102.453 38.117 94.606 47.2497 93.1897 56.7734C91.7484 66.465 96.9793 77.8922 90.7002 85.4609Z"
@@ -1264,7 +1295,7 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                             <div class="bpa-front-bi__label" aria-label="'.$bpa_appointment_cancellation_confirmation.'">'.$bpa_appointment_cancellation_confirmation.'</div>
                         </div>
                     </div>                    
-                    <div class="bpa-front-tmc__summary-content">
+                    <div class="bpa-front-tmc__summary-content"'.$bookingpress_cc_vpre.'>
                         <div class="bpa-front-tmc__sc-item">
                             <div class="bpa-front-sc-item__label" aria-label="'.$bpa_cancel_booking_id_text.'">'.$bpa_cancel_booking_id_text.':</div>
                             <div class="bpa-front-sc-item__val" aria-label="'.$bpa_appointment_booking_id.'">'.$bpa_appointment_booking_id.'</div>
@@ -1279,17 +1310,31 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                         </div>
                     </div>';                    
                     $content = apply_filters('bookingpress_add_cancel_appointment_extra_content',$content,$bkp_ap_id);
-                    $content .="<el-button class='bpa-front-btn bpa-front-btn--primary' @click='bookingpress_cancel_appointment(bookingpress_appointment_id,bookingpress_cancel_token)' :disabled='is_cancel_button_disabled' :class='(is_cancel_appointment_loader == \"1\") ? \"bpa-front-btn--is-loader\" : \"\"'>";                
+                    if ( $bookingpress_cc_vue3 ) {
+                        // Rendered markup of the legacy `<el-button>` (Element 2 wraps the slot in a <span>).
+                        $content .= "<button type='button' class='el-button el-button--default bpa-front-btn bpa-front-btn--primary' @click='bookingpress_cancel_appointment(bookingpress_appointment_id,bookingpress_cancel_token)' :disabled='is_cancel_button_disabled' :class='{ \"is-disabled\": is_cancel_button_disabled, \"bpa-front-btn--is-loader\": is_cancel_appointment_loader == \"1\" }'><span>";
+                    } else {
+                        $content .="<el-button class='bpa-front-btn bpa-front-btn--primary' @click='bookingpress_cancel_appointment(bookingpress_appointment_id,bookingpress_cancel_token)' :disabled='is_cancel_button_disabled' :class='(is_cancel_appointment_loader == \"1\") ? \"bpa-front-btn--is-loader\" : \"\"'>";
+                    }
                         $content .= '<span class="bpa-btn__label" aria-label="'.$bpa_cancel_button_text.'">'.$bpa_cancel_button_text.'</span>
                                 <div class="bpa-front-btn--loader__circles">
                                 <div></div>
                                 <div></div>
                                 <div></div>
-                            </div>                    
-                        </el-button>                        
-                        </div> 
+                            </div>';
+                    if ( $bookingpress_cc_vue3 ) {
+                        $content .= '
+                        </span></button>
+                        </div>
+
+                    </main>';
+                    } else {
+                        $content .= '
+                        </el-button>
+                        </div>
 
                     </el-main>';
+                    }
                 } else {
                     $content .='
                     <div class="bpa-front-thankyou-module-container bpa-front-cancel-confirmation-container" tabindex="1">
@@ -1344,8 +1389,16 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                         <div class="bpa-front-rcc__empty-msg" aria-label="'.$bpa_no_appointment_available_for_cancel.'">'.$bpa_no_appointment_available_for_cancel.'</div>
                     </div>
                 </div>';
-                } 
-                
+                }
+
+                if ( $bookingpress_cc_vue3 ) {
+                    // Only the cancellable branch has a mount node.
+                    if ( ! empty( $bookingpress_appointment_data ) && $bookingpress_appointment_data['bookingpress_appointment_status'] != '3' ) {
+                        \BookingPress\Vue3\CancellationConfirmation\CancellationConfirmation::enqueue_for_render( $bookingpress_uniq_id, $bkp_ap_id, $bookingpress_cancel_token );
+                    }
+                    return $content;
+                }
+
                 add_action(
                     'wp_footer',
                     function () use ( &$bookingpress_uniq_id,$bkp_ap_id,$bookingpress_cancel_token ) {
@@ -2006,7 +2059,7 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
 
         }
 
-        function bookingpress_get_disable_date_func_optimized($return_data = false){
+        function bookingpress_get_disable_date_func_optimized( $return_data = false, $first_available_only = false ){
 
             $start_ms = microtime( true );
             global $wpdb, $BookingPress, $tbl_bookingpress_appointment_bookings, $tbl_bookingpress_payment_logs;
@@ -2213,7 +2266,17 @@ if (! class_exists('bookingpress_appointment_bookings')  && class_exists('Bookin
                                     $bookingpress_selected_date = $bpa_check_date;
                                     /** Check if the selected date is greater than end date in respect to service expiration */
                                     $front_timings_data = $this->bookingpress_retrieve_timeslots( $bpa_check_date, true );
-
+                                    if( $first_available_only ){
+                                        $all_timeslots = array_merge(
+                                            $front_timings_data['morning_time'],
+                                            $front_timings_data['afternoon_time'],
+                                            $front_timings_data['evening_time'],
+                                            $front_timings_data['night_time']
+                                        );
+                                        if( !empty( $all_timeslots ) ){
+                                            return $all_timeslots[0];
+                                        }
+                                    }
                                     $stop_date = $bpa_check_date;
                                     $count++;
                                 }

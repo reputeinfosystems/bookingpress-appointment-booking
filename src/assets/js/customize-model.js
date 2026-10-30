@@ -99,6 +99,8 @@ export const customizePageMethods = {
             summary_container_data: vm.summary_container_data,
             waiting_list_container_data: vm.waiting_list_container_data,
             recurring_appointment_container_data: vm.recurring_appointment_container_data,
+            basic_details_container_data: vm.basic_details_container_data,
+
         };
 
         if (typeof wp !== 'undefined' && wp.hooks) {
@@ -468,6 +470,9 @@ export const customizePageMethods = {
 
                 vm.selected_colorpicker_values =
                     formdata.colorpicker_values || {};
+
+                vm.basic_details_container_data =
+                    formdata.basic_details_container_data || {};
 
                 if (
                     formdata.font_values &&

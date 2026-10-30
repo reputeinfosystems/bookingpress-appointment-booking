@@ -1533,6 +1533,9 @@ body:not(.__bpa-is-staff-customize-view-active) #bpa-staff-panel-header {
 .bpa-customize-body-wrapper .bpa-customize-field-settings-body-container .bp-row.bp-ui-row.bp-row{
     display: block;
 }
+.bpa-tabs--customize-module > .bp-tabs__header.is-top:first-child {
+    display: none !important;
+}
 .bpa-front-module--bd-form .bpa-form-control .bp-textarea__inner {
     background-color: transparent;
     width: 100%;

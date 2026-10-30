@@ -86,20 +86,66 @@ class ServicesRoutes extends Base {
         ] );
     }
 
-    private function get_services_response( $search_service_name = '', $search_service_category = '' ) {
+    private static function get_services_response( $search_service_name = '', $search_service_category = '', $service_id = '', $is_single = false, $page = 0, $per_page = 10, $limit_service_ids = null ) {
         global $wpdb, $tbl_bookingpress_services, $tbl_bookingpress_categories, $tbl_bookingpress_servicesmeta, $tbl_bookingpress_appointment_bookings, $BookingPress;
 
         $where = 'WHERE 1 = 1';
 
         if ( '' !== $search_service_category && 'all' !== $search_service_category ) {
-            $where .= $wpdb->prepare( ' AND bookingpress_category_id = %d', absint( $search_service_category ) );
+            if( is_numeric( $search_service_category ) ){
+                $where .= $wpdb->prepare( ' AND bookingpress_category_id = %d', absint( $search_service_category ) );
+            } else {
+                $all_categories = $wpdb->get_results(
+                    $wpdb->prepare(
+                        "SELECT bookingpress_category_id FROM {$tbl_bookingpress_categories} WHERE bookingpress_category_name LIKE %s",
+                        '%' . $wpdb->esc_like( $search_service_category ) . '%'
+                    )
+                );
+                if ( ! empty( $all_categories ) ) {
+                    $category_ids = wp_list_pluck( $all_categories, 'bookingpress_category_id' );
+                    $placeholders = implode( ',', array_fill( 0, count( $category_ids ), '%d' ) );
+                    $where .= $wpdb->prepare( " AND bookingpress_category_id IN ($placeholders)", ...$category_ids );
+                }
+            }
         }
 
         if ( '' !== $search_service_name ) {
             $where .= $wpdb->prepare( ' AND bookingpress_service_name LIKE %s', '%' . $wpdb->esc_like( $search_service_name ) . '%' );
         }
 
-        $service_rows = $wpdb->get_results( "SELECT * FROM {$tbl_bookingpress_services} {$where} ORDER BY bookingpress_service_position ASC", ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        if( !empty( $service_id ) && true === $is_single ) {
+            $where .= $wpdb->prepare( ' AND bookingpress_service_id = %d', absint( $service_id ) );
+        }
+
+        /** null means no limit; an empty array means no service matched the other filters. */
+        if( is_array( $limit_service_ids ) ) {
+            $limit_service_ids = array_values( array_unique( array_filter( array_map( 'absint', $limit_service_ids ) ) ) );
+            if( empty( $limit_service_ids ) ) {
+                $where .= ' AND 1 = 0';
+            } else {
+                $placeholders = implode( ',', array_fill( 0, count( $limit_service_ids ), '%d' ) );
+                $where .= $wpdb->prepare( " AND bookingpress_service_id IN ($placeholders)", ...$limit_service_ids );
+            }
+        }
+
+        $limit = '';
+        $pagination_data = [];
+        if( $page > 0 ){
+            $offset = ( $page - 1 ) * $per_page;
+            $limit = $wpdb->prepare( ' LIMIT %d, %d', $offset, $per_page );
+
+            $total_services = $wpdb->get_var( "SELECT COUNT(*) FROM {$tbl_bookingpress_services} {$where}" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+            $pagination_data = array(
+                'total' => intval( $total_services ),
+                'per_page' => intval( $per_page ),
+                'current_page' => intval( $page ),
+                'total_pages' => ceil( intval( $total_services ) / intval( $per_page ) ),
+                'has_more' => intval( $page ) < ceil( intval( $total_services ) / intval( $per_page ) ),
+            );
+        }
+
+        $service_rows = $wpdb->get_results( "SELECT * FROM {$tbl_bookingpress_services} {$where} ORDER BY bookingpress_service_position ASC {$limit}", ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        
         $items        = array();
         $counter      = 1;
         $current_date = date( 'Y-m-d', current_time( 'timestamp' ) );
@@ -154,10 +200,17 @@ class ServicesRoutes extends Base {
             $counter++;
         }
 
-        $data      = array(
-            'items' => $items,
-            'total' => count( $service_rows ),
-        );
+        if( true == $is_single ){
+            $data = $items[0];
+        }
+
+        if( true != $is_single ){
+            $data      = array(
+                'items' => $items,
+                'total' => count( $service_rows ),
+                ...$pagination_data
+            );
+        }
         $post_data = array(
             'search_data' => array(
                 'service_name'         => $search_service_name,
@@ -168,10 +221,28 @@ class ServicesRoutes extends Base {
         return rest_ensure_response( apply_filters( 'bookingpress_modify_servies_listing_data', $data, $post_data, $service_rows ) );
     }
 
-    private function get_categories_response() {
+    private static function get_categories_response( $page = 0, $per_page = 10 ) {
         global $wpdb, $tbl_bookingpress_services, $tbl_bookingpress_categories;
 
-        $categories = $wpdb->get_results( "SELECT * FROM {$tbl_bookingpress_categories} ORDER BY bookingpress_category_position ASC", ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        $limit = "";
+
+        $pagination_data = array();
+        if( $page > 0 ) {
+            $offset = ( $page - 1 ) * $per_page;
+            $limit  = " LIMIT $offset, $per_page";
+
+            $total_categories = $wpdb->get_var( "SELECT COUNT(*) FROM {$tbl_bookingpress_categories}" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+
+            $pagination_data = array(
+                'current_page' => $page,
+                'per_page'     => $per_page,
+                'total'        => $total_categories,
+                'total_pages'  => ceil( $total_categories / $per_page ),
+                'has_more'     => $page < ceil( $total_categories / $per_page ),
+            );
+        }
+
+        $categories = $wpdb->get_results( "SELECT * FROM {$tbl_bookingpress_categories} ORDER BY bookingpress_category_position ASC" . $limit, ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
         $items      = array();
         $counter    = 1;
 
@@ -206,7 +277,7 @@ class ServicesRoutes extends Base {
      */
     private function capture_ajax_response( callable $callback ) {
         $cb_name = is_array( $callback ) ? get_class( $callback[0] ) . '::' . $callback[1] : 'closure';
-        error_log( '[BP Services REST] capture_ajax_response → calling: ' . $cb_name );
+        //error_log( '[BP Services REST] capture_ajax_response → calling: ' . $cb_name );
 
         ob_start();
         try {
@@ -222,7 +293,7 @@ class ServicesRoutes extends Base {
         }
         $output = ob_get_clean();
 
-        error_log( '[BP Services REST] Raw output from ' . $cb_name . ' (length=' . strlen( $output ) . '): ' . substr( $output, 0, 500 ) );
+        //error_log( '[BP Services REST] Raw output from ' . $cb_name . ' (length=' . strlen( $output ) . '): ' . substr( $output, 0, 500 ) );
 
         if ( empty( $output ) ) {
             error_log( '[BP Services REST] ERROR: Empty output from ' . $cb_name );
@@ -236,7 +307,7 @@ class ServicesRoutes extends Base {
             return new \WP_REST_Response( [ 'variant' => 'error', 'msg' => 'Invalid JSON from handler.', 'raw' => $output ], 500 );
         }
 
-        error_log( '[BP Services REST] SUCCESS: ' . $cb_name . ' returned ' . ( isset( $data['total'] ) ? $data['total'] . ' total, ' . count( $data['items'] ?? [] ) . ' items' : json_encode( array_keys( $data ) ) ) );
+        //error_log( '[BP Services REST] SUCCESS: ' . $cb_name . ' returned ' . ( isset( $data['total'] ) ? $data['total'] . ' total, ' . count( $data['items'] ?? [] ) . ' items' : json_encode( array_keys( $data ) ) ) );
         return rest_ensure_response( $data );
     }
 
@@ -248,8 +319,8 @@ class ServicesRoutes extends Base {
 
         return $this->get_services_response( $search_service_name, $search_service_category );
 
-        error_log( '[BP Services REST] get_services called — name="' . $search_service_name . '", category="' . $search_service_category . '"' );
-        error_log( '[BP Services REST] bookingpress_services global exists: ' . ( isset( $bookingpress_services ) ? 'YES (' . get_class( $bookingpress_services ) . ')' : 'NO — NULL!' ) );
+        //error_log( '[BP Services REST] get_services called — name="' . $search_service_name . '", category="' . $search_service_category . '"' );
+        //error_log( '[BP Services REST] bookingpress_services global exists: ' . ( isset( $bookingpress_services ) ? 'YES (' . get_class( $bookingpress_services ) . ')' : 'NO — NULL!' ) );
 
         $_POST['action']       = 'bookingpress_get_services';
         $_REQUEST['action']    = 'bookingpress_get_services';
@@ -261,7 +332,7 @@ class ServicesRoutes extends Base {
         $_POST['_wpnonce']       = wp_create_nonce( 'bpa_wp_nonce' );
         $_REQUEST['_wpnonce']    = wp_create_nonce( 'bpa_wp_nonce' );
 
-        error_log( '[BP Services REST] get_services → search_data: ' . json_encode( $_POST['search_data'] ) );
+        //error_log( '[BP Services REST] get_services → search_data: ' . json_encode( $_POST['search_data'] ) );
         return $this->capture_ajax_response( [ $bookingpress_services, 'bookingpress_get_services' ] );
     }
 
@@ -269,8 +340,8 @@ class ServicesRoutes extends Base {
         global $bookingpress_services;
 
         $params = $request->get_params();
-        error_log( '[BP Services REST] save_service called — params: ' . json_encode( $params ) );
-        error_log( '[BP Services REST] bookingpress_services global exists: ' . ( isset( $bookingpress_services ) ? 'YES' : 'NO — NULL!' ) );
+        //error_log( '[BP Services REST] save_service called — params: ' . json_encode( $params ) );
+        //error_log( '[BP Services REST] bookingpress_services global exists: ' . ( isset( $bookingpress_services ) ? 'YES' : 'NO — NULL!' ) );
 
         foreach ( $params as $key => $value ) {
             $_POST[ $key ]    = $value;
@@ -301,7 +372,7 @@ class ServicesRoutes extends Base {
         global $bookingpress_services;
 
         $service_id = intval( $request->get_param( 'service_id' ) );
-        error_log( '[BP Services REST] delete_service called — id=' . $service_id );
+        //error_log( '[BP Services REST] delete_service called — id=' . $service_id );
 
         $_POST['delete_id']    = $service_id;
         $_REQUEST['delete_id'] = $service_id;
@@ -317,7 +388,7 @@ class ServicesRoutes extends Base {
         global $bookingpress_services;
 
         $delete_ids = $request->get_param( 'delete_ids' );
-        error_log( '[BP Services REST] bulk_delete_services called — ids: ' . json_encode( $delete_ids ) );
+        //error_log( '[BP Services REST] bulk_delete_services called — ids: ' . json_encode( $delete_ids ) );
 
         $_POST['cat_delete_ids']    = $delete_ids;
         $_REQUEST['cat_delete_ids'] = $delete_ids;
@@ -335,7 +406,7 @@ class ServicesRoutes extends Base {
         global $bookingpress_services;
 
         $service_id = intval( $request->get_param( 'service_id' ) );
-        error_log( '[BP Services REST] duplicate_service called — id=' . $service_id );
+        //error_log( '[BP Services REST] duplicate_service called — id=' . $service_id );
 
         $_POST['service_id']    = $service_id;
         $_REQUEST['service_id'] = $service_id;
@@ -397,7 +468,7 @@ class ServicesRoutes extends Base {
     }
 
     public function get_categories( $request ) {
-        return $this->get_categories_response();
+        return self::get_categories_response();
     }
 
     public function save_category( $request ) {
@@ -420,7 +491,7 @@ class ServicesRoutes extends Base {
         global $bookingpress_service_categories;
 
         $category_id = intval( $request->get_param( 'category_id' ) );
-        error_log( '[BP Services REST] delete_category called — id=' . $category_id );
+        //error_log( '[BP Services REST] delete_category called — id=' . $category_id );
 
         $_POST['delete_id']    = $category_id;
         $_REQUEST['delete_id'] = $category_id;
@@ -518,5 +589,138 @@ class ServicesRoutes extends Base {
         $return_data['upload_file_name'] = $file_name;
 
         return new \WP_REST_Response( $return_data, 200 );
+    }
+
+    /**
+     * WP Abilities Adaptor
+     * Adaptor for the 'bookingpress/list-service-categories' ability.
+     * Retrieves a paginated list of service categories.
+     * @since 1.6.9
+     * @param array $input Input parameters for the ability.
+     * @return array|\WP_Error Response data or WP_Error on failure.
+    */
+    public static function bookingpress_ability_list_category( $input = [] ){
+        
+        $page = isset( $input['page'] ) ? intval( $input['page'] ) : 1;
+        $per_page = isset( $input['per_page'] ) ? intval( $input['per_page'] ) : 10;
+
+        $response = self::get_categories_response( $page, $per_page );
+
+        if( is_wp_error( $response ) ) {
+            return $response;
+        }
+        $reponse_data = $response->get_data();
+
+        $items = [];
+
+        foreach( $reponse_data['items'] ?? [] as $item ) {
+            $items[] = [
+                'category_id' => (int) $item['category_id'],
+                'category_name' => $item['category_name'] ?? ''
+            ];
+        }
+
+        return [
+            'categories' => $items,
+            'total' => $reponse_data['total'] ?? count($items),
+            'total_pages' => $reponse_data['total_pages'] ?? 1,
+            'current_page' => $reponse_data['current_page'] ?? $page,
+            'per_page' => $per_page,
+            'has_more' => $reponse_data['has_more'] ?? false,
+        ];
+    }
+
+    /**
+     * WP Abilities Adaptor
+     * Adaptor for the 'bookingpress/list-services' ability.
+     * Retrieve a paginated list of services.
+     * @since 1.6.9
+     * @param array $input Input parameter for the ability
+     * @return array|\WP_Error Response data or WP_Error on failure
+     */
+
+    public static function bookingpress_ability_list_services( $input = [] ){
+        $page = isset( $input['page'] ) ? intval( $input['page'] ) : 1;
+        $per_page = isset( $input['per_page'] ) ? intval( $input['per_page'] ) : 10;
+
+        $category = isset( $input['category'] ) ? sanitize_text_field( $input['category'] ) : '';
+        $service = isset( $input['service'] ) ? sanitize_text_field( $input['service'] ) : '';
+
+        /**
+         * Filter the service IDs the 'bookingpress/list-services' ability is limited to.
+         * Callbacks that narrow the list should intersect with the IDs they receive when it is an array.
+         *
+         * @since 1.6.9
+         * @param array|null $limit_service_ids Allowed service IDs, or null for no limit.
+         * @param array      $input             Ability input.
+         */
+        $limit_service_ids = apply_filters( 'bookingpress_ability_list_services_service_ids', null, $input );
+
+        $response = self::get_services_response( $service, $category, '', false, $page, $per_page, is_array( $limit_service_ids ) ? $limit_service_ids : null );
+
+        if( is_wp_error( $response ) ) {
+            return $response;
+        }
+
+        $data = $response->get_data();
+
+        $items = [];
+
+        /** Lets Pro load the extended data of all listed services at once instead of querying per service. */
+        if( class_exists( '\BookingPressPro\api\ServiceProRoutes' ) && method_exists( '\BookingPressPro\api\ServiceProRoutes', 'bookingpress_prefetch_service_data' ) ) {
+            \BookingPressPro\api\ServiceProRoutes::bookingpress_prefetch_service_data( wp_list_pluck( $data['items'] ?? [], 'service_id' ) );
+        }
+
+        foreach( $data['items'] ?? [] as $item ){
+            $item_data = [
+                'service_id' => (int) $item['service_id'],
+                'service_name' => $item['service_name'] ?? '',
+                'service_category' => $item['service_category'] ?? '',
+                'service_duration' => $item['service_duration'] ?? '',
+                'service_duration_val' => $item['service_duration_val'] ?? '',
+                'service_duration_unit' => $item['service_duration_unit'] ?? '',
+                'service_price' => $item['service_price'] ?? '',
+                'service_description' => $item['service_description'] ?? ''
+            ];
+
+            if( class_exists( '\BookingPressPro\api\ServiceProRoutes' ) && method_exists( '\BookingPressPro\api\ServiceProRoutes', 'bookingpress_extend_service_data' ) ) {
+                $item_data = \BookingPressPro\api\ServiceProRoutes::bookingpress_extend_service_data( $item_data, $item );
+            }
+
+            $items[] = $item_data;
+        }
+
+        /**
+         * Filter the services returned by the 'bookingpress/list-services' ability.
+         * Runs once per page so add-ons can load their data for all services in one query.
+         *
+         * @since 1.6.9
+         * @param array $items     Services prepared for the ability response.
+         * @param array $raw_items Services as returned by the services listing.
+         */
+        $items = apply_filters( 'bookingpress_ability_list_services_items', $items, $data['items'] ?? [] );
+
+        return [
+            'items' => $items,
+            'total' => $data['total'] ?? count($items),
+            'total_pages' => $data['total_pages'] ?? 1,
+            'current_page' => $data['current_page'] ?? $page,
+            'per_page' => $per_page,
+            'has_more' => $data['has_more'] ?? false,
+        ];
+    }
+
+    public static function bookingpress_ability_get_service( $input = [] ){
+
+        $service_id = isset( $input['service_id'] ) ? intval( $input['service_id'] ) : 0;
+
+        $response = self::get_services_response( '', '', $service_id, true );
+
+        if( is_wp_error( $response ) ) {
+            return $response;
+        }
+        
+        return $response->get_data();
+
     }
 }

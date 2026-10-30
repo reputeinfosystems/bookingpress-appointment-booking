@@ -118,6 +118,7 @@ class CustomizeFormRoutes extends Base {
             'recurring_appointment_container_data',
             'language_data',
             'cart_container_data',
+            'basic_details_container_data',
         ];
 
        foreach ( $params as $param ) {

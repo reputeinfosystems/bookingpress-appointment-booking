@@ -2259,7 +2259,7 @@ if (! class_exists('BookingPress') ) {
         {
             global $bookingpress_version;
             $bookingpress_old_version = get_option('bookingpress_version', true);
-            if (version_compare($bookingpress_old_version, '1.6.8', '<') ) {
+            if (version_compare($bookingpress_old_version, '1.6.9', '<') ) {
                 $bookingpress_load_upgrade_file = BOOKINGPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $bookingpress_load_upgrade_file;
                 $this->bookingpress_send_anonymous_data_cron();
@@ -5544,7 +5544,7 @@ if (! class_exists('BookingPress') ) {
             }
 
             if (isset($_REQUEST['page']) && (/* sanitize_text_field($_REQUEST['page']) == 'bookingpress_settings' || */ sanitize_text_field($_REQUEST['page']) == 'bookingpress_customize')  ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
-                wp_enqueue_script('bookingpress_v-calendar_js');
+                //wp_enqueue_script('bookingpress_v-calendar_js');
             }
 
             /* if (isset($_REQUEST['page']) && ( isset($_REQUEST['page']) && sanitize_text_field($_REQUEST['page']) == 'bookingpress' ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.MissingUnslash
@@ -5947,7 +5947,7 @@ if (! class_exists('BookingPress') ) {
             $general_settings = $bookingpress_general_setting_options['general_settings'];
 
 
-            if( !is_array( $setting_name ) && !empty( $general_settings[ $setting_type ][ $setting_name ] ) ){                
+            if( !is_array( $setting_name ) && ( !empty( $general_settings[ $setting_type ][ $setting_name ] ) || ( isset( $general_settings[ $setting_type ][ $setting_name ] ) && ( '0' === $general_settings[ $setting_type ][ $setting_name ] || 0 === $general_settings[ $setting_type ][ $setting_name ] ) ) ) ){                
                 $return_setting_data = $general_settings[ $setting_type ][ $setting_name ];
                 $return_setting_data = apply_filters( 'bookingpress_modified_get_settings',$return_setting_data,$setting_type,$setting_name);
                 return $return_setting_data;
@@ -5955,7 +5955,7 @@ if (! class_exists('BookingPress') ) {
             } else if( is_array( $setting_name ) ){
                 $return_data = array();
                 foreach( $setting_name as $setting_name_key ){
-                    if( !empty( $general_settings[ $setting_type ][ $setting_name_key ] ) ){
+                    if( !empty( $general_settings[ $setting_type ][ $setting_name_key ] ) || ( isset( $general_settings[ $setting_type ][ $setting_name_key ] ) && ( '0' === $general_settings[ $setting_type ][ $setting_name_key ] || 0 === $general_settings[ $setting_type ][ $setting_name_key ] ) ) ){
                         $return_setting_data = $general_settings[ $setting_type ][ $setting_name_key ];
                         $return_setting_data = apply_filters( 'bookingpress_modified_get_settings',$return_setting_data,$setting_type,$setting_name_key);
                         $return_data[ $setting_name_key ] = $return_setting_data;
@@ -6859,7 +6859,7 @@ if (! class_exists('BookingPress') ) {
             $default_timeslot_step = $service_step_duration_val = $service_time_duration['default_timeslot'];
 
             $bookingpress_current_time_timestamp = current_time('timestamp');
-            $service_time_duration_unit = $service_time_duration['time_unit'];            
+            $service_time_duration_unit = $service_time_duration['time_unit'];
             
             if (! empty($selected_service_id) ) {
                 //$service_data = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$tbl_bookingpress_services} WHERE bookingpress_service_id = %d", $selected_service_id), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason $tbl_bookingpress_services is a table name
@@ -10216,7 +10216,7 @@ if (! class_exists('BookingPress') ) {
                         .bp-ui-root .bpa-frontend-my-bookings-vue3 .bpa-checkbox.bp-checkbox .bp-checkbox__label,
                         .bp-ui-root .bpa-frontend-my-bookings-vue3 .bp-radio__label,
                         .bp-ui-root .bpa-frontend-my-bookings-vue3 .bp-textarea__inner::placeholder,
-                        .bpa-frontend-my-bookings-vue3 .bpa-form-control.bp-input .bp-input__inner::placeholder,
+                        .bp-ui-root .bpa-frontend-my-bookings-vue3 .bpa-form-control.bp-input .bp-input__inner::placeholder,
                         .bp-ui-root .bpa-form-control.bp-select .bp-select__placeholder
                         {
                             color: ' . $content_color . ' !important;

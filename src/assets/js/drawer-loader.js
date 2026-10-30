@@ -356,7 +356,6 @@ const initHelperIconWrapper = () => {
             const bpa_get_page = bpa_get_url_param.get('page');
             const bpa_get_action = bpa_get_url_param.get('action');
             const help_module = document.querySelector('#bookingpress_help_icon_wrapper')?.getAttribute('data-request-module');
-            
             const closeFab = () => {
                 vm.bpa_fab_floating_btn = 0;
             };
@@ -479,6 +478,8 @@ const initHelperIconWrapper = () => {
                 } else if (selected_tab == 'debug_log_settings') {
                     vm.openNeedHelper('list_debug_log_settings', 'Debug Log Settings');
                 }
+
+                wp.hooks.doAction('bpa_add_extra_tab_outside_setting_func', vm, bpa_get_page, selected_tab);
 
                 closeFab();
             } else if (help_module) {
