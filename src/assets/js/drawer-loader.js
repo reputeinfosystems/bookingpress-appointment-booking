@@ -42,7 +42,7 @@ const initHeaderWrapper = () => {
             window.open('https://www.bookingpressplugin.com/pricing/?utm_source=liteversion&utm_medium=plugin&utm_campaign=Upgrade+to+Premium&utm_id=bookingpress_2', '_blank');
         },
         bookingpress_redirect_sale_premium_page(){
-            window.open('https://www.bookingpressplugin.com/pricing/?utm_source=LiteVersion&utm_medium=Popup&utm_campaign=SummerSale', '_blank');
+            window.open('https://www.bookingpressplugin.com/pricing/?utm_source=liteversion&utm_medium=plugin&utm_campaign=bf-popup', '_blank');
         }
     });
     

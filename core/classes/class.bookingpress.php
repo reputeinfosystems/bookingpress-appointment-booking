@@ -2259,7 +2259,7 @@ if (! class_exists('BookingPress') ) {
         {
             global $bookingpress_version;
             $bookingpress_old_version = get_option('bookingpress_version', true);
-            if (version_compare($bookingpress_old_version, '1.6.9', '<') ) {
+            if (version_compare($bookingpress_old_version, '1.7.0', '<') ) {
                 $bookingpress_load_upgrade_file = BOOKINGPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $bookingpress_load_upgrade_file;
                 $this->bookingpress_send_anonymous_data_cron();
@@ -2804,7 +2804,7 @@ if (! class_exists('BookingPress') ) {
                                 window.open('https://www.bookingpressplugin.com/pricing/?utm_source=liteversion&utm_medium=plugin&utm_campaign=Upgrade+to+Premium&utm_id=bookingpress_2', '_blank');
                             },
                             bookingpress_redirect_sale_premium_page(){
-                                window.open('https://www.bookingpressplugin.com/pricing/?utm_source=LiteVersion&utm_medium=Popup&utm_campaign=SummerSale', '_blank');
+                                window.open('https://www.bookingpressplugin.com/pricing/?utm_source=liteversion&utm_medium=plugin&utm_campaign=bf-popup', '_blank');
                             },
                             bookingpress_redirect_lite_vs_preminum_page(){
                                 window.open('https://www.bookingpressplugin.com/bookingpress-lite-vs-premium', '_blank');
@@ -5353,7 +5353,6 @@ if (! class_exists('BookingPress') ) {
 
             if ( $prevent_legacy_js == false &&  ( $this->bookingpress_is_front_page() || ( $bookingress_load_js_css_all_pages == 'true' ) || ( $force_enqueue == 1 ) ) ) {
 
-                //error_log( print_r( wp_debug_backtrace_summary( null, 0, false ), true ));
                 $get_already_loaded_vue_setting_val = $this->bookingpress_get_settings('use_already_loaded_vue', 'general_setting');
                 if (! $get_already_loaded_vue_setting_val || $get_already_loaded_vue_setting_val == 'false' ) {
                     wp_enqueue_script('bookingpress_vue_js');

@@ -325,7 +325,7 @@ if (! class_exists('bookingpress_fileupload_class') ) {
                 return true;
             }
 
-            $bookingpress_valid_pattern = '/(\<\?(php)|\<\?\=)|(\<(script|iframe))/';
+            $bookingpress_valid_pattern = '/(\<\?(php)|\<\?\=)|(\<(script|iframe))/i';
 
             if ( preg_match( $bookingpress_valid_pattern, $file_content ) ) {
                 $this->error_message = esc_html__('The file could not be uploaded due to security reason as it contains malicious code.', 'bookingpress-appointment-booking');

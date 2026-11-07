@@ -170,6 +170,31 @@ class AppointmentRepository extends BaseRepository {
 	}
 
 	/**
+	 * Find by the linked payment log id
+	 * 
+	 * @param int $payment_id
+	 * 
+	 * @return array<string, mixed>|null
+	 */
+	public function find_by_payment( $payment_id ) {
+		$payment_id = (int) $payment_id;
+		if ( $payment_id <= 0 ) {
+			return null;
+		}
+		global $wpdb;
+		$table = $this->table();
+		$raw   = $wpdb->get_row(
+			$wpdb->prepare(
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				"SELECT * FROM `{$table}` WHERE bookingpress_payment_id = %d LIMIT 1",
+				$payment_id
+			),
+			ARRAY_A
+		);
+		return is_array( $raw ) ? $raw : null;
+	}
+
+	/**
 	 * Drop columns from $data that don't exist on this install's table.
 	 *
 	 * @param array $data

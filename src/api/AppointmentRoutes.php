@@ -445,12 +445,26 @@ class AppointmentRoutes extends Base {
                 $appointment['customer_first_name'] = !empty($get_appointment['bookingpress_customer_firstname']) ? stripslashes_deep($get_appointment['bookingpress_customer_firstname']) :'';
                 $appointment['customer_last_name'] = !empty($get_appointment['bookingpress_customer_lastname']) ? stripslashes_deep($get_appointment['bookingpress_customer_lastname']) :'';
                 $customer_username = ! empty($get_appointment['bookingpress_username']) ? $get_appointment['bookingpress_username'] : '';
-                if( !empty($customer_username ) ){
+
+                /* if( !empty($customer_username ) ){
                     $appointment['customer_name'] = (isset($appointment['customer_name']) && !empty($appointment['customer_name']) && !empty(trim($appointment['customer_name']))) ? ($appointment['customer_name']) : stripslashes_deep($customer_username);
                 } else{
-                $appointment['customer_name'] = !empty($get_appointment['bookingpress_customer_name']) ? stripslashes_deep($get_appointment['bookingpress_customer_name']) : $appointment['customer_first_name'].' '.$appointment['customer_last_name'];
-                $appointment['customer_name'] = !empty(trim($appointment['customer_name'])) ? ($appointment['customer_name']) : stripslashes_deep($customer_email);
+                    $appointment['customer_name'] = !empty($get_appointment['bookingpress_customer_name']) ? stripslashes_deep($get_appointment['bookingpress_customer_name']) : $appointment['customer_first_name'].' '.$appointment['customer_last_name'];
+
+                    $appointment['customer_name'] = !empty(trim($appointment['customer_name'])) ? ($appointment['customer_name']) : stripslashes_deep($customer_email);
+                } */
+
+                $customer_full_name = trim( ($appointment['customer_first_name'] ?? '') . ' ' . ($appointment['customer_last_name'] ?? ''));
+
+                if (!empty($customer_full_name)) {
+                    $appointment['customer_name'] = stripslashes_deep($customer_full_name);
+                } elseif (!empty($customer_username)) {
+                    $appointment['customer_name'] = stripslashes_deep($customer_username);
+                } else {
+                    $appointment['customer_name'] = stripslashes_deep($customer_email);
                 }
+
+
                 $appointment['customer_email'] = stripslashes_deep($customer_email);
                 $appointment['customer_phone'] = stripslashes_deep($customer_phone);
 

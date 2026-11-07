@@ -88,10 +88,6 @@
                             require __DIR__ . '/components/settings/messages_setting_tab.php';
                         }
 
-                        if( class_exists( 'BookingPressPro\admin\Settings' ) && method_exists( 'BookingPressPro\admin\Settings', 'getLicenseTab' ) ) {
-                            \BookingPressPro\admin\Settings::getLicenseTab();
-                        }
-
                         if( class_exists( 'BookingPressPro\admin\Settings' ) && method_exists( 'BookingPressPro\admin\Settings', 'getOptinsTab' ) ) {
                             \BookingPressPro\admin\Settings::getOptinsTab();
                         }
@@ -106,6 +102,10 @@
 
                         if( class_exists( 'BookingPressPro\admin\Settings' ) && method_exists( 'BookingPressPro\admin\Settings', 'getSettingsOutsideTab' ) ) {
                             \BookingPressPro\admin\Settings::getSettingsOutsideTab();
+                        }
+
+                        if( class_exists( 'BookingPressPro\admin\Settings' ) && method_exists( 'BookingPressPro\admin\Settings', 'getLicenseTab' ) ) {
+                            \BookingPressPro\admin\Settings::getLicenseTab();
                         }
 
                         if( $bookingpress_debug_log_settings_allowed == 1 ){

@@ -460,29 +460,9 @@ const initNewAppointmentDialog = () => {
             const vm = this;
             if ('add_new' === bookingpress_selected_customer) {
                 window.BookingPressCustomerDialog.openCustomerDialog();
-            } else {
-                vm.bookingpress_retrieve_custom_field_values(bookingpress_selected_customer);
-            }
+            } 
             wp.hooks.doAction('bookingpress_backend_after_select_customer', vm);
-        },
-        bookingpress_retrieve_custom_field_values(selected_customer_id) {
-            const vm = this;
-            /* let postData = { action: "bookingpress_get_customer_form_field_values", customer_id: selected_customer_id, _wpnonce: BookingPressConfig._wpnonce };
-            axios.post(appoint_ajax_obj.ajax_url, Qs.stringify(postData))
-            .then(function (response) {
-                if (response.data.variant == 'success') {
-                    let customer_form_fields = response.data.customer_form_fields;
-                    for (let field_key in customer_form_fields) {
-                        let field_value = customer_form_fields[field_key];
-                        if ('undefined' != typeof vm.appointment_formdata.bookingpress_appointment_meta_fields_value[field_key]) {
-                            vm.appointment_formdata.bookingpress_appointment_meta_fields_value[field_key] = field_value;
-                        }
-                    }
-                }
-            }).catch(function (error) {
-                console.log(error);
-            }) */
-        },
+        },        
         bookingpress_get_customer_list(query) {
 
             if (query.length > 0 || 'object' == typeof query) {
