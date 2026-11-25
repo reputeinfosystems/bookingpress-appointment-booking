@@ -114,7 +114,14 @@ import './host-registry.js';
 
   // --- REST helper ---------------------------------------------------------
 
-  async function paymentPost(host, route, body) {
+  /**
+   * Codes that mean "the tokens baked into the page are stale", not "the
+   * request is wrong". Each is rejected before anything is staged, so one
+   * retry with fresh tokens cannot create a second booking.
+   */
+  var STALE_AUTH_CODES = ['rest_cookie_invalid_nonce', 'bp_v3_rest_invalid_nonce', 'bp_v3_invalid_form_nonce', 'bp_v3_invalid_instance'];
+
+  async function paymentPost(host, route, body, retried) {
     var root = String(host.paymentRoot() || '').replace(/\/+$/, '');
     if (!root) {
       return { status: 0, ok: false, error: { message: 'Payment routes are unavailable. Please update BookingPress.' } };
@@ -135,6 +142,12 @@ import './host-registry.js';
 
     var json = null;
     try { json = await res.json(); } catch (e) { json = { ok: false, error: { message: 'Server returned non-JSON.' } }; }
+
+    var failureCode = (json && (json.code || (json.error && json.error.code))) || '';
+    if (!res.ok && !retried && STALE_AUTH_CODES.indexOf(failureCode) !== -1 && typeof host.refreshNonces === 'function') {
+      if (await host.refreshNonces()) return paymentPost(host, route, body, true);
+    }
+
     return { status: res.status, ok: !!(json && json.ok), data: json && json.data, error: json && json.error };
   }
 

@@ -178,6 +178,9 @@ class Appointments extends Base{
         wp_enqueue_style( 'bookingpress_admin_css' );
         wp_enqueue_style( 'bookingpress_components_css' );
         wp_enqueue_style( 'bookingpress_fonts_css' );
+        if (is_rtl() ) {
+            wp_enqueue_style('bookingpress_admin_rtl_css');
+        }
 
         wp_enqueue_style(
             'bookingpress-common',

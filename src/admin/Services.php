@@ -37,7 +37,10 @@ class Services extends Base {
         $services_data['service']['_wpnonce'] = $bpa_nonce;
 
         $bookingpress_global_details = $bookingpress_global_options->bookingpress_global_options();
-        $bookingpress_currency_symbol = ! empty( $bookingpress_global_details['price_symbol'] ) ? $bookingpress_global_details['price_symbol'] : '$';
+        $bookingpress_payment_default_currency = $BookingPress->bookingpress_get_settings( 'payment_default_currency', 'payment_setting' );
+        $bookingpress_payment_default_currency = ! empty( $bookingpress_payment_default_currency ) ? $bookingpress_payment_default_currency : 'USD';
+        $bookingpress_currency_symbol          = $BookingPress->bookingpress_get_currency_symbol( $bookingpress_payment_default_currency );
+        $bookingpress_currency_symbol          = ! empty( $bookingpress_currency_symbol ) ? $bookingpress_currency_symbol : '$';
 
         $price_number_of_decimals = $BookingPress->bookingpress_get_settings( 'price_number_of_decimals', 'payment_setting' );
         if ( null === $price_number_of_decimals || '' === $price_number_of_decimals ) {
@@ -156,6 +159,10 @@ class Services extends Base {
         wp_enqueue_style( 'bookingpress_admin_css' );
         wp_enqueue_style( 'bookingpress_components_css' );
         wp_enqueue_style( 'bookingpress_fonts_css' );
+
+        if (is_rtl() ) {
+            wp_enqueue_style('bookingpress_admin_rtl_css');
+        }
 
         wp_enqueue_style(
             'bookingpress-common',

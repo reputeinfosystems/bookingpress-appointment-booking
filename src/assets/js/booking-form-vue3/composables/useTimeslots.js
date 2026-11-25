@@ -73,6 +73,20 @@ const PROGRESSIVE_AHEAD = 2;
 function applyTimeslotRequestFilter(body, state, kind) {
   // Selected staff related chagne : fixed the timeslot not updates: after auto fill the from step (staff -> service) update time slots in that case
   const fd = (state && state.appointment_step_form_data) || {};
+  // The Location module can register its request filter after Date & Time's
+  // first mount. Seed the share-URL location here as well so the initial
+  // request has the same availability context as later month requests.
+  if (state && state.config && state.config.location_activated) {
+    let locationId = fd.selected_location || fd.bookingpress_location_id || '';
+    if (!locationId && typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      locationId = params.get('loc_id') || params.get('location_id') || '';
+    }
+    if (locationId && body && typeof body === 'object') {
+      body.selected_location = String(locationId);
+      body.bookingpress_location_id = String(locationId);
+    }
+  }
   if (!fd.is_any_staff_selected) {
     const staffId = parseInt(fd.selected_staff_member_id || 0, 10);
     if (staffId > 0 && !body.selected_staff) {
@@ -105,6 +119,17 @@ function applyTimeslotCacheSignature(state) {
     instanceId: state && state.instanceId,
   });
   return typeof out === 'string' ? out : '';
+}
+
+function selectedLocationForTimeslots(state) {
+  if (!state || !state.config || !state.config.location_activated) return '';
+  const fd = state.appointment_step_form_data || {};
+  let locationId = fd.selected_location || fd.bookingpress_location_id || '';
+  if (!locationId && typeof window !== 'undefined') {
+    const params = new URLSearchParams(window.location.search);
+    locationId = params.get('loc_id') || params.get('location_id') || '';
+  }
+  return String(locationId || '');
 }
 
 export function useTimeslots(state, api, bus) {
@@ -173,6 +198,8 @@ export function useTimeslots(state, api, bus) {
     const fd = state.appointment_step_form_data || {};
     const suffix = dayServiceCartCacheSignature();
     const addonSignature = applyTimeslotCacheSignature(state);
+    const locationId = selectedLocationForTimeslots(state);
+    const locationSignature = locationId ? `location:${locationId}` : '';
     let staffSuffix = ''; // Selected staff related chagne : fixed the timeslot not updates
     if (!fd.is_any_staff_selected) {
       const staffId = parseInt(fd.selected_staff_member_id || 0, 10);
@@ -180,7 +207,12 @@ export function useTimeslots(state, api, bus) {
         staffSuffix = `staff:${staffId}`;
       }
     }
-    const contextSuffix = [suffix, staffSuffix, addonSignature].filter(Boolean).join('|');
+    // The add-on may also contribute this signature. Avoid duplicating it, and
+    // keep the key stable before and after its request/cache filters register.
+    const hasLocationSignature = locationSignature
+      && String(addonSignature).split('|').indexOf(locationSignature) !== -1;
+    const contextSuffix = [suffix, staffSuffix, addonSignature, (!hasLocationSignature ? locationSignature : '')]
+      .filter(Boolean).join('|');
     return `${base}${contextSuffix ? '|' + contextSuffix : ''}`;
   }
 

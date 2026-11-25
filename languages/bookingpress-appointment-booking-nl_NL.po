@@ -1,10 +1,10 @@
 #@ bookingpress-appointment-booking
 msgid ""
 msgstr ""
-"Project-Id-Version: BookingPress Appointment Booking v1.7.0\n"
+"Project-Id-Version: BookingPress Appointment Booking v1.7.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2026-11-06 05:01:16+0000\n"
+"PO-Revision-Date: 2026-11-20 05:57:14+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -217,27 +217,27 @@ msgstr "succes"
 msgid "Please enter username"
 msgstr "Voer gebruikersnaam in"
 
-#: core/classes/class.bookingpress.php:8754
-#: core/classes/class.bookingpress_customize.php:1542
+#: core/classes/class.bookingpress.php:8753
+#: core/classes/class.bookingpress_customize.php:1549
 #: core/views/upgrade_latest_data.php:1256
 #@ bookingpress-appointment-booking
 msgid "Please enter your username"
 msgstr "Voer alsjeblieft je gebruikersnaam in"
 
-#: core/classes/class.bookingpress.php:8752
-#: core/classes/class.bookingpress_customize.php:1540
+#: core/classes/class.bookingpress.php:8751
+#: core/classes/class.bookingpress_customize.php:1547
 #: core/views/upgrade_latest_data.php:1255
 #@ bookingpress-appointment-booking
 msgid "Enter your username"
 msgstr "Voer je gebruikersnaam in"
 
-#: core/classes/class.bookingpress.php:8743
+#: core/classes/class.bookingpress.php:8742
 #: core/views/upgrade_latest_data.php:1245
 #@ bookingpress-appointment-booking
 msgid "Please tick this box if you want to proceed"
 msgstr "Vink dit vakje aan als je wilt doorgaan"
 
-#: core/classes/class.bookingpress.php:8742
+#: core/classes/class.bookingpress.php:8741
 #: core/views/upgrade_latest_data.php:1243
 #@ bookingpress-appointment-booking
 msgid "I agree with <a target=\"_blank\" href=\"#\">terms & conditions</a>"
@@ -255,7 +255,7 @@ msgstr "Totale afspraken:"
 msgid "Recent Appointment:"
 msgstr "Recente afspraken:"
 
-#: core/classes/class.bookingpress.php:8532
+#: core/classes/class.bookingpress.php:8531
 #@ bookingpress-appointment-booking
 msgid "Next:"
 msgstr "Volgende:"
@@ -355,7 +355,7 @@ msgstr "BookingPress Gmail test e-mail melding"
 msgid "Gmail Test Email cannot sent successfully"
 msgstr "Gmail test e-mail niet succesvol verzonden"
 
-#: core/classes/class.bookingpress.php:8439
+#: core/classes/class.bookingpress.php:8438
 #: core/views/upgrade_latest_data.php:1111
 #@ bookingpress-appointment-booking
 msgid "Cancel appointment confirmation"
@@ -457,9 +457,9 @@ msgstr "Het spijt me! Dit e-mailadres bestaat al. Voer een ander e-mailadres in.
 msgid "I am sorry! The selected currency is not supported by PayPal payment gateway. Please proceed with another available payment method."
 msgstr "Het spijt me! De geselecteerde valuta wordt niet ondersteund door PayPal. Ga door met een andere beschikbare betaalmethode."
 
-#: core/classes/class.bookingpress.php:8042
-#: core/classes/class.bookingpress.php:8108
-#: core/classes/class.bookingpress.php:8159
+#: core/classes/class.bookingpress.php:8041
+#: core/classes/class.bookingpress.php:8107
+#: core/classes/class.bookingpress.php:8158
 #: core/classes/class.bookingpress_appointment.php:2164
 #: core/classes/class.bookingpress_services.php:1178
 #: src/api/ServicesRoutes.php:167
@@ -467,9 +467,9 @@ msgstr "Het spijt me! De geselecteerde valuta wordt niet ondersteund door PayPal
 msgid "Hour"
 msgstr "Uur"
 
-#: core/classes/class.bookingpress.php:8036
-#: core/classes/class.bookingpress.php:8102
-#: core/classes/class.bookingpress.php:8153
+#: core/classes/class.bookingpress.php:8035
+#: core/classes/class.bookingpress.php:8101
+#: core/classes/class.bookingpress.php:8152
 #: core/classes/class.bookingpress_appointment.php:2155
 #: core/classes/class.bookingpress_services.php:1171
 #: src/api/ServicesRoutes.php:165
@@ -477,7 +477,7 @@ msgstr "Uur"
 msgid "Min"
 msgstr "Min"
 
-#: core/classes/class.bookingpress.php:9062
+#: core/classes/class.bookingpress.php:9061
 #: core/views/customize/manage_form_customize.php:980
 #: core/views/upgrade_latest_data.php:1117
 #: src/views/Customize_form.php:1052
@@ -485,24 +485,24 @@ msgstr "Min"
 msgid "Appointment cancellation confirmation"
 msgstr "Bevestiging annulering afspraak"
 
-#: core/classes/class.bookingpress.php:9022
+#: core/classes/class.bookingpress.php:9021
 #@ bookingpress-appointment-booking
 msgid "Cancel Payment"
 msgstr "Betaling annuleren"
 
-#: core/classes/class.bookingpress.php:8594
+#: core/classes/class.bookingpress.php:8593
 #: core/views/upgrade_latest_data.php:1132
 #@ bookingpress-appointment-booking
 msgid "Confirm Cancellation"
 msgstr "Annulering bevestigen"
 
-#: core/classes/class.bookingpress.php:8440
+#: core/classes/class.bookingpress.php:8439
 #: core/views/upgrade_latest_data.php:1112
 #@ bookingpress-appointment-booking
 msgid "There is no appointment to cancel"
 msgstr "Er is geen afspraak om te annuleren"
 
-#: core/classes/class.bookingpress.php:8438
+#: core/classes/class.bookingpress.php:8437
 #: core/classes/class.bookingpress_settings.php:568
 #: core/views/upgrade_latest_data.php:1110
 #: src/admin/Settings.php:131
@@ -510,55 +510,55 @@ msgstr "Er is geen afspraak om te annuleren"
 msgid "There is no time slots available"
 msgstr "Er zijn geen tijdslots beschikbaar"
 
-#: core/classes/class.bookingpress.php:8437
+#: core/classes/class.bookingpress.php:8436
 #@ bookingpress-appointment-booking
 msgid "There is no payment method available."
 msgstr "Er is geen betaalmethode beschikbaar."
 
-#: core/classes/class.bookingpress.php:8436
+#: core/classes/class.bookingpress.php:8435
 #@ bookingpress-appointment-booking
 msgid "Please select any service to book an appointment."
 msgstr "Selecteer een dienst om een afspraak te maken."
 
-#: core/classes/class.bookingpress.php:8435
+#: core/classes/class.bookingpress.php:8434
 #: core/classes/class.bookingpress_settings.php:565
 #: src/admin/Settings.php:128
 #@ bookingpress-appointment-booking
 msgid "Please select appointment date to proceed with the booking."
 msgstr "Selecteer een afspraakdatum om verder te gaan met boeken."
 
-#: core/classes/class.bookingpress.php:8434
+#: core/classes/class.bookingpress.php:8433
 #: core/classes/class.bookingpress_settings.php:564
 #: src/admin/Settings.php:127
 #@ bookingpress-appointment-booking
 msgid "Please select a time slot to proceed with the booking."
 msgstr "Selecteer een tijdslot om verder te gaan met boeken."
 
-#: core/classes/class.bookingpress.php:8433
+#: core/classes/class.bookingpress.php:8432
 #: core/classes/class.bookingpress_settings.php:563
 #: src/admin/Settings.php:126
 #@ bookingpress-appointment-booking
 msgid "Please select a payment method to proceed with the booking."
 msgstr "Selecteer een betaalmethode om door te gaan met boeken."
 
-#: core/classes/class.bookingpress.php:8432
+#: core/classes/class.bookingpress.php:8431
 #@ bookingpress-appointment-booking
 msgid "It seems that you are already registered with us! Please login to continue to book an appointment."
 msgstr "Het lijkt erop dat je al bij ons geregistreerd bent! Login om verder te gaan en een afspraak te maken."
 
-#: core/classes/class.bookingpress.php:8431
+#: core/classes/class.bookingpress.php:8430
 #@ bookingpress-appointment-booking
 msgid "I am sorry! The selected currency is not supported by selected payment gateway. Please proceed with another available payment method."
 msgstr "Het spijt me! De geselecteerde valuta wordt niet ondersteund door de geselecteerde betalingsgateway. Ga verder met een andere beschikbare betaalmethode."
 
-#: core/classes/class.bookingpress.php:8430
+#: core/classes/class.bookingpress.php:8429
 #: core/classes/class.bookingpress_settings.php:560
 #: src/admin/Settings.php:123
 #@ bookingpress-appointment-booking
 msgid "I am sorry! Another appointment is already booked with this time slot. Please select another time slot which suits you the best."
 msgstr "Het spijt me! Er is al een andere afspraak geboekt met dit tijdslot. Selecteer een ander tijdstip dat het beste voor je uitkomt."
 
-#: core/classes/class.bookingpress.php:8429
+#: core/classes/class.bookingpress.php:8428
 #: core/classes/class.bookingpress_settings.php:559
 #: src/admin/Settings.php:122
 #@ bookingpress-appointment-booking
@@ -577,13 +577,13 @@ msgstr "Uur label"
 msgid "Minutes label"
 msgstr "Minuten label"
 
-#: core/classes/class.bookingpress.php:7769
+#: core/classes/class.bookingpress.php:7768
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:6599
 #@ bookingpress-appointment-booking
 msgid "h"
 msgstr "u"
 
-#: core/classes/class.bookingpress.php:7768
+#: core/classes/class.bookingpress.php:7767
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:6598
 #@ bookingpress-appointment-booking
 msgid "m"
@@ -795,8 +795,8 @@ msgstr "Deel URL succesvol gegenereerd"
 msgid "Notification sent successfully"
 msgstr "Melding succesvol verzonden"
 
-#: core/classes/class.bookingpress.php:8293
-#: core/classes/class.bookingpress.php:8322
+#: core/classes/class.bookingpress.php:8292
+#: core/classes/class.bookingpress.php:8321
 #: core/views/upgrade_latest_data.php:1004
 #: core/views/upgrade_latest_data.php:1017
 #@ bookingpress-appointment-booking
@@ -836,9 +836,9 @@ msgstr "Plaatshouder einddatum"
 msgid "We're sorry! you can't cancel this appointment because minimum required time for cancellation is already passed"
 msgstr "Het spijt ons! Je kunt deze afspraak niet annuleren omdat de minimaal vereiste tijd voor annulering al is verstreken"
 
-#: core/classes/class.bookingpress.php:9397
-#: core/classes/class.bookingpress.php:9462
-#: core/classes/class.bookingpress.php:9505
+#: core/classes/class.bookingpress.php:9396
+#: core/classes/class.bookingpress.php:9461
+#: core/classes/class.bookingpress.php:9504
 #: core/classes/class.bookingpress_addons.php:106
 #: core/classes/class.bookingpress_appointment.php:63
 #: core/classes/class.bookingpress_appointment.php:127
@@ -871,7 +871,7 @@ msgstr "Het spijt ons! Je kunt deze afspraak niet annuleren omdat de minimaal ve
 #: core/classes/class.bookingpress_customize.php:490
 #: core/classes/class.bookingpress_customize.php:561
 #: core/classes/class.bookingpress_customize.php:650
-#: core/classes/class.bookingpress_customize.php:740
+#: core/classes/class.bookingpress_customize.php:747
 #: core/classes/class.bookingpress_dashboard.php:150
 #: core/classes/class.bookingpress_dashboard.php:308
 #: core/classes/class.bookingpress_dashboard.php:431
@@ -958,7 +958,7 @@ msgstr "Add-ons lijst succesvol opgehaald"
 msgid "Something went wrong while fetching list of addons"
 msgstr "Er ging iets mis tijdens het ophalen van de lijst met add-ons"
 
-#: core/classes/class.bookingpress.php:9565
+#: core/classes/class.bookingpress.php:9564
 #: src/api/SettingsRoutes.php:760
 #@ bookingpress-appointment-booking
 msgid "log download successfully"
@@ -1093,16 +1093,16 @@ msgstr "Datum titel"
 msgid "ID title"
 msgstr "ID titel"
 
-#: core/classes/class.bookingpress.php:8051
-#: core/classes/class.bookingpress.php:8117
-#: core/classes/class.bookingpress.php:8168
-#: core/classes/class.bookingpress.php:11027
+#: core/classes/class.bookingpress.php:8050
+#: core/classes/class.bookingpress.php:8116
+#: core/classes/class.bookingpress.php:8167
+#: core/classes/class.bookingpress.php:11026
 #: core/classes/class.bookingpress_appointment.php:1961
 #: core/classes/class.bookingpress_appointment.php:2174
 #: core/classes/class.bookingpress_dashboard.php:534
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:3656
 #: src/abilities/Base.php:175
-#: src/api/AppointmentRoutes.php:510
+#: src/api/AppointmentRoutes.php:526
 #: src/api/DashboardRoutes.php:152
 #@ bookingpress-appointment-booking
 msgid "Days"
@@ -1113,7 +1113,7 @@ msgstr "Dagen"
 #: core/classes/class.bookingpress.php:521
 #: core/classes/class.bookingpress.php:556
 #: core/classes/class.bookingpress.php:4060
-#: core/classes/class.bookingpress.php:5743
+#: core/classes/class.bookingpress.php:5742
 #: core/classes/class.bookingpress_customize.php:39
 #: core/classes/class.bookingpress_customize.php:278
 #: core/classes/class.bookingpress_dashboard.php:1643
@@ -1428,14 +1428,14 @@ msgstr "Vertel ons wat over je bedrijf"
 msgid "Your Site"
 msgstr "Je site"
 
-#: core/classes/class.bookingpress.php:8934
+#: core/classes/class.bookingpress.php:8933
 #@ bookingpress-appointment-booking
 msgid "Thank you"
 msgstr "Bedankt"
 
-#: core/classes/class.bookingpress.php:8008
-#: core/classes/class.bookingpress.php:8134
-#: core/classes/class.bookingpress.php:11054
+#: core/classes/class.bookingpress.php:8007
+#: core/classes/class.bookingpress.php:8133
+#: core/classes/class.bookingpress.php:11053
 #: core/classes/class.bookingpress_services.php:1164
 #: src/admin/Calendar.php:70
 #: src/api/ServicesRoutes.php:185
@@ -1520,7 +1520,7 @@ msgstr "Vakantie is succesvol opgeslagen."
 msgid "Last month"
 msgstr "Vorige maand"
 
-#: core/classes/class.bookingpress.php:8829
+#: core/classes/class.bookingpress.php:8828
 #@ bookingpress-appointment-booking
 msgid "Book an Appointment"
 msgstr "Boek een afspraak"
@@ -1581,7 +1581,7 @@ msgstr "methode"
 msgid "Prev"
 msgstr "Vorige"
 
-#: core/classes/class.bookingpress.php:8577
+#: core/classes/class.bookingpress.php:8576
 #: core/views/customize/manage_form_customize.php:1091
 #: core/views/upgrade_latest_data.php:724
 #: src/Vue3/MyBookings/MyBookings.php:640
@@ -1712,9 +1712,9 @@ msgstr "Vul een bericht in"
 msgid "Data retrieved successfully"
 msgstr "Gegevens succesvol opgehaald"
 
-#: core/classes/class.bookingpress.php:8586
-#: core/classes/class.bookingpress.php:8591
-#: core/classes/class.bookingpress.php:8908
+#: core/classes/class.bookingpress.php:8585
+#: core/classes/class.bookingpress.php:8590
+#: core/classes/class.bookingpress.php:8907
 #: core/views/appointment/manage_appointment.php:120
 #: core/views/appointment/manage_appointment.php:335
 #: core/views/appointment/manage_appointment.php:536
@@ -1734,9 +1734,9 @@ msgstr "Gegevens succesvol opgehaald"
 msgid "Booking ID"
 msgstr "Boekings ID"
 
-#: core/classes/class.bookingpress.php:8576
+#: core/classes/class.bookingpress.php:8575
 #: core/classes/class.bookingpress_customize.php:290
-#: core/classes/class.bookingpress_customize.php:1556
+#: core/classes/class.bookingpress_customize.php:1563
 #: core/views/upgrade_latest_data.php:690
 #: src/Vue3/MyBookings/MyBookings.php:649
 #: src/Vue3/MyBookings/MyBookings.php:663
@@ -1745,9 +1745,9 @@ msgstr "Boekings ID"
 msgid "Delete Account"
 msgstr "Verwijder account"
 
-#: core/classes/class.bookingpress.php:8575
+#: core/classes/class.bookingpress.php:8574
 #: core/classes/class.bookingpress_customize.php:289
-#: core/classes/class.bookingpress_customize.php:1555
+#: core/classes/class.bookingpress_customize.php:1562
 #: core/views/upgrade_latest_data.php:689
 #: src/Vue3/MyBookings/MyBookings.php:648
 #@ bookingpress-appointment-booking
@@ -1782,8 +1782,8 @@ msgstr "Valuta scheidingsteken"
 msgid "Currency symbol position"
 msgstr "Positie valutasymbool"
 
-#: core/classes/class.bookingpress.php:8753
-#: core/classes/class.bookingpress_customize.php:1541
+#: core/classes/class.bookingpress.php:8752
+#: core/classes/class.bookingpress_customize.php:1548
 #: core/views/appointment/manage_appointment.php:1111
 #: core/views/calendar/manage_calendar.php:392
 #: core/views/customers/manage_customers.php:352
@@ -2335,9 +2335,9 @@ msgstr "Methode"
 msgid "to"
 msgstr "aan"
 
-#: core/classes/class.bookingpress.php:8542
+#: core/classes/class.bookingpress.php:8541
 #: core/classes/class.bookingpress_customize.php:206
-#: core/classes/class.bookingpress_customize.php:1411
+#: core/classes/class.bookingpress_customize.php:1418
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:5565
 #: core/views/payment/manage_payment.php:122
 #: core/views/payment/manage_payment.php:322
@@ -2498,7 +2498,7 @@ msgstr "Lettertype:"
 msgid "Forms"
 msgstr "Formulieren"
 
-#: core/classes/class.bookingpress.php:8590
+#: core/classes/class.bookingpress.php:8589
 #: core/views/appointment/manage_appointment.php:238
 #: core/views/appointment/manage_appointment.php:453
 #: core/views/appointment/manage_appointment.php:654
@@ -2517,7 +2517,7 @@ msgstr "Formulieren"
 msgid "Total Amount"
 msgstr "Totaalbedrag"
 
-#: core/classes/class.bookingpress.php:8589
+#: core/classes/class.bookingpress.php:8588
 #: core/views/appointment/manage_appointment.php:230
 #: core/views/appointment/manage_appointment.php:445
 #: core/views/appointment/manage_appointment.php:646
@@ -2538,7 +2538,7 @@ msgstr "Totaalbedrag"
 msgid "Payment Method"
 msgstr "Betaalmethode"
 
-#: core/classes/class.bookingpress.php:8588
+#: core/classes/class.bookingpress.php:8587
 #: core/views/appointment/manage_appointment.php:227
 #: core/views/appointment/manage_appointment.php:442
 #: core/views/appointment/manage_appointment.php:643
@@ -2579,7 +2579,7 @@ msgstr "Details van de betaling"
 msgid "Customer Details"
 msgstr "Klantgegevens"
 
-#: core/classes/class.bookingpress.php:8587
+#: core/classes/class.bookingpress.php:8586
 #: core/views/appointment/manage_appointment.php:161
 #: core/views/appointment/manage_appointment.php:376
 #: core/views/appointment/manage_appointment.php:577
@@ -2629,7 +2629,7 @@ msgid "Service time duration cannot be greater than 30 days"
 msgstr "Duur van de dienst mag niet langer zijn dan 30 dagen"
 
 #: core/classes/class.bookingpress.php:1171
-#: core/classes/class.bookingpress_customize.php:1601
+#: core/classes/class.bookingpress_customize.php:1608
 #: src/admin/Customize.php:50
 #@ bookingpress-appointment-booking
 msgid "Inherit Fonts"
@@ -2724,14 +2724,14 @@ msgstr "Uit"
 msgid "BookingPress SMTP Test Email Notification"
 msgstr "BookingPress SMTP test e-mail melding"
 
-#: core/classes/class.bookingpress.php:8543
+#: core/classes/class.bookingpress.php:8542
 #: core/classes/class.bookingpress_customize.php:144
-#: core/classes/class.bookingpress_customize.php:1391
+#: core/classes/class.bookingpress_customize.php:1398
 #@ bookingpress-appointment-booking
 msgid "ALL"
 msgstr "ALLE"
 
-#: core/classes/class.bookingpress.php:8928
+#: core/classes/class.bookingpress.php:8927
 #@ bookingpress-appointment-booking
 msgid "Add to Calendar"
 msgstr "Toevoegen aan kalender"
@@ -3058,8 +3058,8 @@ msgstr "Bewerk"
 msgid "Please select service to get available date and time slots."
 msgstr "Selecteer dienst om beschikbare datum- en tijdslots te krijgen"
 
-#: core/classes/class.bookingpress.php:7671
-#: core/classes/class.bookingpress.php:8511
+#: core/classes/class.bookingpress.php:7670
+#: core/classes/class.bookingpress.php:8510
 #: core/classes/class.bookingpress_customize.php:157
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:5587
 #: src/frontend/BookingForm.php:496
@@ -3067,8 +3067,8 @@ msgstr "Selecteer dienst om beschikbare datum- en tijdslots te krijgen"
 msgid "Night"
 msgstr "Nacht"
 
-#: core/classes/class.bookingpress.php:7663
-#: core/classes/class.bookingpress.php:8509
+#: core/classes/class.bookingpress.php:7662
+#: core/classes/class.bookingpress.php:8508
 #: core/classes/class.bookingpress_customize.php:155
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:5579
 #: src/frontend/BookingForm.php:494
@@ -3143,7 +3143,7 @@ msgstr "Einddatum"
 msgid "Start date"
 msgstr "Startdatum"
 
-#: core/classes/class.bookingpress.php:9018
+#: core/classes/class.bookingpress.php:9017
 #@ bookingpress-appointment-booking
 msgid "Sorry! Something went wrong. Your payment has been failed."
 msgstr "Er ging iets mis. Je betaling is mislukt."
@@ -3352,7 +3352,7 @@ msgstr "Geannuleerd"
 msgid "Approved"
 msgstr "Goedgekeurd"
 
-#: core/classes/class.bookingpress.php:9478
+#: core/classes/class.bookingpress.php:9477
 #: src/api/SettingsRoutes.php:785
 #@ bookingpress-appointment-booking
 msgid "Debug Logs Cleared Successfully."
@@ -3517,7 +3517,7 @@ msgstr "Verzend test e-mail"
 #: core/views/settings/notification_setting_tab.php:204
 #: core/views/settings/notification_setting_tab.php:257
 #: core/views/settings/notification_setting_tab.php:309
-#: src/api/AppointmentRoutes.php:546
+#: src/api/AppointmentRoutes.php:562
 #: src/api/DashboardRoutes.php:183
 #: src/views/components/RescheduleModel.php:44
 #: src/views/components/settings/notification_setting_tab.php:207
@@ -3861,7 +3861,7 @@ msgstr "Geen gegevens gevonden!"
 msgid "Are you sure you want to delete this service?"
 msgstr "Weet je zeker dat je deze dienst wil verwijderen?"
 
-#: core/classes/class.bookingpress.php:8581
+#: core/classes/class.bookingpress.php:8580
 #: core/views/appointment/manage_appointment.php:250
 #: core/views/appointment/manage_appointment.php:465
 #: core/views/dashboard/manage_dashboard.php:227
@@ -3928,7 +3928,7 @@ msgid "Manage Categories"
 msgstr "Categorieën beheren"
 
 #: core/views/services/manage_services.php:8
-#: src/admin/Services.php:170
+#: src/admin/Services.php:173
 #: src/views/Services.php:17
 #@ bookingpress-appointment-booking
 msgid "Manage Services"
@@ -4051,7 +4051,7 @@ msgstr "Aan de beheerder"
 msgid "To Customer"
 msgstr "Aan de klant"
 
-#: core/classes/class.bookingpress.php:8978
+#: core/classes/class.bookingpress.php:8977
 #@ bookingpress-appointment-booking
 msgid "Appointment canceled"
 msgstr "Afspraak geannuleerd"
@@ -4158,14 +4158,14 @@ msgstr "Standaard datum format"
 msgid "Content Settings"
 msgstr "Inhoud instellingen"
 
-#: core/classes/class.bookingpress.php:8578
+#: core/classes/class.bookingpress.php:8577
 #@ bookingpress-appointment-booking
 msgid "Are you sure you want to cancel the appointment?"
 msgstr "Weet je zeker dat je de afspraak wil annuleren?"
 
-#: core/classes/class.bookingpress.php:8572
+#: core/classes/class.bookingpress.php:8571
 #: core/classes/class.bookingpress_customize.php:286
-#: core/classes/class.bookingpress_customize.php:1552
+#: core/classes/class.bookingpress_customize.php:1559
 #: core/views/upgrade_latest_data.php:416
 #@ bookingpress-appointment-booking
 msgid "Search appointments"
@@ -4231,9 +4231,9 @@ msgstr "Links"
 msgid "Booking wizard tabs position"
 msgstr "Boeking wizzard tabs positie"
 
-#: core/classes/class.bookingpress.php:8537
+#: core/classes/class.bookingpress.php:8536
 #: core/classes/class.bookingpress_customize.php:201
-#: core/classes/class.bookingpress_customize.php:1406
+#: core/classes/class.bookingpress_customize.php:1413
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:5540
 #: src/Vue3/Payments/Gateways/OnSiteGateway.php:92
 #: src/frontend/BookingForm.php:509
@@ -4241,9 +4241,9 @@ msgstr "Boeking wizzard tabs positie"
 msgid "Pay Locally"
 msgstr "Lokaal betalen"
 
-#: core/classes/class.bookingpress.php:8538
+#: core/classes/class.bookingpress.php:8537
 #: core/classes/class.bookingpress_customize.php:202
-#: core/classes/class.bookingpress_customize.php:1407
+#: core/classes/class.bookingpress_customize.php:1414
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:5545
 #: src/frontend/BookingForm.php:511
 #@ bookingpress-appointment-booking
@@ -4283,8 +4283,8 @@ msgstr "Voer je naam in"
 msgid "Name"
 msgstr "Naam"
 
-#: core/classes/class.bookingpress.php:7667
-#: core/classes/class.bookingpress.php:8510
+#: core/classes/class.bookingpress.php:7666
+#: core/classes/class.bookingpress.php:8509
 #: core/classes/class.bookingpress_customize.php:156
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:5583
 #: src/frontend/BookingForm.php:495
@@ -4292,8 +4292,8 @@ msgstr "Naam"
 msgid "Evening"
 msgstr "Avond"
 
-#: core/classes/class.bookingpress.php:7659
-#: core/classes/class.bookingpress.php:8508
+#: core/classes/class.bookingpress.php:7658
+#: core/classes/class.bookingpress.php:8507
 #: core/classes/class.bookingpress_customize.php:154
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:5575
 #: src/frontend/BookingForm.php:493
@@ -4302,7 +4302,7 @@ msgid "Morning"
 msgstr "Ochtend"
 
 #: core/classes/class.bookingpress.php:1238
-#: core/classes/class.bookingpress.php:8545
+#: core/classes/class.bookingpress.php:8544
 #: core/classes/class.bookingpress_customize.php:185
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:5530
 #: core/views/payment/manage_payment.php:135
@@ -4345,7 +4345,7 @@ msgstr "Primaire kleur"
 msgid "Are you sure you want to reset the settings?"
 msgstr "Weet je zeker dat je de instellingen wil resetten?"
 
-#: core/classes/class.bookingpress.php:8579
+#: core/classes/class.bookingpress.php:8578
 #: core/views/customize/manage_form_customize.php:103
 #: core/views/upgrade_latest_data.php:725
 #: src/Vue3/MyBookings/MyBookings.php:643
@@ -4354,7 +4354,7 @@ msgstr "Weet je zeker dat je de instellingen wil resetten?"
 msgid "No"
 msgstr "Nee"
 
-#: core/classes/class.bookingpress.php:8580
+#: core/classes/class.bookingpress.php:8579
 #: core/views/customize/manage_form_customize.php:102
 #: core/views/upgrade_latest_data.php:726
 #: src/Vue3/MyBookings/MyBookings.php:642
@@ -4525,15 +4525,15 @@ msgstr "Volledige naam"
 msgid "Manage Customers"
 msgstr "Beheer klanten"
 
-#: core/classes/class.bookingpress.php:8048
-#: core/classes/class.bookingpress.php:8114
-#: core/classes/class.bookingpress.php:8165
+#: core/classes/class.bookingpress.php:8047
+#: core/classes/class.bookingpress.php:8113
+#: core/classes/class.bookingpress.php:8164
 #: core/classes/class.bookingpress_appointment.php:1959
 #: core/classes/class.bookingpress_dashboard.php:532
 #: core/views/calendar/manage_calendar.php:43
 #: src/abilities/Base.php:173
 #: src/admin/Calendar.php:99
-#: src/api/AppointmentRoutes.php:508
+#: src/api/AppointmentRoutes.php:524
 #: src/api/DashboardRoutes.php:150
 #@ bookingpress-appointment-booking
 msgid "Day"
@@ -4925,7 +4925,7 @@ msgstr "Annuleren"
 msgid "Change status"
 msgstr "Wijzig status"
 
-#: core/classes/class.bookingpress.php:8585
+#: core/classes/class.bookingpress.php:8584
 #: core/views/appointment/manage_appointment.php:281
 #: core/views/customize/manage_form_customize.php:1061
 #: core/views/dashboard/manage_dashboard.php:263
@@ -4951,7 +4951,7 @@ msgid "Appointment Date"
 msgstr "Datum afspraak"
 
 #: core/classes/class.bookingpress.php:1239
-#: core/classes/class.bookingpress.php:8544
+#: core/classes/class.bookingpress.php:8543
 #: core/classes/class.bookingpress_customize.php:184
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:5526
 #: core/views/appointment/manage_appointment.php:262
@@ -4984,9 +4984,9 @@ msgstr "Duur"
 msgid "No Record Found!"
 msgstr "Geen record gevonden!"
 
-#: core/classes/class.bookingpress.php:8571
+#: core/classes/class.bookingpress.php:8570
 #: core/classes/class.bookingpress_customize.php:285
-#: core/classes/class.bookingpress_customize.php:1551
+#: core/classes/class.bookingpress_customize.php:1558
 #: core/views/appointment/manage_appointment.php:79
 #: core/views/customers/manage_customers.php:36
 #: core/views/payment/manage_payment.php:52
@@ -5048,7 +5048,7 @@ msgstr "Zoeken naar klanten, diensten..."
 msgid "Select Status"
 msgstr "Selecteer status"
 
-#: core/classes/class.bookingpress.php:8584
+#: core/classes/class.bookingpress.php:8583
 #: core/views/appointment/manage_appointment.php:55
 #: core/views/appointment/manage_appointment.php:234
 #: core/views/appointment/manage_appointment.php:263
@@ -5095,7 +5095,7 @@ msgstr "Status"
 msgid "Select Customer"
 msgstr "Selecteer Klant"
 
-#: core/classes/class.bookingpress.php:8923
+#: core/classes/class.bookingpress.php:8922
 #: core/views/appointment/manage_appointment.php:39
 #: core/views/payment/manage_payment.php:22
 #: src/views/Appointments.php:50
@@ -5104,7 +5104,7 @@ msgstr "Selecteer Klant"
 msgid "Customer Name"
 msgstr "Naam van de klant"
 
-#: core/classes/class.bookingpress.php:8583
+#: core/classes/class.bookingpress.php:8582
 #: core/views/appointment/manage_appointment.php:153
 #: core/views/appointment/manage_appointment.php:255
 #: core/views/appointment/manage_appointment.php:368
@@ -5185,7 +5185,7 @@ msgstr "Afspraken beheren"
 msgid "Appointment Booking"
 msgstr "Afspraak boeking"
 
-#: core/classes/frontend/class.bookingpress_spam_protection.php:71
+#: core/classes/frontend/class.bookingpress_spam_protection.php:70
 #@ bookingpress-appointment-booking
 msgid "Captcha generated successfully."
 msgstr "Captcha succesvol gegenereerd."
@@ -5371,12 +5371,12 @@ msgstr "Voer het adres van het bedrijf in"
 msgid "Please enter company name"
 msgstr "Voer de bedrijfsnaam in"
 
+#: core/classes/class.bookingpress.php:8572
 #: core/classes/class.bookingpress.php:8573
-#: core/classes/class.bookingpress.php:8574
 #: core/classes/class.bookingpress_customize.php:287
 #: core/classes/class.bookingpress_customize.php:288
-#: core/classes/class.bookingpress_customize.php:1553
-#: core/classes/class.bookingpress_customize.php:1554
+#: core/classes/class.bookingpress_customize.php:1560
+#: core/classes/class.bookingpress_customize.php:1561
 #: core/classes/class.bookingpress_settings.php:607
 #: core/views/upgrade_latest_data.php:688
 #: core/views/upgrade_latest_data.php:983
@@ -5391,9 +5391,9 @@ msgstr "Selecteer een datum"
 msgid "Please enter name"
 msgstr "Voer naam in"
 
-#: core/classes/class.bookingpress.php:8536
+#: core/classes/class.bookingpress.php:8535
 #: core/classes/class.bookingpress_customize.php:200
-#: core/classes/class.bookingpress_customize.php:1405
+#: core/classes/class.bookingpress_customize.php:1412
 #: core/classes/class.bookingpress_settings.php:472
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:5535
 #: core/views/settings/payment_setting_tab.php:137
@@ -5864,25 +5864,25 @@ msgid "Approved Appointment"
 msgstr "Goedgekeurde afspraak"
 
 #: core/classes/class.bookingpress.php:1179
-#: core/classes/class.bookingpress_customize.php:1609
+#: core/classes/class.bookingpress_customize.php:1616
 #: src/admin/Customize.php:58
 #@ bookingpress-appointment-booking
 msgid "Google Fonts"
 msgstr "Google Fonts"
 
 #: core/classes/class.bookingpress.php:1175
-#: core/classes/class.bookingpress_customize.php:1605
+#: core/classes/class.bookingpress_customize.php:1612
 #: src/admin/Customize.php:54
 #@ bookingpress-appointment-booking
 msgid "Default Fonts"
 msgstr "Standaard lettertypen"
 
-#: core/classes/class.bookingpress_customize.php:1023
+#: core/classes/class.bookingpress_customize.php:1030
 #@ bookingpress-appointment-booking
 msgid "Customization settings saved successfully."
 msgstr "Aanpassingsinstellingen succesvol opgeslagen."
 
-#: core/classes/class.bookingpress_customize.php:718
+#: core/classes/class.bookingpress_customize.php:725
 #@ bookingpress-appointment-booking
 msgid "Field Settings Data Saved Successfully"
 msgstr "Gegevens veldinstellingen met succes opgeslagen"
@@ -5893,7 +5893,7 @@ msgid "Field position has been changed successfully."
 msgstr "Veldpositie is succesvol gewijzigd."
 
 #: core/classes/class.bookingpress_customize.php:448
-#: core/classes/class.bookingpress_customize.php:809
+#: core/classes/class.bookingpress_customize.php:816
 #@ bookingpress-appointment-booking
 msgid "Customize settings updated successfully."
 msgstr "Instellingen aanpassen succesvol geüpdatet."
@@ -5931,14 +5931,14 @@ msgstr "Instellingen aanpassen succesvol geüpdatet."
 #: core/classes/class.bookingpress_customize.php:367
 #: core/classes/class.bookingpress_customize.php:502
 #: core/classes/class.bookingpress_customize.php:662
-#: core/classes/class.bookingpress_customize.php:752
-#: core/classes/class.bookingpress_customize.php:926
-#: core/classes/class.bookingpress_customize.php:956
-#: core/classes/class.bookingpress_customize.php:987
-#: core/classes/class.bookingpress_customize.php:1102
-#: core/classes/class.bookingpress_customize.php:1132
-#: core/classes/class.bookingpress_customize.php:1166
-#: core/classes/class.bookingpress_customize.php:1204
+#: core/classes/class.bookingpress_customize.php:759
+#: core/classes/class.bookingpress_customize.php:933
+#: core/classes/class.bookingpress_customize.php:963
+#: core/classes/class.bookingpress_customize.php:994
+#: core/classes/class.bookingpress_customize.php:1109
+#: core/classes/class.bookingpress_customize.php:1139
+#: core/classes/class.bookingpress_customize.php:1173
+#: core/classes/class.bookingpress_customize.php:1211
 #: core/classes/class.bookingpress_dashboard.php:1253
 #: core/classes/class.bookingpress_dashboard.php:1282
 #: core/classes/class.bookingpress_dashboard.php:1313
@@ -6031,7 +6031,7 @@ msgstr "Gegevens van veldinstellingen met succes opgehaald"
 #: core/classes/class.bookingpress.php:4136
 #: core/classes/class.bookingpress.php:4941
 #: core/classes/class.bookingpress_customize.php:136
-#: core/classes/class.bookingpress_customize.php:1384
+#: core/classes/class.bookingpress_customize.php:1391
 #: core/classes/class.bookingpress_import_export.php:2797
 #: core/classes/class.bookingpress_import_export.php:3309
 #: core/views/bookingpress_header.php:99
@@ -6112,9 +6112,9 @@ msgid "Please upload jpg/png file only"
 msgstr "Upload alleen jpg/png bestanden"
 
 #: core/classes/class.bookingpress.php:894
-#: core/classes/class.bookingpress.php:9387
-#: core/classes/class.bookingpress.php:9456
-#: core/classes/class.bookingpress.php:9499
+#: core/classes/class.bookingpress.php:9386
+#: core/classes/class.bookingpress.php:9455
+#: core/classes/class.bookingpress.php:9498
 #: core/classes/class.bookingpress_appointment.php:574
 #: core/classes/class.bookingpress_customers.php:2006
 #: core/classes/class.bookingpress_services.php:975
@@ -6178,11 +6178,11 @@ msgstr "Selecteer diensten"
 msgid "Please fill all required values"
 msgstr "Vul alle vereiste waarden in"
 
-#: core/classes/class.bookingpress.php:8428
+#: core/classes/class.bookingpress.php:8427
 #: core/classes/class.bookingpress_calendar.php:928
 #: core/classes/class.bookingpress_settings.php:558
 #: src/admin/Settings.php:121
-#: src/api/AppointmentRoutes.php:1107
+#: src/api/AppointmentRoutes.php:1124
 #@ bookingpress-appointment-booking
 msgid "Appointment has been booked successfully."
 msgstr "Afspraak is met succes geboekt."
@@ -6262,7 +6262,7 @@ msgstr "Selecteer klant"
 #: src/admin/Calendar.php:219
 #: src/admin/Customer.php:248
 #: src/admin/Payments.php:63
-#: src/admin/Services.php:86
+#: src/admin/Services.php:89
 #: src/views/Appointments.php:410
 #: src/views/Appointments.php:421
 #: src/views/Appointments.php:430
@@ -6304,7 +6304,7 @@ msgstr "Verwijderen"
 #: src/admin/Calendar.php:215
 #: src/admin/Customer.php:244
 #: src/admin/Payments.php:59
-#: src/admin/Services.php:82
+#: src/admin/Services.php:85
 #@ bookingpress-appointment-booking
 msgid "Bulk Action"
 msgstr "Bulkactie"
@@ -6315,10 +6315,10 @@ msgstr "Bulkactie"
 msgid "Appointment has been deleted successfully."
 msgstr "Afspraak is met succes verwijderd."
 
-#: core/classes/class.bookingpress.php:8045
-#: core/classes/class.bookingpress.php:8111
-#: core/classes/class.bookingpress.php:8162
-#: core/classes/class.bookingpress.php:11029
+#: core/classes/class.bookingpress.php:8044
+#: core/classes/class.bookingpress.php:8110
+#: core/classes/class.bookingpress.php:8161
+#: core/classes/class.bookingpress.php:11028
 #: core/classes/class.bookingpress_appointment.php:2166
 #: core/classes/class.bookingpress_appointment.php:2171
 #: core/classes/class.bookingpress_services.php:1181
@@ -6332,10 +6332,10 @@ msgstr "Afspraak is met succes verwijderd."
 msgid "Hours"
 msgstr "Uren"
 
-#: core/classes/class.bookingpress.php:8039
-#: core/classes/class.bookingpress.php:8105
-#: core/classes/class.bookingpress.php:8156
-#: core/classes/class.bookingpress.php:11025
+#: core/classes/class.bookingpress.php:8038
+#: core/classes/class.bookingpress.php:8104
+#: core/classes/class.bookingpress.php:8155
+#: core/classes/class.bookingpress.php:11024
 #: core/classes/class.bookingpress_appointment.php:2157
 #: core/classes/class.bookingpress_services.php:1174
 #: core/views/services/manage_services.php:501
@@ -6358,8 +6358,8 @@ msgstr "Afspraakstatus succesvol gewijzigd"
 #: core/classes/class.bookingpress.php:532
 #: core/classes/class.bookingpress.php:820
 #: core/classes/class.bookingpress.php:990
-#: core/classes/class.bookingpress.php:9477
-#: core/classes/class.bookingpress.php:9564
+#: core/classes/class.bookingpress.php:9476
+#: core/classes/class.bookingpress.php:9563
 #: core/classes/class.bookingpress_addons.php:172
 #: core/classes/class.bookingpress_appointment.php:77
 #: core/classes/class.bookingpress_appointment.php:84
@@ -6391,9 +6391,9 @@ msgstr "Afspraakstatus succesvol gewijzigd"
 #: core/classes/class.bookingpress_customize.php:447
 #: core/classes/class.bookingpress_customize.php:539
 #: core/classes/class.bookingpress_customize.php:625
-#: core/classes/class.bookingpress_customize.php:717
-#: core/classes/class.bookingpress_customize.php:808
-#: core/classes/class.bookingpress_customize.php:1022
+#: core/classes/class.bookingpress_customize.php:724
+#: core/classes/class.bookingpress_customize.php:815
+#: core/classes/class.bookingpress_customize.php:1029
 #: core/classes/class.bookingpress_dashboard.php:1395
 #: core/classes/class.bookingpress_growth_tools.php:265
 #: core/classes/class.bookingpress_growth_tools.php:342
@@ -6447,7 +6447,7 @@ msgstr "Afspraakstatus succesvol gewijzigd"
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:3235
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:4479
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:4501
-#: core/classes/frontend/class.bookingpress_spam_protection.php:70
+#: core/classes/frontend/class.bookingpress_spam_protection.php:69
 #: src/admin/Appointments.php:100
 #: src/api/AppointmentRoutes.php:98
 #: src/api/AppointmentRoutes.php:120
@@ -6508,57 +6508,57 @@ msgstr "Selecteer een actie."
 msgid "Select service"
 msgstr "Selecteer dienst"
 
-#: core/classes/class.bookingpress.php:8974
+#: core/classes/class.bookingpress.php:8973
 #@ bookingpress-appointment-booking
 msgid "We have sent an email notification for cancel appointment. So please click on the button to cancel the appointment."
 msgstr "We hebben een e-mailmelding verzonden voor het annuleren van de afspraak. Klik dus op de knop om de afspraak te annuleren."
 
-#: core/classes/class.bookingpress.php:8973
+#: core/classes/class.bookingpress.php:8972
 #@ bookingpress-appointment-booking
 msgid "Sorry to hear that you have requested for cancel the appointment."
 msgstr "Jammer om te horen dat je gevraagd hebt om de afspraak te annuleren."
 
-#: core/classes/class.bookingpress.php:8923
+#: core/classes/class.bookingpress.php:8922
 #@ bookingpress-appointment-booking
 msgid "Customer Name:"
 msgstr "Klantnaam:"
 
-#: core/classes/class.bookingpress.php:8919
+#: core/classes/class.bookingpress.php:8918
 #@ bookingpress-appointment-booking
 msgid "Date & Time:"
 msgstr "Datum & tijd:"
 
-#: core/classes/class.bookingpress.php:8915
+#: core/classes/class.bookingpress.php:8914
 #@ bookingpress-appointment-booking
 msgid "Service:"
 msgstr "Dienst:"
 
-#: core/classes/class.bookingpress.php:8911
+#: core/classes/class.bookingpress.php:8910
 #@ bookingpress-appointment-booking
 msgid "We have sent your booking information to your email address."
 msgstr "We hebben de informatie over je afspraak naar je e-mailadres verzonden."
 
-#: core/classes/class.bookingpress.php:8910
+#: core/classes/class.bookingpress.php:8909
 #@ bookingpress-appointment-booking
 msgid "Your Appointment Booked successfully!"
 msgstr "Je afspraak is succesvol geboekt!"
 
-#: core/classes/class.bookingpress.php:8732
-#: core/classes/class.bookingpress_customize.php:1530
+#: core/classes/class.bookingpress.php:8731
+#: core/classes/class.bookingpress_customize.php:1537
 #@ bookingpress-appointment-booking
 msgid "Please enter appointment note"
 msgstr "Vul een bericht voor de afspraak in"
 
-#: core/classes/class.bookingpress.php:8731
-#: core/classes/class.bookingpress_customize.php:1529
+#: core/classes/class.bookingpress.php:8730
+#: core/classes/class.bookingpress_customize.php:1536
 #@ bookingpress-appointment-booking
 msgid "Enter note details"
 msgstr "Voer notitie details in"
 
-#: core/classes/class.bookingpress.php:8730
+#: core/classes/class.bookingpress.php:8729
 #: core/classes/class.bookingpress_customers.php:1333
 #: core/classes/class.bookingpress_customers.php:1372
-#: core/classes/class.bookingpress_customize.php:1528
+#: core/classes/class.bookingpress_customize.php:1535
 #: core/views/appointment/manage_appointment.php:1156
 #: core/views/calendar/manage_calendar.php:437
 #: core/views/customers/manage_customers.php:397
@@ -6577,123 +6577,123 @@ msgstr "Voer notitie details in"
 msgid "Note"
 msgstr "Notitie"
 
-#: core/classes/class.bookingpress.php:8721
-#: core/classes/class.bookingpress_customize.php:1516
+#: core/classes/class.bookingpress.php:8720
+#: core/classes/class.bookingpress_customize.php:1523
 #@ bookingpress-appointment-booking
 msgid "Please enter your phone number"
 msgstr "Vul je telefoonnummer in"
 
-#: core/classes/class.bookingpress.php:8720
-#: core/classes/class.bookingpress_customize.php:1515
+#: core/classes/class.bookingpress.php:8719
+#: core/classes/class.bookingpress_customize.php:1522
 #@ bookingpress-appointment-booking
 msgid "Enter your phone number"
 msgstr "Vul je telefoonnummer in"
 
-#: core/classes/class.bookingpress.php:8719
-#: core/classes/class.bookingpress_customize.php:1514
+#: core/classes/class.bookingpress.php:8718
+#: core/classes/class.bookingpress_customize.php:1521
 #: src/admin/Calendar.php:166
-#: src/api/AppointmentRoutes.php:738
+#: src/api/AppointmentRoutes.php:755
 #: src/api/CalendarRoutes.php:52
 #: src/api/CalendarRoutes.php:181
 #@ bookingpress-appointment-booking
 msgid "Phone Number"
 msgstr "Telefoonnummer"
 
-#: core/classes/class.bookingpress.php:8710
-#: core/classes/class.bookingpress_customize.php:1503
+#: core/classes/class.bookingpress.php:8709
+#: core/classes/class.bookingpress_customize.php:1510
 #@ bookingpress-appointment-booking
 msgid "Please enter your email address"
 msgstr "Voer je e-mailadres in"
 
-#: core/classes/class.bookingpress.php:8709
-#: core/classes/class.bookingpress_customize.php:1502
+#: core/classes/class.bookingpress.php:8708
+#: core/classes/class.bookingpress_customize.php:1509
 #@ bookingpress-appointment-booking
 msgid "Enter your email address"
 msgstr "Voer je e-mailadres in"
 
-#: core/classes/class.bookingpress.php:8708
-#: core/classes/class.bookingpress_customize.php:1501
+#: core/classes/class.bookingpress.php:8707
+#: core/classes/class.bookingpress_customize.php:1508
 #: src/admin/Calendar.php:165
-#: src/api/AppointmentRoutes.php:737
+#: src/api/AppointmentRoutes.php:754
 #: src/api/CalendarRoutes.php:51
 #: src/api/CalendarRoutes.php:180
 #@ bookingpress-appointment-booking
 msgid "Email Address"
 msgstr "E-mailadres"
 
-#: core/classes/class.bookingpress.php:8699
-#: core/classes/class.bookingpress_customize.php:1490
+#: core/classes/class.bookingpress.php:8698
+#: core/classes/class.bookingpress_customize.php:1497
 #@ bookingpress-appointment-booking
 msgid "Please enter your lastname"
 msgstr "Voer je achternaam in"
 
-#: core/classes/class.bookingpress.php:8698
-#: core/classes/class.bookingpress_customize.php:1489
+#: core/classes/class.bookingpress.php:8697
+#: core/classes/class.bookingpress_customize.php:1496
 #@ bookingpress-appointment-booking
 msgid "Enter your lastname"
 msgstr "Voer je achternaam in"
 
-#: core/classes/class.bookingpress.php:8697
-#: core/classes/class.bookingpress_customize.php:1488
+#: core/classes/class.bookingpress.php:8696
+#: core/classes/class.bookingpress_customize.php:1495
 #@ bookingpress-appointment-booking
 msgid "Lastname"
 msgstr "Achternaam"
 
-#: core/classes/class.bookingpress.php:8688
-#: core/classes/class.bookingpress_customize.php:1477
+#: core/classes/class.bookingpress.php:8687
+#: core/classes/class.bookingpress_customize.php:1484
 #@ bookingpress-appointment-booking
 msgid "Please enter your firstname"
 msgstr "Voer je voornaam in"
 
-#: core/classes/class.bookingpress.php:8687
-#: core/classes/class.bookingpress_customize.php:1476
+#: core/classes/class.bookingpress.php:8686
+#: core/classes/class.bookingpress_customize.php:1483
 #@ bookingpress-appointment-booking
 msgid "Enter your firstname"
 msgstr "Voer je voornaam in"
 
-#: core/classes/class.bookingpress.php:8686
-#: core/classes/class.bookingpress_customize.php:1475
+#: core/classes/class.bookingpress.php:8685
+#: core/classes/class.bookingpress_customize.php:1482
 #@ bookingpress-appointment-booking
 msgid "Firstname"
 msgstr "Voornaam"
 
-#: core/classes/class.bookingpress.php:8677
-#: core/classes/class.bookingpress_customize.php:1464
+#: core/classes/class.bookingpress.php:8676
+#: core/classes/class.bookingpress_customize.php:1471
 #@ bookingpress-appointment-booking
 msgid "Please enter your full name"
 msgstr "Voer je volledige naam in"
 
-#: core/classes/class.bookingpress.php:8676
-#: core/classes/class.bookingpress_customize.php:1463
+#: core/classes/class.bookingpress.php:8675
+#: core/classes/class.bookingpress_customize.php:1470
 #@ bookingpress-appointment-booking
 msgid "Enter your full name"
 msgstr "Voer je volledige naam in"
 
-#: core/classes/class.bookingpress.php:8675
-#: core/classes/class.bookingpress_customize.php:1462
+#: core/classes/class.bookingpress.php:8674
+#: core/classes/class.bookingpress_customize.php:1469
 #@ bookingpress-appointment-booking
 msgid "Fullname"
 msgstr "Volledige naam"
 
-#: core/classes/class.bookingpress.php:8567
-#: core/classes/class.bookingpress.php:8860
+#: core/classes/class.bookingpress.php:8566
+#: core/classes/class.bookingpress.php:8859
 #: core/classes/class.bookingpress_customize.php:283
-#: core/classes/class.bookingpress_customize.php:1549
+#: core/classes/class.bookingpress_customize.php:1556
 #: src/Vue3/MyBookings/MyBookings.php:669
 #@ bookingpress-appointment-booking
 msgid "My Bookings"
 msgstr "Mijn boekingen"
 
-#: core/classes/class.bookingpress.php:8533
+#: core/classes/class.bookingpress.php:8532
 #: core/classes/class.bookingpress_customize.php:188
-#: core/classes/class.bookingpress_customize.php:1449
+#: core/classes/class.bookingpress_customize.php:1456
 #: src/frontend/BookingForm.php:512
 #@ bookingpress-appointment-booking
 msgid "Book Appointment"
 msgstr "Afspraak boeken"
 
 #: core/classes/class.bookingpress_customize.php:187
-#: core/classes/class.bookingpress_customize.php:1448
+#: core/classes/class.bookingpress_customize.php:1455
 #: core/views/frontend/appointment_my_appointments.php:596
 #: core/views/wizard/manage_wizard.php:121
 #: core/views/wizard/manage_wizard.php:270
@@ -6709,40 +6709,40 @@ msgstr "Afspraak boeken"
 msgid "Next"
 msgstr "Volgende"
 
-#: core/classes/class.bookingpress.php:8531
+#: core/classes/class.bookingpress.php:8530
 #: core/classes/class.bookingpress_customize.php:186
-#: core/classes/class.bookingpress_customize.php:1447
+#: core/classes/class.bookingpress_customize.php:1454
 #: src/frontend/BookingForm.php:484
 #@ bookingpress-appointment-booking
 msgid "Go Back"
 msgstr "Ga terug"
 
-#: core/classes/class.bookingpress.php:8515
+#: core/classes/class.bookingpress.php:8514
 #: core/classes/class.bookingpress_customize.php:196
-#: core/classes/class.bookingpress_customize.php:1402
+#: core/classes/class.bookingpress_customize.php:1409
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:5570
 #: src/frontend/BookingForm.php:508
 #@ bookingpress-appointment-booking
 msgid "Select Payment Method"
 msgstr "Selecteer betaalmethode"
 
-#: core/classes/class.bookingpress.php:8514
+#: core/classes/class.bookingpress.php:8513
 #: core/classes/class.bookingpress_customize.php:195
-#: core/classes/class.bookingpress_customize.php:1401
+#: core/classes/class.bookingpress_customize.php:1408
 #@ bookingpress-appointment-booking
 msgid "Your appointment booking summary"
 msgstr "Je afspraak boekingsoverzicht"
 
-#: core/classes/class.bookingpress.php:8507
+#: core/classes/class.bookingpress.php:8506
 #: core/classes/class.bookingpress_customize.php:153
-#: core/classes/class.bookingpress_customize.php:1398
+#: core/classes/class.bookingpress_customize.php:1405
 #@ bookingpress-appointment-booking
 msgid "Time Slot"
 msgstr "Tijdslot"
 
-#: core/classes/class.bookingpress.php:8505
+#: core/classes/class.bookingpress.php:8504
 #: core/classes/class.bookingpress_customize.php:148
-#: core/classes/class.bookingpress_customize.php:1394
+#: core/classes/class.bookingpress_customize.php:1401
 #: core/views/appointment/manage_appointment.php:816
 #: core/views/appointment/manage_appointment.php:819
 #: core/views/appointment/manage_appointment.php:933
@@ -6759,9 +6759,9 @@ msgstr "Tijdslot"
 msgid "Select Service"
 msgstr "Selecteer dienst"
 
-#: core/classes/class.bookingpress.php:8504
+#: core/classes/class.bookingpress.php:8503
 #: core/classes/class.bookingpress_customize.php:143
-#: core/classes/class.bookingpress_customize.php:1390
+#: core/classes/class.bookingpress_customize.php:1397
 #: core/classes/class.bookingpress_services.php:359
 #: core/views/services/manage_services.php:479
 #: src/frontend/BookingForm.php:479
@@ -6770,18 +6770,18 @@ msgstr "Selecteer dienst"
 msgid "Select Category"
 msgstr "Selecteer categorie"
 
-#: core/classes/class.bookingpress.php:8503
+#: core/classes/class.bookingpress.php:8502
 #: core/classes/class.bookingpress_customize.php:139
-#: core/classes/class.bookingpress_customize.php:1387
+#: core/classes/class.bookingpress_customize.php:1394
 #: src/frontend/BookingForm.php:491
 #: src/frontend/BookingForm.php:1216
 #@ bookingpress-appointment-booking
 msgid "Summary"
 msgstr "Overzicht"
 
-#: core/classes/class.bookingpress.php:8502
+#: core/classes/class.bookingpress.php:8501
 #: core/classes/class.bookingpress_customize.php:138
-#: core/classes/class.bookingpress_customize.php:1386
+#: core/classes/class.bookingpress_customize.php:1393
 #: core/views/appointment/manage_appointment.php:150
 #: core/views/appointment/manage_appointment.php:365
 #: core/views/appointment/manage_appointment.php:566
@@ -6806,14 +6806,14 @@ msgstr "Overzicht"
 msgid "Basic Details"
 msgstr "Basis details"
 
-#: core/classes/class.bookingpress.php:8501
-#: core/classes/class.bookingpress.php:8541
-#: core/classes/class.bookingpress.php:8593
-#: core/classes/class.bookingpress.php:8919
+#: core/classes/class.bookingpress.php:8500
+#: core/classes/class.bookingpress.php:8540
+#: core/classes/class.bookingpress.php:8592
+#: core/classes/class.bookingpress.php:8918
 #: core/classes/class.bookingpress_customize.php:137
 #: core/classes/class.bookingpress_customize.php:205
-#: core/classes/class.bookingpress_customize.php:1385
-#: core/classes/class.bookingpress_customize.php:1410
+#: core/classes/class.bookingpress_customize.php:1392
+#: core/classes/class.bookingpress_customize.php:1417
 #: core/views/upgrade_latest_data.php:1131
 #: src/frontend/BookingForm.php:489
 #: src/frontend/BookingForm.php:506
@@ -6822,13 +6822,13 @@ msgstr "Basis details"
 msgid "Date & Time"
 msgstr "Datum & tijd"
 
-#: core/classes/class.bookingpress.php:8500
-#: core/classes/class.bookingpress.php:8539
-#: core/classes/class.bookingpress.php:8582
-#: core/classes/class.bookingpress.php:8592
-#: core/classes/class.bookingpress.php:8915
+#: core/classes/class.bookingpress.php:8499
+#: core/classes/class.bookingpress.php:8538
+#: core/classes/class.bookingpress.php:8581
+#: core/classes/class.bookingpress.php:8591
+#: core/classes/class.bookingpress.php:8914
 #: core/classes/class.bookingpress_customize.php:203
-#: core/classes/class.bookingpress_customize.php:1408
+#: core/classes/class.bookingpress_customize.php:1415
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:5550
 #: core/views/appointment/manage_appointment.php:45
 #: core/views/appointment/manage_appointment.php:261
@@ -6867,34 +6867,34 @@ msgstr "Datum & tijd"
 msgid "Service"
 msgstr "Dienst"
 
-#: core/classes/class.bookingpress.php:5654
+#: core/classes/class.bookingpress.php:5653
 #@ bookingpress-appointment-booking
 msgid "This email is already registered, please choose another one."
 msgstr "Deze e-mail is al geregistreerd, kies een andere."
 
-#: core/classes/class.bookingpress.php:5648
-#: core/classes/class.bookingpress.php:5652
+#: core/classes/class.bookingpress.php:5647
+#: core/classes/class.bookingpress.php:5651
 #@ bookingpress-appointment-booking
 msgid "Please enter valid email address."
 msgstr "Voer een geldig e-mailadres in."
 
-#: core/classes/class.bookingpress.php:5645
+#: core/classes/class.bookingpress.php:5644
 #@ bookingpress-appointment-booking
 msgid "Please type your e-mail address."
 msgstr "Vul je e-mailadres in."
 
-#: core/classes/class.bookingpress.php:5627
+#: core/classes/class.bookingpress.php:5626
 #@ bookingpress-appointment-booking
 msgid "This username is already registered, please choose another one."
 msgstr "Deze gebruikersnaam is al geregistreerd, kies een andere."
 
-#: core/classes/class.bookingpress.php:5621
-#: core/classes/class.bookingpress.php:5625
+#: core/classes/class.bookingpress.php:5620
+#: core/classes/class.bookingpress.php:5624
 #@ bookingpress-appointment-booking
 msgid "This username is invalid because it uses illegal characters. Please enter a valid username."
 msgstr "Deze gebruikersnaam is ongeldig omdat deze gebruikmaakt van ongeldige tekens. Geef een geldige gebruikersnaam op."
 
-#: core/classes/class.bookingpress.php:5618
+#: core/classes/class.bookingpress.php:5617
 #@ bookingpress-appointment-booking
 msgid "Please enter a username."
 msgstr "Vul een gebruikersnaam in."
@@ -6927,13 +6927,13 @@ msgstr "Je aanvraag kan omwille van beveiligingsredenen niet worden verwerkt."
 #: core/classes/class.bookingpress.php:1022
 #: core/classes/class.bookingpress.php:1044
 #: core/classes/class.bookingpress.php:4059
-#: core/classes/class.bookingpress.php:5742
-#: core/classes/class.bookingpress.php:9386
-#: core/classes/class.bookingpress.php:9400
-#: core/classes/class.bookingpress.php:9455
-#: core/classes/class.bookingpress.php:9465
-#: core/classes/class.bookingpress.php:9498
-#: core/classes/class.bookingpress.php:9508
+#: core/classes/class.bookingpress.php:5741
+#: core/classes/class.bookingpress.php:9385
+#: core/classes/class.bookingpress.php:9399
+#: core/classes/class.bookingpress.php:9454
+#: core/classes/class.bookingpress.php:9464
+#: core/classes/class.bookingpress.php:9497
+#: core/classes/class.bookingpress.php:9507
 #: core/classes/class.bookingpress_addons.php:109
 #: core/classes/class.bookingpress_addons.php:117
 #: core/classes/class.bookingpress_appointment.php:66
@@ -7032,18 +7032,18 @@ msgstr "Je aanvraag kan omwille van beveiligingsredenen niet worden verwerkt."
 #: core/classes/class.bookingpress_customize.php:564
 #: core/classes/class.bookingpress_customize.php:653
 #: core/classes/class.bookingpress_customize.php:661
-#: core/classes/class.bookingpress_customize.php:743
-#: core/classes/class.bookingpress_customize.php:751
-#: core/classes/class.bookingpress_customize.php:925
-#: core/classes/class.bookingpress_customize.php:955
-#: core/classes/class.bookingpress_customize.php:986
-#: core/classes/class.bookingpress_customize.php:1037
-#: core/classes/class.bookingpress_customize.php:1049
-#: core/classes/class.bookingpress_customize.php:1060
-#: core/classes/class.bookingpress_customize.php:1101
-#: core/classes/class.bookingpress_customize.php:1131
-#: core/classes/class.bookingpress_customize.php:1165
-#: core/classes/class.bookingpress_customize.php:1203
+#: core/classes/class.bookingpress_customize.php:750
+#: core/classes/class.bookingpress_customize.php:758
+#: core/classes/class.bookingpress_customize.php:932
+#: core/classes/class.bookingpress_customize.php:962
+#: core/classes/class.bookingpress_customize.php:993
+#: core/classes/class.bookingpress_customize.php:1044
+#: core/classes/class.bookingpress_customize.php:1056
+#: core/classes/class.bookingpress_customize.php:1067
+#: core/classes/class.bookingpress_customize.php:1108
+#: core/classes/class.bookingpress_customize.php:1138
+#: core/classes/class.bookingpress_customize.php:1172
+#: core/classes/class.bookingpress_customize.php:1210
 #: core/classes/class.bookingpress_dashboard.php:153
 #: core/classes/class.bookingpress_dashboard.php:311
 #: core/classes/class.bookingpress_dashboard.php:434
@@ -7293,9 +7293,9 @@ msgstr "Fout"
 msgid "BookingPress - WordPress Appointment Booking Plugin requires a minimum WordPress version of 5.0."
 msgstr "BookingPress - WordPress Appointment Booking plugin vereist minimaal WordPress versie 5.0."
 
-#: core/classes/class.bookingpress.php:8540
+#: core/classes/class.bookingpress.php:8539
 #: core/classes/class.bookingpress_customize.php:204
-#: core/classes/class.bookingpress_customize.php:1409
+#: core/classes/class.bookingpress_customize.php:1416
 #: core/classes/frontend/class.bookingpress_appointment_bookings.php:5555
 #: core/views/appointment/manage_appointment.php:260
 #: core/views/dashboard/manage_dashboard.php:237
@@ -7932,61 +7932,61 @@ msgstr "Het wordt aangeraden om de Pop-up-methode te gebruiken in plaats van de 
 msgid "Auto login user after successful booking"
 msgstr "Automatische login gebruiker na succesvolle boeking"
 
-#: core/classes/class.bookingpress.php:8280
+#: core/classes/class.bookingpress.php:8279
 #, php-format
 #@ bookingpress-appointment-booking
 msgid "Dear %1$s %2$s,%3$sYou have successfully scheduled appointment.%3$sThank you for choosing us,%3$s%4$s"
 msgstr "Beste %1$s %2$s,%3$s Je hebt een afspraak gepland.%3$sBedankt dat je voor ons hebt gekozen,%3$s%4$s"
 
-#: core/classes/class.bookingpress.php:8281
+#: core/classes/class.bookingpress.php:8280
 #, php-format
 #@ bookingpress-appointment-booking
 msgid "Dear %1$s %2$s,%3$sThe %4$s appointment is scheduled and it is waiting for a confirmation.%3$sThank you for choosing us,%3$s%5$s"
 msgstr "Beste %1$s %2$s,%3$sDe %4$s afspraak is gepland en wacht op een bevestiging.%3$sBedankt dat je voor ons hebt gekozen,%3$s%5$s"
 
-#: core/classes/class.bookingpress.php:8282
+#: core/classes/class.bookingpress.php:8281
 #, php-format
 #@ bookingpress-appointment-booking
 msgid "Dear %1$s %2$s,%3$sThe %4$s appointment, has been rejected.%3$sThank you for choosing us,%3$s%5$s"
 msgstr "Beste %1$s %2$s,%3$sT %4$s afspraak, is afgewezen.%3$sBedankt dat u voor ons heeft gekozen,%3$s%5$s"
 
-#: core/classes/class.bookingpress.php:8283
+#: core/classes/class.bookingpress.php:8282
 #, php-format
 #@ bookingpress-appointment-booking
 msgid "Dear %1$s %2$s,%3$sThe %4$s appointment, has been canceled.%3$sThank you for choosing us,%3$s%5$s"
 msgstr "Beste %1$s %2$s,%3$sT %4$s afspraak, is geannuleerd.%3$sBedankt dat je voor ons hebt gekozen,%3$s%5$s"
 
-#: core/classes/class.bookingpress.php:8284
+#: core/classes/class.bookingpress.php:8283
 #, php-format
 #@ bookingpress-appointment-booking
 msgid "Hi%1$sPlease book your appointment with following URL: %1$s%2$s%1$sThanks,%1$s%3$s"
 msgstr "Hallo%1$sBoek uw afspraak met de volgende URL: %1$s%2$s%1$sBedankt,%1$s%3$s"
 
-#: core/classes/class.bookingpress.php:8309
+#: core/classes/class.bookingpress.php:8308
 #, php-format
 #@ bookingpress-appointment-booking
 msgid "Hi administrator,%1$sYou have one confirmed %2$s appointment. The appointment is added to your schedule.%1$sThank you,%1$s%3$s"
 msgstr "Hallo beheerder,%1$sJe hebt één bevestigde %2$s afspraak. De afspraak is toegevoegd aan je planning.%1$sBedankt,%1$s%3$s"
 
-#: core/classes/class.bookingpress.php:8310
+#: core/classes/class.bookingpress.php:8309
 #, php-format
 #@ bookingpress-appointment-booking
 msgid "Hi administrator,%1$sYou have new appointment in %2$s. The appointment is waiting for a confirmation.%1$sThank you,%1$s%3$s"
 msgstr "Hallo beheerder,%1$sJe hebt een nieuwe afspraak over %2$s. De afspraak wacht op een bevestiging.%1$sBedankt,%1$s%3$s"
 
-#: core/classes/class.bookingpress.php:8311
+#: core/classes/class.bookingpress.php:8310
 #, php-format
 #@ bookingpress-appointment-booking
 msgid "Hi administrator,%1$sYour %2$s appointment, has been rejected.%1$sThank you,%1$s%3$s"
 msgstr "Hallo beheerder, %1$sJaar %2$s afspraak is afgewezen.%1$sBedankt,%1$s%3$s"
 
-#: core/classes/class.bookingpress.php:8312
+#: core/classes/class.bookingpress.php:8311
 #, php-format
 #@ bookingpress-appointment-booking
 msgid "Hi administrator,%1$sYour %2$s appointment, has been canceled.%1$sThank you,%1$s%3$s"
 msgstr "Hallo beheerder, %1$sJaar %2$s afspraak is geannuleerd.%1$sBedankt,%1$s%3$s"
 
-#: core/classes/class.bookingpress.php:8313
+#: core/classes/class.bookingpress.php:8312
 #, php-format
 #@ bookingpress-appointment-booking
 msgid "Hi administrator,%1$sFollowing appointment URL is shared with customer. %1$s%2$s%1$sThank you,%1$s%3$s"
@@ -8435,7 +8435,7 @@ msgstr "Verjaardagsuitverkoop"
 msgid "AffiliatePress Successfully installed."
 msgstr "AffiliatePress succesvol geïnstalleerd."
 
-#: core/classes/class.bookingpress_customize.php:1061
+#: core/classes/class.bookingpress_customize.php:1068
 #@ bookingpress-appointment-booking
 msgid "You can not set the \"Date & Time\" step as the first step in the process."
 msgstr "U kunt de stap 'Datum en tijd' niet als eerste stap in het proces instellen."
@@ -8497,22 +8497,22 @@ msgstr "De afspraak is verwijderd of niet gevonden."
 msgid "Either service already deletd or service id not found."
 msgstr "De service is al verwijderd of de service-ID is niet gevonden."
 
-#: core/classes/class.bookingpress-core.php:413
+#: core/classes/class.bookingpress-core.php:429
 #@ bookingpress-appointment-booking
 msgid "This function can only be called via REST API."
 msgstr "Deze functie kan alleen via de REST API worden aangeroepen."
 
-#: core/classes/class.bookingpress-core.php:424
+#: core/classes/class.bookingpress-core.php:440
 #@ bookingpress-appointment-booking
 msgid "Missing or invalid Authorization header."
 msgstr "Ontbrekende of ongeldige autorisatieheader."
 
-#: core/classes/class.bookingpress-core.php:436
+#: core/classes/class.bookingpress-core.php:452
 #@ bookingpress-appointment-booking
 msgid "Unauthorized. Invalid API key."
 msgstr "Niet geautoriseerd. Ongeldige API-sleutel."
 
-#: core/classes/class.bookingpress-core.php:447
+#: core/classes/class.bookingpress-core.php:463
 #@ bookingpress-appointment-booking
 msgid "Unauthorized. API key has been expired. Please generate the new API key and try again."
 msgstr "Niet geautoriseerd. De API-sleutel is verlopen. Genereer een nieuwe API-sleutel en probeer het opnieuw."
@@ -8530,17 +8530,17 @@ msgstr "Gelieve een jpg/png/webp-bestand te uploaden met een maximale grootte va
 msgid "Loading..."
 msgstr "Bezig met laden..."
 
-#: src/api/AppointmentRoutes.php:603
+#: src/api/AppointmentRoutes.php:619
 #@ bookingpress-appointment-booking
 msgid "Sorry, past appontment can not be rescheduled"
 msgstr "Sorry, een eerder gemaakte afspraak kan niet opnieuw worden gepland"
 
-#: src/api/AppointmentRoutes.php:626
+#: src/api/AppointmentRoutes.php:642
 #@ bookingpress-appointment-booking
 msgid "Sorry, Appointment can not be rescheduled as the selected time has been passed."
 msgstr "Sorry, de afspraak kan niet opnieuw worden gepland omdat de geselecteerde tijd is verstreken."
 
-#: src/api/AppointmentRoutes.php:648
+#: src/api/AppointmentRoutes.php:664
 #@ bookingpress-appointment-booking
 msgid "Appointment rescheduled successfully"
 msgstr "Afspraak met succes opnieuw gepland"
@@ -8627,12 +8627,12 @@ msgstr "Kaartvelden"
 msgid "reorder"
 msgstr "opnieuw ordenen"
 
-#: core/classes/class.bookingpress_customize.php:1038
+#: core/classes/class.bookingpress_customize.php:1045
 #@ bookingpress-appointment-booking
 msgid "Date & Time cannot come immediately after Basic Details when it is the first step."
 msgstr "Datum & Tijd kunnen niet direct na Basisgegevens komen als het de eerste stap is."
 
-#: core/classes/class.bookingpress_customize.php:1050
+#: core/classes/class.bookingpress_customize.php:1057
 #@ bookingpress-appointment-booking
 msgid "Cart must be the last step, or placed just before Basic Details when Basic Details is the last step."
 msgstr "Winkelwagen moet de laatste stap zijn, of direct voor Basisgegevens komen als Basisgegevens de laatste stap is."
@@ -8644,7 +8644,7 @@ msgstr "Vorig jaar"
 
 #: src/admin/Appointments.php:64
 #: src/admin/Dashboard.php:84
-#: src/api/AppointmentRoutes.php:1168
+#: src/api/AppointmentRoutes.php:1185
 #@ bookingpress-appointment-booking
 msgid "Appointment status updated successfully."
 msgstr "Afspraakstatus succesvol bijgewerkt."
@@ -9159,111 +9159,111 @@ msgstr "Afspraakstatus bijwerken"
 
 #: src/abilities/BookingPressAbilities.php:669
 #: src/abilities/BookingPressAbilities.php:765
-#: src/api/AppointmentRoutes.php:902
+#: src/api/AppointmentRoutes.php:919
 #@ bookingpress-appointment-booking
 msgid "Invalid scope to get the appointment."
 msgstr "Ongeldige scope om de afspraak op te halen."
 
 #: src/abilities/BookingPressAbilities.php:775
-#: src/api/AppointmentRoutes.php:892
+#: src/api/AppointmentRoutes.php:909
 #@ bookingpress-appointment-booking
 msgid "Invalid appointment ID."
 msgstr "Ongeldig afspraak-ID."
 
 #: src/abilities/BookingPressAbilities.php:793
-#: src/api/AppointmentRoutes.php:914
-#: src/api/AppointmentRoutes.php:1138
+#: src/api/AppointmentRoutes.php:931
+#: src/api/AppointmentRoutes.php:1155
 #@ bookingpress-appointment-booking
 msgid "Appointment not found."
 msgstr "Afspraak niet gevonden."
 
-#: src/api/AppointmentRoutes.php:851
+#: src/api/AppointmentRoutes.php:868
 #@ bookingpress-appointment-booking
 msgid "Invalid service ID."
 msgstr "Ongeldig service-ID."
 
-#: src/api/AppointmentRoutes.php:862
+#: src/api/AppointmentRoutes.php:879
 #@ bookingpress-appointment-booking
 msgid "Service not found."
 msgstr "Service niet gevonden."
 
-#: src/api/AppointmentRoutes.php:926
+#: src/api/AppointmentRoutes.php:943
 #@ bookingpress-appointment-booking
 msgid "You do not have permission to cancel this appointment."
 msgstr "Je hebt geen toestemming om deze afspraak te annuleren."
 
-#: src/api/AppointmentRoutes.php:937
+#: src/api/AppointmentRoutes.php:954
 #@ bookingpress-appointment-booking
 msgid "Appointment Cancellation is disabled for Customers."
 msgstr "Annulering van afspraken is uitgeschakeld voor klanten."
 
-#: src/api/AppointmentRoutes.php:949
+#: src/api/AppointmentRoutes.php:966
 #@ bookingpress-appointment-booking
 msgid "Appointment is neither pending nor confirmed so it cannot be canceled."
 msgstr "Afspraak is noch in behandeling noch bevestigd, dus kan niet worden geannuleerd."
 
-#: src/api/AppointmentRoutes.php:967
-#: src/api/AppointmentRoutes.php:979
+#: src/api/AppointmentRoutes.php:984
+#: src/api/AppointmentRoutes.php:996
 #@ bookingpress-appointment-booking
 msgid "The appointment could not be canceled."
 msgstr "De afspraak kon niet worden geannuleerd."
 
-#: src/api/AppointmentRoutes.php:987
+#: src/api/AppointmentRoutes.php:1004
 #@ bookingpress-appointment-booking
 msgid "Appointment has been successfully canceled."
 msgstr "Afspraak is succesvol geannuleerd."
 
-#: src/api/AppointmentRoutes.php:1001
+#: src/api/AppointmentRoutes.php:1018
 #@ bookingpress-appointment-booking
 msgid "Service ID, booking date, and booking time are required."
 msgstr "Service-ID, boekingsdatum en -tijd zijn vereist."
 
-#: src/api/AppointmentRoutes.php:1004
+#: src/api/AppointmentRoutes.php:1021
 #@ bookingpress-appointment-booking
 msgid "Customer ID or customer email is required."
 msgstr "Klant-ID of klant-e-mailadres is vereist."
 
-#: src/api/AppointmentRoutes.php:1011
+#: src/api/AppointmentRoutes.php:1028
 #@ bookingpress-appointment-booking
 msgid "No customer found with this email address."
 msgstr "Geen klant gevonden met dit e-mailadres."
 
-#: src/api/AppointmentRoutes.php:1025
+#: src/api/AppointmentRoutes.php:1042
 #@ bookingpress-appointment-booking
 msgid "This time slot is not available. Choose another slot."
 msgstr "Dit tijdslot is niet beschikbaar. Kies een ander slot."
 
-#: src/api/AppointmentRoutes.php:1077
+#: src/api/AppointmentRoutes.php:1094
 #@ bookingpress-appointment-booking
 msgid "This time slot is already booked. Choose another slot."
 msgstr "Dit tijdslot is al geboekt. Kies een ander slot."
 
-#: src/api/AppointmentRoutes.php:1089
+#: src/api/AppointmentRoutes.php:1106
 #@ bookingpress-appointment-booking
 msgid "The appointment could not be booked."
 msgstr "De afspraak kon niet worden geboekt."
 
-#: src/api/AppointmentRoutes.php:1100
+#: src/api/AppointmentRoutes.php:1117
 #@ bookingpress-appointment-booking
 msgid "The appointment was booked, but its ID could not be retrieved. Do not retry."
 msgstr "De afspraak is geboekt, maar het ID kon niet worden opgehaald. Probeer niet opnieuw."
 
-#: src/api/AppointmentRoutes.php:1119
+#: src/api/AppointmentRoutes.php:1136
 #@ bookingpress-appointment-booking
 msgid "Appointment ID and appointment status are required."
 msgstr "Afspraak-ID en afspraakstatus zijn vereist."
 
-#: src/api/AppointmentRoutes.php:1127
+#: src/api/AppointmentRoutes.php:1144
 #@ bookingpress-appointment-booking
 msgid "You do not have permission to update upcoming appointments."
 msgstr "Je hebt geen toestemming om aankomende afspraken bij te werken."
 
-#: src/api/AppointmentRoutes.php:1148
+#: src/api/AppointmentRoutes.php:1165
 #@ bookingpress-appointment-booking
 msgid "The appointment is already in the specified status."
 msgstr "De afspraak heeft al de opgegeven status."
 
-#: src/api/AppointmentRoutes.php:1175
+#: src/api/AppointmentRoutes.php:1192
 #@ bookingpress-appointment-booking
 msgid "The appointment status could not be updated. Another appointment may already be booked in the same time slot."
 msgstr "De afspraakstatus kon niet worden bijgewerkt. Er is mogelijk al een andere afspraak geboekt in hetzelfde tijdslot."
@@ -9291,6 +9291,6 @@ msgstr "Geen beschikbare datums voor de geselecteerde service."
 #. translators: plugin header field 'Version'
 #: bookingpress-appointment-booking.php:0
 #@ bookingpress-appointment-booking
-msgid "1.7.0"
-msgstr "1.7.0"
+msgid "1.7.1"
+msgstr "1.7.1"
 

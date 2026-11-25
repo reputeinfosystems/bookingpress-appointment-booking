@@ -90,7 +90,21 @@ class DashboardRoutes extends Base {
                 $customer_email = ! empty($get_appointment['bookingpress_customer_email']) ? $get_appointment['bookingpress_customer_email'] : '';
                 $customer_phone = ! empty($get_appointment['bookingpress_customer_phone']) ? $get_appointment['bookingpress_customer_phone'] : '';
 
-                $appointment['customer_name'] = !empty($get_appointment['bookingpress_customer_name']) ? stripslashes_deep($get_appointment['bookingpress_customer_name']) :'';
+                $customer_full_name = trim( ($get_appointment['bookingpress_customer_firstname'] ?? '') . ' ' . ($get_appointment['bookingpress_customer_lastname'] ?? ''));
+                $customer_username = ! empty($get_appointment['bookingpress_username']) ? $get_appointment['bookingpress_username'] : '';
+
+                if (!empty($customer_full_name)) {
+                    $appointment['customer_name'] = stripslashes_deep($customer_full_name);
+                } elseif( isset($get_appointment['bookingpress_customer_name']) && !empty($get_appointment['bookingpress_customer_name']) ){
+                    $appointment['customer_name'] = stripslashes_deep($get_appointment['bookingpress_customer_name']);
+                } elseif (!empty($customer_username)) {
+                    $appointment['customer_name'] = stripslashes_deep($customer_username);
+                } else {
+                    $appointment['customer_name'] = stripslashes_deep($customer_email);
+                }
+
+
+                //$appointment['customer_name'] = !empty($get_appointment['bookingpress_customer_name']) ? stripslashes_deep($get_appointment['bookingpress_customer_name']) :'';
                 $appointment['customer_first_name'] = !empty($get_appointment['bookingpress_customer_firstname']) ? stripslashes_deep($get_appointment['bookingpress_customer_firstname']) :'';
                 $appointment['customer_last_name'] = !empty($get_appointment['bookingpress_customer_lastname']) ? stripslashes_deep($get_appointment['bookingpress_customer_lastname']) :'';
                 $appointment['customer_email'] = stripslashes_deep($customer_email);

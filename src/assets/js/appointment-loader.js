@@ -512,6 +512,7 @@ const initAppointmentLoader = () => {
                     const updateLabel = this.appointment_status.find(status => String(status.value) === String(new_status))?.text || '';
                     this.updateAppointmentRow(appointment_id, { appointment_status_label: updateLabel, appointment_status: new_status });
 
+                    wp.hooks.doAction('bookingpress_after_change_appointment_status', this, appointment_id, new_status, rest_response);
                     //this.loadAppointments();
                 }
             })

@@ -114,6 +114,13 @@ function createMyBookingsComponent(cfg) {
                               <div class="bpa-item--label">{{ strings.members || 'No. of Person' }}:</div>
                               <div class="bpa-item--val">{{ scope.row.selected_extra_members }}</div>
                             </div>
+                              
+                          </div>
+                          <div class="bpa-vac-bd__row">
+                            <div class="bpa-bd__item" v-if="scope.row.bookingpress_location_id && scope.row.bookingpress_location_id != 0 && scope.row.bookingpress_location_name">
+                                <div class="bpa-item--label">{{ strings.location || 'Location' }}:</div>
+                                <div class="bpa-item--val">{{ scope.row.bookingpress_location_name }}</div>
+                            </div>
                           </div>
                           <!-- Show extras for single-service bookings only. -->
                           <!-- Legacy markup (bpa-vac-extra__row / bpa-ec--*): name, qty and

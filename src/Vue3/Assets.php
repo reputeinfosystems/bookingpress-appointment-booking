@@ -366,6 +366,10 @@ class Assets {
 			'wpRestNonce'   => $wp_rest_nonce,
 			'formNonce'     => $form_nonce,
 			'instanceToken' => $instance_token,
+			// Unix time the tokens above were minted. A page cache can serve this
+			// markup long after they expire; the client compares against it and
+			// re-issues them before they are used.
+			'issuedAt'      => time(),
 		);
 
 		self::$instances_data[ $instance_id ] = $state;

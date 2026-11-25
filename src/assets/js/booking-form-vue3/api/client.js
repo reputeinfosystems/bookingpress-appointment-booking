@@ -25,8 +25,46 @@
  */
 export function createApiClient(cfg) {
   const root = String(cfg.restRoot || '').replace(/\/+$/, '');
-	
-	async function refreshWpNonce() {
+
+  // The tokens are minted when the page is rendered, and a page cache can
+  // serve that markup long after they expire (`wp_rest` lives 12-24h, the
+  // instance token 12h). Re-issue them once they pass this age, so nothing
+  // — the form or a payment module reading `state.nonces` — ever sends a
+  // stale set. Kept under both lifetimes.
+  const TOKEN_MAX_AGE_MS = 10 * 60 * 60 * 1000;
+  const TOKEN_CHECK_EVERY_MS = 5 * 60 * 1000;
+
+  // `issuedAt` is server time in seconds. Missing (older server) → count
+  // from now, so a long-open tab is still covered.
+  let tokensIssuedAt = Number(cfg.issuedAt) > 0 ? Number(cfg.issuedAt) * 1000 : Date.now();
+  let refreshInFlight = null;
+
+  // One request at a time: the age check and a 403 retry can both ask at once.
+  function refreshWpNonce() {
+    if (!refreshInFlight) {
+      refreshInFlight = requestFreshTokens().finally(() => { refreshInFlight = null; });
+    }
+    return refreshInFlight;
+  }
+
+  function refreshIfStale() {
+    if (Date.now() - tokensIssuedAt >= TOKEN_MAX_AGE_MS) refreshWpNonce();
+  }
+
+  function keepTokensFresh() {
+    if (typeof window === 'undefined') return;
+    refreshIfStale();
+    // Timers are throttled in background tabs, so also check the moment the
+    // customer comes back to the page.
+    window.setInterval(refreshIfStale, TOKEN_CHECK_EVERY_MS);
+    if (typeof document !== 'undefined') {
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') refreshIfStale();
+      });
+    }
+  }
+
+	async function requestFreshTokens() {
     try {
 		const refreshPayload = {
       		instanceId: String(cfg.instanceId || ''),
@@ -45,6 +83,20 @@ export function createApiClient(cfg) {
 		  cfg.formNonce     = json.data.form_nonce;
 		  //cfg.instanceId    = json.data.instanceId;
 		  cfg.instanceToken = json.data.instanceToken;
+		  tokensIssuedAt    = Date.now();
+
+		  // Payment modules read the tokens from `state.nonces` (via the
+		  // payment host), not from this cfg. Hand the fresh set back so they
+		  // stop posting the stale, page-cached ones.
+		  if (typeof cfg.onTokensRefreshed === 'function') {
+		    try {
+		      cfg.onTokensRefreshed({
+		        wpRestNonce:   cfg.wpRestNonce,
+		        formNonce:     cfg.formNonce,
+		        instanceToken: cfg.instanceToken,
+		      });
+		    } catch (_e) { /* noop */ }
+		  }
 
 		  
         return true;
@@ -100,7 +152,12 @@ export function createApiClient(cfg) {
     return { status: res.status, ok: !!(json && json.ok), data: json && json.data, error: json && json.error, errors: json && json.errors, raw: json };
   }
 
+  keepTokensFresh();
+
   return {
+    refreshNonces() {
+      return refreshWpNonce();
+    },
     state(extra) {
       return post('state', extra || {});
     },

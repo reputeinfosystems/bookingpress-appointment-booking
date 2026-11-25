@@ -202,8 +202,8 @@ export const customizePageMethods = {
                     const updateFieldIds = (fields) => {
                         if (!Array.isArray(fields)) return;
                         fields.forEach(field => {
-                            if (field && field.field_name && response.field_id_map[field.field_name]) {
-                                field.id = response.field_id_map[field.field_name];
+                            if (field && field.meta_key && response.field_id_map[field.meta_key]) {
+                                field.id = response.field_id_map[field.meta_key];
                             }
                             if (field && field.field_options && Array.isArray(field.field_options.inner_fields)) {
                                 updateFieldIds(field.field_options.inner_fields);

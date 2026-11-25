@@ -17,13 +17,13 @@ import { createApp } from 'vue';
 // of the imported files to force a fresh fetch even when the browser has
 // cached an earlier copy under a no-query URL.
 import App from './components/App.js?v=33';
-import { createApiClient } from './api/client.js?v=3';
+import { createApiClient } from './api/client.js?v=4';
 import { useFormState } from './composables/useFormState.js?v=3';
 import { useReadiness } from './composables/useReadiness.js?v=4';
 import { useStepNavigation } from './composables/useStepNavigation.js?v=4';
 import { useTimeslots } from './composables/useTimeslots.js?v=13';
 import { useSubmission } from './composables/useSubmission.js?v=6';
-import { registerBookingFormHost } from './payments/booking-form-host.js?v=1';
+import { registerBookingFormHost } from './payments/booking-form-host.js?v=2';
 
 // eslint-disable-next-line no-console
 console.info('[bp-v3] app module loaded');
@@ -62,6 +62,10 @@ export function mountBookingFormInstance(instanceId, initialState, mountNodeOver
     wpRestNonce:   (initialState.nonces && initialState.nonces.wpRestNonce)   || '',
     formNonce:     (initialState.nonces && initialState.nonces.formNonce)     || '',
     instanceToken: (initialState.nonces && initialState.nonces.instanceToken) || '',
+    issuedAt:      (initialState.nonces && initialState.nonces.issuedAt)      || 0,
+    onTokensRefreshed: (tokens) => {
+      state.nonces = Object.assign({}, state.nonces || {}, tokens);
+    },
   });
 
   const readiness  = useReadiness(state);

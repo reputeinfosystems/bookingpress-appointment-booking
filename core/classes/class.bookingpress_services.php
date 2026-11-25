@@ -17,17 +17,17 @@ if (! class_exists('bookingpress_services') ) {
             add_action('wp_ajax_bookingpress_duplicate_service', array( $this, 'bookingpress_duplicate_service' ));
             add_action('wp_ajax_bookingpress_get_search_categories', array( $this, 'bookingpress_search_categories' ));
 
-            add_action('bookingpress_services_dynamic_vue_methods', array( $this, 'bookingpress_service_dynamic_vue_methods_func' ), 10);
-            add_action('bookingpress_services_dynamic_on_load_methods', array( $this, 'bookingpress_service_dynamic_on_load_methods_func' ), 10);
-            add_action('bookingpress_services_dynamic_data_fields', array( $this, 'bookingpress_service_dynamic_data_fields_func' ), 10);
-            add_action('bookingpress_services_dynamic_directives', array( $this, 'bookingpress_service_dynamic_directives_func' ), 10);
-            add_action('bookingpress_services_dynamic_helper_vars', array( $this, 'bookingpress_service_dynamic_helper_func' ), 10);
+            // add_action('bookingpress_services_dynamic_vue_methods', array( $this, 'bookingpress_service_dynamic_vue_methods_func' ), 10); // Vue 2 - safe to remove
+            // add_action('bookingpress_services_dynamic_on_load_methods', array( $this, 'bookingpress_service_dynamic_on_load_methods_func' ), 10); // Vue 2 - safe to remove
+            // add_action('bookingpress_services_dynamic_data_fields', array( $this, 'bookingpress_service_dynamic_data_fields_func' ), 10); // Vue 2 - safe to remove
+            // add_action('bookingpress_services_dynamic_directives', array( $this, 'bookingpress_service_dynamic_directives_func' ), 10); // Vue 2 - safe to remove
+            // add_action('bookingpress_services_dynamic_helper_vars', array( $this, 'bookingpress_service_dynamic_helper_func' ), 10); // Vue 2 - safe to remove
 
-            add_action('bookingpress_services_dynamic_view_load', array( $this, 'bookingpress_service_dynamic_view_load_func' ), 10);
+            // add_action('bookingpress_services_dynamic_view_load', array( $this, 'bookingpress_service_dynamic_view_load_func' ), 10); // Vue 2 - safe to remove
 
             add_action('wp_ajax_bookingpress_upload_service', array( $this, 'bookingpress_upload_service_func' ), 10);
 
-            add_action( 'admin_init', array( $this, 'bookingpress_service_vue_data_fields') );
+            // add_action( 'admin_init', array( $this, 'bookingpress_service_vue_data_fields') ); // Vue 2 - safe to remove
 
             add_action( 'wp_ajax_bookingpress_remove_service_file', array( $this, 'bookingpress_remove_service_file_func') );
             

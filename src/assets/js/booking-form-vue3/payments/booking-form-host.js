@@ -201,6 +201,19 @@ export function registerBookingFormHost(handle) {
       return state.nonces || {};
     },
 
+    /**
+     * Re-issue the auth tokens after a stale-nonce rejection (page cache,
+     * long-open tab, login during the booking). On success `nonces()`
+     * returns the fresh set.
+     *
+     * @returns {Promise<boolean>}
+     */
+    refreshNonces() {
+      const api = handle.api;
+      if (!api || typeof api.refreshNonces !== 'function') return Promise.resolve(false);
+      return api.refreshNonces();
+    },
+
     paymentRoot() {
       return String((state.rest && state.rest.paymentRoot) || '');
     },

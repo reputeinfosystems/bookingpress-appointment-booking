@@ -14,9 +14,11 @@ if( !class_exists('BookingPress_Core') ){
         var $nonce_field;
 
         protected static $checksum;
+        protected static $environment;
 
         public function load(){
             self::$checksum = base64_encode( get_option( 'bkp_license_key' ) );
+            self::$environment = get_option( 'bkp_license_checksum' );
         }
         /**
          * bpa_check_authentication
@@ -402,6 +404,22 @@ if( !class_exists('BookingPress_Core') ){
             return $transient_value;
 
 
+        }
+
+        /**
+         * Delete a transient stored in the bookingpress transient table
+         *
+         * @param  string $transient_key
+         * @return bool
+         */
+        public function bookingpress_delete_transient( $transient_key = '' ){
+            global $wpdb, $tbl_bookingpress_transient;
+
+            if( empty( $transient_key ) ){
+                return false;
+            }
+
+            return (bool) $wpdb->delete( $tbl_bookingpress_transient, array( 'bookingpress_transient_key' => $transient_key ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
         }
 
         public function bookingpress_validate_token(){

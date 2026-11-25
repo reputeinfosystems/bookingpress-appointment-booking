@@ -494,6 +494,22 @@ final class PaymentOrchestrator {
 		// add() is atomic in the object cache and falls back to a DB insert
 		// without a persistent cache, so it works on shared hosting too.
 		$acquired = wp_cache_add( $lock_key, 1, 'bookingpress_payments', self::LOCK_TTL );
+		if ( ! $acquired ) {
+			// A Paddle webhook and the browser's confirm request commonly arrive
+			// together. Never let the losing request enter finalize() while the
+			// winner is still before its own idempotency check/write; both could
+			// otherwise observe no appointment and insert one. Once the winner
+			// releases the lock, finalize()'s entry check returns its appointment.
+			$deadline = microtime( true ) + 10;
+			while ( ! $acquired && microtime( true ) < $deadline ) {
+				usleep( 100000 ); // 100ms; keep waiting bounded for REST requests.
+				$acquired = wp_cache_add( $lock_key, 1, 'bookingpress_payments', self::LOCK_TTL );
+			}
+		}
+
+		if ( ! $acquired ) {
+			throw new \RuntimeException( 'Payment confirmation is already being processed. Please retry shortly.' );
+		}
 
 		try {
 			$envelope = $context->finalize( $reference, $result );
@@ -502,9 +518,7 @@ final class PaymentOrchestrator {
 
 			return is_array( $envelope ) ? $envelope : array();
 		} finally {
-			if ( $acquired ) {
-				wp_cache_delete( $lock_key, 'bookingpress_payments' );
-			}
+			wp_cache_delete( $lock_key, 'bookingpress_payments' );
 		}
 	}
 

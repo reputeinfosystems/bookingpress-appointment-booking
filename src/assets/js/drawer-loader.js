@@ -133,6 +133,8 @@ const initHelperIconWrapper = () => {
                 appointments: "https://www.bookingpressplugin.com/documents/appointments/",
                 notifications: "https://www.bookingpressplugin.com/documents/email-notifications-message/",
                 payments: "https://www.bookingpressplugin.com/documents/payment/",
+                coupons: "https://www.bookingpressplugin.com/documents/coupons/",
+                discounts: "https://www.bookingpressplugin.com/documents/advanced-discount/",
                 general_settings: "https://www.bookingpressplugin.com/documents/general-settings/",
                 company_settings: "https://www.bookingpressplugin.com/documents/company-settings/",
                 notification_settings: "https://www.bookingpressplugin.com/documents/notifications-settings/",
@@ -376,9 +378,18 @@ const initHelperIconWrapper = () => {
 
             } else if (bpa_get_page == 'bookingpress_calendar') {
 
-                vm.request_module = 'calendar';
-                vm.bpa_set_read_more_link();
-                vm.openNeedHelper('list_calendar', 'Calendar');
+                const discountTab = document.querySelector('.bpa-active-advanced-discount-list');
+                const isDiscountTab = (discountTab && window.getComputedStyle(discountTab).display !== 'none')
+                    || sessionStorage.getItem('current_coupon_tabname') === 'discount';
+                if (isDiscountTab) {
+                    vm.request_module = 'discounts';
+                    vm.bpa_set_read_more_link();
+                    vm.openNeedHelper('list_discounts', 'Discounts', 'Discounts');
+                } else {
+                    vm.request_module = 'calendar';
+                    vm.bpa_set_read_more_link();
+                    vm.openNeedHelper('list_calendar', 'Calendar');
+                }
                 closeFab();
 
             } else if (bpa_get_page == 'bookingpress_appointments') {
@@ -400,6 +411,23 @@ const initHelperIconWrapper = () => {
                 vm.request_module = 'customers';
                 vm.bpa_set_read_more_link();
                 vm.openNeedHelper('list_customers', 'Customers');
+                closeFab();
+
+            } else if (bpa_get_page == 'bookingpress_coupons') {
+
+                const discountTab = document.querySelector('.bpa-active-advanced-discount-list');
+                const isDiscountTab = (discountTab && window.getComputedStyle(discountTab).display !== 'none')
+                    || sessionStorage.getItem('current_coupon_tabname') === 'discount';
+
+                if (isDiscountTab) {
+                    vm.request_module = 'discounts';
+                    vm.bpa_set_read_more_link();
+                    vm.openNeedHelper('list_discounts', 'Discounts', 'Discounts');
+                } else {
+                    vm.request_module = 'coupons';
+                    vm.bpa_set_read_more_link();
+                    vm.openNeedHelper('list_coupons', 'Coupons');
+                }
                 closeFab();
 
             } else if (bpa_get_page == 'bookingpress_services') {

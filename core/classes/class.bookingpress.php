@@ -2259,7 +2259,7 @@ if (! class_exists('BookingPress') ) {
         {
             global $bookingpress_version;
             $bookingpress_old_version = get_option('bookingpress_version', true);
-            if (version_compare($bookingpress_old_version, '1.7.0', '<') ) {
+            if (version_compare($bookingpress_old_version, '1.7.1', '<') ) {
                 $bookingpress_load_upgrade_file = BOOKINGPRESS_VIEWS_DIR . '/upgrade_latest_data.php';
                 include $bookingpress_load_upgrade_file;
                 $this->bookingpress_send_anonymous_data_cron();
@@ -8086,7 +8086,26 @@ if (! class_exists('BookingPress') ) {
             $bookingpress_services_details   = array();
 
             //Get all uncategorized services
-            $bookingpress_get_uncategorized_services = $wpdb->get_results($wpdb->prepare("SELECT * FROM $tbl_bookingpress_services WHERE bookingpress_category_id = %d ORDER BY bookingpress_service_id DESC", 0), ARRAY_A); //phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared --Reason: $tbl_bookingpress_services is table name
+            $bookingpress_all_services = BookingPressDb::bpa_fetch_records([
+                'columns' => 'bookingpress_service_id, bookingpress_category_id, bookingpress_service_name, bookingpress_service_price, bookingpress_service_duration_val, bookingpress_service_duration_unit',
+                'table'   => $tbl_bookingpress_services,
+                'type'    => ARRAY_A
+            ]);
+
+            $bookingpress_services_by_category = array();
+
+            if (!empty($bookingpress_all_services)) {
+                foreach ($bookingpress_all_services as $service) {
+
+                    $category_id = (int) $service['bookingpress_category_id'];
+
+                    $bookingpress_services_by_category[$category_id][] = $service;
+                }
+            }
+
+            $bookingpress_get_uncategorized_services = isset($bookingpress_services_by_category[0]) ? $bookingpress_services_by_category[0] : array();
+
+            usort($bookingpress_get_uncategorized_services, function($a, $b) { return (int) $b['bookingpress_service_id'] - (int) $a['bookingpress_service_id']; });
             
             if(!empty($bookingpress_get_uncategorized_services)){
                 foreach($bookingpress_get_uncategorized_services as $uncat_ser_key => $uncat_ser_val){
@@ -8135,11 +8154,19 @@ if (! class_exists('BookingPress') ) {
                 );
             }
 
-            $bookingpress_service_categories = $wpdb->get_results('SELECT * FROM ' . $tbl_bookingpress_categories . ' WHERE bookingpress_category_id != 0 ORDER BY bookingpress_category_position ASC', ARRAY_A);// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Reason: $tbl_bookingpress_categories is table name defined globally. False alarm
+            $bookingpress_service_categories = BookingPressDb::bpa_fetch_records([
+                'columns'  => 'bookingpress_category_id, bookingpress_category_name, bookingpress_category_position',
+                'table'    => $tbl_bookingpress_categories,
+                'where'    => 'WHERE bookingpress_category_id != 0',
+                'order_by' => 'ORDER BY bookingpress_category_position ASC',
+                'type'     => ARRAY_A
+            ]);
+
             foreach ( $bookingpress_service_categories as $bookingpress_service_cat_key => $bookingpress_service_cat_val ) {
                 $bookingpress_cat_id       = $bookingpress_service_cat_val['bookingpress_category_id'];
                 $bookingpress_tmp_services = array();
-                $bookingpress_services     = $wpdb->get_results($wpdb->prepare('SELECT * FROM ' . $tbl_bookingpress_services . ' WHERE bookingpress_category_id = %d', $bookingpress_cat_id), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Reason: $tbl_bookingpress_services is table name defined globally. False alarm
+                $bookingpress_services = isset($bookingpress_services_by_category[$bookingpress_cat_id]) ? $bookingpress_services_by_category[$bookingpress_cat_id] : array();
+
                 foreach ( $bookingpress_services as $bookingpress_service_key => $bookingpress_service_val ) {
                     $bookingpress_service_price = $this->bookingpress_price_formatter_with_currency_symbol($bookingpress_service_val['bookingpress_service_price'], $bookingpress_currency_symbol);
 

@@ -458,6 +458,8 @@ class AppointmentRoutes extends Base {
 
                 if (!empty($customer_full_name)) {
                     $appointment['customer_name'] = stripslashes_deep($customer_full_name);
+                } elseif( isset($get_appointment['bookingpress_customer_name']) && !empty($get_appointment['bookingpress_customer_name']) ){
+                    $appointment['customer_name'] = stripslashes_deep($get_appointment['bookingpress_customer_name']);
                 } elseif (!empty($customer_username)) {
                     $appointment['customer_name'] = stripslashes_deep($customer_username);
                 } else {
@@ -726,6 +728,7 @@ class AppointmentRoutes extends Base {
         //$_POST['appointment_data'] = wp_json_encode( $appointment_data ); //phpcs:ignore
         $_POST['appointment_data'] = wp_slash( wp_json_encode( $appointment_data ) ); //phpcs:ignore        
         $_REQUEST['_wpnonce'] = wp_create_nonce( 'bpa_wp_nonce' ); //phpcs:ignore
+        $_REQUEST['action']   = ! empty( $request->get_param( 'action' ) ) ? $request->get_param( 'action' ) : 'bookingpress_save_appointment_booking';
 
         $response = $bookingpress_calendar->bookingpress_save_appointment_booking_func( false, true );
 

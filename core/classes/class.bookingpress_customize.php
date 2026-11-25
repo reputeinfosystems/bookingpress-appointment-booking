@@ -376,7 +376,7 @@ if (! class_exists('bookingpress_customize') ) {
             $summary_container_data          = ! empty($_POST['summary_container_data']) ? array_map(array( $BookingPress, 'appointment_sanatize_field' ), $_POST['summary_container_data']) : array(); // phpcs:ignore WordPress.Security.NonceVerification
 
             $front_label_edit_data = ! empty($_POST['front_label_edit_data']) ? array_map(array( $BookingPress, 'appointment_sanatize_field' ), $_POST['front_label_edit_data']) : array(); // phpcs:ignore WordPress.Security.NonceVerification
-            
+
             $booking_form_settings_data = array(
                 'tab_container_data' => $tab_container_data,
                 'category_container_data' => $category_container_data,
@@ -389,8 +389,8 @@ if (! class_exists('bookingpress_customize') ) {
                 'front_label_edit_data' => $front_label_edit_data,
             ); 
              
-            $booking_form_settings_data = apply_filters('bookingpress_before_save_customize_booking_form',$booking_form_settings_data);            
-
+            $booking_form_settings_data = apply_filters('bookingpress_before_save_customize_booking_form',$booking_form_settings_data);       
+            
             if (! empty($booking_form_settings_data) ) {
                 foreach($booking_form_settings_data as $data_key  => $data_value) {
                     if(!empty($data_value)) {
@@ -682,15 +682,20 @@ if (! class_exists('bookingpress_customize') ) {
                         'bookingpress_field_position'      => $bookingpress_field_setting_val['field_position'],
                     );
 
-                    $bpa_existing_field_id = $bookingpress_field_setting_val['id'];
+                    $bpa_existing_field_id = isset( $bookingpress_field_setting_val['id'] ) ? intval( $bookingpress_field_setting_val['id'] ) : 0;
 
                     $bookingpress_db_fields = apply_filters('bookingpress_modify_form_field_data_before_save', $bookingpress_db_fields, $bookingpress_field_setting_val);
 
-                    $field_exist = $wpdb->get_var($wpdb->prepare("SELECT COUNT(bookingpress_form_field_id) as total FROM {$tbl_bookingpress_form_fields} WHERE bookingpress_form_field_id = %d", $bpa_existing_field_id)); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_form_fields is table name defined globally. False Positive alarm
+                    $field_meta_key = isset( $bookingpress_db_fields['bookingpress_field_meta_key'] ) ? $bookingpress_db_fields['bookingpress_field_meta_key'] : '';
+                    $existing_field_meta_key = $wpdb->get_var( $wpdb->prepare( "SELECT bookingpress_field_meta_key FROM {$tbl_bookingpress_form_fields} WHERE bookingpress_form_field_id = %d", $bpa_existing_field_id ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_form_fields is table name defined globally.
+                    if ( ! empty( $field_meta_key ) && $existing_field_meta_key !== $field_meta_key ) {
+                        $bpa_existing_field_id = $wpdb->get_var( $wpdb->prepare( "SELECT bookingpress_form_field_id FROM {$tbl_bookingpress_form_fields} WHERE bookingpress_field_meta_key = %s AND ( bookingpress_is_customer_field = %d OR bookingpress_is_customer_field IS NULL ) ORDER BY bookingpress_form_field_id DESC LIMIT 1", $field_meta_key, 0 ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Reason: $tbl_bookingpress_form_fields is table name defined globally.
+                    }
+                    $field_exist = ! empty( $bpa_existing_field_id );
                     if ($field_exist > 0 ) {
-                        $wpdb->update($tbl_bookingpress_form_fields, $bookingpress_db_fields, array( 'bookingpress_form_field_id' => $bpa_existing_field_id ));
+                        $db_result = $wpdb->update($tbl_bookingpress_form_fields, $bookingpress_db_fields, array( 'bookingpress_form_field_id' => $bpa_existing_field_id ));
                     } else {
-                        $wpdb->insert($tbl_bookingpress_form_fields, $bookingpress_db_fields);
+                        $db_result = $wpdb->insert($tbl_bookingpress_form_fields, $bookingpress_db_fields);
                         $bpa_existing_field_id = $wpdb->insert_id;
                         $bookingpress_field_settings_data[$bookingpress_field_setting_key]['id'] = $bpa_existing_field_id;
                     }
@@ -705,11 +710,13 @@ if (! class_exists('bookingpress_customize') ) {
 
                 wp_cache_delete( 'bpa_appointment_booking_form_fields_data_' );
 
-                $all_db_fields = $wpdb->get_results("SELECT bookingpress_form_field_id, bookingpress_form_field_name FROM {$tbl_bookingpress_form_fields}", ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+                $all_db_fields = $wpdb->get_results("SELECT bookingpress_form_field_id, bookingpress_field_meta_key FROM {$tbl_bookingpress_form_fields} WHERE bookingpress_is_customer_field = 0 OR bookingpress_is_customer_field IS NULL ORDER BY bookingpress_form_field_id DESC", ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
                 $field_id_map = array();
                 if (!empty($all_db_fields)) {
                     foreach ($all_db_fields as $db_f) {
-                        $field_id_map[$db_f['bookingpress_form_field_name']] = intval($db_f['bookingpress_form_field_id']);
+                        if ( ! empty( $db_f['bookingpress_field_meta_key'] ) && ! isset( $field_id_map[$db_f['bookingpress_field_meta_key']] ) ) {
+                            $field_id_map[$db_f['bookingpress_field_meta_key']] = intval($db_f['bookingpress_form_field_id']);
+                        }
                     }
                 }
 

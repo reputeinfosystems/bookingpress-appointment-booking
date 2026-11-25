@@ -46,7 +46,7 @@
                                 BookingPressPro\admin\Appointments::render_appointments_staff_filters();
                             }
                         ?>
-                        <bp-ui-col :xs="24" :sm="24" :md="24" ::lg="typeof is_staffmember_activated !== 'undefined' && is_staffmember_activated == 1 ? 4 : 6" :xl="typeof is_staffmember_activated !== 'undefined' && is_staffmember_activated == 1 ? 5 : 6" :xl="typeof is_staffmember_activated !== 'undefined' && is_staffmember_activated == 1 ? 5 : 6">
+                        <bp-ui-col :xs="24" :sm="24" :md="24" :lg="typeof is_staffmember_activated !== 'undefined' && is_staffmember_activated == 1 ? 5 : 6" :xl="typeof is_staffmember_activated !== 'undefined' && is_staffmember_activated == 1 ? 5 : 6">
                             <span class="bpa-form-label"><?php esc_html_e('Customer Name', 'bookingpress-appointment-booking'); ?></span>    
                             <bp-ui-select class="bpa-form-control bpa-from-select-tab" v-model="search_customer_name" multiple filterable collapse-tags placeholder="<?php esc_html_e( 'Start typing to fetch customer', 'bookingpress-appointment-booking' ); ?>" remote reserve-keyword :remote-method="bookingpress_get_search_customer_list" :loading="bookingpress_loading" :popper-append-to-body="false" popper-class="bpa-el-select--is-with-navbar">
                                 <bp-ui-option v-if="bookingpress_loading == 'true'" value="__loading__" :label="bookingpress_loading" disabled>
@@ -55,7 +55,7 @@
                                 <bp-ui-option v-for="item in search_customer_list" :key="item.value" :label="item.text" :value="item.value"></bp-ui-option>
                             </bp-ui-select>
                         </bp-ui-col>
-                        <bp-ui-col :xs="24" :sm="24" :md="24" ::lg="typeof is_staffmember_activated !== 'undefined' && is_staffmember_activated == 1 ? 4 : 6" :xl="typeof is_staffmember_activated !== 'undefined' && is_staffmember_activated == 1 ? 5 : 6" :xl="typeof is_staffmember_activated !== 'undefined' && is_staffmember_activated == 1 ? 5 : 6">
+                        <bp-ui-col :xs="24" :sm="24" :md="24" :lg="typeof is_staffmember_activated !== 'undefined' && is_staffmember_activated == 1 ? 5 : 6" :xl="typeof is_staffmember_activated !== 'undefined' && is_staffmember_activated == 1 ? 5 : 6">
                             <span class="bpa-form-label"><?php esc_html_e('Service', 'bookingpress-appointment-booking'); ?></span>
                             <bp-ui-select class="bpa-form-control bpa-from-select-tab" v-model="search_service_name" multiple filterable collapse-tags placeholder="<?php esc_html_e('Select service', 'bookingpress-appointment-booking'); ?>" popper-class="bpa-el-select--is-with-navbar">
                                 <bp-ui-option-group v-for="service_cat_data in appointment_services_data" :key="service_cat_data.category_name" :label="service_cat_data.category_name">
@@ -63,7 +63,7 @@
                                 </bp-ui-option-group>
                             </bp-ui-select>
                         </bp-ui-col>
-                        <bp-ui-col :xs="24" :sm="24" :md="24" ::lg="typeof is_staffmember_activated !== 'undefined' && is_staffmember_activated == 1 ? 4 : 6" :xl="typeof is_staffmember_activated !== 'undefined' && is_staffmember_activated == 1 ? 5 : 6" :xl="typeof is_staffmember_activated !== 'undefined' && is_staffmember_activated == 1 ? 5 : 6">
+                        <bp-ui-col :xs="24" :sm="24" :md="24" :lg="typeof is_staffmember_activated !== 'undefined' && is_staffmember_activated == 1 ? 5 : 6" :xl="typeof is_staffmember_activated !== 'undefined' && is_staffmember_activated == 1 ? 5 : 6">
                             <span class="bpa-form-label"><?php esc_html_e('Status', 'bookingpress-appointment-booking'); ?></span>        
                             <bp-ui-select class="bpa-form-control bpa-from-select-tab" v-model="search_appointment_status" placeholder="<?php esc_html_e('Select status', 'bookingpress-appointment-booking'); ?>" :popper-append-to-body="false" popper-class="bpa-el-select--is-with-navbar">
                                 <bp-ui-option label="<?php esc_html_e('All', 'bookingpress-appointment-booking'); ?>" value="all"></bp-ui-option>

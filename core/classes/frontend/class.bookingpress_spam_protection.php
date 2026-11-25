@@ -10,7 +10,7 @@ if (! class_exists('bookingpress_spam_protection') ) {
             add_action('wp_ajax_bookingpress_generate_spam_captcha', array( $this, 'bookingpress_generate_spam_captcha_func' ));
             add_action('wp_ajax_nopriv_bookingpress_generate_spam_captcha', array( $this, 'bookingpress_generate_spam_captcha_func' ));
 
-            add_action('init', array( $this, 'bookingpress_start_session' ), 1);
+            /* PHP session no longer started on init: it sent PHPSESSID + no-cache headers on every front-end request and broke page caching. Server-side state now lives in the bookingpress transient table. */
 
             // add_filter('bookingpress_validate_spam_protection', array($this, 'bookingpress_validate_spam_protection_func'), 10, 2);
         }
@@ -64,7 +64,6 @@ if (! class_exists('bookingpress_spam_protection') ) {
             }
 
             $bookingpress_spam_captcha    = $this->bookingpress_generate_captcha_code(12);
-            $_SESSION['bpa_filter_input'] = md5($bookingpress_spam_captcha);
 
             $response['variant']     = 'success';
             $response['title']       = esc_html__('Success', 'bookingpress-appointment-booking');
@@ -106,29 +105,13 @@ if (! class_exists('bookingpress_spam_protection') ) {
 
         
         /**
-         * Starts session if not started
+         * Deprecated: BookingPress no longer uses PHP sessions.
+         * Kept as a no-op so external callers do not fatal.
          *
          * @return void
          */
         function bookingpress_start_session()
         {
-            if (version_compare(PHP_VERSION, '7.0.0') >= 0 ) {
-                if (( function_exists('session_status') && session_status() == PHP_SESSION_NONE && ! is_admin() ) ) {
-                    @session_start(
-                        array(
-                            'read_and_close' => false,
-                        )
-                    );
-                }
-            } elseif (version_compare(PHP_VERSION, '5.4.0') >= 0 ) {
-                if (( function_exists('session_status') && session_status() == PHP_SESSION_NONE && ! is_admin() ) ) {
-                    @session_start();
-                }
-            } else {
-                if (( session_id() == '' && ! is_admin() ) ) {
-                    @session_start();
-                }
-            }
         }
     }
 }
